@@ -1,0 +1,4 @@
+@dir: msp/out
+lib/libsns_mis2032.so
+lib/liblens_ms41908.so
+lib/liblens_ms41939.so

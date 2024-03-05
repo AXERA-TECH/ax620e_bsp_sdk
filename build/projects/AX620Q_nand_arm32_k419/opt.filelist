@@ -1,0 +1,41 @@
+@dir: msp/out/arm_glibc
+third-party/lib/libfaac.so* usr/lib/
+third-party/lib/libsamplerate.so* usr/lib/
+third-party/lib/libtinyalsa.so* usr/lib/
+
+@dir: msp/out/arm_glibc
+bin/FRTDemo/* bin/FRTDemo/
+-bin/FRTDemo/frtdemo_s
+bin/OPALDemo/* bin/OPALDemo/
+-bin/OPALDemo/opaldemo_s
+bin/tuning-server bin/
+bin/sample_vin bin/
+bin/sample_audio bin/
+bin/sample_uvc/* bin/
+bin/ax_npuscene bin/
+
+@dir: msp/out/arm_glibc
+etc/skelModels/ax_ax620E_bv_algo_model_*.axmodel etc/skelModels/
+
+@dir: msp/out/arm_glibc
+lib/libax_ae.so
+lib/libax_awb.so
+lib/libax_af.so
+lib/libax_audio_3a.so
+lib/libax_audio.so
+lib/libax_engine_tiny.so lib/libax_engine.so
+lib/libax_interpreter.so
+lib/libax_ives.so
+lib/libax_ivps.so
+lib/libax_mipi.so
+lib/libax_nt_ctrl.so
+lib/libax_nt_stream.so
+lib/libax_proton.so
+lib/libax_sys.so
+lib/libax_venc.so
+lib/libax_opal.so
+lib/libax_skel_tiny.so lib/libax_skel.so
+lib/libax_lpcm.so
+lib/libax_g711u.so
+lib/libax_g711a.so
+lib/libax_faac.so

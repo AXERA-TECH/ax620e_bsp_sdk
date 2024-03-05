@@ -1,0 +1,43 @@
+{
+    "//": "testsuite settings",
+    "testsuite_settings": {
+        "LoopNum": -1,
+        "DefIntervalMs": 2000,
+        "RandomEnable": 0,
+        "VIN": [
+            {
+                "sns_id": 0,
+                "capture_enable": 1,
+                "nIntervalMs": 2000
+            },
+            {
+                "sns_id": 0,
+                "pipe_framerate": 25
+            },
+            {
+                "sns_id": 0,
+                "daynight_mode": 0
+            }
+        ],
+        "OSD": [
+            {
+                "sns_id": 0,
+                "enable": 1
+            },
+            {
+                "sns_id": 0,
+                "enable": 0
+            }
+        ],
+        "AI": [
+            {
+                "sns_id": 0,
+                "enable": 1
+            },
+            {
+                "sns_id": 0,
+                "enable": 0
+            }
+        ]
+    }
+}

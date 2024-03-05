@@ -1,0 +1,62 @@
+CUR_PATH             := $(shell pwd)
+HOME_PATH            := $(abspath $(CUR_PATH)/../../..)
+
+include $(HOME_PATH)/build/config.mak
+
+PRJ_OUT_HOME         := $(HOME_PATH)/build/out/$(PROJECT)
+OBJ_OUT_PATH         := $(PRJ_OUT_HOME)/objs
+SRC_RELATIVE_PATH    := $(subst $(HOME_PATH)/,,$(CUR_PATH))
+TARGET_OUT_PATH      := $(OBJ_OUT_PATH)/$(SRC_RELATIVE_PATH)
+
+SRC_PATH             := $(CUR_PATH)
+SAMPLE_PATH          := $(CUR_PATH)/..
+BASE_PATH            := $(HOME_PATH)/msp/component
+OUT_PATH             := $(MSP_OUT_PATH)
+LIB_PATH             := $(OUT_PATH)/lib
+
+# output
+MOD_NAME 		:= sample_ivps_jenc_slice
+OUTPUT 			:= $(TARGET_OUT_PATH)/.obj
+
+# source
+SRCS 			:= $(wildcard $(SRC_PATH)/*.c)
+
+CINCLUDE		+= -I$(SRC_PATH) \
+			-I$(OUT_PATH)/include
+
+OBJS 			:= $(SRCS:%.c=$(OUTPUT)/%.o)
+DEPS			:= $(OBJS:%.o=%.d)
+
+vpath %.c $(addsuffix :,$(dir $(patsubst %.c,%.o,$(SRCS))))
+
+# exec
+TARGET			:= $(MOD_NAME)
+
+CFLAGS			:= ${EXEC_FLAG}
+
+# build flags
+ifeq ($(debug),yes)
+CFLAGS			+= -Wall -O0 -ggdb3
+else
+CFLAGS			+= -Wall -O2
+endif
+
+CFLAGS			+= -ldl
+
+# dependency
+CLIB			+= -Wl,-rpath-link=$(OUT_PATH)/lib
+CLIB			+= -L$(OUT_PATH)/lib
+CLIB			+= -lax_venc
+CLIB			+= -lax_ivps
+CLIB			+= -lax_proton
+CLIB			+= -lax_sys
+CLIB			+= -lm -lpthread
+
+# install
+INSTALL_BIN	:= $(TARGET)
+MV_TARGET	:= $(INSTALL_BIN)
+
+# link
+LINK = $(CC)
+
+include $(HOME_PATH)/build/rules.mak

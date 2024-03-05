@@ -1,0 +1,17 @@
+# app
+app/demo/OPALDemo
+app/demo/QSDemo
+
+# third-party
+third-party/
+
+# msp out
+msp/out/arm_glibc/data/
+msp/out/arm_glibc/bin/
+msp/out/arm_glibc/etc/
+
+# build out
+build/out/
+
+# vscode
+.vscode

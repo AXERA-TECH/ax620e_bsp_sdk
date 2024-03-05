@@ -1,0 +1,101 @@
+BEGIN {
+    print "ax_isp_iq_param_t g_selected_params[] = {"
+}
+/^const static / {
+if (index($3, "_VERSION_"))
+    print "    {AX_ISP_PARAM_VERSION, &"$4"},"
+else if (index($3, "_BLC_"))
+    print "    {AX_ISP_PARAM_BLC, &"$4"},"
+else if (index($3, "_DPC_"))
+    print "    {AX_ISP_PARAM_DPC, &"$4"},"
+else if (index($3, "_RLTM_"))
+    print "    {AX_ISP_PARAM_RLTM, &"$4"},"
+else if (index($3, "_DEHAZE_"))
+    print "    {AX_ISP_PARAM_DEHAZE, &"$4"},"
+else if (index($3, "_LSC_"))
+    print "    {AX_ISP_PARAM_LSC, &"$4"},"
+else if (index($3, "_DEMOSAIC_"))
+    print "    {AX_ISP_PARAM_DEMOSAIC, &"$4"},"
+else if (index($3, "_GIC_"))
+    print "    {AX_ISP_PARAM_GIC, &"$4"},"
+else if (index($3, "_FCC_"))
+    print "    {AX_ISP_PARAM_FCC, &"$4"},"
+else if (index($3, "_CSC_"))
+    print "    {AX_ISP_PARAM_CSC, &"$4"},"
+else if (index($3, "_CC_"))
+    print "    {AX_ISP_PARAM_CC, &"$4"},"
+else if (index($3, "_GAMMA_"))
+    print "    {AX_ISP_PARAM_GAMMA, &"$4"},"
+else if (index($3, "_YNR_"))
+    print "    {AX_ISP_PARAM_YNR, &"$4"},"
+else if (index($3, "_CNR_"))
+    print "    {AX_ISP_PARAM_CNR, &"$4"},"
+else if (index($3, "_YCRT_"))
+    print "    {AX_ISP_PARAM_YCRT, &"$4"},"
+else if (index($3, "_SCM_"))
+    print "    {AX_ISP_PARAM_SCM, &"$4"},"
+else if (index($3, "_SHARPEN_"))
+    print "    {AX_ISP_PARAM_SHARPEN, &"$4"},"
+else if (index($3, "_YCPROC_"))
+    print "    {AX_ISP_PARAM_YCPROC, &"$4"},"
+else if (index($3, "_CCMP_"))
+    print "    {AX_ISP_PARAM_CCMP, &"$4"},"
+else if (index($3, "_CLP_"))
+    print "    {AX_ISP_PARAM_CLP, &"$4"},"
+else if (index($3, "_HS2DLUT_"))
+    print "    {AX_ISP_PARAM_HS2DLUT, &"$4"},"
+else if (index($3, "_CMAP_"))
+    print "    {AX_ISP_PARAM_CMAP, &"$4"},"
+else if (index($3, "_MDE_"))
+    print "    {AX_ISP_PARAM_MDE, &"$4"},"
+else if (index($3, "_AYNR_"))
+    print "    {AX_ISP_PARAM_AYNR, &"$4"},"
+else if (index($3, "_ACNR_"))
+    print "    {AX_ISP_PARAM_ACNR, &"$4"},"
+else if (index($3, "_AINR_"))
+    print "    {AX_ISP_PARAM_AINR, &"$4"},"
+else if (index($3, "_AE_PARAM_"))
+    print "    {AX_ISP_PARAM_AE, &"$4"},"
+else if (index($3, "_AWB_PARAM_"))
+    print "    {AX_ISP_PARAM_AWB, &"$4"},"
+else if (index($3, "_DEPURPLE_"))
+    print "    {AX_ISP_PARAM_DEPURPLE, &"$4"},"
+else if (index($3, "_HDR_"))
+    print "    {AX_ISP_PARAM_HDR, &"$4"},"
+else if (index($3, "_RAW2DNR_"))
+    print "    {AX_ISP_PARAM_RAW2DNR, &"$4"},"
+else if (index($3, "_RAW3DNR_"))
+    print "    {AX_ISP_PARAM_RAW3DNR, &"$4"},"
+else if (index($3, "_YUV3DNR_"))
+    print "    {AX_ISP_PARAM_YUV3DNR, &"$4"},"
+else if (index($3, "_3DLUT_"))
+    print "    {AX_ISP_PARAM_3DLUT, &"$4"},"
+else if (index($3, "_CA_"))
+    print "    {AX_ISP_PARAM_CA, &"$4"},"
+else if (index($3, "_DEPWL_"))
+    print "    {AX_ISP_PARAM_DEPWL, &"$4"},"
+else if (index($3, "_NUC_"))
+    print "    {AX_ISP_PARAM_NUC, &"$4"},"
+else if (index($3, "_AE_STAT_PARAM_"))
+    print "    {AX_ISP_PARAM_AE_STAT, &"$4"},"
+else if (index($3, "_AWB_STAT_PARAM_"))
+    print "    {AX_ISP_PARAM_AWB_STAT, &"$4"},"
+else if (index($3, "_AF_STAT_PARAM_"))
+    print "    {AX_ISP_PARAM_AF_STAT, &"$4"},"
+else if (index($3, "_ME_"))
+    print "    {AX_ISP_PARAM_ME, &"$4"},"
+else if (index($3, "_LDC_"))
+    print "    {AX_ISP_PARAM_LDC, &"$4"},"
+else if (index($3, "_SCENE_"))
+    print "    {AX_ISP_PARAM_SCENE, &"$4"},"
+else if (index($3, "_DIS_"))
+    print "    {AX_ISP_PARAM_DIS, &"$4"},"
+else if (index($3, "_AF_IIR_REF_LIST_T"))
+    print "    {AX_ISP_AF_IIR_REF_LIST, &"$4"},"
+else if (index($3, "_ME_"))
+    print "    {AX_ISP_PARAM_ME, &"$4"},"
+}
+END {
+    print "    {AX_ISP_PARAM_NONE, AX_NULL},"
+    print "};"
+}

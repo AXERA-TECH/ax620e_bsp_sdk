@@ -1,0 +1,223 @@
+{
+	"//": "algo settings",
+	"algo_settings":
+	[
+		{
+			"sns_id": 0,
+			"SKEL": {
+				"//": "0: none; 4: HVCP",
+				"detect_algo_type": 4,
+				"detect_models_path": "/opt/etc/skelModels",
+				"detect_track_active": true,
+				"push_enabled": true,
+				"panorama_enabled": false,
+				"push_attr_always": false,
+				"roi": {
+					"enable": false,
+					"points": [
+						{
+							"x": 320,
+							"y": 180
+						},
+						{
+							"x": 320,
+							"y": 540
+						},
+						{
+							"x": 960,
+							"y": 540
+						},
+						{
+							"x": 960,
+							"y": 180
+						}
+					]
+				},
+				"object_filter": [
+					{
+						"object_category": "face",
+						"width": 0,
+						"height": 0,
+						"confidence": 0
+					},
+					{
+						"object_category": "body",
+						"width": 0,
+						"height": 0,
+						"confidence": 0
+					},
+					{
+						"object_category": "vehicle",
+						"width": 0,
+						"height": 0,
+						"confidence": 0
+					},
+					{
+						"object_category": "cycle",
+						"width": 0,
+						"height": 0,
+						"confidence": 0
+					},
+					{
+						"object_category": "plate",
+						"width": 0,
+						"height": 0,
+						"confidence": 0
+					}
+				],
+				"push_object_filter": [
+					{
+						"object_category": "face",
+						"width": 0,
+						"height": 0,
+						"pose_blur": {
+							"pitch": 180,
+							"yaw": 180,
+							"roll": 180,
+							"blur": 1.0
+						}
+					},
+					{
+						"object_category": "body",
+						"quality": 0
+					},
+					{
+						"object_category": "vehicle",
+						"quality": 0
+					},
+					{
+						"object_category": "cycle",
+						"quality": 0
+					},
+					{
+						"object_category": "plate",
+						"quality": 0
+					}
+				],
+				"push_object_crop_scale": [
+					{
+						"object_category": "face",
+						"scaleleft": 0,
+						"scaleright": 0,
+						"scaletop": 0,
+						"scalebottom": 0
+					},
+					{
+						"object_category": "body",
+						"scaleleft": 0,
+						"scaleright": 0,
+						"scaletop": 0,
+						"scalebottom": 0
+					},
+					{
+						"object_category": "vehicle",
+						"scaleleft": 0,
+						"scaleright": 0,
+						"scaletop": 0,
+						"scalebottom": 0
+					},
+					{
+						"object_category": "cycle",
+						"scaleleft": 0,
+						"scaleright": 0,
+						"scaletop": 0,
+						"scalebottom": 0
+					},
+					{
+						"object_category": "plate",
+						"scaleleft": 0,
+						"scaleright": 0,
+						"scaletop": 0,
+						"scalebottom": 0
+					}
+				],
+				"push_strategy": {
+					"//": "1: fast; 2: interval; 3: best",
+					"push_mode": 3,
+					"interval_time": 2000,
+					"push_counts": 3
+				},
+				"ae_roi_object_filter": [
+					{
+						"object_category": "face",
+						"enable": false,
+						"width": 0,
+						"height": 0,
+						"//": "1: best; 2: entire",
+						"mode": 1
+					},
+					{
+						"object_category": "body",
+						"enable": false,
+						"width": 50,
+						"height": 50,
+						"//": "1: best; 2: entire",
+						"mode": 1
+					},
+					{
+						"object_category": "vehicle",
+						"enable": false,
+						"width": 0,
+						"height": 0,
+						"//": "1: best; 2: entire",
+						"mode": 1
+					},
+					{
+						"object_category": "cycle",
+						"enable": false,
+						"width": 0,
+						"height": 0,
+						"//": "1: best; 2: entire",
+						"mode": 1
+					},
+					{
+						"object_category": "plate",
+						"enable": false,
+						"width": 0,
+						"height": 0,
+						"//": "1: best; 2: entire",
+						"mode": 1
+					}
+				],
+				"analyze_attribute": [
+					"ANALYZE_ATTR_PLATE_ATTRIBUTE"
+				],
+				"crop_encoder_qplevel": 75,
+				"max_track_size": {
+					"human": 0,
+					"vehicle": 0,
+					"cycle": 0
+				}
+			},
+			"IVES": {
+				"framerate": 1,
+				"MD": {
+					"enable": true,
+					"mb": "32x32",
+					"threshold Y": 20,
+					"confidence": 50
+				},
+				"OD": {
+					"enable": true,
+					"threshold Y": 100,
+					"confidence Y": 80,
+					"lux threshold": 0,
+					"lux diff": 60
+				},
+				"SCD": {
+					"enable": true,
+					"threshold": 60,
+					"confidence": 60
+				}
+			}
+		}
+	],
+	"AUDIO": {
+		"//": "acoustic event detection",
+		"enable": false,
+		"//": "decibel threshold (unit: dB)",
+		"threshold": 10,
+		"//": "dispatch detection result interval (unit: ms)",
+		"interval": 10000
+	}
+}

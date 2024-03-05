@@ -1,0 +1,31 @@
+@dir: kernel/osdrv/out/arm_glibc_linux-4.19.125
+ko/ax_sys.ko.xz     ko/ax_sys.ko
+ko/ax_cmm.ko.xz     ko/ax_cmm.ko
+ko/ax_pool.ko.xz    ko/ax_pool.ko
+ko/ax_base.ko.xz    ko/ax_base.ko
+ko/ax_npu.ko.xz     ko/ax_npu.ko
+ko/ax_ivps.ko.xz    ko/ax_ivps.ko
+ko/ax_vpp.ko.xz     ko/ax_vpp.ko
+ko/ax_gdc.ko.xz     ko/ax_gdc.ko
+ko/ax_tdp.ko.xz     ko/ax_tdp.ko
+ko/ax_venc.ko.xz    ko/ax_venc.ko
+ko/ax_jenc.ko.xz    ko/ax_jenc.ko
+ko/ax_mipi_rx.ko.xz ko/ax_mipi_rx.ko
+ko/ax_proton.ko.xz  ko/ax_proton.ko
+ko/ax_vo.ko.xz      ko/ax_vo.ko
+ko/ax_audio.ko.xz   ko/ax_audio.ko
+ko/ax_perf_monitor.ko.xz   ko/ax_perf_monitor.ko
+
+@dir: rootfs/rootfs
+opt/scripts/* scripts/
+
+@dir: build/projects
+AX620Q_nand_arm32_k419/soc/scripts/* scripts/
+
+@dir: build/out/AX620Q_nand_arm32_k419/objs/kernel/linux
+ko/grace.ko.xz     ko/grace.ko
+ko/lockd.ko.xz     ko/lockd.ko
+ko/nfs.ko.xz       ko/nfs.ko
+ko/nfsv2.ko.xz     ko/nfsv2.ko
+ko/nfsv3.ko.xz     ko/nfsv3.ko
+ko/sunrpc.ko.xz    ko/sunrpc.ko

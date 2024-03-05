@@ -1,0 +1,87 @@
+{
+    "//": "ppl settings",
+    "scenario_0":
+    [
+        {
+            "src_mod": "VIN",
+            "src_grp": 0,
+            "src_chn": 0,
+            "dst_mod": "AVS",
+            "dst_grp": 0,
+            "dst_chn": 0,
+            "link": 1
+        },
+        {
+            "src_mod": "VIN",
+            "src_grp": 1,
+            "src_chn": 0,
+            "dst_mod": "AVS",
+            "dst_grp": 0,
+            "dst_chn": 1,
+            "link": 1
+        },
+        {
+            "src_mod": "AVS",
+            "src_grp": 0,
+            "src_chn": 0,
+            "dst_mod": "IVPS",
+            "dst_grp": 0,
+            "dst_chn": 0,
+            "link": 1
+        },
+        {
+            "src_mod": "IVPS",
+            "src_grp": 0,
+            "src_chn": 0,
+            "dst_mod": "VENC",
+            "dst_grp": 0,
+            "dst_chn": 0,
+            "link": 1
+        },
+        {
+            "src_mod": "IVPS",
+            "src_grp": 0,
+            "src_chn": 0,
+            "dst_mod": "CAPTURE",
+            "dst_grp": 0,
+            "dst_chn": 0,
+            "link": 0
+        },
+        {
+            "src_mod": "IVPS",
+            "src_grp": 0,
+            "src_chn": 1,
+            "dst_mod": "COLLECT",
+            "dst_grp": 0,
+            "dst_chn": 0,
+            "link": 0
+        },
+        {
+            "src_mod": "COLLECT",
+            "src_grp": 0,
+            "src_chn": 0,
+            "dst_mod": "DETECT",
+            "dst_grp": 0,
+            "dst_chn": 0,
+            "link": 0
+        },
+        {
+            "src_mod": "COLLECT",
+            "src_grp": 0,
+            "src_chn": 0,
+            "dst_mod": "IVES",
+            "dst_grp": 0,
+            "dst_chn": 0,
+            "link": 0
+        },
+        {
+            "src_mod": "IVPS",
+            "src_grp": 0,
+            "src_chn": 2,
+            "dst_mod": "VENC",
+            "dst_grp": 0,
+            "dst_chn": 1,
+            "link": 1
+        }
+    ]
+}

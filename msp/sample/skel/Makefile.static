@@ -1,0 +1,82 @@
+################################################################################
+#	prepare param
+################################################################################
+CUR_PATH			:= $(shell pwd)
+HOME_PATH			:= $(abspath $(CUR_PATH)/../../..)
+
+include $(HOME_PATH)/build/color.mk
+include $(HOME_PATH)/build/config.mak
+
+PRJ_OUT_HOME        := $(HOME_PATH)/build/out/$(PROJECT)
+OBJ_OUT_PATH        := $(PRJ_OUT_HOME)/objs
+SRC_PATH            := $(CUR_PATH)
+LIB_PATH            := $(MSP_OUT_PATH)/lib
+SRC_RELATIVE_PATH   := $(subst $(HOME_PATH)/,,$(SRC_PATH))
+TARGET_OUT_PATH     := $(OBJ_OUT_PATH)/$(SRC_RELATIVE_PATH)
+SAMPLE_BIN_PATH     := $(HOME_PATH)/app/sample/skel/bin
+HEADER_EXTERNAL_PATH	:= $(HOME_PATH)/header/external
+
+################################################################################
+#	set task
+################################################################################
+MOD_NAME 			= sample_skel_s
+OUTPUT 				:= $(TARGET_OUT_PATH)/obj_a
+
+# source
+SRCS                := $(wildcard $(SRC_PATH)/*.c)
+SRCCPPS             := $(wildcard $(SRC_PATH)/*.cpp)
+
+CINCLUDE            := -I$(SRC_PATH) \
+                       -I$(MSP_OUT_PATH)/include \
+                       -I$(HEADER_EXTERNAL_PATH)
+
+
+OBJS 				:= $(SRCS:%.c=$(OUTPUT)/%.o) \
+                       $(SRCCPPS:%.cpp=$(OUTPUT)/%.o)
+
+DEPS				:= $(OBJS:%.o=%.d)
+
+# exec
+TARGET				:= $(TARGET_OUT_PATH)/$(MOD_NAME)
+
+# build flags
+CFLAGS				:= ${EXEC_FLAG} -Wall -Wl,-rpath-link=$(LIB_PATH)
+CFLAGS              += -DSAMPLE_SKEL_BUILD_VERSION=\"$(SDK_VERSION)\"
+CFLAGS              += -DSAMPLE_SKEL_NAME=\"$(TARGET)\"
+
+debug = no
+ifeq ($(debug),yes)
+CFLAGS				+= -O0 -ggdb3
+else
+CFLAGS				+= -O2
+endif
+
+CPPFLAGS            := --std=c++11 -Wall -Wl,-rpath-link=$(LIB_PATH)
+# dependency
+CLIB			+= -Wl,-rpath-link=$(MSP_OUT_PATH)/lib
+CLIB			+= -L$(MSP_OUT_PATH)/lib
+
+CLIB			+= -l:libax_venc.a
+CLIB			+= -l:libax_sys.a
+CLIB			+= -l:libax_vdec.a
+CLIB			+= -l:libax_ivps.a
+CLIB			+= -l:libax_proton.a
+#CLIB			+= -l:libax_syslog.a
+ifeq ($(CHIP_TYPE), AX620Q)
+CLIB			+= -l:libax_skel_tiny.a
+CLIB			+= -l:libax_engine_tiny.a
+else
+CLIB			+= -l:libax_skel.a
+CLIB			+= -l:libax_engine.a
+endif
+CLIB			+= -l:libax_interpreter.a
+CLIB			+= -lm -lpthread -lrt -ldl -lstdc++
+
+# install
+INSTALL_TARGET			:= $(TARGET)
+INSTALL_DIR			    := $(ROOTFS_TARGET_PATH)/bin/
+#INSTALL_DATA    		:= $(CUR_PATH)/data/skel
+# link
+LINK = $(CC)
+
+include $(HOME_PATH)/build/rules.mak

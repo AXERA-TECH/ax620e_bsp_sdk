@@ -1,6 +1,7 @@
 BSD 3-Clause License
 
-Copyright (c) 2024, AXERA
+Copyright (c) 2019-2024 Axera Semiconductor (Ningbo) Co., Ltd.
+All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions are met:
@@ -26,3 +27,39 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-----
+
+app/demo/src/inc/appweb is Copyright (c) Embedthis Software. All Rights Reserved.
+
+This software is distributed under commercial and open source licenses.
+You may use the Embedthis Open Source license or you may acquire a 
+commercial license from Embedthis Software. You agree to be fully bound
+by the terms of either license. Consult the LICENSE.md distributed with
+this software for full details and other copyrights.
+
+-----
+
+app/demo/src/inc/live is Copyright (c) 1996-2020 Live Networks, Inc.  All rights reserved.
+
+This library is free software; you can redistribute it and/or modify it under
+the terms of the GNU Lesser General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. (See <http://www.gnu.org/copyleft/lesser.html>.)
+
+This library is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public License for
+more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with this library; if not, write to the Free Software Foundation, Inc.,
+51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+
+-----
+
+app/demo/src/inc/jsoncpp is Copyright 2007-2010 Baptiste Lepilleur and The JsonCpp Authors
+
+Distributed under MIT license, or public domain if desired and
+recognized in your jurisdiction.
+See file LICENSE for detail or copy at http://jsoncpp.sourceforge.net/LICENSE

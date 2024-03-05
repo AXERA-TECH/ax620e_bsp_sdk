@@ -1,0 +1,75 @@
+CUR_PATH             := $(shell pwd)
+HOME_PATH            := $(abspath $(CUR_PATH)/../../..)
+
+include $(HOME_PATH)/build/config.mak
+
+PRJ_OUT_HOME         := $(HOME_PATH)/build/out/$(PROJECT)
+OBJ_OUT_PATH         := $(PRJ_OUT_HOME)/objs
+SRC_RELATIVE_PATH    := $(subst $(HOME_PATH)/,,$(CUR_PATH))
+TARGET_OUT_PATH      := $(OBJ_OUT_PATH)/$(SRC_RELATIVE_PATH)
+
+SRC_PATH             := $(CUR_PATH)
+SAMPLE_PATH          := $(CUR_PATH)/..
+BASE_PATH            := $(HOME_PATH)/msp/component
+OUT_PATH             := $(MSP_OUT_PATH)
+LIB_PATH             := $(OUT_PATH)/lib
+
+# output
+MOD_NAME 		:= sample_ivps_jenc_slice_s
+OUTPUT 			:= $(TARGET_OUT_PATH)/.obj_a
+
+# source
+SRCS 			:= $(wildcard $(SRC_PATH)/*.c) \
+				$(wildcard $(SAMPLE_PATH)/common/common_codec/*.c)
+
+
+CINCLUDE		+= -I$(SRC_PATH) \
+				-I$(OUT_PATH)/include \
+				-I$(SAMPLE_PATH)/common/common_codec
+
+OBJS 			:= $(SRCS:%.c=$(OUTPUT)/%.o)
+DEPS			:= $(OBJS:%.o=%.d)
+
+vpath %.c $(addsuffix :,$(dir $(patsubst %.c,%.o,$(SRCS))))
+
+# exec
+TARGET			:= $(MOD_NAME)
+
+CFLAGS			:= ${EXEC_FLAG}
+
+# build flags
+ifeq ($(debug),yes)
+CFLAGS			+= -Wall -O0 -ggdb3
+else
+CFLAGS			+= -Wall -O2
+endif
+
+CFLAGS			+= -DSAMPLE_BUILD_STATIC
+
+CFLAGS			+= -ldl
+
+# dependency
+CLIB			+= -Wl,-rpath-link=$(OUT_PATH)/lib
+CLIB			+= -L$(OUT_PATH)/lib
+CLIB			+= -lstdc++
+CLIB			+= -lm -lpthread -lrt
+CLIB			+= -l:libax_ivps.a
+CLIB			+= -l:libax_venc.a
+CLIB			+= -l:libax_sys.a
+CLIB			+= -l:libax_proton.a
+ifeq ($(CHIP_TYPE), AX620Q)
+CLIB				+= -l:libax_engine_tiny.a
+else
+CLIB				+= -l:libax_engine.a
+endif
+CLIB				+= -l:libax_interpreter.a
+CLIB			+= -lstdc++
+
+# install
+INSTALL_BIN	:= $(TARGET)
+MV_TARGET	:= $(INSTALL_BIN)
+
+# link
+LINK = $(CC)
+
+include $(HOME_PATH)/build/rules.mak

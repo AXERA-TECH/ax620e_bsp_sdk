@@ -1,0 +1,47 @@
+@font-face {
+  font-family: "iconfont"; /* Project id  */
+  src: url('iconfont.ttf?t=1695721987384') format('truetype');
+}
+
+.iconfont {
+  font-family: "iconfont" !important;
+  font-size: normal;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-fullscreen-exit:before {
+  content: "\eb8a";
+}
+
+.icon-fullscreen-enter:before {
+  content: "\ec1d";
+}
+
+.icon-sound:before {
+  content: "\e614";
+}
+
+.icon-silence:before {
+  content: "\e666";
+}
+
+.icon-record-start:before {
+  content: "\ea88";
+}
+
+.icon-record-stop:before {
+  content: "\e68d";
+}
+
+.icon-mic-on:before {
+  content: "\e96b";
+}
+
+.icon-mic-off:before {
+  content: "\e96c";
+}
+
+
+

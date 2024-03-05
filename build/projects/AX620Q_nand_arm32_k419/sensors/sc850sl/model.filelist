@@ -1,0 +1,15 @@
+@dir: msp/out/arm_glibc
+etc/models/aiisp/SC850SL_HDR_3840x2160*.axmodel
+etc/models/aiisp/SC850SL_SDR_3840x2160_10b_LCG_ISP1_A50X_I1-16X_0000_MULTI3_1705292622_240119_AX620E.axmodel
+etc/models/aiisp/SC850SL_SDR_3840x2160_12b_LCG_ISP1_A16X_I1-4X_0000_00000629971_240105_AX620E.axmodel
+etc/models/aiisp/SC850SL_SDR_3840x2160_12b_LCG_ISP1_A16X_I1-4X_0000_00000632908_240108_AX620E.axmodel
+etc/models/aiisp/SC850SL_SDR_3840x2160_12b_LCG_ISP1_A16X_I1-4X_0000_00000632888_240108_AX620E.axmodel
+etc/sc850sl_hdr_4lane_620q.ini
+etc/sc850sl_hdr_4lane.ini
+etc/sc850sl_sdr_4lane_620q.ini
+etc/sc850sl_sdr_4lane.ini
+etc/sc850sl_single_hdr_4lane_entry_620q.ini
+etc/sc850sl_single_hdr_4lane_entry.ini
+etc/sc850sl_single_sdr_4lane_entry_620q.ini
+etc/sc850sl_single_sdr_4lane_entry.ini
+etc/sc850sl_sdr_mode3_switch_mode7.bin

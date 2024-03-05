@@ -1,0 +1,125 @@
+{
+  "//": "ivps settings",
+  "//": "Single sensor",
+  "scenario_1":
+  [
+    {
+      "grp_id": 0,
+      "grp_info":
+      {
+        "grp_chn_num": 3,
+        "engine_filter_0": "",
+        "engine_filter_1": "VPP",
+        "engine_filter_2": ["SCL", "SCL", "SCL", "", ""],
+        "engine_filter_3": ["TDP", "", "TDP", "", ""],
+        "grp_framerate": {"src": -1, "dst": -1},
+        "chn_framerate":
+        [
+          {"src": -1, "dst": -1}, {"src": -1, "dst": 10}, {"src": -1, "dst": -1}
+        ],
+        "grp_resolution": {"w": -1, "h": -1},
+        "chn_resolution":
+        [
+          {"w": -1, "h": -1}, {"w": 1280, "h": 720}, {"w": 720, "h": 576}
+        ],
+        "grp_in_fifo_depth": 2,
+        "chn_link_flag": [1, 0, 1],
+        "chn_out_fifo_depth": [0, 1, 0],
+        "grp_fbc":{"mode": 0, "level": 0},
+        "chn_fbc":
+        [
+          {"mode": 2, "level": 4}, {"mode": 0, "level": 0}, {"mode": 2, "level": 4}
+        ],
+        "grp_inplace":[0, 0],
+        "chn_inplace":[[0, 1], [0, 0], [0, 1]],
+        "//chn_scl": "0: Auto; 1: Bilinear interpolation; 2: Phase filtering",
+        "chn_scl": [2, 1, 1],
+        "chn_voosd_flag": [1, 0, 1],
+        "spec_engine_config":
+        {
+          "mask_enable":1
+        }
+      }
+    }
+  ],
+  "//": "Dual sensor",
+  "scenario_0":
+  [
+    {
+      "grp_id": 0,
+      "grp_info":
+      {
+        "grp_chn_num": 3,
+        "engine_filter_0": "",
+        "engine_filter_1": "VPP",
+        "engine_filter_2": ["SCL", "SCL", "SCL", "", ""],
+        "engine_filter_3": ["TDP", "", "TDP", "", ""],
+        "grp_framerate": {"src": -1, "dst": -1},
+        "chn_framerate":
+        [
+          {"src": -1, "dst": -1}, {"src": -1, "dst": 10}, {"src": -1, "dst": -1}
+        ],
+        "grp_resolution": {"w": -1, "h": -1},
+        "chn_resolution":
+        [
+          {"w": -1, "h": -1}, {"w": 1280, "h": 720}, {"w": 720, "h": 576}
+        ],
+        "grp_in_fifo_depth": 2,
+        "chn_link_flag": [1, 0, 1],
+        "chn_out_fifo_depth": [0, 1, 0],
+        "grp_fbc":{"mode": 0, "level": 0},
+        "chn_fbc":
+        [
+          {"mode": 2, "level": 4}, {"mode": 0, "level": 0}, {"mode": 2, "level": 4}
+        ],
+        "grp_inplace":[0, 0],
+        "chn_inplace":[[0, 1], [0, 0], [0, 1]],
+        "//chn_scl": "0: Auto; 1: Bilinear interpolation; 2: Phase filtering",
+        "chn_scl": [2, 1, 1],
+        "chn_voosd_flag": [1, 0, 1],
+        "spec_engine_config":
+        {
+          "mask_enable":1
+        }
+      }
+    },
+    {
+      "grp_id": 1,
+      "grp_info":
+      {
+        "grp_chn_num": 3,
+        "engine_filter_0": "",
+        "engine_filter_1": "VPP",
+        "engine_filter_2": ["SCL", "SCL", "SCL", "", ""],
+        "engine_filter_3": ["TDP", "", "TDP", "", ""],
+        "grp_framerate": {"src": -1, "dst": -1},
+        "chn_framerate":
+        [
+          {"src": -1, "dst": -1}, {"src": -1, "dst": 10}, {"src": -1, "dst": -1}
+        ],
+        "grp_resolution": {"w": -1, "h": -1},
+        "chn_resolution":
+        [
+          {"w": -1, "h": -1}, {"w": 1280, "h": 720}, {"w": 720, "h": 576}
+        ],
+        "grp_in_fifo_depth": 2,
+        "chn_link_flag": [1, 0, 1],
+        "chn_out_fifo_depth": [0, 1, 0],
+        "grp_fbc":{"mode": 0, "level": 0},
+        "chn_fbc":
+        [
+          {"mode": 2, "level": 4}, {"mode": 0, "level": 0}, {"mode": 2, "level": 4}
+        ],
+        "grp_inplace":[0, 0],
+        "chn_inplace":[[0, 1], [0, 0], [0, 1]],
+        "//chn_scl": "0: Auto; 1: Bilinear interpolation; 2: Phase filtering",
+        "chn_scl": [2, 1, 1],
+        "chn_voosd_flag": [1, 0, 1],
+        "spec_engine_config":
+        {
+          "mask_enable":1
+        }
+      }
+    }
+  ]
+}

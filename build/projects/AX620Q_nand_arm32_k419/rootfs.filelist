@@ -1,0 +1,24 @@
+@dir:rootfs/arm/glibc/rootfs
+bin/*
+dev/*
+etc/*
+lib/*
+lib32
+linuxrc
+sbin/*
+usr/bin/*
+usr/sbin/*
+usr/share/*
+var/* var
+
+@dir: tools
+ax_lookat/bin/CHIP_AX620E/arm/ax_lookat usr/bin
+
+@dir: build/projects/AX620Q_nand_arm32_k419/rootfs
+etc/inittab
+etc/fstab
+etc/syslog.conf
+etc/ax_syslog.conf etc/.ax_syslog.conf
+etc/syslog.conf etc/.syslog.conf
+etc/init.d/rcS
+etc/fw_env.config

@@ -1,0 +1,48 @@
+#!/bin/sh
+
+mknod /dev/null c 1 3
+
+ubiattach /dev/ubi_ctrl -m 6
+mount -t ubifs /dev/ubi1_0 /param
+
+mkdir -p /opt/data/AXSyslog/kernel
+
+hwclock -s &
+/soc/scripts/auto_load_all_drv.sh
+mount -t pstore pstore /sys/fs/pstore
+
+if [ -e "/dev/mmcblk0p1" ]; then
+    mount /dev/mmcblk0p1 /mnt/tfcard
+    if [ -e "/mnt/tfcard/init.sh" ]; then
+        chmod +x /mnt/tfcard/init.sh
+        /mnt/tfcard/init.sh
+    else
+        echo "no init.sh in sd"
+    fi
+else
+    echo "no sdcard device"
+fi
+
+for i in /etc/init.d/S??* ;do
+
+     # Ignore dangling symlinks (if any).
+     [ ! -f "$i" ] && continue
+
+     case "$i" in
+	*.sh)
+	    # Source shell script for speed.
+	    (
+		trap - INT QUIT TSTP
+		set start
+		. $i
+	    )
+	    ;;
+	*)
+	    # No sh extension, so fork subprocess.
+	    $i start
+	    ;;
+    esac
+done
+
+/etc/init.d/axsyslogd start
+/etc/init.d/axklogd start

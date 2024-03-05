@@ -1,0 +1,6 @@
+@dir: msp/out/arm_glibc
+etc/models/aiisp/GC4653_SDR_2560x1440_10b_HCG_ISP1_A16X_I4-16X_0000_00000642723_240116_AX620E.axmodel
+etc/gc4653_sdr_2lane.ini
+etc/gc4653_sdr_2lane_620q.ini
+etc/gc4653_single_sdr_2lane_entry.ini
+etc/gc4653_single_sdr_2lane_620q_entry.ini

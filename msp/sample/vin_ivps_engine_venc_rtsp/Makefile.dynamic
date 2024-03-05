@@ -1,0 +1,105 @@
+CUR_PATH            := $(shell pwd)
+HOME_PATH           := $(abspath $(CUR_PATH)/../../..)
+
+include $(HOME_PATH)/build/color.mk
+include $(HOME_PATH)/build/config.mak
+
+PRJ_OUT_HOME        := $(HOME_PATH)/build/out/$(PROJECT)
+OBJ_OUT_PATH        := $(PRJ_OUT_HOME)/objs
+SRC_RELATIVE_PATH   := $(subst $(HOME_PATH)/,,$(SRC_PATH))
+TARGET_OUT_PATH     := $(OBJ_OUT_PATH)/$(SRC_RELATIVE_PATH)
+
+SRC_PATH            := $(CUR_PATH)
+SAMPLE_PATH         := $(CUR_PATH)/..
+OUT_PATH            := $(MSP_OUT_PATH)
+LIB_PATH            := $(MSP_OUT_PATH)/lib
+SSL_PATH            := $(HOME_PATH)/third-party/openssl/$(ARCH)
+LIVE_PATH           := $(HOME_PATH)/third-party/live/out/$(ARCH)/$(LIBC)
+OPENCV_PATH         := $(HOME_PATH)/third-party/opencv-4.5.5
+
+USE_OPENSSL			:= no
+
+# output
+MOD_NAME 			:= sample_vin_ivps_engine_venc_rtsp
+OUTPUT 				:= $(TARGET_OUT_PATH)/obj
+
+# source
+SRCS 				:= $(wildcard $(SRC_PATH)/*.c)
+SRCS				+= $(SAMPLE_COMMON_PATH)/common_venc.c
+SRCS				+= $(SAMPLE_COMMON_PATH)/common_venc_log.c
+SRCS				+= $(SAMPLE_PATH)/common/common_arg_parse.c
+SRCS				+= $(SAMPLE_PATH)/common/common_cam.c
+SRCS				+= $(SAMPLE_PATH)/common/common_sys.c
+SRCS				+= $(SAMPLE_PATH)/common/common_vin.c
+SRCS				+= $(SAMPLE_PATH)/common/common_isp.c
+SRCS				+= $(SAMPLE_PATH)/common/common_nt.c
+SRCCPPS				:= $(wildcard $(SAMPLE_PATH)/rtsp/*.cpp)
+SRCCPPS				+= $(wildcard $(SRC_PATH)/*.cpp)
+
+
+vpath %.c $(addsuffix :,$(dir $(patsubst %.c,%.o,$(SRCS))))
+
+CINCLUDE			+= -I$(SRC_PATH)                                \
+					   -I$(OUT_PATH)/include                        \
+					   -I$(SAMPLE_PATH)/common                      \
+					   -I$(SAMPLE_PATH)/rtsp                        \
+					   -I$(LIVE_PATH)/include/BasicUsageEnvironment \
+					   -I$(LIVE_PATH)/include/groupsock             \
+					   -I$(LIVE_PATH)/include/liveMedia             \
+					   -I$(LIVE_PATH)/include/UsageEnvironment      \
+					   -I$(SSL_PATH)/include	                    \
+					   -I$(OPENCV_PATH)/include/opencv4	            \
+					   -I$(SRC_PATH)/include
+
+OBJS 				:= $(addprefix $(OUTPUT)/,$(notdir $(patsubst %.c,%.o,$(SRCS))))
+OBJS 				+= $(SRCCPPS:%.cpp=$(OUTPUT)/%.o)
+DEPS				:= $(OBJS:%.o=%.d)
+# exec
+TARGET				:= $(MOD_NAME)
+
+# build flags
+CPPFLAGS			:= --std=c++11 -fopenmp
+CFLAGS				:= ${EXEC_FLAG}
+
+ifeq ($(debug),yes)
+CFLAGS				+= -fopenmp -Wall -O0 -ggdb3
+else
+CFLAGS				+= -Wall -O2
+endif
+
+CFLAGS				+= -ldl
+
+ifeq ($(USE_OPENSSL),no)
+CFLAGS				+= -DNO_OPENSSL
+endif
+
+# dependency
+CLIB				+= -Wl,-rpath-link=$(OUT_PATH)/lib
+CLIB				+= -L$(OUT_PATH)/lib
+CLIB				+= -lax_mipi
+CLIB				+= -lax_nt_ctrl
+CLIB				+= -lax_nt_stream
+CLIB				+= -lax_proton
+CLIB				+= -lax_engine
+CLIB				+= -lax_ae
+CLIB				+= -lax_awb
+CLIB				+= -lax_af
+CLIB				+= -lax_venc
+CLIB				+= -lax_ivps
+CLIB				+= -lax_sys
+CLIB				+= -lm -lpthread -lrt -ldl -lstdc++ -fopenmp
+CLIB				+= -L$(OPENCV_PATH)/lib/$(ARCH)/$(LIBC)
+CLIB				+= -L$(OPENCV_PATH)/lib/$(ARCH)/$(LIBC)/opencv4/3rdparty/
+CLIB				+= -Wl,--start-group -lopencv_imgcodecs -lopencv_imgproc -lopencv_core -ldl -lm -lpthread -lrt -littnotify -ltegra_hal -llibjpeg-turbo -llibwebp -llibpng -llibtiff -llibopenjp2 -lzlib -Wl,--end-group
+ifeq ($(USE_OPENSSL),yes)
+CLIB				+= -L$(SSL_PATH)/$(LIBC)/lib -lssl -lcrypto
+endif
+CLIB				+= -L$(LIVE_PATH)/lib -lliveMedia -lgroupsock -lBasicUsageEnvironment -lUsageEnvironment
+
+# install
+INSTALL_BIN			:= $(TARGET)
+
+# link
+LINK = $(CC)
+
+include $(HOME_PATH)/build/rules.mak

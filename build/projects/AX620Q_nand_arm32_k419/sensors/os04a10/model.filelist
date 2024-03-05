@@ -1,0 +1,22 @@
+@dir: msp/out/arm_glibc
+etc/models/aiisp/OS04A10_HDR_2688x1520_*.axmodel
+etc/models/aiisp/OS04A10_SDR_2688x1520_*.axmodel
+etc/os04a10_sdr_online_2lane.ini
+etc/os04a10_sdr_online_2lane_620q.ini
+etc/os04a10_double_sdr_online_entry.ini
+etc/os04a10_double_sdr_online_entry_620q.ini
+etc/os04a10_hdr_online.ini
+etc/os04a10_hdr_online_620q.ini
+etc/os04a10_double_hdr_online_entry.ini
+etc/os04a10_double_hdr_online_entry_620q.ini
+etc/os04a10_single_sdr_online_entry.ini
+etc/os04a10_single_sdr_online_entry_620q.ini
+etc/os04a10_sdr_online.ini
+etc/os04a10_sdr_online_620q.ini
+etc/os04a10_single_hdr_online_entry.ini
+etc/os04a10_single_hdr_online_entry_620q.ini
+etc/os04a10_hdr_online_2lane.ini
+etc/os04a10_hdr_online_2lane_dev1.ini
+etc/os04a10_hdr_online_2lane_620q.ini
+etc/os04a10_hdr_online_2lane_620q_dev1.ini
+etc/os04a10_sdr_mode3_switch_mode7.bin

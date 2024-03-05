@@ -1,0 +1,21 @@
+@dir: msp/out/arm_glibc
+etc/models/aiisp/SC500AI_HDR_2880x1620*.axmodel
+etc/models/aiisp/SC500AI_SDR_2880x1620_10b_LCG_ISP1_A24-24X_I1-48X_0000_MULTI4_00000641966_240115_AX620E.axmodel
+etc/sc500ai_sdr_2lane.ini
+etc/sc500ai_sdr_2lane_620q.ini
+etc/sc500ai_hdr_2lane.ini
+etc/sc500ai_hdr_2lane_620q.ini
+etc/sc500ai_single_hdr_2lane_entry.ini
+etc/sc500ai_single_hdr_2lane_entry_620q.ini
+etc/sc500ai_sdr_4lane.ini
+etc/sc500ai_sdr_4lane_620q.ini
+etc/sc500ai_single_sdr_4lane_entry.ini
+etc/sc500ai_single_sdr_4lane_entry_620q.ini
+etc/sc500ai_hdr_4lane.ini
+etc/sc500ai_hdr_4lane_620q.ini
+etc/sc500ai_single_hdr_4lane_entry.ini
+etc/sc500ai_single_hdr_4lane_entry_620q.ini
+etc/sc500ai_single_sdr_2lane_entry.ini
+etc/sc500ai_single_sdr_2lane_entry_620q.ini
+etc/sc500ai_double_sdr_online_entry_620q.ini
+etc/sc500ai_double_hdr_online_entry_620q.ini

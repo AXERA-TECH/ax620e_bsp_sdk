@@ -1,0 +1,98 @@
+CUR_PATH             := $(shell pwd)
+HOME_PATH            := $(abspath $(CUR_PATH)/../../..)
+
+include $(HOME_PATH)/build/config.mak
+
+PRJ_OUT_HOME         := $(HOME_PATH)/build/out/$(PROJECT)
+OBJ_OUT_PATH         := $(PRJ_OUT_HOME)/objs
+SRC_RELATIVE_PATH    := $(subst $(HOME_PATH)/,,$(CUR_PATH))
+TARGET_OUT_PATH      := $(OBJ_OUT_PATH)/$(SRC_RELATIVE_PATH)
+
+SRC_PATH             := $(CUR_PATH)
+THIRD_PARTY_PATH     := $(HOME_PATH)/third-party
+BASE_PATH            := $(HOME_PATH)/msp/component
+LIB_PATH             := $(MSP_OUT_PATH)/lib
+COMMON_PATH          := $(SRC_PATH)/../common
+SAMPLE_PATH          := $(SRC_PATH)/..
+USE_OPENSSL          := no
+
+MOD_NAME = sample_vdec_ivps_vo
+OUTPUT               := $(TARGET_OUT_PATH)/.obj
+
+# source
+SRCS    += $(COMMON_PATH)/common_arg_parse.c
+SRCS    += $(SAMPLE_PATH)/common/common_vdec.c
+SRCS    += $(COMMON_PATH)/common_vdec_cmd.c
+SRCS    += $(COMMON_PATH)/common_vdec_utils.c
+SRCS    += $(SAMPLE_PATH)/common/common_vo.c
+SRCS    += $(SAMPLE_PATH)/common/common_vo_pattern.c
+
+SRCS    += $(SRC_PATH)/sample_vdec_hal.c
+SRCS    += $(SRC_PATH)/sample_ivps_hal.c
+SRCS    += $(SRC_PATH)/sample_vo_hal.c
+
+SRCS    += $(SRC_PATH)/sample_vdec_ivps_vo.c
+
+vpath %.c $(addsuffix :,$(dir $(patsubst %.c,%.o,$(SRCS))))
+
+CINCLUDE        += -I$(SRC_PATH)
+CINCLUDE        += -I$(MSP_OUT_PATH)/include
+CINCLUDE        += -I$(BASE_PATH)/codec/common
+CINCLUDE        += -I$(BASE_PATH)/sys
+CINCLUDE        += -I$(BASE_PATH)/sys/cmm
+CINCLUDE        += -I$(HOME_PATH)/third-party/openssl/$(ARCH)/include
+CINCLUDE        += -I$(SAMPLE_PATH)/common
+CINCLUDE        += -I$(HOME_PATH)/header/internal
+CINCLUDE        += -I$(THIRD_PARTY_PATH)/ffmpeg/include/
+
+OBJS            := $(SRCS:%.c=$(OUTPUT)/%.o)
+DEPS            := $(OBJS:%.o=%.d)
+
+# exec
+TARGET          := $(MOD_NAME)
+
+# build flags
+CFLAGS          := ${EXEC_FLAG} -Wall -Wl,-rpath-link=$(LIB_PATH)
+
+#debug = yes
+ifeq ($(debug),yes)
+CFLAGS          += -O0
+CFLAGS          += -ggdb3
+else
+CFLAGS          += -O2 -Wno-unused
+endif
+
+ifeq ($(USE_OPENSSL),no)
+CFLAGS            += -DNO_OPENSSL
+endif
+
+#CFLAGS          += -Werror
+#CFLAGS          += -Werror=implicit-function-declaration
+
+#CFLAGS          += -DAX_VDEC_FFMPEG_ENABLE
+#CLIB            += -L$(THIRD_PARTY_PATH)/ffmpeg/lib -lswresample -lavcodec -lavutil -lavformat
+
+# dependency
+CLIB            += -Wl,--whole-archive
+CLIB            += -L$(LIB_PATH) -lax_vdec
+CLIB            += -lax_ivps
+CLIB            += -lax_sys
+CLIB            += -Wl,--no-whole-archive
+CLIB            += -lm -lpthread
+CLIB            += -lax_vo
+
+CLIB            += $(HOME_PATH)/third-party/drm/lib/$(ARCH)/$(LIBC)/libdrm.a
+
+ifeq ($(USE_OPENSSL),yes)
+CLIB            += -L$(THIRD_PARTY_PATH)/openssl/$(ARCH)/$(LIBC)/lib -lssl -lcrypto
+endif
+
+# install
+INSTALL_BIN     := $(TARGET)
+MV_TARGET       := $(INSTALL_BIN)
+#INSTALL_DATA    := $(CUR_PATH)/data/vdec
+
+# link
+LINK = $(CC)
+
+include $(HOME_PATH)/build/rules.mak

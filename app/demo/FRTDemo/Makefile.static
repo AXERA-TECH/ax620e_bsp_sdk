@@ -1,0 +1,287 @@
+CUR_PATH            := $(shell pwd)
+HOME_PATH           := $(abspath $(CUR_PATH)/../../..)
+
+include $(HOME_PATH)/build/color.mk
+include $(HOME_PATH)/build/config.mak
+
+PRJ_OUT_HOME        := $(HOME_PATH)/build/out/$(PROJECT)
+OBJ_OUT_PATH        := $(PRJ_OUT_HOME)/objs
+LIB_PATH            := $(MSP_OUT_PATH)/lib
+INC_PATH            := $(MSP_OUT_PATH)/include
+SRC_RELATIVE_PATH   := $(subst $(HOME_PATH)/,,$(CUR_PATH))
+TARGET_OUT_PATH     := $(OBJ_OUT_PATH)/$(SRC_RELATIVE_PATH)
+BIN_PATH            := $(HOME_PATH)/app/demo/FRTDemo/bin
+SRC_PATH            := $(HOME_PATH)/app/demo/FRTDemo/src
+COMPONENT_PATH      := $(HOME_PATH)/app/component
+COMPONENT_3RD_PATH  := $(COMPONENT_PATH)/3rd
+RESOURCE_PATH       := $(HOME_PATH)/app/component/resource
+3RD_PATH            := $(HOME_PATH)/third-party
+SSL_PATH            := $(3RD_PATH)/openssl/$(ARCH)/$(LIBC)
+LIVE_PATH           := $(3RD_PATH)/live/out/$(ARCH)/$(LIBC)
+MP4_PATH            := $(3RD_PATH)/mp4
+
+USE_OPENSSL         := no
+
+MOD_NAME            = frtdemo_s
+OUTPUT              := $(TARGET_OUT_PATH)/obj_a
+
+# source
+SRCCPPS         := $(wildcard $(SRC_PATH)/*.cpp)
+ifeq ($(IPC_SUPPORT),yes)
+SRCCPPS         += $(wildcard $(SRC_PATH)/ipc/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/builder/ipc/*.cpp)
+endif
+ifeq ($(PANO_SUPPORT),yes)
+SRCCPPS         += $(wildcard $(SRC_PATH)/pano/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/builder/pano/*.cpp)
+endif
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/config_parser/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/log/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/pool/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/rtsp/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/webserver/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/sensor/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/stage/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/ivps/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/osd/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/osd/font/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/collector/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/detector/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/ives/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/encoder/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/linkage/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/config/ini/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/option_helper/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/utils/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/utils/yuv/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/capture/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/audio/*.cpp)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/testsuite/*.cpp)
+
+ifeq ($(MP4ENC_SUPPORT),yes)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/mp4enc/*.cpp)
+endif
+
+ifeq ($(PANO_SUPPORT),yes)
+SRCCPPS         += $(wildcard $(COMPONENT_PATH)/avs/*.cpp)
+endif
+
+SRCS            :=
+
+OBJS            := $(SRCCPPS:%.cpp=$(OUTPUT)/%.o)
+OBJS            += $(SRCS:%.c=$(OUTPUT)/%.o)
+
+DEPS            := $(OBJS:%.o=$(OUTPUT)%.d)
+
+# include
+CINCLUDE        := -I$(INC_PATH)
+CINCLUDE        += -I$(SRC_PATH)
+ifeq ($(IPC_SUPPORT),yes)
+CINCLUDE        += -I$(SRC_PATH)/ipc
+CINCLUDE        += -I$(COMPONENT_PATH)/builder/ipc
+endif
+ifeq ($(PANO_SUPPORT),yes)
+CINCLUDE        += -I$(SRC_PATH)/pano
+CINCLUDE        += -I$(COMPONENT_PATH)/builder/pano
+endif
+CINCLUDE        += -I$(COMPONENT_PATH)/header
+CINCLUDE        += -I$(COMPONENT_PATH)/config_parser
+CINCLUDE        += -I$(COMPONENT_PATH)/log
+CINCLUDE        += -I$(COMPONENT_PATH)/pool
+CINCLUDE        += -I$(COMPONENT_PATH)/rtsp
+CINCLUDE        += -I$(COMPONENT_PATH)/sensor
+CINCLUDE        += -I$(COMPONENT_PATH)/stage
+CINCLUDE        += -I$(COMPONENT_PATH)/ivps
+CINCLUDE        += -I$(COMPONENT_PATH)/osd
+CINCLUDE        += -I$(COMPONENT_PATH)/osd/font
+CINCLUDE        += -I$(COMPONENT_PATH)/collector
+CINCLUDE        += -I$(COMPONENT_PATH)/detector
+CINCLUDE        += -I$(COMPONENT_PATH)/ives
+CINCLUDE        += -I$(COMPONENT_PATH)/encoder
+CINCLUDE        += -I$(COMPONENT_PATH)/linkage
+CINCLUDE        += -I$(COMPONENT_PATH)/webserver
+CINCLUDE        += -I$(COMPONENT_PATH)/config/ini
+CINCLUDE        += -I$(COMPONENT_PATH)/config/json
+CINCLUDE        += -I$(COMPONENT_PATH)/option_helper
+CINCLUDE        += -I$(COMPONENT_PATH)/utils
+CINCLUDE        += -I$(COMPONENT_PATH)/utils/yuv
+CINCLUDE        += -I$(COMPONENT_PATH)/capture
+CINCLUDE        += -I$(COMPONENT_PATH)/audio
+CINCLUDE        += -I$(COMPONENT_PATH)/testsuite
+CINCLUDE        += -I$(COMPONENT_3RD_PATH)/inc
+CINCLUDE        += -I$(COMPONENT_3RD_PATH)/inc/appweb
+CINCLUDE        += -I$(LIVE_PATH)/include/BasicUsageEnvironment
+CINCLUDE        += -I$(LIVE_PATH)/include/groupsock
+CINCLUDE        += -I$(LIVE_PATH)/include/liveMedia
+CINCLUDE        += -I$(LIVE_PATH)/include/UsageEnvironment
+ifeq ($(USE_OPENSSL),yes)
+CINCLUDE        += -I$(SSL_PATH)/include
+endif
+
+ifeq ($(MP4ENC_SUPPORT),yes)
+CINCLUDE        += -I$(COMPONENT_PATH)/mp4enc
+CINCLUDE        += -I$(MP4_PATH)/include
+endif
+
+ifeq ($(FONT_USE_FREETYPE),yes)
+CINCLUDE        += -I$(COMPONENT_3RD_PATH)/inc/freetype2
+CINCLUDE        += -I$(COMPONENT_3RD_PATH)/inc/freetype2/freetype
+CINCLUDE        += -I$(COMPONENT_3RD_PATH)/inc/freetype2/freetype/config
+endif
+
+ifeq ($(PANO_SUPPORT),yes)
+CINCLUDE        += -I$(COMPONENT_PATH)/avs
+endif
+
+# build flags
+CFLAGS            := ${EXEC_FLAG} --std=c++11 -Wall -Wl,-rpath-link=$(LIB_PATH):$(BIN_PATH)/lib:$(3RD_PATH)/lib:$(MP4_PATH)/lib
+
+ifeq ($(debug),yes)
+CFLAGS            += -O0 -ggdb3
+else
+CFLAGS            += -O2
+endif
+
+ifeq ($(IPC_SUPPORT),yes)
+CFLAGS            += -DIPC_SUPPORT
+endif
+
+ifeq ($(PANO_SUPPORT),yes)
+CFLAGS            += -DPANO_SUPPORT
+endif
+
+ifeq ($(TUNING_CTRL_SUPPORT),yes)
+CFLAGS            += -DTUNING_CTRL
+endif
+
+ifeq ($(mtrace),yes)
+CFLAGS            += -DAX_MEM_CHECK
+endif
+
+CFLAGS            += -DUSE_STATIC_LIBS
+
+CFLAGS            += -DAPP_BUILD_VERSION=\"$(SDK_VERSION)\"
+
+ifeq ($(FONT_USE_FREETYPE),yes)
+CFLAGS            += -DFONT_USE_FREETYPE
+endif
+
+ifeq ($(MP4ENC_SUPPORT),yes)
+CFLAGS            += -DMP4ENC_SUPPORT
+endif
+
+ifeq ($(USE_OPENSSL),no)
+CFLAGS            += -DNO_OPENSSL
+endif
+
+ifeq ($(ARCH),arm)
+CFLAGS            += -DARM32
+CFLAGS            += -Wno-psabi
+else
+CFLAGS            += -DARM64
+endif
+
+CFLAGS            += -DOS04A10_SUPPORT
+CFLAGS            += -DSC450AI_SUPPORT
+CFLAGS            += -DIMX678_SUPPORT
+CFLAGS            += -DSC200AI_SUPPORT
+CFLAGS            += -DSC500AI_SUPPORT
+CFLAGS            += -DSC850SL_SUPPORT
+CFLAGS            += -DC4395_SUPPORT
+CFLAGS            += -DGC4653_SUPPORT
+CFLAGS            += -DMIS2032_SUPPORT
+CFLAGS            += -DSNS_MODE_DYNAMIC_SWITCH_SUPPORT
+
+ifeq ($(USE_OPENSSL),no)
+CFLAGS            += -DNO_OPENSSL
+endif
+# exec
+ifeq ($(STRIP_APP),yes)
+STRIPPED_TARGET   := $(TARGET_OUT_PATH)/$(MOD_NAME)
+DEBUG_TARGET      := $(TARGET_OUT_PATH)/$(MOD_NAME)_debug
+else
+TARGET            := $(TARGET_OUT_PATH)/$(MOD_NAME)
+endif
+
+# dependency
+CLIB            := -L$(LIB_PATH)
+ifeq ($(TUNING_CTRL_SUPPORT),yes)
+CLIB            += -l:libax_nt_ctrl.a
+CLIB            += -l:libax_nt_stream.a
+endif
+CLIB            += -l:libax_proton.a
+CLIB            += -l:libax_ae.a
+CLIB            += -l:libax_awb.a
+CLIB            += -l:libax_af.a
+CLIB            += -l:libax_mipi.a
+CLIB            += -l:libax_venc.a
+CLIB            += -l:libax_ivps.a
+CLIB            += -l:libax_ives.a
+ifeq ($(CHIP_TYPE), AX620Q)
+CLIB            += -l:libax_skel_tiny.a
+CLIB            += -l:libax_engine_tiny.a
+else
+CLIB            += -l:libax_skel.a
+CLIB            += -l:libax_engine.a
+endif
+CLIB            += -l:libax_interpreter.a
+CLIB            += -l:libax_audio.a
+CLIB            += -l:libax_audio_3a.a
+CLIB            += -l:libax_sys.a
+
+#This position need add all sensor's libxxx.a
+CLIB            += -l:libsns_os04a10.a
+CLIB            += -l:libsns_sc450ai.a
+CLIB            += -l:libsns_imx678.a
+CLIB            += -l:libsns_sc200ai.a
+CLIB            += -l:libsns_sc500ai.a
+CLIB            += -l:libsns_sc850sl.a
+CLIB            += -l:libsns_c4395.a
+CLIB            += -l:libsns_gc4653.a
+CLIB            += -l:libsns_mis2032.a
+
+CLIB            += -lrt
+CLIB            += -lm
+CLIB            += -ldl
+CLIB            += -lpthread
+CLIB            += -lstdc++
+CLIB            += -L$(LIVE_PATH)/lib -l:libliveMedia.a -l:libgroupsock.a -l:libBasicUsageEnvironment.a -l:libUsageEnvironment.a
+ifeq ($(USE_OPENSSL),yes)
+CLIB            += -L$(SSL_PATH)/lib -l:libssl.a -l:libcrypto.a
+endif
+
+CLIB            += -L$(RESOURCE_PATH)/lib/$(ARCH)/$(LIBC)/appweb -lappweb -lmpr -lhttp
+
+
+CLIB            += -L$(3RD_PATH)/tinyalsa/lib/$(ARCH)/$(LIBC)
+CLIB            += -ltinyalsa
+CLIB            += -L$(3RD_PATH)/faac/lib/$(ARCH)/$(LIBC)
+CLIB            += -lfaac
+CLIB            += -L$(3RD_PATH)/libsamplerate/lib/$(ARCH)/$(LIBC)
+CLIB            += -lsamplerate
+
+
+ifeq ($(MP4ENC_SUPPORT),yes)
+CLIB            += -L$(MP4_PATH)/lib/$(ARCH)/$(LIBC) -l:libmp4.a
+endif
+
+ifeq ($(FONT_USE_FREETYPE),yes)
+CLIB            += -L$(COMPONENT_3RD_PATH)/lib/$(ARCH)/$(LIBC) -l:libfreetype.a
+endif
+
+ifeq ($(PANO_SUPPORT),yes)
+CLIB			+= -lax_avs -lax_avscali
+endif
+
+# link
+LINK = $(CPP)
+
+ifeq ($(STRIP_APP),yes)
+INSTALL_TARGET  := $(STRIPPED_TARGET)
+else
+INSTALL_TARGET  := $(TARGET)
+endif
+
+INSTALL_DIR     := $(ROOTFS_TARGET_PATH)/bin/FRTDemo
+
+include $(HOME_PATH)/build/rules.mak

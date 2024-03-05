@@ -1,0 +1,86 @@
+CUR_PATH			:= $(shell pwd)
+HOME_PATH			:= $(abspath $(CUR_PATH)/../../../../..)
+
+BASE_PATH			:= $(HOME_PATH)/msp/component
+
+include $(HOME_PATH)/build/config.mak
+
+SRC_PATH			:= $(CUR_PATH)
+PRJ_OUT_HOME		:= $(HOME_PATH)/build/out/$(PROJECT)
+OBJ_OUT_PATH		:= $(PRJ_OUT_HOME)/objs
+OUT_PATH			:= $(MSP_OUT_PATH)
+SRC_RELATIVE_PATH	:= $(subst $(HOME_PATH)/,,$(SRC_PATH))
+TARGET_OUT_PATH		:= $(OBJ_OUT_PATH)/$(SRC_RELATIVE_PATH)
+SYS_LIB_PATH		:= $(MSP_OUT_PATH)/lib
+
+SRC_I2C_PATH			:= $(BASE_PATH)/isp_proton/sensor/i2c
+SNS_PATH			    := $(BASE_PATH)/isp_proton/sensor
+MODEL_PATH				:= $(CUR_PATH)/aiisp_model
+COMMON_PATH				:= $(BASE_PATH)/isp_proton/sensor/common
+COMMON_SRC_PATH			:= $(BASE_PATH)/isp_proton/sensor/common/src
+
+GENERATED_PATH          := $(TARGET_OUT_PATH)/generated
+soversion=yes
+
+include $(HOME_PATH)/build/config.mak
+
+
+# output
+MOD_NAME 		:= sns_dummy
+OUTPUT 			:= $(TARGET_OUT_PATH)/.obj
+
+
+# source
+SRCS 			+= $(wildcard $(SRC_I2C_PATH)/*.c) \
+					$(wildcard $(CUR_PATH)/*.c) \
+					$(wildcard $(COMMON_SRC_PATH)/*.c) \
+
+CINCLUDE		+=  -I$(SRC_I2C_PATH)/ \
+					-I$(OUT_PATH)/include \
+					-I$(SNS_PATH)/include \
+					-I$(COMMON_PATH)/include \
+                    			-I$(ISP_PATH)/firmware/include \
+					-I$(SNS_PATH)/dummysensor \
+					-I$(GENERATED_PATH)
+
+OBJS 			    := $(SRCS:%.c=$(OUTPUT)/%.o)
+DEOBJS 			    := $(OBJS:%.o=%.d)
+
+# dynamic lib version (must)
+SONAME		:= lib$(MOD_NAME).so
+STRIPPED_TARGET	:= $(SONAME)
+DEBUG_TARGET    := lib$(MOD_NAME).debug
+
+# build flags
+CFLAGS			:= ${DYNAMIC_FLAG}
+ifeq ($(debug),yes)
+CFLAGS			+= -Werror -Wall -O0 -g
+else
+CFLAGS			+= -Wall -Werror -O2 -ggdb3
+endif
+CFLAGS			+= -Wno-unused-variable
+ifeq ($(target),x86)
+CFLAGS += -DBUILD_TARGET_X86
+CROSS               :=
+else
+CFLAGS			+= -DLINUX
+endif
+CFLAGS			+= -fvisibility=hidden
+#CFLAGS			+= -DSENSOR_LOG_USE_PRINTF
+
+# dependency
+CLIB    		+= -lpthread
+
+# install
+INSTALL_LIB		:= $(STRIPPED_TARGET) $(DEBUG_TARGET)
+MV_TARGET		:= $(INSTALL_LIB)
+INSTALL_AIISP_MODELS		+= $(MODEL_PATH)/sdr/*.axmodel
+INSTALL_AIISP_MODELS		+= $(MODEL_PATH)/hdr/*.axmodel
+ifneq ($(wildcard $(PARAMS_PATH)/custom/*.bin),)
+INSTALL_ETC		+= $(PARAMS_PATH)/custom/*.bin
+endif
+
+# link
+LINK = $(CC)
+
+include $(HOME_PATH)/build/rules.mak

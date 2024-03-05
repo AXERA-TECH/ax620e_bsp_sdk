@@ -1,0 +1,74 @@
+CUR_PATH			:= $(shell pwd)
+HOME_PATH			:= $(abspath $(CUR_PATH)/../../../..)
+
+include $(HOME_PATH)/build/color.mk
+include $(HOME_PATH)/build/config.mak
+
+PRJ_OUT_HOME		:= $(HOME_PATH)/build/out/$(PROJECT)
+OBJ_OUT_PATH		:= $(PRJ_OUT_HOME)/objs
+OUT_PATH			:= $(MSP_OUT_PATH)
+SRC_PATH			:= $(CUR_PATH)
+SRC_RELATIVE_PATH	:= $(subst $(HOME_PATH)/,,$(SRC_PATH))
+TARGET_OUT_PATH		:= $(OBJ_OUT_PATH)/$(SRC_RELATIVE_PATH)
+
+BASE_PATH			:= $(HOME_PATH)/msp/component
+LIB_PATH			:= $(MSP_OUT_PATH)/lib
+COMMON_PATH			:= $(BASE_PATH)/common
+
+INC_PATH			:= $(abspath $(CUR_PATH)/../include)
+THIRD_PATH			:= $(HOME_PATH)/third-party
+OPENCV_PATH			:= $(THIRD_PATH)/opencv-4.5.5
+
+include $(HOME_PATH)/build/config.mak
+
+# output
+MOD_NAME			:= sample_npu_classification_s
+OUTPUT				:= $(TARGET_OUT_PATH)/obj_a
+
+# source
+SRCS				:= $(wildcard $(SRC_PATH)/*.cc)
+OBJS				:= $(addprefix $(OUTPUT)/,$(notdir $(patsubst %.cc,%.o,$(SRCS))))
+CINCLUDE			:= -I$(SRC_PATH) -I$(INC_PATH) -I$(MSP_OUT_PATH)/include -I$(HOME_PATH)/msp/component/include -I$(THIRD_PATH)/cmdline
+CINCLUDE			+= -I$(OPENCV_PATH)/include/opencv4
+
+# exec
+TARGET				:= $(TARGET_OUT_PATH)/$(MOD_NAME)
+
+# build flags
+CPPFLAGS            := --std=c++11
+CFLAGS				:= ${EXEC_FLAG} -Wall -Wl,-rpath-link=$(LIB_PATH)
+ifeq ($(debug),yes)
+CFLAGS				+= -O0 -ggdb3
+else
+CFLAGS				+= -O2
+endif
+
+# dependency
+CLIB				+= -L$(LIB_PATH)
+CLIB				+= -L$(OPENCV_PATH)/lib/$(ARCH)/$(LIBC)
+CLIB				+= -L$(OPENCV_PATH)/lib/$(ARCH)/$(LIBC)/opencv4/3rdparty
+
+CLIB				+= -lstdc++
+
+ifeq ($(ARCH), arm)
+CLIB				+= -Wl,--start-group -lopencv_imgcodecs -lopencv_imgproc -lopencv_core -ldl -lm -lpthread -lrt -littnotify -llibjpeg-turbo -llibwebp -llibpng -llibtiff -llibopenjp2 -lzlib -Wl,--end-group
+endif
+ifeq ($(ARCH), arm64)
+CLIB				+= -Wl,--start-group -lopencv_imgcodecs -lopencv_imgproc -lopencv_core -ldl -lm -lpthread -lrt -littnotify -llibjpeg-turbo -llibwebp -llibpng -llibtiff -llibopenjp2 -ltegra_hal -lzlib -Wl,--end-group
+endif
+
+CLIB				+= -l:libax_sys.a
+ifeq ($(CHIP_TYPE), AX620Q)
+CLIB				+= -l:libax_engine_tiny.a
+else
+CLIB				+= -l:libax_engine.a
+endif
+CLIB				+= -l:libax_interpreter.a
+
+INSTALL_BIN			:= $(TARGET)
+#INSTALL_DATA		:= $(CUR_PATH)/data/npu
+
+# link
+LINK = $(CC)
+
+include $(HOME_PATH)/build/rules.mak
