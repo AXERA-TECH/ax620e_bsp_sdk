@@ -28,7 +28,7 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: prepare third-party
         run: |
-          wget https://github.com/xiguadong/assets/releases/download/v0.1/third-party.tgz
+          wget https://github.com/AXERA-TECH/ax620q_bsp_sdk/releases/download/v1.7.0/third-party.tar.gz
           tar zxvf third-party.tgz
       
       - name: prepare gcc and build
