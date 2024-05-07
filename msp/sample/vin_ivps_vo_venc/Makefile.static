@@ -1,0 +1,120 @@
+CUR_PATH             := $(shell pwd)
+HOME_PATH            := $(abspath $(CUR_PATH)/../../..)
+
+include $(HOME_PATH)/build/color.mk
+include $(HOME_PATH)/build/config.mak
+
+PRJ_OUT_HOME         := $(HOME_PATH)/build/out/$(PROJECT)
+OBJ_OUT_PATH         := $(PRJ_OUT_HOME)/objs
+SRC_RELATIVE_PATH    := $(subst $(HOME_PATH)/,,$(CUR_PATH))
+TARGET_OUT_PATH      := $(OBJ_OUT_PATH)/$(SRC_RELATIVE_PATH)
+
+SRC_PATH             := $(CUR_PATH)
+SAMPLE_PATH          := $(SRC_PATH)/..
+SAMPLE_COMMON_PATH   := $(SAMPLE_PATH)/common
+OUT_PATH             := $(MSP_OUT_PATH)
+LIB_PATH             := $(OUT_PATH)/lib
+SSL_PATH             := $(HOME_PATH)/third-party/openssl/$(ARCH)
+LIVE_PATH            := $(HOME_PATH)/third-party/live/out/$(ARCH)/$(LIBC)
+
+USE_OPENSSL          := no
+
+# output
+MOD_NAME 		:= sample_vin_ivps_vo_venc_s
+OUTPUT 			:= $(TARGET_OUT_PATH)/.obj_a
+
+# source
+SRCS 			:= $(wildcard $(SRC_PATH)/*.c)
+SRCS			+= $(SAMPLE_COMMON_PATH)/common_venc.c
+SRCS			+= $(SAMPLE_COMMON_PATH)/common_venc_log.c
+SRCS			+= $(SAMPLE_PATH)/common/common_arg_parse.c
+SRCS			+= $(SAMPLE_PATH)/common/common_cam.c
+SRCS			+= $(SAMPLE_PATH)/common/common_sys.c
+SRCS			+= $(SAMPLE_PATH)/common/common_vin.c
+SRCS			+= $(SAMPLE_PATH)/common/common_isp.c
+SRCS			+= $(SAMPLE_PATH)/common/common_nt.c
+SRCS			+= $(SAMPLE_PATH)/common/common_vo.c
+SRCS			+= $(SAMPLE_PATH)/common/common_hw.c
+SRCS			+= $(SAMPLE_PATH)/common/common_vo_pattern.c
+SRCCPPS			:= $(wildcard $(SAMPLE_PATH)/rtsp/*.cpp)
+
+
+vpath %.c $(addsuffix :,$(dir $(patsubst %.c,%.o,$(SRCS))))
+
+CINCLUDE		+= -I$(SRC_PATH) \
+			-I$(OUT_PATH)/include \
+			-I$(SAMPLE_PATH)/common \
+			-I$(SAMPLE_PATH)/rtsp \
+			-I$(LIVE_PATH)/include/BasicUsageEnvironment \
+			-I$(LIVE_PATH)/include/groupsock \
+			-I$(LIVE_PATH)/include/liveMedia \
+			-I$(LIVE_PATH)/include/UsageEnvironment \
+			-I$(SSL_PATH)/include
+
+OBJS 			:= $(addprefix $(OUTPUT)/,$(notdir $(patsubst %.c,%.o,$(SRCS))))
+OBJS 			+= $(SRCCPPS:%.cpp=$(OUTPUT)/%.o)
+DEPS			:= $(OBJS:%.o=%.d)
+# exec
+TARGET			:= $(MOD_NAME)
+
+CFLAGS			:= ${EXEC_FLAG}
+
+# build flags
+ifeq ($(debug),yes)
+CFLAGS			+= -Werror -Wall -O0 -ggdb3
+else
+CFLAGS			+= -Werror -Wall -O2
+endif
+
+CFLAGS			+= -ldl
+CFLAGS			+= -DSAMPLE_BUILD_STATIC
+
+ifeq ($(USE_OPENSSL),no)
+CFLAGS            += -DNO_OPENSSL
+endif
+
+# dependency
+CLIB			+= -Wl,-rpath-link=$(OUT_PATH)/lib
+CLIB			+= -L$(OUT_PATH)/lib -l:libax_ivps.a
+CLIB			+= -lstdc++
+CLIB			+= -l:libax_sys.a
+CLIB			+= -lm -lpthread -lrt
+CLIB			+= -l:libax_nt_ctrl.a
+CLIB			+= -l:libax_proton.a
+ifeq ($(CHIP_TYPE), AX620Q)
+CLIB			+= -l:libax_engine_tiny.a
+else
+CLIB			+= -l:libax_engine.a
+endif
+CLIB			+= -l:libax_interpreter.a
+CLIB			+= -l:libax_ae.a
+CLIB			+= -l:libax_awb.a
+CLIB			+= -l:libax_af.a
+CLIB			+= -l:libax_mipi.a
+CLIB			+= -l:libax_nt_stream.a
+CLIB			+= -l:libax_venc.a
+CLIB			+= -lm -lpthread
+#CLIB			+= -lm -lpthread -lrt -ldl -lstdc++
+ifeq ($(USE_OPENSSL),yes)
+CLIB            += -L$(SSL_PATH)/$(LIBC)/lib -lssl -lcrypto
+endif
+CLIB			+= -L$(LIVE_PATH)/lib -lliveMedia -lgroupsock -lBasicUsageEnvironment -lUsageEnvironment
+CLIB			+= -l:libsns_dummy.a
+CLIB			+= -l:libsns_os04a10.a
+CLIB            += $(HOME_PATH)/third-party/drm/lib/$(ARCH)/$(LIBC)/libdrm.a
+
+CLIB			+= -L$(LIB_PATH) -l:libax_vo.a -l:libax_sys.a
+CLIB			+= -l:libax_sys.a
+CLIB			+= -lrt
+CLIB			+= -lm
+CLIB			+= -ldl
+CLIB			+= -lstdc++
+
+# install
+INSTALL_BIN	:= $(TARGET)
+MV_TARGET	:= $(INSTALL_BIN)
+
+# link
+LINK = $(CC)
+
+include $(HOME_PATH)/build/rules.mak

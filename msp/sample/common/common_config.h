@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -21,10 +21,10 @@ AX_MIPI_RX_ATTR_T gDummyMipiAttr = {
     .nDataRate =  400,
     .nDataLaneMap[0] = 0,
     .nDataLaneMap[1] = 1,
-    .nDataLaneMap[2] = 2,
-    .nDataLaneMap[3] = 3,
-    .nClkLane[0]     = 1,
-    .nClkLane[1]     = 0,
+    .nDataLaneMap[2] = 3,
+    .nDataLaneMap[3] = 4,
+    .nClkLane[0]     = 2,
+    .nClkLane[1]     = 5,
 };
 
 AX_SNS_ATTR_T gDummySnsAttr = {
@@ -135,47 +135,7 @@ AX_VIN_CHN_ATTR_T gDVPChn0Attr = {
     .tCompressInfo = {AX_COMPRESS_MODE_NONE, 0},
 };
 
-AX_VIN_DEV_BT_ATTR_T gBTAttr = {
-    /* bt param cfg */
-    .eDataChnSel = AX_VIN_INTF_DATA_MODE_SINGLE_CHN,
-    .eSyncCtrlMode = AX_VIN_BT_CTRL_SYNC_CODE,
-    .tSyncCfg.eHsyncInv = AX_VIN_SYNC_POLARITY_LOW,
-    .tSyncCfg.eVsyncInv = AX_VIN_SYNC_POLARITY_LOW,
-    .nDataActiveMode = 0,
-    .eSyncHeaderType = AX_VIN_BT_SYNC_HEADER_8_BYTE,
-    .nYcOrder = 0,
-    /* bt delay cfg*/
-    .tTimingBlank.nHsyncHfb =  0,
-    .tTimingBlank.nHsyncHact =  0,
-    .tTimingBlank.nHsyncHbb =  0,
-    .tTimingBlank.nVsyncVfb =  0,
-    .tTimingBlank.nVsyncVact =  0,
-    .tTimingBlank.nVsyncVbb =  0,
-    /* bt sync code cfg */
-    .tBtSyncCode[0].nInvSavMask = 0xFF,
-    .tBtSyncCode[0].nVldSavMask = 0xFF,
-    .tBtSyncCode[0].nInvSav = 0xAB,
-    .tBtSyncCode[0].nVldSav = 0X80,
-    .tBtSyncCode[1].nInvSavMask = 0xFF,
-    .tBtSyncCode[1].nVldSavMask = 0xFF,
-    .tBtSyncCode[1].nInvSav = 0xAB,
-    .tBtSyncCode[1].nVldSav = 0X80,
-    .tBtSyncCode[2].nInvSavMask = 0xFF,
-    .tBtSyncCode[2].nVldSavMask = 0xFF,
-    .tBtSyncCode[2].nInvSav = 0xAB,
-    .tBtSyncCode[2].nVldSav = 0X80,
-    .tBtSyncCode[3].nInvSavMask = 0xFF,
-    .tBtSyncCode[3].nVldSavMask = 0xFF,
-    .tBtSyncCode[3].nInvSav = 0xAB,
-    .tBtSyncCode[3].nVldSav = 0X80,
-     /* bt mux cfg*/
-    .nBtHsyncMux = 0x14,
-    .nBtVsyncMux = 0x15,
-    /* bt mode cfg*/
-    .eBtTdmMode = 0x00,
-};
-
-AX_SNS_ATTR_T gBTSnsAttr = {
+AX_SNS_ATTR_T gBT656SnsAttr = {
     .nWidth = 720,
     .nHeight = 480,
     .fFrameRate = 30.0,
@@ -185,12 +145,12 @@ AX_SNS_ATTR_T gBTSnsAttr = {
     .bTestPatternEnable = AX_FALSE,
 };
 
-AX_SNS_CLK_ATTR_T gBTSnsClkAttr = {
+AX_SNS_CLK_ATTR_T gBT656SnsClkAttr = {
     .nSnsClkIdx = 0,
     .eSnsClkRate = AX_SNS_CLK_27M,
 };
 
-AX_VIN_DEV_ATTR_T gBTDevAttr = {
+AX_VIN_DEV_ATTR_T gBT656DevAttr = {
     .bImgDataEnable = AX_TRUE,
     .bNonImgDataEnable = AX_FALSE,
     .eDevMode = AX_VIN_DEV_ONLINE,
@@ -203,51 +163,57 @@ AX_VIN_DEV_ATTR_T gBTDevAttr = {
     .eBayerPattern = AX_BP_RGGB,
     .eSnsMode = AX_SNS_LINEAR_MODE,
     .eSnsOutputMode = AX_SNS_NORMAL,
-    // .nConvYuv422To420En = 1,
-    // .nConvFactor = 3,
+    .nConvYuv422To420En = 1,
+    .nConvFactor = 2,
 
     /* bt param cfg */
     .tBtIntfAttr.eDataChnSel = AX_VIN_INTF_DATA_MODE_SINGLE_CHN,
-    .tBtIntfAttr.eSyncCtrlMode = AX_VIN_BT_CTRL_VSYNC_HSYNC,
+    .tBtIntfAttr.eSyncCtrlMode = AX_VIN_BT_CTRL_SYNC_CODE, //internal sync
     .tBtIntfAttr.tSyncCfg.eHsyncInv = AX_VIN_SYNC_POLARITY_HIGH,
     .tBtIntfAttr.tSyncCfg.eVsyncInv = AX_VIN_SYNC_POLARITY_HIGH,
     .tBtIntfAttr.nDataActiveMode = 1,
     .tBtIntfAttr.eSyncHeaderType = AX_VIN_BT_SYNC_HEADER_8_BYTE,
     .tBtIntfAttr.nYcOrder = 1,
-    /* bt delay cfg*/
-    .tBtIntfAttr.tTimingBlank.nHsyncHfb =  0,
-    .tBtIntfAttr.tTimingBlank.nHsyncHact =  0,
-    .tBtIntfAttr.tTimingBlank.nHsyncHbb =  0,
-    .tBtIntfAttr.tTimingBlank.nVsyncVfb =  0,
-    .tBtIntfAttr.tTimingBlank.nVsyncVact =  0,
-    .tBtIntfAttr.tTimingBlank.nVsyncVbb =  0,
-    /* bt sync code cfg */
+
+    /* bt delay cfg [only external sync need cfg]*/
+    // .tBtIntfAttr.tTimingBlank.nHsyncHfb =  0,
+    // .tBtIntfAttr.tTimingBlank.nHsyncHact =  0,
+    // .tBtIntfAttr.tTimingBlank.nHsyncHbb =  0xF4,
+    // .tBtIntfAttr.tTimingBlank.nVsyncVfb =  0x04,
+    // .tBtIntfAttr.tTimingBlank.nVsyncVact =  0,
+    // .tBtIntfAttr.tTimingBlank.nVsyncVbb =  0x10,
+
+    /* bt sync code cfg [only internal sync need cfg]*/
     .tBtIntfAttr.tBtSyncCode[0].nInvSavMask = 0xFF,
     .tBtIntfAttr.tBtSyncCode[0].nVldSavMask = 0xFF,
     .tBtIntfAttr.tBtSyncCode[0].nInvSav = 0xAB,
     .tBtIntfAttr.tBtSyncCode[0].nVldSav = 0X80,
-    .tBtIntfAttr.tBtSyncCode[1].nInvSavMask = 0xFF,
-    .tBtIntfAttr.tBtSyncCode[1].nVldSavMask = 0xFF,
-    .tBtIntfAttr.tBtSyncCode[1].nInvSav = 0xAB,
-    .tBtIntfAttr.tBtSyncCode[1].nVldSav = 0X80,
-    .tBtIntfAttr.tBtSyncCode[2].nInvSavMask = 0xFF,
-    .tBtIntfAttr.tBtSyncCode[2].nVldSavMask = 0xFF,
-    .tBtIntfAttr.tBtSyncCode[2].nInvSav = 0xAB,
-    .tBtIntfAttr.tBtSyncCode[2].nVldSav = 0X80,
-    .tBtIntfAttr.tBtSyncCode[3].nInvSavMask = 0xFF,
-    .tBtIntfAttr.tBtSyncCode[3].nVldSavMask = 0xFF,
-    .tBtIntfAttr.tBtSyncCode[3].nInvSav = 0xAB,
-    .tBtIntfAttr.tBtSyncCode[3].nVldSav = 0X80,
-     /* bt mux cfg*/
-    .tBtIntfAttr.nBtHsyncMux = 0x00,
-    .tBtIntfAttr.nBtVsyncMux = 0x01,
+
+    /* bt sync code [others bt chn]cfg [bt tdm mode need cfg]*/
+    // .tBtIntfAttr.tBtSyncCode[1].nInvSavMask = 0xFF,
+    // .tBtIntfAttr.tBtSyncCode[1].nVldSavMask = 0xFF,
+    // .tBtIntfAttr.tBtSyncCode[1].nInvSav = 0xAB,
+    // .tBtIntfAttr.tBtSyncCode[1].nVldSav = 0X80,
+    // .tBtIntfAttr.tBtSyncCode[2].nInvSavMask = 0xFF,
+    // .tBtIntfAttr.tBtSyncCode[2].nVldSavMask = 0xFF,
+    // .tBtIntfAttr.tBtSyncCode[2].nInvSav = 0xAB,
+    // .tBtIntfAttr.tBtSyncCode[2].nVldSav = 0X80,
+    // .tBtIntfAttr.tBtSyncCode[3].nInvSavMask = 0xFF,
+    // .tBtIntfAttr.tBtSyncCode[3].nVldSavMask = 0xFF,
+    // .tBtIntfAttr.tBtSyncCode[3].nInvSav = 0xAB,
+    // .tBtIntfAttr.tBtSyncCode[3].nVldSav = 0X80,
+
+     /* bt sync mux cfg  [only external sync need cfg]*/
+    // .tBtIntfAttr.nBtHsyncMux = 0x01,
+    // .tBtIntfAttr.nBtVsyncMux = 0x00,
+
     .tBtIntfAttr.nBtDataMux = {0x08, 0x09, 0x02, 0x03, 0x04, 0x05, 0x06,
                                  0x07, 0x0a, 0x0b, -1, -1, -1, -1},
-    /* bt mode cfg*/
-    .tBtIntfAttr.eBtTdmMode = 0x00,
+    /* bt tdm mode chn cfg*/
+    .tBtIntfAttr.eBtTdmMode = AX_VIN_BT_TDM_MODE_1CH,
 };
 
-AX_VIN_PIPE_ATTR_T gBTPipeAttr = {
+AX_VIN_PIPE_ATTR_T gBT656PipeAttr = {
     .ePipeWorkMode = AX_VIN_PIPE_SUB_YUV_MODE,
     .tPipeImgRgn = {0, 0, 720, 480},
     .eBayerPattern = AX_BP_RGGB,
@@ -256,7 +222,103 @@ AX_VIN_PIPE_ATTR_T gBTPipeAttr = {
     .tCompressInfo = {AX_COMPRESS_MODE_NONE, 0},
 };
 
-AX_VIN_CHN_ATTR_T gBTChn0Attr = {
+AX_VIN_CHN_ATTR_T gBT656Chn0Attr = {
+    .nWidth = 720,
+    .nHeight = 480,
+    .nWidthStride = 720,
+    .eImgFormat = AX_FORMAT_YUV420_SEMIPLANAR,
+    .nDepth = 3,
+    .tCompressInfo = {AX_COMPRESS_MODE_NONE, 0},
+};
+
+AX_SNS_ATTR_T gBT1120SnsAttr = {
+    .nWidth = 720,
+    .nHeight = 480,
+    .fFrameRate = 30.0,
+    .eSnsMode = AX_SNS_LINEAR_MODE,
+    .eRawType = AX_RT_YUV422,
+    .eBayerPattern = AX_BP_RGGB,
+    .bTestPatternEnable = AX_FALSE,
+};
+
+AX_SNS_CLK_ATTR_T gBT1120SnsClkAttr = {
+    .nSnsClkIdx = 0,
+    .eSnsClkRate = AX_SNS_CLK_27M,
+};
+
+AX_VIN_DEV_ATTR_T gBT1120DevAttr = {
+    .bImgDataEnable = AX_TRUE,
+    .bNonImgDataEnable = AX_FALSE,
+    .eDevMode = AX_VIN_DEV_ONLINE,
+    .eSnsIntfType = AX_SNS_INTF_TYPE_BT1120,
+    .tDevImgRgn[0] = {0, 0, 720, 480},
+    .tDevImgRgn[1] = {0, 0, 720, 480},
+    .tDevImgRgn[2] = {0, 0, 720, 480},
+    .tDevImgRgn[3] = {0, 0, 720, 480},
+    .ePixelFmt = AX_FORMAT_YUV422_INTERLEAVED_UYVY,
+    .eBayerPattern = AX_BP_RGGB,
+    .eSnsMode = AX_SNS_LINEAR_MODE,
+    .eSnsOutputMode = AX_SNS_NORMAL,
+    .nConvYuv422To420En = 1,
+    .nConvFactor = 2,
+
+    /* bt param cfg */
+    .tBtIntfAttr.eDataChnSel = AX_VIN_INTF_DATA_MODE_DUAL_CHN,
+    .tBtIntfAttr.eSyncCtrlMode = AX_VIN_BT_CTRL_SYNC_CODE, //internal sync
+    .tBtIntfAttr.tSyncCfg.eHsyncInv = AX_VIN_SYNC_POLARITY_HIGH,
+    .tBtIntfAttr.tSyncCfg.eVsyncInv = AX_VIN_SYNC_POLARITY_HIGH,
+    .tBtIntfAttr.nDataActiveMode = 1,
+    .tBtIntfAttr.eSyncHeaderType = AX_VIN_BT_SYNC_HEADER_4_BYTE,
+    .tBtIntfAttr.nYcOrder = 0,
+
+    /* bt delay cfg [only external sync need cfg]*/
+    // .tBtIntfAttr.tTimingBlank.nHsyncHfb =  0,
+    // .tBtIntfAttr.tTimingBlank.nHsyncHact =  0,
+    // .tBtIntfAttr.tTimingBlank.nHsyncHbb =  0xF4,
+    // .tBtIntfAttr.tTimingBlank.nVsyncVfb =  0x04,
+    // .tBtIntfAttr.tTimingBlank.nVsyncVact =  0,
+    // .tBtIntfAttr.tTimingBlank.nVsyncVbb =  0x10,
+
+    /* bt sync code cfg [only internal sync need cfg]*/
+    .tBtIntfAttr.tBtSyncCode[0].nInvSavMask = 0xFF,
+    .tBtIntfAttr.tBtSyncCode[0].nVldSavMask = 0xFF,
+    .tBtIntfAttr.tBtSyncCode[0].nInvSav = 0xAB,
+    .tBtIntfAttr.tBtSyncCode[0].nVldSav = 0X80,
+
+    /* bt sync code [others bt chn]cfg [bt tdm mode need cfg]*/
+    // .tBtIntfAttr.tBtSyncCode[1].nInvSavMask = 0xFF,
+    // .tBtIntfAttr.tBtSyncCode[1].nVldSavMask = 0xFF,
+    // .tBtIntfAttr.tBtSyncCode[1].nInvSav = 0xAB,
+    // .tBtIntfAttr.tBtSyncCode[1].nVldSav = 0X80,
+    // .tBtIntfAttr.tBtSyncCode[2].nInvSavMask = 0xFF,
+    // .tBtIntfAttr.tBtSyncCode[2].nVldSavMask = 0xFF,
+    // .tBtIntfAttr.tBtSyncCode[2].nInvSav = 0xAB,
+    // .tBtIntfAttr.tBtSyncCode[2].nVldSav = 0X80,
+    // .tBtIntfAttr.tBtSyncCode[3].nInvSavMask = 0xFF,
+    // .tBtIntfAttr.tBtSyncCode[3].nVldSavMask = 0xFF,
+    // .tBtIntfAttr.tBtSyncCode[3].nInvSav = 0xAB,
+    // .tBtIntfAttr.tBtSyncCode[3].nVldSav = 0X80,
+
+     /* bt sync mux cfg  [only external sync need cfg]*/
+    // .tBtIntfAttr.nBtHsyncMux = 0x01,
+    // .tBtIntfAttr.nBtVsyncMux = 0x00,
+
+    .tBtIntfAttr.nBtDataMux = {0x08, 0x09, 0x02, 0x03, 0x04, 0x05, 0x06,
+                                 0x07, -1, 0-1, 0x12, 0x13, 0x0c, 0x0d, 0x0e, 0x0f, 0x10, 0x11},
+    /* bt tdm mode chn cfg*/
+    .tBtIntfAttr.eBtTdmMode = AX_VIN_BT_TDM_MODE_1CH,
+};
+
+AX_VIN_PIPE_ATTR_T gBT1120PipeAttr = {
+    .ePipeWorkMode = AX_VIN_PIPE_ISP_BYPASS_MODE,
+    .tPipeImgRgn = {0, 0, 720, 480},
+    .eBayerPattern = AX_BP_RGGB,
+    .ePixelFmt = AX_FORMAT_YUV422_SEMIPLANAR,
+    .eSnsMode = AX_SNS_LINEAR_MODE,
+    .tCompressInfo = {AX_COMPRESS_MODE_NONE, 0},
+};
+
+AX_VIN_CHN_ATTR_T gBT1120Chn0Attr = {
     .nWidth = 720,
     .nHeight = 480,
     .nWidthStride = 720,
@@ -270,10 +332,10 @@ AX_LVDS_ATTR_T gLvdsAttr = {
     .nDataRate = 900,
     .nDataLaneMap[0] = 0,
     .nDataLaneMap[1] = 1,
-    .nDataLaneMap[2] = 2,
-    .nDataLaneMap[3] = 3,
-    .nClkLane[0]     = 1,
-    .nClkLane[1]     = 0,
+    .nDataLaneMap[2] = 3,
+    .nDataLaneMap[3] = 4,
+    .nClkLane[0]     = 2,
+    .nClkLane[1]     = 5,
 };
 
 AX_SNS_ATTR_T gLvdsSnsAttr = {
@@ -345,10 +407,10 @@ AX_MIPI_RX_ATTR_T gOs04a10MipiAttr = {
     .nDataRate =  80,
     .nDataLaneMap[0] = 0,
     .nDataLaneMap[1] = 1,
-    .nDataLaneMap[2] = 2,
-    .nDataLaneMap[3] = 3,
-    .nClkLane[0]     = 1,
-    .nClkLane[1]     = 0,
+    .nDataLaneMap[2] = 3,
+    .nDataLaneMap[3] = 4,
+    .nClkLane[0]     = 2,
+    .nClkLane[1]     = 5,
 };
 
 AX_SNS_ATTR_T gOs04a10SnsAttr = {
@@ -418,10 +480,10 @@ AX_MIPI_RX_ATTR_T gSc450aiMipiAttr = {
     .nDataRate =  80,
     .nDataLaneMap[0] = 0,
     .nDataLaneMap[1] = 1,
-    .nDataLaneMap[2] = 2,
-    .nDataLaneMap[3] = 3,
-    .nClkLane[0]     = 1,
-    .nClkLane[1]     = 0,
+    .nDataLaneMap[2] = 3,
+    .nDataLaneMap[3] = 4,
+    .nClkLane[0]     = 2,
+    .nClkLane[1]     = 5,
 };
 
 AX_SNS_ATTR_T gSc450aiSnsAttr = {
@@ -492,10 +554,10 @@ AX_MIPI_RX_ATTR_T gs5kjn1sq03MipiAttr = {
     .nDataRate =  80,
     .nDataLaneMap[0] = 0,
     .nDataLaneMap[1] = 1,
-    .nDataLaneMap[2] = 2,
-    .nDataLaneMap[3] = 3,
-    .nClkLane[0]     = 1,
-    .nClkLane[1]     = 0,
+    .nDataLaneMap[2] = 3,
+    .nDataLaneMap[3] = 4,
+    .nClkLane[0]     = 2,
+    .nClkLane[1]     = 5,
 };
 
 AX_SNS_ATTR_T gs5kjn1sq03SnsAttr = {

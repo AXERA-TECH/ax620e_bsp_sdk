@@ -1,13 +1,12 @@
-/**********************************************************************************
+/**************************************************************************************************
  *
- * Copyright (c) 2019-2020 Beijing AXera Technology Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Beijing AXera Technology Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Beijing AXera Technology Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
- **********************************************************************************/
-
+ **************************************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,8 +22,6 @@
 #include "ax_sys_api.h"
 #include "ax_avs_api.h"
 #include "avs_common_arg_parse.h"
-#include "ini_parser.h"
-
 #include "avs_common_api.h"
 
 static struct option long_opts[] = {
@@ -100,7 +97,7 @@ static void *AVSSendFrameProc(void *arg) {
     for (AX_S32 i = 0; i < s32PipeNum; i++) {
         fFileIn[i] = fopen((AX_CHAR*)(pAVSBaseParam->pInput[i]), "rb");
         if (fFileIn[i] == NULL) {
-            SAMPLE_ERR_LOG("Open input file error!\n");
+            SAMPLE_ERR_LOG("Open input file error, index %d, %s\n", i, pAVSBaseParam->pInput[i]);
             return NULL;
         }
     }
@@ -349,6 +346,7 @@ AX_S32 SampleAVSUsage(SAMPLE_AVS_BASE_PARA_T* pAVSBaseParam) {
     if(pAVSBaseParam->s32UserPoolId == AX_INVALID_POOLID)
     {
         SAMPLE_ERR_LOG("PoolInit failed, CMM memory may not enough!\n");
+        free(pAVSGrpAttr);
         return -1;
     }
 
@@ -360,8 +358,10 @@ AX_S32 SampleAVSUsage(SAMPLE_AVS_BASE_PARA_T* pAVSBaseParam) {
     if (s32Ret)
     {
         SAMPLE_ERR_LOG("AX_AVS_CreateGrp fail, ret 0x%X\n", s32Ret);
+        free(pAVSGrpAttr);
         return -1;
     }
+    free(pAVSGrpAttr);
 
     stAVSChnAttr.u32Depth = 4;
     stAVSChnAttr.stOutAttr.u32Width = s32OutputWidth;
@@ -448,6 +448,10 @@ AX_S32 AVSParameterGet(AX_S32 argc, AX_CHAR **argv, SAMPLE_AVS_BASE_PARA_T* pAVS
     }
 
     ini = iniparser_load(pInitFileName);
+    if (ini == NULL) {
+        SAMPLE_ERR_LOG("Load ini fail\n");
+        return -1;
+    }
 
     pAVSBaseParam->s32PipeNum = ini_getint(ini, ax_strcat(cKey, "avs_attr", ":pipe_num"), 0);
     pAVSBaseParam->pInput[0] = (AX_S8*)ini_get_string(ini, ax_strcat(cKey, "avs_attr", ":input_left"), 0);
@@ -517,8 +521,19 @@ AX_S32 AVSParameterGet(AX_S32 argc, AX_CHAR **argv, SAMPLE_AVS_BASE_PARA_T* pAVS
         printf(cFmtint, "Seam y", pAVSBaseParam->s32MaskY);
     }
 
+    pAVSBaseParam->ini = ini;
+
     return 0;
 }
+
+AX_VOID AVSParameterFree(SAMPLE_AVS_BASE_PARA_T* pAVSBaseParam) {
+    if (pAVSBaseParam != NULL) {
+        if (pAVSBaseParam->ini != NULL) {
+            iniparser_freedict(pAVSBaseParam->ini);
+        }
+    }
+}
+
 
 void AVSParameterDefault(SAMPLE_AVS_BASE_PARA_T* pAVSBaseParam) {
     pAVSBaseParam->s32GroupId = 0;

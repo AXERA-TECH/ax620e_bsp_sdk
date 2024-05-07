@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Shanghai) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Shanghai) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Shanghai) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -40,7 +40,7 @@ static AX_F32 nDgainTable[SENSOR_MAX_GAIN_STEP];
 #endif
 #define SNS_1_SECOND_UNIT_US            (1000000)
 
-static AX_SNS_COMMBUS_T gDummyBusInfo[AX_VIN_MAX_PIPE_NUM] = { {0}};
+static AX_SNS_COMMBUS_T gDummyBusInfo[AX_VIN_MAX_PIPE_NUM] = {0};
 SNS_STATE_OBJ *sns_ctx[AX_VIN_MAX_PIPE_NUM] = {AX_NULL};
 
 #define SENSOR_GET_CTX(dev, pstCtx) (pstCtx = sns_ctx[dev])
@@ -68,7 +68,7 @@ static AX_S32 sensor_ctx_init(ISP_PIPE_ID nPipeId)
         sns_obj = (SNS_STATE_OBJ *)calloc(1, sizeof(SNS_STATE_OBJ));
         if (AX_NULL == sns_obj) {
             SNS_ERR("malloc sns_ctx failed\r\n");
-            return SNS_ERR_CODE_NOT_MEM;
+            return AX_SNS_ERR_NOMEM;
         }
     }
 
@@ -76,7 +76,7 @@ static AX_S32 sensor_ctx_init(ISP_PIPE_ID nPipeId)
 
     SENSOR_SET_CTX(nPipeId, sns_obj);
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 static AX_VOID sensor_ctx_exit(ISP_PIPE_ID nPipeId)
@@ -141,7 +141,7 @@ static AX_S32 dummy_set_bus_info(ISP_PIPE_ID nPipeId, AX_SNS_COMMBUS_T tSnsBusIn
 {
     gDummyBusInfo[nPipeId].I2cDev = tSnsBusInfo.I2cDev;
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 static AX_S32 dummysensor_streaming_ctrl(ISP_PIPE_ID nPipeId, AX_U32 on)
@@ -154,11 +154,11 @@ static AX_S32 dummysensor_streaming_ctrl(ISP_PIPE_ID nPipeId, AX_U32 on)
     } else {
     }
     if (0 != result) {
-        return -1;
+        return AX_SNS_ERR_UNKNOWN;
     }
     usleep(300 * 1000);
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 static AX_S32 dummysensor_sensor_set_mode(ISP_PIPE_ID nPipeId, AX_SNS_ATTR_T *sns_mode)
@@ -179,7 +179,7 @@ static AX_S32 dummysensor_sensor_set_mode(ISP_PIPE_ID nPipeId, AX_SNS_ATTR_T *sn
         nRet = sensor_ctx_init(nPipeId);
         if (0 != nRet) {
             SNS_ERR("sensor_ctx_init failed!\n");
-            return SNS_ERR_CODE_INIT_FAILD;
+            return AX_SNS_ERR_NOT_INIT;
         } else {
             SENSOR_GET_CTX(nPipeId, sns_obj);
         }
@@ -202,7 +202,7 @@ static AX_S32 dummysensor_sensor_set_mode(ISP_PIPE_ID nPipeId, AX_SNS_ATTR_T *sn
     sns_obj->sns_mode_obj.fFrameRate = framerate;
     memcpy(&sns_obj->sns_attr_param, sns_mode, sizeof(AX_SNS_ATTR_T));
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 static AX_S32 dummysensor_sensor_get_mode(ISP_PIPE_ID nPipeId, AX_SNS_ATTR_T *pSnsMode)
@@ -219,7 +219,7 @@ static AX_S32 dummysensor_sensor_get_mode(ISP_PIPE_ID nPipeId, AX_SNS_ATTR_T *pS
         nRet = sensor_ctx_init(nPipeId);
         if (0 != nRet) {
             SNS_ERR("sensor_ctx_init failed!\n");
-            return -1;
+            return AX_SNS_ERR_NOT_INIT;
         } else {
             SENSOR_GET_CTX(nPipeId, sns_obj);
         }
@@ -227,7 +227,7 @@ static AX_S32 dummysensor_sensor_get_mode(ISP_PIPE_ID nPipeId, AX_SNS_ATTR_T *pS
 
     memcpy(pSnsMode, &sns_obj->sns_attr_param, sizeof(AX_SNS_ATTR_T));
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 
@@ -240,7 +240,7 @@ static AX_S32 dummysensor_testpattern_ctrl(ISP_PIPE_ID nPipeId, AX_U32 on)
     } else {
     }
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 /****************************************************************************
@@ -262,7 +262,7 @@ static AX_S32 dummy_get_isp_default_params(ISP_PIPE_ID nPipeId, AX_SENSOR_DEFAUL
         nRet = sensor_ctx_init(nPipeId);
         if (0 != nRet) {
             SNS_ERR("sensor_ctx_init failed!\n");
-            return SNS_ERR_CODE_INIT_FAILD;
+            return AX_SNS_ERR_NOT_INIT;
         } else {
             SENSOR_GET_CTX(nPipeId, sns_obj);
         }
@@ -295,7 +295,7 @@ static AX_S32 dummy_get_isp_default_params(ISP_PIPE_ID nPipeId, AX_SENSOR_DEFAUL
         break;
     }
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 /* dummy sensor black level will overwrite by AX_ISP_SetPubAttr() */
@@ -322,7 +322,7 @@ static AX_S32 dummy_get_black_level(ISP_PIPE_ID nPipeId, AX_SNS_BLACK_LEVEL_T *p
         ptBlackLevel->nBlackLevel[3] = 1024;
     }
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 #if 0
 static AX_S32 dummysensor_get_sensor_caps(ISP_PIPE_ID nPipeId, AX_SNS_CAP_T *params)
@@ -335,7 +335,7 @@ static AX_S32 dummysensor_get_sensor_caps(ISP_PIPE_ID nPipeId, AX_SNS_CAP_T *par
     params->nSnsRawType_caps = AX_SNS_RAWTYPE_12BIT;
     params->nSnsFps_caps = AX_SNS_25FPS;
     params->nSnsResolution_caps = AX_SNS_RES_2688_1520;
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 #endif
 /****************************************************************************
@@ -406,7 +406,7 @@ AX_S32 dummysensor_set_aecparam(ISP_PIPE_ID nPipeId)
             sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMinIntegrationTime[HDR_LONG_FRAME_IDX],
             sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMaxIntegrationTime[HDR_LONG_FRAME_IDX]);
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 static AX_S32 dummysensor_set_again(ISP_PIPE_ID nPipeId, AX_SNS_AE_GAIN_CFG_T *ptAGain)
@@ -436,7 +436,7 @@ static AX_S32 dummysensor_set_again(ISP_PIPE_ID nPipeId, AX_SNS_AE_GAIN_CFG_T *p
         sns_obj->ae_ctrl_param.sns_ae_param.fCurAGain[HDR_SHORT_FRAME_IDX] = ptAGain->fGain[HDR_SHORT_FRAME_IDX];
     }
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 static AX_S32 dummysensor_set_dgain(ISP_PIPE_ID nPipeId, AX_SNS_AE_GAIN_CFG_T *ptDGain)
@@ -445,7 +445,7 @@ static AX_S32 dummysensor_set_dgain(ISP_PIPE_ID nPipeId, AX_SNS_AE_GAIN_CFG_T *p
     AX_U8 Gain_de;
     AX_U8 Gain_de2;
     AX_S32 result = 0;
-    AX_F32 gain_val = 0;
+    AX_F32 gain_value = 0;
     AX_F32 nGainFromUser = 0;
 
     SNS_STATE_OBJ *sns_obj = AX_NULL;
@@ -467,7 +467,7 @@ static AX_S32 dummysensor_set_dgain(ISP_PIPE_ID nPipeId, AX_SNS_AE_GAIN_CFG_T *p
         sns_obj->ae_ctrl_param.sns_ae_param.fCurDGain[HDR_SHORT_FRAME_IDX] = ptDGain->fGain[HDR_SHORT_FRAME_IDX];
     }
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 
@@ -485,7 +485,7 @@ AX_S32 dummysensor_get_integration_time_range(ISP_PIPE_ID nPipeId, AX_F32 fHdrRa
 
     if (fabs(fHdrRatio) < EPS) {
         SNS_ERR("hdr ratio is error \n");
-        return SNS_ERR_CODE_ILLEGAL_PARAMS;
+        return AX_SNS_ERR_ILLEGAL_PARAM;
     }
 
     if (AX_SNS_HDR_2X_MODE == sns_obj->sns_mode_obj.eHDRMode) {
@@ -516,7 +516,7 @@ AX_S32 dummysensor_get_integration_time_range(ISP_PIPE_ID nPipeId, AX_F32 fHdrRa
         // do nothing
     }
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 AX_S32 dummysensor_set_integration_time(ISP_PIPE_ID nPipeId, AX_SNS_AE_SHUTTER_CFG_T *ptIntTime)
@@ -564,7 +564,7 @@ AX_S32 dummysensor_set_integration_time(ISP_PIPE_ID nPipeId, AX_SNS_AE_SHUTTER_C
             sns_obj->sztRegsInfo[0].tSnsExpInfo.szExpTime[HDR_LONG_FRAME_IDX],
             sns_obj->sztRegsInfo[0].tSnsExpInfo.szExpTime[HDR_MEDIUM_FRAME_IDX]);
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 AX_S32 dummysensor_hcglcg_ctrl(ISP_PIPE_ID nPipeId, AX_U32 nSnsHcgLcg)
@@ -593,7 +593,7 @@ AX_S32 dummysensor_hcglcg_ctrl(ISP_PIPE_ID nPipeId, AX_U32 nSnsHcgLcg)
         sns_obj->ae_ctrl_param.eSnsHcgLcgMode = AX_LCG_NOTSUPPORT_MODE;
     }
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 
@@ -610,19 +610,18 @@ AX_S32 dummysensor_get_hw_exposure_params(ISP_PIPE_ID nPipeId, AX_SNS_EXP_CTRL_P
     memcpy(ptAeCtrlParam, &sns_obj->ae_ctrl_param, sizeof(AX_SNS_EXP_CTRL_PARAM_T));
     memcpy(&ptAeCtrlParam->sns_dev_attr, &sns_obj->sns_attr_param, sizeof(AX_SNS_ATTR_T));
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 static AX_S32 dummysensor_get_gain_table(ISP_PIPE_ID nPipeId, AX_SNS_AE_GAIN_TABLE_T *params)
 {
     AX_U32 i;
-    AX_S32 ret = 0;
     AX_S32 d_max = 0;
     AX_S32 d_min = 0;
     SNS_STATE_OBJ *sns_obj = AX_NULL;
 
     if (!params)
-        return -1;
+        return AX_SNS_ERR_NULL_PTR;
 
     SENSOR_GET_CTX(nPipeId, sns_obj);
     SNS_CHECK_PTR_VALID(sns_obj);
@@ -642,7 +641,7 @@ static AX_S32 dummysensor_get_gain_table(ISP_PIPE_ID nPipeId, AX_SNS_AE_GAIN_TAB
         params->pDgainTable = nDgainTable;
     }
 
-    return ret;
+    return AX_SNS_SUCCESS;
 }
 #if 0
 static AX_S32 dummysensor_get_sensor_gain_table(ISP_PIPE_ID nPipeId, AX_SNS_AE_GAIN_TABLE_T *params)
@@ -659,7 +658,7 @@ static AX_S32 dummysensor_get_sensor_gain_table(ISP_PIPE_ID nPipeId, AX_SNS_AE_G
 
 AX_S32 dummysensor_reset(ISP_PIPE_ID nPipeId, AX_U32 nResetGpio)
 {
-    return 0;
+    return AX_SNS_SUCCESS;
 }
 
 AX_SYS_API_PUBLIC AX_SENSOR_REGISTER_FUNC_T gSnsdummyObj = {

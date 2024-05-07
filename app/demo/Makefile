@@ -9,7 +9,7 @@ HOME_PATH         := $(abspath $(LOCAL_PATH)/../..)
 include $(HOME_PATH)/build/color.mk
 include $(HOME_PATH)/build/config.mak
 
-ifeq ($(FASTBOOT_SUPPORT),TRUE)
+ifeq ($(AX_BOOT_OPTIMIZATION_SUPPORT),TRUE)
 	SUBDIRS += QSDemo
 endif
 

@@ -15,6 +15,8 @@ SRC_RELATIVE_PATH   := $(subst $(HOME_PATH)/,,$(SRC_PATH))
 TARGET_OUT_PATH     := $(OBJ_OUT_PATH)/$(SRC_RELATIVE_PATH)
 SAMPLE_BIN_PATH     := $(HOME_PATH)/app/sample/skel/bin
 HEADER_EXTERNAL_PATH	:= $(HOME_PATH)/header/external
+COMMON_PATH         := $(SRC_PATH)/../common
+SAMPLE_PATH         := $(SRC_PATH)/..
 
 ################################################################################
 #	set task
@@ -24,11 +26,17 @@ OUTPUT 				:= $(TARGET_OUT_PATH)/obj_a
 
 # source
 SRCS                := $(wildcard $(SRC_PATH)/*.c)
+SRCS                += $(COMMON_PATH)/common_arg_parse.c
+SRCS                += $(COMMON_PATH)/common_vdec.c
+SRCS                += $(COMMON_PATH)/common_vdec_cmd.c
+SRCS                += $(COMMON_PATH)/common_vdec_utils.c
+
 SRCCPPS             := $(wildcard $(SRC_PATH)/*.cpp)
 
 CINCLUDE            := -I$(SRC_PATH) \
                        -I$(MSP_OUT_PATH)/include \
-                       -I$(HEADER_EXTERNAL_PATH)
+                       -I$(HEADER_EXTERNAL_PATH)    \
+                       -isystem $(COMMON_PATH)   
 
 
 OBJS 				:= $(SRCS:%.c=$(OUTPUT)/%.o) \
@@ -43,6 +51,7 @@ TARGET				:= $(TARGET_OUT_PATH)/$(MOD_NAME)
 CFLAGS				:= ${EXEC_FLAG} -Wall -Wl,-rpath-link=$(LIB_PATH)
 CFLAGS              += -DSAMPLE_SKEL_BUILD_VERSION=\"$(SDK_VERSION)\"
 CFLAGS              += -DSAMPLE_SKEL_NAME=\"$(TARGET)\"
+CFLAGS              += -D_FILE_OFFSET_BITS=64
 
 debug = no
 ifeq ($(debug),yes)
@@ -57,8 +66,8 @@ CLIB			+= -Wl,-rpath-link=$(MSP_OUT_PATH)/lib
 CLIB			+= -L$(MSP_OUT_PATH)/lib
 
 CLIB			+= -l:libax_venc.a
-CLIB			+= -l:libax_sys.a
 CLIB			+= -l:libax_vdec.a
+CLIB			+= -l:libax_sys.a
 CLIB			+= -l:libax_ivps.a
 CLIB			+= -l:libax_proton.a
 #CLIB			+= -l:libax_syslog.a
@@ -75,7 +84,8 @@ CLIB			+= -lm -lpthread -lrt -ldl -lstdc++
 # install
 INSTALL_TARGET			:= $(TARGET)
 INSTALL_DIR			    := $(ROOTFS_TARGET_PATH)/bin/
-#INSTALL_DATA    		:= $(CUR_PATH)/data/skel
+INSTALL_DATA    		:= $(CUR_PATH)/data/skel
+
 # link
 LINK = $(CC)
 

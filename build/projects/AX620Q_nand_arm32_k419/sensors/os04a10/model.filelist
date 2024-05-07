@@ -1,6 +1,6 @@
-@dir: msp/out/arm_glibc
-etc/models/aiisp/OS04A10_HDR_2688x1520_*.axmodel
-etc/models/aiisp/OS04A10_SDR_2688x1520_*.axmodel
+@dir: msp/out/$(MSP_OUT_DIR)
+etc/models/aiisp/OS04A10_HDR_2688x1520_10b_HCG_ISP1_A2-16X_I1-4X_0000_MULTI2_00000695716_240308_AX620E.axmodel
+etc/models/aiisp/OS04A10_SDR_2688x1520_10b_HCG_ISP1_A16X_I1-16X_0000_MULTI4_00000695986_240308_AX620E.axmodel
 etc/os04a10_sdr_online_2lane.ini
 etc/os04a10_sdr_online_2lane_620q.ini
 etc/os04a10_double_sdr_online_entry.ini
@@ -20,3 +20,5 @@ etc/os04a10_hdr_online_2lane_dev1.ini
 etc/os04a10_hdr_online_2lane_620q.ini
 etc/os04a10_hdr_online_2lane_620q_dev1.ini
 etc/os04a10_sdr_mode3_switch_mode7.bin
+etc/os04a10_hdr_2x_ratio_1to1.bin
+etc/os04a10_hdr_2x_ratio_default.bin

@@ -33,7 +33,7 @@ OUTPUT 			:= $(TARGET_OUT_PATH)/.obj
 # source
 SRCS 			+= $(wildcard $(SRC_I2C_PATH)/*.c) \
 					$(wildcard $(CUR_PATH)/*.c) \
-					$(wildcard $(COMMON_SRC_PATH)/*.c) \
+					$(wildcard $(COMMON_SRC_PATH)/*.c)
 
 CINCLUDE		+=  -I$(SRC_I2C_PATH)/ \
 					-I$(OUT_PATH)/include \
@@ -43,11 +43,10 @@ CINCLUDE		+=  -I$(SRC_I2C_PATH)/ \
 					-I$(GENERATED_PATH)
 
 OBJS 			:= $(SRCS:%.c=$(OUTPUT)/%.o)
-DEPS				:= $(OBJS:%.o=%.d)
-DEOBJS 			    := $(OBJS:%.o=%.d)
+DEPS			:= $(OBJS:%.o=%.d)
 
 # dynamic lib version (must)
-SONAME		:= lib$(MOD_NAME).so
+SONAME			:= lib$(MOD_NAME).so
 STRIPPED_TARGET	:= $(SONAME)
 DEBUG_TARGET    := lib$(MOD_NAME).debug
 

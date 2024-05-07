@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -18,13 +18,11 @@
 #include <pthread.h>
 #include <sys/prctl.h>
 
-#include "ax_vin_api.h"
 #include "ax_isp_api.h"
 #include "ax_isp_3a_api.h"
-#include "common_type.h"
 #include "common_isp.h"
 #include "common_sys.h"
-
+#include "common_hw.h"
 
 #define AX_LIB_SENSOR_PATH  "/opt/lib/"
 static AX_ISP_AF_REGFUNCS_T s_tAfFuncs = {0};
@@ -53,33 +51,11 @@ const static AX_SENSOR_LIB_TAB s_libSensorTab[] = {
     {SAMPLE_SNS_DVP,                "libsns_sc4210.so",         "gSnssc4210Obj"},
     {SAMPLE_SNS_BT656,              "libsns_dummy.so",          "gSnsdummyObj"},
     {SAMSUNG_S5KJN1SQ03,            "libsns_s5kjn1sq03.so",     "gSnss5kjn1sq03Obj"},
+    {SAMPLE_SNS_BT1120,              "libsns_dummy.so",          "gSnsdummyObj"},
     {SAMPLE_SNS_TYPE_BUTT,          "NULL",                     "NULL"},
 };
 #endif
 
-
-
-/* TODO user need config device node number */
-static AX_S8 COMMON_ISP_GetI2cDevNode(AX_U8 nDevId)
-{
-    switch (AX_SYS_GetChipType()) {
-    case AX620Q_CHIP:
-            return 0;
-    break;
-    case AX630C_CHIP:
-        if (nDevId == 0)
-            return 0;
-        else
-            return 2;
-    break;
-    default:
-        if (nDevId == 0)
-            return 0;
-        else
-            return 2;
-    break;
-    }
-}
 
 #ifdef SAMPLE_BUILD_STATIC
 AX_SENSOR_REGISTER_FUNC_T *COMMON_ISP_GetSnsObj(SAMPLE_SNS_TYPE_E eSnsType)
@@ -182,9 +158,11 @@ AX_S32 COMMON_ISP_RegisterSns(AX_U8 nPipeId, AX_U8 nDevId, AX_SNS_CONNECT_TYPE_E
     /* confige i2c/spi dev id */
     if (ISP_SNS_CONNECT_I2C_TYPE == eBusType) {
         tSnsBusInfo.I2cDev = COMMON_ISP_GetI2cDevNode(nDevId);
+        tSnsBusInfo.busType = ISP_SNS_CONNECT_I2C_TYPE;
     } else {
         tSnsBusInfo.SpiDev.bit4SpiDev = COMMON_ISP_GetI2cDevNode(nDevId);
         tSnsBusInfo.SpiDev.bit4SpiCs  = 0;
+        tSnsBusInfo.busType = ISP_SNS_CONNECT_SPI_TYPE;
     }
 
     if (NULL != ptSnsHdl->pfn_sensor_set_bus_info) {
@@ -260,13 +238,6 @@ AX_S32 COMMON_ISP_SetSnsAttr(AX_U8 nPipeId, AX_SNS_ATTR_T *ptSnsAttr, AX_SNS_CLK
     axRet = AX_ISP_SetSnsAttr(nPipeId, ptSnsAttr);
     if (0 != axRet) {
         COMM_ISP_PRT("AX_ISP_SetSnsAttr failed, nRet=0x%x.\n", axRet);
-        return -1;
-    }
-
-    /* confige sensor clk */
-    axRet = AX_ISP_OpenSnsClk(pstSnsClkAttr->nSnsClkIdx, pstSnsClkAttr->eSnsClkRate);
-    if (0 != axRet) {
-        COMM_ISP_PRT("AX_ISP_OpenSnsClk failed, nRet=0x%x.\n", axRet);
         return -1;
     }
 
@@ -352,10 +323,12 @@ AX_S32 COMMON_ISP_RegisterAwbAlgLib(AX_U8 nPipeId, AX_SENSOR_REGISTER_FUNC_T *pt
         tAwbFuncs.pfnAwb_Init = AX_ISP_ALG_AwbInit;
         tAwbFuncs.pfnAwb_Exit = AX_ISP_ALG_AwbDeInit;
         tAwbFuncs.pfnAwb_Run  = AX_ISP_ALG_AwbRun;
+        tAwbFuncs.pfnAwb_Ctrl  = AX_ISP_ALG_AwbCtrl;
     } else {
         tAwbFuncs.pfnAwb_Init = pAwbFuncs->pfnAwb_Init;
         tAwbFuncs.pfnAwb_Exit = pAwbFuncs->pfnAwb_Exit;
         tAwbFuncs.pfnAwb_Run  = pAwbFuncs->pfnAwb_Run;
+        tAwbFuncs.pfnAwb_Ctrl  = pAwbFuncs->pfnAwb_Ctrl;
     }
 
     /* Register the sensor driver interface TO the AWB library */

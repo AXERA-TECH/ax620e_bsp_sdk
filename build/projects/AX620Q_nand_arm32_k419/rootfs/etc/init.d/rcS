@@ -9,7 +9,6 @@ mkdir -p /opt/data/AXSyslog/kernel
 
 hwclock -s &
 /soc/scripts/auto_load_all_drv.sh
-mount -t pstore pstore /sys/fs/pstore
 
 if [ -e "/dev/mmcblk0p1" ]; then
     mount /dev/mmcblk0p1 /mnt/tfcard

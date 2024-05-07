@@ -1,4 +1,5 @@
-SUBDIRS = include dummysensor smartsens_sc450ai
+SUBDIRS = include dummysensor smartsens_sc450ai smartsens_sc200ai
+MODVER_SUBDIRS := $(filter-out include makebin, $(SUBDIRS))
 
 ################################################################################
 #	prepare param

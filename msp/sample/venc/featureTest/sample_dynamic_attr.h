@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -45,3 +45,5 @@ AX_S32 SampleTestBpsAdapt(AX_S32 VeChn, AX_VOID *handle);
 AX_S32 SampleDynVui(AX_S32 VencChn, AX_VOID *handle);
 
 AX_S32 SampleTestGop(AX_S32 VeChn, AX_VOID *handle);
+
+AX_S32 SampleVencSvc(AX_S32 VeChn, AX_VOID *handle);

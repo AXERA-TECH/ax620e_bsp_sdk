@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -54,6 +54,12 @@ static AX_S32 SAMPLE_COMM_VO_StopWbc(VO_DEV VoDev)
     return s32Ret;
 }
 
+static AX_VO_SYNC_INFO_T g_stSyncInfos[SAMPLE_VO_SYNC_USER_MAX] = {
+    /* 0 - 480x360@60 */
+    {.u16Vact = 360, .u16Vbb = 12, .u16Vfb = 20, .u16Hact = 480, .u16Hbb = 30, .u16Hfb = 25, .u16Hpw = 25, .u16Vpw = 10, .u32Pclk = 13500, .bIdv = 1, .bIhs = 1, .bIvs = 1},
+};
+
+
 AX_S32 SAMPLE_COMM_VO_StartDev(SAMPLE_VO_DEV_CONFIG_S *pstVoDevConf)
 {
     AX_S32 s32Ret = 0;
@@ -62,6 +68,10 @@ AX_S32 SAMPLE_COMM_VO_StartDev(SAMPLE_VO_DEV_CONFIG_S *pstVoDevConf)
     stVoPubAttr.enMode = pstVoDevConf->enMode;
     stVoPubAttr.enIntfType  = pstVoDevConf->enVoIntfType;
     stVoPubAttr.enIntfSync  = pstVoDevConf->enIntfSync;
+    if (stVoPubAttr.enIntfSync == AX_VO_OUTPUT_USER) {
+        stVoPubAttr.stSyncInfo = g_stSyncInfos[pstVoDevConf->u32SyncIndex];
+    }
+
     stVoPubAttr.enIntfFmt  = pstVoDevConf->enVoOutfmt;
 
     s32Ret = AX_VO_SetPubAttr(pstVoDevConf->u32VoDev, &stVoPubAttr);

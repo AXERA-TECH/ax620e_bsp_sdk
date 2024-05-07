@@ -17,11 +17,11 @@ const static AX_ISP_VERSION_T ax_isp_version_param_sdr = {
     /* nIspMinor1 */
     0,
     /* nIspMinor2 */
-    30,
+    31,
     /* szBuildTime[32] */
     "Oct 25 2023 22:41:15",
     /* szIspVersion[64] */
-    "AX620E_ISP_V4.0.30",
+    "AX620E_ISP_V4.0.31",
 };
 
 const static AX_ISP_IQ_SCENE_PARAM_T scene_param_sdr = {
@@ -68,9 +68,13 @@ const static AX_ISP_IQ_AE_PARAM_T ae_param_sdr = {
         3860,
         /* nIrisPwmDuty */
         0,
+        /* nPos */
+        512,
         /* nHdrRealRatioLtoS */
         1024,
         /* nHdrRealRatioStoVS */
+        1024,
+        /* nLumaHdrRealRatioLtoS */
         1024,
         /* nSetPoint */
         25600,
@@ -191,7 +195,7 @@ const static AX_ISP_IQ_AE_PARAM_T ae_param_sdr = {
         /* tAeRouteParam */
         {
             /* nTableNum */
-            1,
+            2,
             /* nUsedTableId */
             0,
             /* tRouteTable[8] */
@@ -210,6 +214,8 @@ const static AX_ISP_IQ_AE_PARAM_T ae_param_sdr = {
                             30,
                             /* nGain */
                             1024,
+                            /* nAperture */
+                            0,
                             /* nIncrementPriority */
                             0,
                         },
@@ -219,6 +225,8 @@ const static AX_ISP_IQ_AE_PARAM_T ae_param_sdr = {
                             40000,
                             /* nGain */
                             65535,
+                            /* nAperture */
+                            0,
                             /* nIncrementPriority */
                             0,
                         },
@@ -228,6 +236,8 @@ const static AX_ISP_IQ_AE_PARAM_T ae_param_sdr = {
                             66000,
                             /* nGain */
                             122880,
+                            /* nAperture */
+                            0,
                             /* nIncrementPriority */
                             0,
                         },
@@ -237,6 +247,8 @@ const static AX_ISP_IQ_AE_PARAM_T ae_param_sdr = {
                             100000,
                             /* nGain */
                             245760,
+                            /* nAperture */
+                            0,
                             /* nIncrementPriority */
                             0,
                         },
@@ -246,6 +258,8 @@ const static AX_ISP_IQ_AE_PARAM_T ae_param_sdr = {
                             120000,
                             /* nGain */
                             368640,
+                            /* nAperture */
+                            0,
                             /* nIncrementPriority */
                             0,
                         },
@@ -255,6 +269,73 @@ const static AX_ISP_IQ_AE_PARAM_T ae_param_sdr = {
                             166000,
                             /* nGain */
                             1024000,
+                            /* nAperture */
+                            0,
+                            /* nIncrementPriority */
+                            0,
+                        },
+                    },
+                },
+                /* 1 */
+                {
+                    /* sTableName[32] */
+                    "PirisAeRoute",
+                    /* nRouteCurveNum */
+                    5,
+                    /* tRouteCurveList[16] */
+                    {
+                        /* 0 */
+                        {
+                            /* nIntergrationTime */
+                            30,
+                            /* nGain */
+                            1024,
+                            /* nAperture */
+                            5,
+                            /* nIncrementPriority */
+                            0,
+                        },
+                        /* 1 */
+                        {
+                            /* nIntergrationTime */
+                            30,
+                            /* nGain */
+                            1024,
+                            /* nAperture */
+                            296,
+                            /* nIncrementPriority */
+                            0,
+                        },
+                        /* 2 */
+                        {
+                            /* nIntergrationTime */
+                            166000,
+                            /* nGain */
+                            1024,
+                            /* nAperture */
+                            296,
+                            /* nIncrementPriority */
+                            0,
+                        },
+                        /* 3 */
+                        {
+                            /* nIntergrationTime */
+                            166000,
+                            /* nGain */
+                            1024,
+                             /* nAperture */
+                            512,
+                            /* nIncrementPriority */
+                            0,
+                        },
+                        /* 4 */
+                        {
+                            /* nIntergrationTime */
+                            166000,
+                            /* nGain */
+                            1024000,
+                            /* nAperture */
+                            512,
                             /* nIncrementPriority */
                             0,
                         },
@@ -324,20 +405,27 @@ const static AX_ISP_IQ_AE_PARAM_T ae_param_sdr = {
             0,
             /* tRatioStrategyParam */
             {
-                /* nMinRatio */
-                5120,
-                /* nMaxRatio */
-                16384,
                 /* nShortNonSatAreaPercent */
-                103284736,
-                /* nShortSatLuma */
-                153600,
+                104438168,
                 /* nTolerance */
-                1048576,
+                8388608,
                 /* nConvergeCntFrameNum */
                 3,
                 /* nDampRatio */
-                870,
+                922,
+                /* tHdrRatioParamCurve */
+                {
+                    /* nListSize */
+                    6,
+                    /* nRefList[10] */
+                    {102, 10240, 30720, 102400, 204800, 1024000, /*0 - 5*/},
+                    /* nSatLumaList[10] */
+                    {153600, 122880, 61440, 40960, 20480, 10240, /*0 - 5*/},
+                    /* nMinRatioList[10] */
+                    {1024, 1024, 1024, 1024, 1024, 1024, /*0 - 5*/},
+                    /* nMaxRatioList[10] */
+                    {32768, 32768, 32768, 32768, 32768, 32768, /*0 - 5*/},
+                },
             },
             /* nFixedHdrRatio */
             1024,
@@ -453,6 +541,8 @@ const static AX_ISP_IQ_AE_PARAM_T ae_param_sdr = {
         },
         /* tSleepWakeUpParam */
         {
+            /* nEnableSleepSetting */
+            0,
             /* nNoiseLevel */
             41,
             /* nLinearLumaTh */
@@ -3743,8 +3833,6 @@ const static AX_ISP_IQ_AWB_PARAM_T awb_param_sdr = {
             },
             /* nDampRatio */
             100000,
-            /* nFrameSkipping */
-            3,
         },
         /* nMode */
         0,
@@ -8105,6 +8193,10 @@ const static AX_ISP_IQ_FCC_PARAM_T fcc_param_sdr = {
         16,
         /* nFcCorSatLut[9] */
         {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
+        /* nFcCorSatLevel0 */
+        11,
+        /* nFcCorSatLevel1 */
+        16,
     },
     /* tAutoParam */
     {
@@ -8133,6 +8225,10 @@ const static AX_ISP_IQ_FCC_PARAM_T fcc_param_sdr = {
             {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
             {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
         },
+        /* nFcCorSatLevel0[16] */
+        {11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,  /*0 - 15*/},
+        /* nFcCorSatLevel1[16] */
+        {16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,  /*0 - 15*/},
     },
 };
 

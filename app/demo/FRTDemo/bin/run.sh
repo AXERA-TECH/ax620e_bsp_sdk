@@ -59,7 +59,7 @@ fi
 #set -e
 cd $cur_path
 
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$cur_path/lib
 
 # Enable core dump
 EnableCoreDump=0

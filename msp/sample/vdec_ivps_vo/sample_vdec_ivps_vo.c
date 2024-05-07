@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -280,7 +280,7 @@ static AX_S32 _CaluWinRes(AX_U32 uChnNum, AX_U32 u32LayerWidth, AX_U32 u32LayerH
         break;
     }
 
-    *u32Width   = ALIGN_DOWN(u32LayerWidth / u32Col, 16);
+    *u32Width   = ALIGN_DOWN(u32LayerWidth / u32Col, 2);
     *u32Height  = ALIGN_DOWN(u32LayerHeight / u32Row, 2);
 
     return AX_SUCCESS;

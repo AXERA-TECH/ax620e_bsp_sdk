@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -182,7 +182,7 @@ AX_VOID SampleSendFrameInit(VENC_CHN VeChn, AX_PAYLOAD_TYPE_E enType, SAMPLE_VEN
     pstArg->strideY = pCml->strideY;
     pstArg->strideU = pCml->strideU;
     pstArg->strideV = pCml->strideV;
-    pstArg->syncType = pCml->syncType;
+    pstArg->syncType = pCml->syncSend;
     pstArg->VeChn = VeChn;
     pstArg->frameSize = pCml->frameSize;
     pstArg->blkSize = pCml->BlkSize;
@@ -209,7 +209,8 @@ AX_VOID SampleSendFrameInit(VENC_CHN VeChn, AX_PAYLOAD_TYPE_E enType, SAMPLE_VEN
     pstArg->qpMapBlkType = pCml->qpMapBlkType;
 
     pstArg->qpMapSize = pCml->qpMapSize;
-
+    pstArg->svcRegionNum = pCml->svcRegionNum;
+    pstArg->svcQpMod = pCml->svcQpMod;
     pstArg->rcMode = pCml->rcMode;
     pstArg->rcModeNew = pCml->rcModeNew;
 
@@ -276,7 +277,7 @@ AX_VOID SampleGetStreamInit(VENC_CHN VeChn, AX_PAYLOAD_TYPE_E enType, SAMPLE_VEN
 {
     pstArg->bGetStrmStart = AX_TRUE;
     pstArg->enType = enType;
-    pstArg->syncType = pCml->syncType;
+    pstArg->syncType = pCml->syncGet;
     pstArg->VeChn = VeChn;
     pstArg->testId = pCml->ut;
     pstArg->gopMode = pCml->gopMode;
@@ -288,6 +289,7 @@ AX_VOID SampleGetStreamInit(VENC_CHN VeChn, AX_PAYLOAD_TYPE_E enType, SAMPLE_VEN
     pstArg->output = pCml->output;
     pstArg->ptrPrivate = (AX_VOID *)pCml;
     pstArg->bSleep = pCml->bSleep;
+    pstArg->bSourcePool = pCml->bSourcePool;
     pstArg->srcFrameRate = pCml->srcFrameRate;
     pstArg->dstFrameRate = pCml->dstFrameRate;
     strcpy(pstArg->strmSuffix, pCml->strmSuffix);
@@ -399,7 +401,6 @@ AX_VOID *SAMPLE_VENC_SendFrameProc(AX_VOID *arg)
                 }
             }
         }
-
         s32Ret = AX_VENC_SendFrame(VeChn, &stFrame, syncType);
         if (AX_SUCCESS != s32Ret) {
 
@@ -550,7 +551,6 @@ AX_VOID *SAMPLE_VENC_SendFramePerfProc(AX_VOID *arg)
         stFrame.stVFrame.u32PicStride[0] = strideY;
         stFrame.stVFrame.u32PicStride[1] = strideU;
         stFrame.stVFrame.u32PicStride[2] = strideV;
-
         s32Ret = AX_VENC_SendFrame(VeChn, &stFrame, syncType);
         if (AX_SUCCESS != s32Ret)
             SAMPLE_LOG("chn-%d: AX_VENC_SendFrame failed, ret=%x\n", VeChn, s32Ret);
@@ -938,6 +938,7 @@ AX_VOID *SAMPLE_VENC_GetStreamProc(AX_VOID *arg)
     SAMPLE_VENC_GETSTREAM_PARA_T *pstArg = (SAMPLE_VENC_GETSTREAM_PARA_T *)arg;
     VENC_CHN VeChn = pstArg->VeChn;
     AX_S32 testId = pstArg->testId;
+    AX_S32 syncType = 100;
     AX_CHAR esName[50];
     AX_PAYLOAD_TYPE_E enType = pstArg->enType;
 
@@ -962,7 +963,7 @@ AX_VOID *SAMPLE_VENC_GetStreamProc(AX_VOID *arg)
     }
 
     while (pstArg->bGetStrmStart) {
-        s32Ret = AX_VENC_GetStream(VeChn, &stStream, pstArg->syncType);
+        s32Ret = AX_VENC_GetStream(VeChn, &stStream, syncType);
         if (AX_SUCCESS == s32Ret) {
             s32Ret = COMMON_VENC_WriteStream(pstArg, AX_FALSE, totalGetStream, pStrm, &stStream);
             if (AX_SUCCESS != s32Ret)

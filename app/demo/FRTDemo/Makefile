@@ -26,11 +26,15 @@ STRIP_APP           := yes
 IPC_SUPPORT         := yes
 PANO_SUPPORT        := no
 TUNING_CTRL_SUPPORT := yes
+APP_AAC_SUPPORT     := faac
+APP_OPUS_SUPPORT    := no
 else
 STRIP_APP           := no
 IPC_SUPPORT         := yes
 PANO_SUPPORT        := yes
 TUNING_CTRL_SUPPORT := yes
+APP_AAC_SUPPORT     := fdk
+APP_OPUS_SUPPORT    := no
 endif
 
 ################################################################################
@@ -78,3 +82,5 @@ export STRIP_APP
 export IPC_SUPPORT
 export PANO_SUPPORT
 export TUNING_CTRL_SUPPORT
+export APP_AAC_SUPPORT
+export APP_OPUS_SUPPORT

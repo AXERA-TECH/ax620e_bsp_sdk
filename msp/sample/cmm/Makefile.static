@@ -35,7 +35,6 @@ endif
 # dependency
 CLIB            += -L$(LIB_PATH)
 CLIB            += -lpthread
-CLIB            += -l:libax_dma.a
 CLIB            += -l:libax_sys.a
 
 # install

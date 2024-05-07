@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -63,8 +63,10 @@ void exit_handler(int s) {
     AX_S32 nDelayExitTime = 0;
     if (CCmdLineParser::GetInstance()->GetDelayExitTime(nDelayExitTime)) {
         if (nDelayExitTime > 0 && g_Exit_count == 0) {
+            CPrintHelper::GetInstance()->FinalPrint();
             printf("====================== Wait %d ms ======================\n", nDelayExitTime);
             CElapsedTimer::GetInstance()->mSleep((AX_U32)nDelayExitTime);
+            printf("====================== Wait %d ms done =================\n", nDelayExitTime);
         }
     }
 

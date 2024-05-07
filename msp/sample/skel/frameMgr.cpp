@@ -1,12 +1,13 @@
-/**********************************************************************************
+/**************************************************************************************************
  *
- * Copyright (c) 2019-2020 Beijing AXera Technology Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Beijing AXera Technology Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Beijing AXera Technology Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
- **********************************************************************************/
+ **************************************************************************************************/
+
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
@@ -15,106 +16,57 @@
 #include "frameMgr.h"
 #include <iostream>
 
-typedef struct _SKEL_FRAME_BUF_T {
-    AX_VOID *YUVDataVir;
-    AX_U64 YUVDataPhy;
-    AX_BOOL bUsed;
-    AX_U64 nFrameId;
-
-    _SKEL_FRAME_BUF_T(){
-        memset(this, 0x00, sizeof(struct _SKEL_FRAME_BUF_T));
-    }
-} SKEL_FRAME_BUF_T;
-
 AX_BOOL g_bSkel_frame_mgr_inited = AX_FALSE;
-std::vector<SKEL_FRAME_BUF_T> g_skel_frame_buf;
+AX_POOL g_skel_frame_poolId = AX_INVALID_POOLID;
 
-AX_VOID FrameMgrCreate(AX_U32 nDepth) {
-    g_skel_frame_buf.resize(nDepth);
+AX_VOID FrameMgrCreate(AX_U32 nFrameSize, AX_U32 nDepth) {
+    AX_POOL_CONFIG_T stPoolConfig;
+
+    memset(&stPoolConfig, 0, sizeof(AX_POOL_CONFIG_T));
+    stPoolConfig.MetaSize = 4096;
+    stPoolConfig.BlkCnt = nDepth;
+    stPoolConfig.BlkSize = nFrameSize;
+    stPoolConfig.CacheMode = AX_POOL_CACHE_MODE_NONCACHE;
+    memset(stPoolConfig.PartitionName, 0, sizeof(stPoolConfig.PartitionName));
+    strcpy((AX_CHAR *)stPoolConfig.PartitionName, "anonymous");
+
+    g_skel_frame_poolId = AX_POOL_CreatePool(&stPoolConfig);
     g_bSkel_frame_mgr_inited = AX_TRUE;
 }
 
-AX_VOID FrameMgr(const AX_SKEL_RESULT_T *pstResult) {
-    if (!pstResult || !g_bSkel_frame_mgr_inited) {
-        return;
-    }
-
-    for (AX_U32 i = 0; i < g_skel_frame_buf.size(); i ++) {
-        if (g_skel_frame_buf[i].bUsed) {
-            // still in frame queue
-            if (g_skel_frame_buf[i].nFrameId > pstResult->nFrameId) {
-                continue;
-            }
-
-            AX_BOOL bInCacheList = AX_FALSE;
-            for (AX_U32 j = 0; j < pstResult->nCacheListSize; j ++) {
-                if (g_skel_frame_buf[i].nFrameId == pstResult->pstCacheList[j].nFrameId) {
-                    bInCacheList = AX_TRUE;
-                    break;
-                }
-            }
-
-            if (!bInCacheList) {
-                if (g_skel_frame_buf[i].YUVDataPhy != 0
-                    && g_skel_frame_buf[i].YUVDataVir) {
-                    AX_SYS_MemFree(g_skel_frame_buf[i].YUVDataPhy, g_skel_frame_buf[i].YUVDataVir);
-                    g_skel_frame_buf[i].YUVDataPhy = 0;
-                    g_skel_frame_buf[i].YUVDataVir = NULL;
-                }
-                g_skel_frame_buf[i].bUsed = AX_FALSE;
-                g_skel_frame_buf[i].nFrameId = 0;
-            }
-        }
-    }
-}
-
-AX_BOOL FrameMgrGet(AX_U64 *YUVDataPhy, AX_VOID **YUVDataVir, AX_U32 nFrameSize, AX_U64 nFrameId ,AX_BLK blkId) {
-    if (!g_bSkel_frame_mgr_inited) {
+AX_BOOL FrameMgrGet(AX_U64 *YUVDataPhy, AX_VOID **YUVDataVir, AX_U32 nFrameSize, AX_U64 nFrameId, AX_BLK *nBlkId) {
+    if (!g_bSkel_frame_mgr_inited
+        || g_skel_frame_poolId == AX_INVALID_POOLID) {
         return AX_FALSE;
     }
 
-    for (AX_U32 i = 0; i < g_skel_frame_buf.size(); i ++) {
-        if (!g_skel_frame_buf[i].bUsed) {
-            if (g_skel_frame_buf[i].YUVDataPhy == 0
-                || !g_skel_frame_buf[i].YUVDataVir) {
-                //AX_S32 nRet = AX_SYS_MemAlloc(&g_skel_frame_buf[i].YUVDataPhy, (AX_VOID **)&g_skel_frame_buf[i].YUVDataVir, nFrameSize, 256, (AX_S8 *)"SKEL_TEST");
-                g_skel_frame_buf[i].YUVDataPhy = AX_POOL_Handle2PhysAddr(blkId);
-                g_skel_frame_buf[i].YUVDataVir = AX_POOL_GetBlockVirAddr(blkId);
+    AX_BLK blkId = AX_POOL_GetBlock(g_skel_frame_poolId, nFrameSize, NULL);
 
-                if (g_skel_frame_buf[i].YUVDataPhy == 0
-                    || !g_skel_frame_buf[i].YUVDataVir) {
-                    return AX_FALSE;
-                }
-            }
+    if (blkId != AX_INVALID_BLOCKID) {
+        *YUVDataPhy = AX_POOL_Handle2PhysAddr(blkId);
+        *YUVDataVir = AX_POOL_GetBlockVirAddr(blkId);
+        *nBlkId = blkId;
 
-            *YUVDataPhy = g_skel_frame_buf[i].YUVDataPhy;
-            *YUVDataVir = g_skel_frame_buf[i].YUVDataVir;
-
-            g_skel_frame_buf[i].bUsed = AX_TRUE;
-            g_skel_frame_buf[i].nFrameId = nFrameId;
-
-            return AX_TRUE;
-        }
+        return AX_TRUE;
     }
 
     return AX_FALSE;
 }
 
+AX_VOID FrameMgrRelease(AX_BLK blkId) {
+    if (blkId != AX_INVALID_BLOCKID) {
+        blkId = AX_POOL_ReleaseBlock(blkId);
+    }
+}
+
 AX_VOID FrameMgrDestroy(AX_VOID) {
-    if (!g_bSkel_frame_mgr_inited) {
+    if (!g_bSkel_frame_mgr_inited
+        || g_skel_frame_poolId == AX_INVALID_POOLID) {
         return;
     }
 
-    for (AX_U32 i = 0; i < g_skel_frame_buf.size(); i ++) {
-        if (g_skel_frame_buf[i].YUVDataPhy != 0
-            && g_skel_frame_buf[i].YUVDataVir) {
-            AX_SYS_MemFree(g_skel_frame_buf[i].YUVDataPhy, g_skel_frame_buf[i].YUVDataVir);
-            g_skel_frame_buf[i].YUVDataPhy = 0;
-            g_skel_frame_buf[i].YUVDataVir = NULL;
-        }
-        g_skel_frame_buf[i].bUsed = AX_FALSE;
-        g_skel_frame_buf[i].nFrameId = 0;
-    }
+    AX_POOL_DestroyPool(g_skel_frame_poolId);
 
+    g_skel_frame_poolId = AX_INVALID_POOLID;
     g_bSkel_frame_mgr_inited = AX_FALSE;
 }

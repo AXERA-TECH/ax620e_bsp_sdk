@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -69,7 +69,7 @@ typedef enum {
     SAMPLE_VIN_NONE  = -1,
     SAMPLE_VIN_SINGLE_DUMMY  = 0,
     SAMPLE_VIN_SINGLE_OS04A10 = 1,
-    SAMPLE_VIN_SINGLE_OS08A20  = 2,
+    SAMPLE_VIN_SINGLE_SC450AI  = 2,
     SAMPLE_VIN_BUTT
 } SAMPLE_VIN_CASE_E;
 

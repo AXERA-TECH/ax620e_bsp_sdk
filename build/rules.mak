@@ -12,6 +12,10 @@ CFLAGS		+= -D$(PROJECT) -D$(CHIP_NAME)
 CPPFLAGS	+= -DBUILD_AXVERSION=\"$(SDK_VERSION)\"
 CFLAGS		+= -DBUILD_AXVERSION=\"$(SDK_VERSION)\"
 
+ifeq ($(ARCH),arm)
+CFLAGS		+= -Wno-psabi
+endif
+
 MOD_VER_FILE    := $(GENERATED_PATH)/ax_module_version.h
 
 ifeq ($(SUPPORT_HW_EL),TRUE)

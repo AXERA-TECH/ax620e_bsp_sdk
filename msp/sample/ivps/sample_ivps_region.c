@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -48,13 +48,12 @@ static AX_VOID IVPS_RegionCfg0(AX_IVPS_RGN_DISP_GROUP_T *ptRegion)
 
     /*
     nAlpha: Required
-            [0, 255], 0: transparent, 255: opaque.
+            (0, 255], 0: transparent, 255: opaque.
     */
     ptRegion->nNum = 4;
     ptRegion->tChnAttr.nZindex = 0;
-    ptRegion->tChnAttr.nAlpha = 200; /*0 - 255, 0: transparent, 255: opaque*/
+    ptRegion->tChnAttr.nAlpha = 200; /* (0, 255], 0: transparent, 255: opaque */
     ptRegion->tChnAttr.eFormat = AX_FORMAT_ARGB8888;
-
     ptRegion->arrDisp[0].bShow = AX_TRUE;
     ptRegion->arrDisp[0].eType = AX_IVPS_RGN_TYPE_LINE;
     ptRegion->arrDisp[0].uDisp.tLine.tPTs[0].nX = 10;
@@ -63,10 +62,11 @@ static AX_VOID IVPS_RegionCfg0(AX_IVPS_RGN_DISP_GROUP_T *ptRegion)
     ptRegion->arrDisp[0].uDisp.tLine.tPTs[1].nY = 10;
     ptRegion->arrDisp[0].uDisp.tLine.nLineWidth = 4;
     ptRegion->arrDisp[0].uDisp.tLine.nColor = GREEN;
-    ptRegion->arrDisp[0].uDisp.tLine.nAlpha = 200 /*0 - 255, 0: transparent, 255: opaque*/;
+    ptRegion->arrDisp[0].uDisp.tLine.nAlpha = 200 /* (0, 255], 0: transparent, 255: opaque */;
 
     ptRegion->arrDisp[1].bShow = AX_TRUE;
     ptRegion->arrDisp[1].eType = AX_IVPS_RGN_TYPE_POLYGON;
+    ptRegion->arrDisp[1].uDisp.tPolygon.nPointNum = 4;
     ptRegion->arrDisp[1].uDisp.tPolygon.tPTs[0].nX = 200;
     ptRegion->arrDisp[1].uDisp.tPolygon.tPTs[0].nY = 200;
     ptRegion->arrDisp[1].uDisp.tPolygon.tPTs[1].nX = 400;
@@ -97,7 +97,9 @@ static AX_VOID IVPS_RegionCfg0(AX_IVPS_RGN_DISP_GROUP_T *ptRegion)
     ptRegion->arrDisp[3].uDisp.tPolygon.tRect.nW = 100;
     ptRegion->arrDisp[3].uDisp.tPolygon.tRect.nH = 80;
     ptRegion->arrDisp[3].uDisp.tPolygon.bSolid = AX_FALSE;
-    ptRegion->arrDisp[3].uDisp.tPolygon.bCornerRect = AX_TRUE;
+    ptRegion->arrDisp[3].uDisp.tPolygon.tCornerRect.bEnable = AX_FALSE;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tCornerRect.nHorLength = 20;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tCornerRect.nVerLength = 10;
     ptRegion->arrDisp[3].uDisp.tPolygon.nLineWidth = 2;
     ptRegion->arrDisp[3].uDisp.tPolygon.nColor = GREEN;
     ptRegion->arrDisp[3].uDisp.tPolygon.nAlpha = 200;
@@ -114,7 +116,7 @@ static AX_VOID IVPS_RegionCfg1(AX_IVPS_RGN_DISP_GROUP_T *ptRegion)
             Indicates which layer to draw OSD on.
             If in inplace mode, nZindex is in [0, 31]. If not, nZindex = 0.
     nAlpha: Required
-            [0, 255], 0: transparent, 255: opaque.
+            (0, 255], 0: transparent, 255: opaque.
     eFormat: Required
             Support AX_FORMAT_ARGB1555/AX_FORMAT_RGBA5551/AX_FORMAT_BITMAP.
             The sub arrDisp's format should be the same as the for format.
@@ -122,7 +124,7 @@ static AX_VOID IVPS_RegionCfg1(AX_IVPS_RGN_DISP_GROUP_T *ptRegion)
     */
     ptRegion->nNum = 2;
     ptRegion->tChnAttr.nZindex = 0;
-    ptRegion->tChnAttr.nAlpha = 200; /*0 - 255, 0: transparent, 255: opaque*/
+    ptRegion->tChnAttr.nAlpha = 200; /* (0, 255], 0: transparent, 255: opaque */
     ptRegion->tChnAttr.eFormat = AX_FORMAT_ARGB1555;
     ptRegion->arrDisp[0].bShow = AX_TRUE;
     ptRegion->arrDisp[0].eType = AX_IVPS_RGN_TYPE_OSD;
@@ -152,7 +154,7 @@ static AX_VOID IVPS_RegionCfg2(AX_IVPS_RGN_DISP_GROUP_T *ptRegion)
 {
     /*
     nAlpha: Required
-            [0, 255], 0: transparent, 254: opaque.
+            (0, 255], 0: transparent, 254: opaque.
     */
     ptRegion->nNum = 5;
     ptRegion->tChnAttr.nZindex = 2;
@@ -214,7 +216,7 @@ static AX_VOID IVPS_RegionCfg3(AX_IVPS_RGN_DISP_GROUP_T *ptRegion)
             Indicates which layer to draw OSD on.
             If in inplace mode, nZindex is in [0, 31]. If not, nZindex = 0.
     nAlpha: Required
-            [0, 255], 0: transparent, 255: opaque.
+            (0, 255], 0: transparent, 255: opaque.
     eFormat: Required
             Support AX_FORMAT_ARGB1555/AX_FORMAT_RGBA5551/AX_FORMAT_BITMAP.
             The sub arrDisp's format should be the same as the for format.
@@ -223,7 +225,7 @@ static AX_VOID IVPS_RegionCfg3(AX_IVPS_RGN_DISP_GROUP_T *ptRegion)
     ByteReverse(&bitmap_cursor[0], sizeof(bitmap_cursor));
     ptRegion->nNum = 2;
     ptRegion->tChnAttr.nZindex = 0;
-    ptRegion->tChnAttr.nAlpha = 200; /*0 - 255, 0: transparent, 255: opaque*/
+    ptRegion->tChnAttr.nAlpha = 200; /* (0, 255], 0: transparent, 255: opaque */
     ptRegion->tChnAttr.eFormat = AX_FORMAT_BITMAP;
     ptRegion->tChnAttr.nBitColor.nColor = 0xFF0000;
     ptRegion->tChnAttr.nBitColor.bColorInv = AX_TRUE;
@@ -250,6 +252,81 @@ static AX_VOID IVPS_RegionCfg3(AX_IVPS_RGN_DISP_GROUP_T *ptRegion)
     ptRegion->arrDisp[1].uDisp.tOSD.pBitmap = &bitmap_cursor[0];
 }
 
+/* Polygon config */
+static AX_VOID IVPS_RegionCfg4(AX_IVPS_RGN_DISP_GROUP_T *ptRegion)
+{
+
+    ptRegion->nNum = 1;
+    ptRegion->tChnAttr.nZindex = 0;
+    ptRegion->tChnAttr.nAlpha = 200; /* (0, 255], 0: transparent, 255: opaque */
+    ptRegion->tChnAttr.eFormat = AX_FORMAT_ARGB8888;
+
+    ptRegion->arrDisp[0].bShow = AX_TRUE;
+    ptRegion->arrDisp[0].eType = AX_IVPS_RGN_TYPE_POLYGON;
+    ptRegion->arrDisp[0].uDisp.tPolygon.nPointNum = 4;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[0].nX = 200;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[0].nY = 200;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[1].nX = 400;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[1].nY = 200;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[2].nX = 450;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[2].nY = 500;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[3].nX = 200;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[3].nY = 500;
+    ptRegion->arrDisp[0].uDisp.tPolygon.bSolid = AX_TRUE;
+    ptRegion->arrDisp[0].uDisp.tPolygon.nColor = LIGHTBLUE;
+    ptRegion->arrDisp[0].uDisp.tPolygon.nAlpha = 200;
+}
+
+/* Polygon config */
+static AX_VOID IVPS_RegionCfg5(AX_IVPS_RGN_DISP_GROUP_T *ptRegion)
+{
+
+    ptRegion->nNum = 1;
+    ptRegion->tChnAttr.nZindex = 0;
+    ptRegion->tChnAttr.nAlpha = 200; /* (0, 255], 0: transparent, 255: opaque */
+    ptRegion->tChnAttr.eFormat = AX_FORMAT_ARGB8888;
+
+    ptRegion->arrDisp[0].bShow = AX_TRUE;
+    ptRegion->arrDisp[0].eType = AX_IVPS_RGN_TYPE_POLYGON;
+    ptRegion->arrDisp[0].uDisp.tPolygon.nPointNum = 4;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[0].nX = 200 + 350;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[0].nY = 200;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[1].nX = 400 + 350;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[1].nY = 200;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[2].nX = 450 + 350;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[2].nY = 500;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[3].nX = 200 + 350;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[3].nY = 500;
+    ptRegion->arrDisp[0].uDisp.tPolygon.bSolid = AX_TRUE;
+    ptRegion->arrDisp[0].uDisp.tPolygon.nColor = RED;
+    ptRegion->arrDisp[0].uDisp.tPolygon.nAlpha = 200;
+}
+
+/* Polygon config */
+static AX_VOID IVPS_RegionCfg6(AX_IVPS_RGN_DISP_GROUP_T *ptRegion)
+{
+
+    ptRegion->nNum = 1;
+    ptRegion->tChnAttr.nZindex = 0;
+    ptRegion->tChnAttr.nAlpha = 200; /* (0, 255], 0: transparent, 255: opaque */
+    ptRegion->tChnAttr.eFormat = AX_FORMAT_ARGB8888;
+
+    ptRegion->arrDisp[0].bShow = AX_TRUE;
+    ptRegion->arrDisp[0].eType = AX_IVPS_RGN_TYPE_POLYGON;
+    ptRegion->arrDisp[0].uDisp.tPolygon.nPointNum = 4;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[0].nX = 200 + 400;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[0].nY = 200 + 350;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[1].nX = 400 + 400;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[1].nY = 200 + 350;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[2].nX = 450 + 400;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[2].nY = 500 + 350;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[3].nX = 200 + 400;
+    ptRegion->arrDisp[0].uDisp.tPolygon.tPTs[3].nY = 500 + 350;
+    ptRegion->arrDisp[0].uDisp.tPolygon.bSolid = AX_TRUE;
+    ptRegion->arrDisp[0].uDisp.tPolygon.nColor = DARKSALMON;
+    ptRegion->arrDisp[0].uDisp.tPolygon.nAlpha = 200;
+}
+
 static AX_VOID IVPS_OsdBufRelease(AX_IVPS_RGN_DISP_GROUP_T *ptRegion)
 {
     AX_SYS_MemFree((AX_U64)ptRegion->arrDisp[0].uDisp.tOSD.u64PhyAddr,
@@ -262,11 +339,17 @@ static AX_IVPS_RGN_DISP_GROUP_T tRegionGrp[8];
 
 static AX_VOID IVPS_RegionConfigAll(AX_S32 nNum)
 {
-
     IVPS_RegionCfg0(&tRegionGrp[0]);
     IVPS_RegionCfg1(&tRegionGrp[1]);
     IVPS_RegionCfg2(&tRegionGrp[2]);
     IVPS_RegionCfg3(&tRegionGrp[3]);
+}
+
+static AX_VOID IVPS_RegionConfigAllPolygon(void)
+{
+    IVPS_RegionCfg4(&tRegionGrp[4]);
+    IVPS_RegionCfg5(&tRegionGrp[5]);
+    IVPS_RegionCfg6(&tRegionGrp[6]);
 }
 
 static AX_S32 IVPS_RegionUpdate(AX_U32 nRgnNum)
@@ -314,7 +397,6 @@ AX_S32 IVPS_StartRegion(AX_U32 nRegionNum)
     }
     for (AX_S32 i = 0; i < nRegionNum; i++)
     {
-
         gRegions[i].handle = AX_IVPS_RGN_Create();
         ALOGI("gRegions[%d].handle:%d", i, gRegions[i].handle);
         if (AX_IVPS_INVALID_REGION_HANDLE == gRegions[i].handle)
@@ -322,14 +404,12 @@ AX_S32 IVPS_StartRegion(AX_U32 nRegionNum)
             ALOGE("AX_IVPS_CreateRegion(%d) fail", i);
             return -1;
         }
-
         AX_S32 ret = AX_IVPS_RGN_AttachToFilter(gRegions[i].handle,
                                                 gRegions[i].IvpsGrp, gRegions[i].IvpsFilter);
         if (IVPS_SUCC != ret)
         {
             ALOGE("AX_IVPS_RGN_DetachFromFilter(handle %d => Grp %d Filter %x) fail, ret=0x%x",
                   gRegions[i].handle, gRegions[i].IvpsGrp, gRegions[i].IvpsFilter, ret);
-
             /* detach and destroy overlay */
             for (; i >= 0; i--)
             {
@@ -344,7 +424,6 @@ AX_S32 IVPS_StartRegion(AX_U32 nRegionNum)
             return -1;
         }
     }
-
     return 0;
 }
 
@@ -360,14 +439,30 @@ AX_S32 IVPS_StopRegion(AX_VOID)
     {
         if (AX_IVPS_INVALID_REGION_HANDLE != gRegions[j].handle)
         {
-
             AX_IVPS_RGN_DetachFromFilter(gRegions[j].handle,
                                          gRegions[j].IvpsGrp, gRegions[j].IvpsFilter);
             AX_IVPS_RGN_Destroy(gRegions[j].handle);
             gRegions[j].handle = AX_IVPS_INVALID_REGION_HANDLE;
         }
     }
+    return 0;
+}
 
+/*
+ * IVPS_StopRegionById()
+ * Detach the handle from filter, then destroy the handle.
+ */
+AX_S32 IVPS_StopRegionById(AX_S32 nRegionId)
+{
+    ALOGI("IVPS_Stop RegionId:%ld", nRegionId);
+
+    if (AX_IVPS_INVALID_REGION_HANDLE != gRegions[nRegionId].handle)
+    {
+        AX_IVPS_RGN_DetachFromFilter(gRegions[nRegionId].handle,
+                                     gRegions[nRegionId].IvpsGrp, gRegions[nRegionId].IvpsFilter);
+        AX_IVPS_RGN_Destroy(gRegions[nRegionId].handle);
+        gRegions[nRegionId].handle = AX_IVPS_INVALID_REGION_HANDLE;
+    }
     return 0;
 }
 
@@ -375,21 +470,38 @@ AX_S32 IVPS_StopRegion(AX_VOID)
  * IVPS_UpdateThreadStart()
  * Create a thread to update the region canvas every time.
  */
-AX_S32 IVPS_RegionUpdateThreadStart(AX_S32 nRegionNum, SAMPLE_IVPS_GRP_T *pGrp)
+AX_S32 IVPS_RegionUpdateThreadStart(AX_S32 nRegionNum, SAMPLE_IVPS_GRP_T *pGrp, AX_BOOL bStopTest)
 {
-    IVPS_RegionConfigAll(nRegionNum);
-    ALOGI("UPDATE nRegionNum:%d", nRegionNum);
-
-    if (0 != pthread_create(&gSampleIvpsMain.region_tid, NULL, IVPS_UpdateCanvasThread, (AX_VOID *)(AX_LONG)nRegionNum))
+    AX_U32 ret;
+    printf("\nIVPS_RegionUpdateThreadStart  bStopTest:%d\n", bStopTest);
+    if (bStopTest)
     {
-        return -1;
+        IVPS_RegionConfigAllPolygon();
+        for (AX_U32 index = 0; index < 3; index++)
+        {
+            ret = AX_IVPS_RGN_Update(gRegions[index].handle, &tRegionGrp[index + 4]);
+            if (IVPS_SUCC != ret)
+            {
+                ALOGE("AX_IVPS_RGN_Update fail, ret=0x%x", ret);
+            }
+        }
     }
-
+    else
+    {
+        IVPS_RegionConfigAll(nRegionNum);
+        ALOGI("UPDATE nRegionNum:%d", nRegionNum);
+        if (0 != pthread_create(&gSampleIvpsMain.region_tid, NULL, IVPS_UpdateCanvasThread, (AX_VOID *)(AX_LONG)nRegionNum))
+        {
+            return -1;
+        }
+    }
     return 0;
 }
 
-AX_S32 IVPS_RegionUpdateThreadStop(AX_VOID)
+AX_S32 IVPS_RegionUpdateThreadStop(AX_BOOL bStopTest)
 {
-    pthread_join(gSampleIvpsMain.region_tid, NULL);
+    if (!bStopTest) {
+        pthread_join(gSampleIvpsMain.region_tid, NULL);
+    }
     return 0;
 }

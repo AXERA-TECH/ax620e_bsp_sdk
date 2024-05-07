@@ -33,6 +33,7 @@ SRCS			+= $(SAMPLE_PATH)/common/common_sys.c
 SRCS			+= $(SAMPLE_PATH)/common/common_vin.c
 SRCS			+= $(SAMPLE_PATH)/common/common_isp.c
 SRCS			+= $(SAMPLE_PATH)/common/common_nt.c
+SRCS			+= $(SAMPLE_PATH)/common/common_hw.c
 SRCCPPS			:= $(wildcard $(SAMPLE_PATH)/rtsp/*.cpp)
 
 vpath %.c $(addsuffix :,$(dir $(patsubst %.c,%.o,$(SRCS))))

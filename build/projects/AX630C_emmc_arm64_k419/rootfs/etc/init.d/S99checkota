@@ -1,0 +1,65 @@
+#!/bin/sh
+function get_env() {
+	fw_printenv | grep ${1}= | awk -F = '{ print $2 }'
+}
+
+start() {
+	upgrade_slota_available=$(fw_printenv | grep upgrade_slota_available | cut -d'=' -f2)
+	upgrade_slotb_available=$(fw_printenv | grep upgrade_slotb_available | cut -d'=' -f2)
+	bootsystem=`get_env "bootsystem"`
+
+	if [ "$upgrade_slota_available" == "0" ] && [ "$upgrade_slotb_available" == "0" ]; then
+		echo "ota check not need"
+	else
+		echo "Starting ota check"
+		if [ "$bootsystem" == "A" ]; then
+			if [ "$upgrade_slota_available" == "1" ]; then
+				echo "===== OTA upgrade A system successful ====="
+				fw_setenv upgrade_slota_available 0
+				fw_setenv upgrade_slotb_available 0
+			elif [ "$upgrade_slotb_available" == "1" ]; then
+				echo "===== OTA upgrade B system failed ====="
+				fw_setenv upgrade_slota_available 0
+				fw_setenv upgrade_slotb_available 0
+			fi
+		elif [ "$bootsystem" == "B" ]; then
+			if [ "$upgrade_slotb_available" == "1" ]; then
+				echo "===== OTA upgrade B system successful ====="
+				fw_setenv upgrade_slota_available 0
+				fw_setenv upgrade_slotb_available 0
+			elif [ "$upgrade_slota_available" == "1" ]; then
+				echo "===== OTA upgrade A system failed ====="
+				fw_setenv upgrade_slota_available 0
+				fw_setenv upgrade_slotb_available 0
+			fi
+		fi
+	fi
+
+	# printf "Starting swupdate: "
+	# start-stop-daemon -S -q -m -b -p /var/run/swupdate.pid \
+	# 		-x /opt/swupdate/bin/swupdate.sh
+	# [ $? = 0 ] && echo "OK" || echo "FAIL"
+}
+
+stop() {
+	echo "check ota stop"
+	# printf "Stopping swupdate: "
+	# start-stop-daemon -K -q -p /var/run/swupdate.pid && start-stop-daemon -K -q -n swupdate
+	# [ $? = 0 ] && echo "OK" || echo "FAIL"
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	restart|reload)
+		stop
+		start
+		;;
+	*)
+		exit 1
+esac
+exit $?

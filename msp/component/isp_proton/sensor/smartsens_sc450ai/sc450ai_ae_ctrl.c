@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Shanghai) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Shanghai) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Shanghai) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -702,14 +702,14 @@ const SC450AI_GAIN_TABLE_T sc450ai_dgain_table[] = {
     {15.875, 0x07, 0xFE},
 };
 
-static AX_F32 sc450ai_again2value(float gain, AX_U8 *again_in, AX_U8 *again_de)
+static AX_S32 sc450ai_again2value(AX_F32 gain, AX_U8 *again_in, AX_U8 *again_de, AX_F32 *gain_value)
 {
     AX_U32 i;
     AX_U32 count;
     AX_U32 ret_value = 0;
 
     if (!again_in || !again_de)
-        return -1;
+        return AX_SNS_ERR_NULL_PTR;
 
     count = sizeof(sc450ai_again_table) / sizeof(sc450ai_again_table[0]);
 
@@ -717,26 +717,25 @@ static AX_F32 sc450ai_again2value(float gain, AX_U8 *again_in, AX_U8 *again_de)
         if (gain > sc450ai_again_table[i].gain) {
             continue;
         } else {
-            if (again_in)
-                *again_in = sc450ai_again_table[i].gain_in;
-            if (again_de)
-                *again_de = sc450ai_again_table[i].gain_de;
+            *again_in = sc450ai_again_table[i].gain_in;
+            *again_de = sc450ai_again_table[i].gain_de;
+            *gain_value = sc450ai_again_table[i].gain;
             SNS_DBG("again=%f, again_in=0x%x, again_de=0x%x\n", gain, *again_in, *again_de);
-            return sc450ai_again_table[i].gain;
+            return AX_SNS_SUCCESS;
         }
     }
 
-    return -1;
+    return AX_SNS_ERR_NOT_MATCH;
 }
 
-static AX_F32 sc450ai_dgain2value(float gain, AX_U8 *dgain_in, AX_U8 *dgain_de, AX_U8 *dgain_de2)
+static AX_S32 sc450ai_dgain2value(AX_F32 gain, AX_U8 *dgain_in, AX_U8 *dgain_de, AX_U8 *dgain_de2, AX_F32 *gain_value)
 {
     AX_U32 i;
     AX_U32 count;
     AX_U32 ret_value = 0;
 
     if (!dgain_in || !dgain_de)
-        return -1;
+        return AX_SNS_ERR_NULL_PTR;
 
     count = sizeof(sc450ai_dgain_table) / sizeof(sc450ai_dgain_table[0]);
 
@@ -746,14 +745,13 @@ static AX_F32 sc450ai_dgain2value(float gain, AX_U8 *dgain_in, AX_U8 *dgain_de, 
         } else {
             *dgain_in = sc450ai_dgain_table[i].gain_in;
             *dgain_de = sc450ai_dgain_table[i].gain_de;
-
+            *gain_value = sc450ai_dgain_table[i].gain;
             SNS_DBG("dgain=%f, dgain_in=0x%x, dgain_de=0x%x\n", gain, *dgain_in, *dgain_de);
-
-            return sc450ai_dgain_table[i].gain;
+            return AX_SNS_SUCCESS;
         }
     }
 
-    return -1;
+    return AX_SNS_ERR_NOT_MATCH;
 }
 
 
@@ -762,7 +760,7 @@ static AX_S32 sc450ai_get_gain_table(AX_SNS_AE_GAIN_TABLE_T *params)
     AX_U32 i;
     AX_S32 ret = 0;
     if (!params)
-        return -1;
+        return AX_SNS_ERR_NULL_PTR;
 
     params->nAgainTableSize = sizeof(sc450ai_again_table) / sizeof(sc450ai_again_table[0]);
     params->nDgainTableSize = sizeof(sc450ai_dgain_table) / sizeof(sc450ai_dgain_table[0]);
@@ -800,7 +798,7 @@ static AX_S32 sc450ai_set_exp_limit(ISP_PIPE_ID nPipeId, AX_F32 fHdrRatio)
         sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMaxIntegrationTime[HDR_LONG_FRAME_IDX] = SC450AI_SDR_EXP_LINE_MAX(sns_sc450aiparams[nPipeId].vts) / 2.0f;
         sns_obj->ae_ctrl_param.sns_ae_param.fIntegrationTimeIncrement[HDR_LONG_FRAME_IDX] = SC450AI_SDR_INTEGRATION_TIME_STEP;
     } else if (sns_obj->sns_mode_obj.eHDRMode == AX_SNS_HDR_2X_MODE) {
-        vts_s = (2 * sns_sc450aiparams[nPipeId].vts + 11 * fHdrRatio - 13) / (fHdrRatio + 1);
+        vts_s = (2 * sns_sc450aiparams[nPipeId].vts + 11 * fHdrRatio - 13) / (2 * (fHdrRatio + 1));
         SNS_DBG("hdr vts_s:%d, vts:%d, ratio:%f\n", vts_s, sns_sc450aiparams[nPipeId].vts ,fHdrRatio);
 
         sns_sc450aiparams[nPipeId].vts_s = vts_s;
@@ -825,7 +823,31 @@ static AX_S32 sc450ai_set_exp_limit(ISP_PIPE_ID nPipeId, AX_F32 fHdrRatio)
             sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMaxIntegrationTime[HDR_MEDIUM_FRAME_IDX],
             sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMinIntegrationTime[HDR_MEDIUM_FRAME_IDX]);
 
-    return 0;
+    return AX_SNS_SUCCESS;
+}
+
+AX_S32 sc450ai_get_params_from_setting(ISP_PIPE_ID nPipeId)
+{
+    AX_S32 ret = 0;
+    AX_U32 reg_cnt = 0;
+    camera_i2c_reg_array *setting = AX_NULL;
+    AX_U32 vts = 0;
+
+    ret = sc450ai_select_setting(nPipeId, &setting, &reg_cnt);
+    if (ret) {
+        return ret;
+    }
+
+    ret = sc450ai_get_vts_from_setting(nPipeId, setting, reg_cnt, &vts);
+    if (ret) {
+        return ret;
+    }
+
+    sns_sc450aiparams[nPipeId].vts = vts;
+
+    SNS_DBG("pipe:%d, get setting params vts:0x%x\n", nPipeId, sns_sc450aiparams[nPipeId].vts);
+
+    return AX_SNS_SUCCESS;
 }
 
 AX_S32 sc450ai_cfg_aec_param(ISP_PIPE_ID nPipeId)
@@ -836,10 +858,8 @@ AX_S32 sc450ai_cfg_aec_param(ISP_PIPE_ID nPipeId)
     SENSOR_GET_CTX(nPipeId, sns_obj);
     SNS_CHECK_PTR_VALID(sns_obj);
 
-
-    sns_obj->sns_mode_obj.nVts = AXSNS_DIV_0_TO_1(sc450ai_get_vts(nPipeId));
-    sns_sc450aiparams[nPipeId].vts = sns_obj->sns_mode_obj.nVts;
-    sns_sc450aiparams[nPipeId].vts_s = AXSNS_DIV_0_TO_1(sc450ai_get_vts_s(nPipeId));
+    sc450ai_get_params_from_setting(nPipeId);
+    sns_obj->sns_mode_obj.nVts = sns_sc450aiparams[nPipeId].vts;
     sns_sc450aiparams[nPipeId].setting_vts = sns_obj->sns_mode_obj.nVts;
     sns_sc450aiparams[nPipeId].setting_fps = sns_obj->sns_mode_obj.fFrameRate;
 
@@ -873,7 +893,7 @@ AX_S32 sc450ai_cfg_aec_param(ISP_PIPE_ID nPipeId)
     sns_obj->ae_ctrl_param.sns_ae_param.fCurRatio = SC450AI_MAX_RATIO;
     sns_obj->ae_ctrl_param.eSnsHcgLcgMode = AX_LCG_NOTSUPPORT_MODE;
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 
@@ -886,7 +906,7 @@ AX_S32 sc450ai_get_sensor_gain_table(ISP_PIPE_ID nPipeId, AX_SNS_AE_GAIN_TABLE_T
     result = sc450ai_get_gain_table(params);
     return result;
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 
@@ -910,9 +930,10 @@ AX_S32 sc450ai_set_again(ISP_PIPE_ID nPipeId, AX_SNS_AE_GAIN_CFG_T *ptAGain)
     nGainFromUser = AXSNS_CLIP3(nGainFromUser, sns_obj->ae_ctrl_param.sns_ae_limit.fMinAgain[HDR_LONG_FRAME_IDX],
                                 sns_obj->ae_ctrl_param.sns_ae_limit.fMaxAgain[HDR_LONG_FRAME_IDX]);
 
-    gain_value = sc450ai_again2value(nGainFromUser, &Gain_in, &Gain_de);
-    if (gain_value == -1) {
+    result =  sc450ai_again2value(nGainFromUser, &Gain_in, &Gain_de, &gain_value);
+    if (result) {
         SNS_ERR("new gain match failed \n");
+        return result;
     } else {
         sns_obj->ae_ctrl_param.sns_ae_param.fCurAGain[HDR_LONG_FRAME_IDX] = gain_value;
         result = sc450ai_sns_update_regidx_table(nPipeId, SC450AI_LONG_AGAIN_H_IDX, (Gain_in & 0xFF));
@@ -929,9 +950,10 @@ AX_S32 sc450ai_set_again(ISP_PIPE_ID nPipeId, AX_SNS_AE_GAIN_CFG_T *ptAGain)
         nGainFromUser = AXSNS_CLIP3(nGainFromUser, sns_obj->ae_ctrl_param.sns_ae_limit.fMinAgain[HDR_MEDIUM_FRAME_IDX],
                                     sns_obj->ae_ctrl_param.sns_ae_limit.fMaxAgain[HDR_MEDIUM_FRAME_IDX]);
 
-        gain_value = sc450ai_again2value(nGainFromUser, &Gain_in, &Gain_de);
-        if (gain_value == -1) {
+        result =  sc450ai_again2value(nGainFromUser, &Gain_in, &Gain_de, &gain_value);
+        if (result) {
             SNS_ERR("new gain match failed \n");
+            return result;
         } else {
             sns_obj->ae_ctrl_param.sns_ae_param.fCurAGain[HDR_MEDIUM_FRAME_IDX] = gain_value;
             result = sc450ai_sns_update_regidx_table(nPipeId, SC450AI_VSHORT_AGAIN_H_IDX, (Gain_in & 0xFF));
@@ -947,7 +969,7 @@ AX_S32 sc450ai_set_again(ISP_PIPE_ID nPipeId, AX_SNS_AE_GAIN_CFG_T *ptAGain)
             ptAGain->fGain[HDR_LONG_FRAME_IDX],
             ptAGain->fGain[HDR_MEDIUM_FRAME_IDX]);
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 AX_S32 sc450ai_set_dgain(ISP_PIPE_ID nPipeId, AX_SNS_AE_GAIN_CFG_T *ptDGain)
@@ -956,7 +978,7 @@ AX_S32 sc450ai_set_dgain(ISP_PIPE_ID nPipeId, AX_SNS_AE_GAIN_CFG_T *ptDGain)
     AX_U8 Gain_de;
     AX_U8 Gain_de2;
     AX_S32 result = 0;
-    AX_F32 gain_val = 0;
+    AX_F32 gain_value = 0;
     AX_F32 nGainFromUser = 0;
 
     SNS_STATE_OBJ *sns_obj = AX_NULL;
@@ -971,18 +993,19 @@ AX_S32 sc450ai_set_dgain(ISP_PIPE_ID nPipeId, AX_SNS_AE_GAIN_CFG_T *ptDGain)
     nGainFromUser = AXSNS_CLIP3(nGainFromUser, sns_obj->ae_ctrl_param.sns_ae_limit.fMinDgain[HDR_LONG_FRAME_IDX],
                                 sns_obj->ae_ctrl_param.sns_ae_limit.fMaxDgain[HDR_LONG_FRAME_IDX]);
 
-    gain_val = sc450ai_dgain2value(nGainFromUser, &Gain_in, &Gain_de, &Gain_de2);
-    if (gain_val == -1) {
+    result = sc450ai_dgain2value(nGainFromUser, &Gain_in, &Gain_de, &Gain_de2, &gain_value);
+    if (result) {
         SNS_ERR("new gain match failed \n");
+        return result;
     } else {
-        sns_obj->ae_ctrl_param.sns_ae_param.fCurDGain[HDR_LONG_FRAME_IDX] = gain_val;
+        sns_obj->ae_ctrl_param.sns_ae_param.fCurDGain[HDR_LONG_FRAME_IDX] = gain_value;
         result = sc450ai_sns_update_regidx_table(nPipeId, SC450AI_LONG_DGAIN_H_IDX, Gain_in);
         result = sc450ai_sns_update_regidx_table(nPipeId, SC450AI_LONG_DGAIN_L_IDX, Gain_de);
         if (result != 0) {
             SNS_ERR("write hw failed %d \n", result);
             return result;
         }
-        sns_obj->ae_ctrl_param.sns_ae_param.fCurDGain[HDR_LONG_FRAME_IDX] = gain_val;
+        sns_obj->ae_ctrl_param.sns_ae_param.fCurDGain[HDR_LONG_FRAME_IDX] = gain_value;
     }
 
     /* short frame digital gain seting */
@@ -991,18 +1014,19 @@ AX_S32 sc450ai_set_dgain(ISP_PIPE_ID nPipeId, AX_SNS_AE_GAIN_CFG_T *ptDGain)
         nGainFromUser = AXSNS_CLIP3(nGainFromUser, sns_obj->ae_ctrl_param.sns_ae_limit.fMinDgain[HDR_MEDIUM_FRAME_IDX],
                                     sns_obj->ae_ctrl_param.sns_ae_limit.fMaxDgain[HDR_MEDIUM_FRAME_IDX]);
 
-        gain_val = sc450ai_dgain2value(nGainFromUser, &Gain_in, &Gain_de, &Gain_de2);
-        if (gain_val == -1) {
+        result = sc450ai_dgain2value(nGainFromUser, &Gain_in, &Gain_de, &Gain_de2, &gain_value);
+        if (result) {
             SNS_ERR("new gain match failed \n");
+            return result;
         } else {
-            sns_obj->ae_ctrl_param.sns_ae_param.fCurDGain[HDR_MEDIUM_FRAME_IDX] = gain_val;
+            sns_obj->ae_ctrl_param.sns_ae_param.fCurDGain[HDR_MEDIUM_FRAME_IDX] = gain_value;
             result = sc450ai_sns_update_regidx_table(nPipeId, SC450AI_VSHORT_DGAIN_H_IDX, Gain_in);
             result = sc450ai_sns_update_regidx_table(nPipeId, SC450AI_VSHORT_DGAIN_L_IDX, Gain_de);
             if (result != 0) {
                 SNS_ERR("write hw failed %d \n", result);
                 return result;
             }
-            sns_obj->ae_ctrl_param.sns_ae_param.fCurDGain[HDR_MEDIUM_FRAME_IDX] = gain_val;
+            sns_obj->ae_ctrl_param.sns_ae_param.fCurDGain[HDR_MEDIUM_FRAME_IDX] = gain_value;
         }
 
     }
@@ -1011,7 +1035,7 @@ AX_S32 sc450ai_set_dgain(ISP_PIPE_ID nPipeId, AX_SNS_AE_GAIN_CFG_T *ptDGain)
             ptDGain->fGain[HDR_LONG_FRAME_IDX],
             ptDGain->fGain[HDR_MEDIUM_FRAME_IDX]);
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 /* Calculate the max int time according to the exposure ratio */
@@ -1028,7 +1052,7 @@ AX_S32 sc450ai_get_integration_time_range(ISP_PIPE_ID nPipeId, AX_F32 fHdrRatio,
 
     if (fabs(fHdrRatio) < EPS) {
         SNS_ERR("hdr ratio is error \n");
-        return SNS_ERR_CODE_ILLEGAL_PARAMS;
+        return AX_SNS_ERR_ILLEGAL_PARAM;
     }
 
     if (AX_SNS_LINEAR_MODE == sns_obj->sns_mode_obj.eHDRMode) {
@@ -1058,7 +1082,7 @@ AX_S32 sc450ai_get_integration_time_range(ISP_PIPE_ID nPipeId, AX_F32 fHdrRatio,
         // do nothing
     }
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 AX_S32 sc450ai_set_integration_time(ISP_PIPE_ID nPipeId, AX_SNS_AE_SHUTTER_CFG_T *ptIntTime)
@@ -1069,6 +1093,7 @@ AX_S32 sc450ai_set_integration_time(ISP_PIPE_ID nPipeId, AX_SNS_AE_SHUTTER_CFG_T
     AX_S32 result = 0;
     AX_F32 ratio = 1.0f;
     AX_F32 fExpLineFromUser = 0;
+    AX_U32 LineGap = 0;
 
     SNS_STATE_OBJ *sns_obj = AX_NULL;
 
@@ -1099,28 +1124,30 @@ AX_S32 sc450ai_set_integration_time(ISP_PIPE_ID nPipeId, AX_SNS_AE_SHUTTER_CFG_T
 
     if (IS_HDR_MODE(sns_obj->sns_mode_obj.eHDRMode)) {
         fExpLineFromUser = ptIntTime->fIntTime[HDR_MEDIUM_FRAME_IDX];
-        if (sns_obj->ae_ctrl_param.sns_ae_param.fCurIntegrationTime[HDR_MEDIUM_FRAME_IDX] == fExpLineFromUser) {
-            SNS_DBG("new and current integration time  is equal \n");
-        } else {
 
-            fExpLineFromUser = AXSNS_CLIP3(fExpLineFromUser,
-                                           sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMinIntegrationTime[HDR_MEDIUM_FRAME_IDX],
-                                           sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMaxIntegrationTime[HDR_MEDIUM_FRAME_IDX]);
+        fExpLineFromUser = AXSNS_CLIP3(fExpLineFromUser,
+                                        sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMinIntegrationTime[HDR_MEDIUM_FRAME_IDX],
+                                        sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMaxIntegrationTime[HDR_MEDIUM_FRAME_IDX]);
 
-            ex_ival = fExpLineFromUser * 2;
+        ex_ival = fExpLineFromUser * 2;
 
-            ex_l = REG_LOW_8BITS(ex_ival);
-            ex_h = REG_HIGH_8BITS(ex_ival);
-
-            sc450ai_sns_update_regidx_table(nPipeId, SC450AI_SHORT_EXP_LINE_H_IDX, (ex_h & 0xf0) >> 4);
-            sc450ai_sns_update_regidx_table(nPipeId, SC450AI_SHORT_EXP_LINE_M_IDX, ((ex_h & 0xf) << 4) | ((ex_l & 0xf0) >> 4));
-            sc450ai_sns_update_regidx_table(nPipeId, SC450AI_SHORT_EXP_LINE_L_IDX, ((ex_l & 0xf) << 4));
-
-            sns_obj->ae_ctrl_param.sns_ae_param.fCurIntegrationTime[HDR_MEDIUM_FRAME_IDX] = ex_ival / 2.0f;
+        //LineGap < Height
+        LineGap = sc450ai_get_vts_s(nPipeId) / 2;
+        if(LineGap > sns_obj->sns_mode_obj.nHeight) {
+            ex_ival = sns_obj->sns_mode_obj.nHeight - 1;
         }
+
+        ex_l = REG_LOW_8BITS(ex_ival);
+        ex_h = REG_HIGH_8BITS(ex_ival);
+
+        sc450ai_sns_update_regidx_table(nPipeId, SC450AI_SHORT_EXP_LINE_H_IDX, (ex_h & 0xf0) >> 4);
+        sc450ai_sns_update_regidx_table(nPipeId, SC450AI_SHORT_EXP_LINE_M_IDX, ((ex_h & 0xf) << 4) | ((ex_l & 0xf0) >> 4));
+        sc450ai_sns_update_regidx_table(nPipeId, SC450AI_SHORT_EXP_LINE_L_IDX, ((ex_l & 0xf) << 4));
+
+        sns_obj->ae_ctrl_param.sns_ae_param.fCurIntegrationTime[HDR_MEDIUM_FRAME_IDX] = ex_ival / 2.0f;
     }
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 AX_S32 sc450ai_get_hw_exposure_params(ISP_PIPE_ID nPipeId, AX_SNS_EXP_CTRL_PARAM_T *ptAeCtrlParam)
@@ -1136,7 +1163,7 @@ AX_S32 sc450ai_get_hw_exposure_params(ISP_PIPE_ID nPipeId, AX_SNS_EXP_CTRL_PARAM
     memcpy(ptAeCtrlParam, &sns_obj->ae_ctrl_param, sizeof(AX_SNS_EXP_CTRL_PARAM_T));
     memcpy(&ptAeCtrlParam->sns_dev_attr, &sns_obj->sns_attr_param, sizeof(AX_SNS_ATTR_T));
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 AX_U32 sc450ai_sns_update_regidx_table(ISP_PIPE_ID nPipeId, AX_U8 nRegIdx, AX_U8 nRegValue)
@@ -1147,12 +1174,12 @@ AX_U32 sc450ai_sns_update_regidx_table(ISP_PIPE_ID nPipeId, AX_U8 nRegIdx, AX_U8
     SENSOR_GET_CTX(nPipeId, sns_obj);
     SNS_CHECK_PTR_VALID(sns_obj);
 
-    sns_obj->sztRegsInfo[0].sztI2cData[nRegIdx].nData = nRegValue;
+    sns_obj->sztRegsInfo[0].sztData.sztI2cData[nRegIdx].nData = nRegValue;
 
     SNS_DBG("Idx = %d, reg addr 0x%x, reg data 0x%x\n",
-        nRegIdx, sns_obj->sztRegsInfo[0].sztI2cData[nRegIdx].nRegAddr, nRegValue);
+        nRegIdx, sns_obj->sztRegsInfo[0].sztData.sztI2cData[nRegIdx].nRegAddr, nRegValue);
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 AX_U32 sc450ai_sns_refresh_all_regs_from_tbl(ISP_PIPE_ID nPipeId)
@@ -1168,13 +1195,13 @@ AX_U32 sc450ai_sns_refresh_all_regs_from_tbl(ISP_PIPE_ID nPipeId)
 
     for (i = 0; i < nNum; i++) {
         nRegValue = sc450ai_reg_read(nPipeId, gsc450aiAeRegsTable[i].nRegAddr);
-        sns_obj->sztRegsInfo[0].sztI2cData[i].nRegAddr = gsc450aiAeRegsTable[i].nRegAddr;
-        sns_obj->sztRegsInfo[0].sztI2cData[i].nData = nRegValue;
+        sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].nRegAddr = gsc450aiAeRegsTable[i].nRegAddr;
+        sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].nData = nRegValue;
 
-        SNS_DBG(" nRegAddr 0x%x, nRegValue 0x%x\n", sns_obj->sztRegsInfo[0].sztI2cData[i].nRegAddr, sns_obj->sztRegsInfo[0].sztI2cData[i].nData);
+        SNS_DBG(" nRegAddr 0x%x, nRegValue 0x%x\n", sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].nRegAddr, sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].nData);
     }
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 AX_S32 sc450ai_sns_update_init_exposure_reg(ISP_PIPE_ID nPipeId)
@@ -1186,12 +1213,12 @@ AX_S32 sc450ai_sns_update_init_exposure_reg(ISP_PIPE_ID nPipeId)
     SNS_CHECK_PTR_VALID(sns_obj);
 
     for (i = 0; i < sns_obj->sztRegsInfo[0].nRegNum; i++) {
-        sc450ai_write_register(nPipeId, sns_obj->sztRegsInfo[0].sztI2cData[i].nRegAddr, sns_obj->sztRegsInfo[0].sztI2cData[i].nData);
+        sc450ai_write_register(nPipeId, sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].nRegAddr, sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].nData);
         SNS_DBG("Idx = %d, reg addr 0x%x, reg data 0x%x\n",
-            i, sns_obj->sztRegsInfo[0].sztI2cData[i].nRegAddr, sns_obj->sztRegsInfo[0].sztI2cData[i].nData);
+            i, sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].nRegAddr, sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].nData);
     }
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 AX_S32 sc450ai_ae_get_sensor_reg_info(ISP_PIPE_ID nPipeId, AX_SNS_REGS_CFG_TABLE_T *ptSnsRegsInfo)
@@ -1216,15 +1243,15 @@ AX_S32 sc450ai_ae_get_sensor_reg_info(ISP_PIPE_ID nPipeId, AX_SNS_REGS_CFG_TABLE
         sns_obj->sztRegsInfo[0].nCfg2ValidDelayMax = 2;
 
         for (i = 0; i < sns_obj->sztRegsInfo[0].nRegNum; i++) {
-            sns_obj->sztRegsInfo[0].sztI2cData[i].bUpdate = AX_TRUE;
-            sns_obj->sztRegsInfo[0].sztI2cData[i].nDevAddr = gSc450aiSlaveAddr[nPipeId];
-            sns_obj->sztRegsInfo[0].sztI2cData[i].nAddrByteNum = SC450AI_ADDR_BYTE;
-            sns_obj->sztRegsInfo[0].sztI2cData[i].nDataByteNum = SC450AI_DATA_BYTE;
-            sns_obj->sztRegsInfo[0].sztI2cData[i].nDelayFrmNum = gsc450aiAeRegsTable[i].nDelayFrmNum;
+            sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].bUpdate = AX_TRUE;
+            sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].nDevAddr = gSc450aiSlaveAddr[nPipeId];
+            sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].nAddrByteNum = SC450AI_ADDR_BYTE;
+            sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].nDataByteNum = SC450AI_DATA_BYTE;
+            sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].nDelayFrmNum = gsc450aiAeRegsTable[i].nDelayFrmNum;
             if (IS_LINEAR_MODE(sns_obj->sns_mode_obj.eHDRMode)) {
-                sns_obj->sztRegsInfo[0].sztI2cData[i].nIntPos = AX_SNS_L_FSOF;
+                sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].nIntPos = AX_SNS_L_FSOF;
             } else {
-                sns_obj->sztRegsInfo[0].sztI2cData[i].nIntPos = AX_SNS_S_FSOF;
+                sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].nIntPos = AX_SNS_S_FSOF;
             }
             SNS_DBG("pipe %d, [%2d] nRegAddr 0x%x, nRegValue 0x%x\n", nPipeId, i,
                     gsc450aiAeRegsTable[i].nRegAddr, gsc450aiAeRegsTable[i].nRegValue);
@@ -1235,13 +1262,13 @@ AX_S32 sc450ai_ae_get_sensor_reg_info(ISP_PIPE_ID nPipeId, AX_SNS_REGS_CFG_TABLE
         sc450ai_sns_update_init_exposure_reg(nPipeId);
     } else {
         for (i = 0; i < sns_obj->sztRegsInfo[0].nRegNum; i++) {
-            if (sns_obj->sztRegsInfo[0].sztI2cData[i].nData == sns_obj->sztRegsInfo[1].sztI2cData[i].nData) {
-                sns_obj->sztRegsInfo[0].sztI2cData[i].bUpdate = AX_FALSE;
+            if (sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].nData == sns_obj->sztRegsInfo[1].sztData.sztI2cData[i].nData) {
+                sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].bUpdate = AX_FALSE;
             } else {
-                sns_obj->sztRegsInfo[0].sztI2cData[i].bUpdate = AX_TRUE;
+                sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].bUpdate = AX_TRUE;
                 bUpdateReg = AX_TRUE;
                 SNS_DBG("pipe %d, [%2d] nRegAddr 0x%x, nRegValue 0x%x\n", nPipeId, i,
-                        sns_obj->sztRegsInfo[0].sztI2cData[i].nRegAddr, sns_obj->sztRegsInfo[0].sztI2cData[i].nData);
+                        sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].nRegAddr, sns_obj->sztRegsInfo[0].sztData.sztI2cData[i].nData);
             }
         }
     }
@@ -1276,12 +1303,12 @@ AX_S32 sc450ai_get_slow_shutter_param(ISP_PIPE_ID nPipeId, AX_SNS_AE_SLOW_SHUTTE
     framerate = sns_obj->sns_mode_obj.fFrameRate;
     if (framerate > SNS_MAX_FRAME_RATE) {
         SNS_ERR(" framerate out of range %d \n", framerate);
-        return SNS_ERR_CODE_ILLEGAL_PARAMS;
+        return AX_SNS_ERR_ILLEGAL_PARAM;
     }
 
     if (sns_obj->ae_ctrl_param.fTimePerLine == 0) {
         SNS_ERR("line_period is zero : %f\n", sns_obj->ae_ctrl_param.fTimePerLine);
-        return SNS_ERR_CODE_ILLEGAL_PARAMS;
+        return AX_SNS_ERR_ILLEGAL_PARAM;
     }
 
     ptSlowShutterParam->nGroupNum = AXSNS_MIN((sizeof(gFpsGear) / sizeof(AX_F32)), framerate);
@@ -1316,7 +1343,7 @@ AX_S32 sc450ai_get_slow_shutter_param(ISP_PIPE_ID nPipeId, AX_SNS_AE_SLOW_SHUTTE
                 nVts);
     }
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 AX_S32 sc450ai_get_fps(ISP_PIPE_ID nPipeId, AX_F32 *pFps)
@@ -1331,7 +1358,7 @@ AX_S32 sc450ai_get_fps(ISP_PIPE_ID nPipeId, AX_F32 *pFps)
 
     *pFps = sns_obj->ae_ctrl_param.sns_ae_param.fCurFps;
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 
@@ -1345,9 +1372,9 @@ AX_S32 sc450ai_set_fps(ISP_PIPE_ID nPipeId, AX_F32 fFps)
     SENSOR_GET_CTX(nPipeId, sns_obj);
     SNS_CHECK_PTR_VALID(sns_obj);
 
-    if (IS_FLOAT_ZERO(fFps)) {
-        SNS_ERR("userFps is zero !\n");
-        return SNS_ERR_CODE_ILLEGAL_PARAMS;
+    if(AXSNS_CAMPARE_FLOAT(AX_SNS_FPS_MIN, fFps) || AXSNS_CAMPARE_FLOAT(fFps, AX_SNS_FPS_MAX)) {
+        SNS_ERR("pipe:%d, fps:%f is not supported, range:[%f-%f]\n", nPipeId, fFps, AX_SNS_FPS_MIN, AX_SNS_FPS_MAX);
+        return AX_SNS_ERR_NOT_SUPPORT;
     }
 
     if (IS_SNS_FPS_EQUAL(fFps, sns_sc450aiparams[nPipeId].setting_fps)) {
@@ -1394,5 +1421,5 @@ AX_S32 sc450ai_set_fps(ISP_PIPE_ID nPipeId, AX_F32 fFps)
     SNS_INFO("pipe:%d, userFps:%f, curFps:%f, vts:0x%x\n",
         nPipeId, fFps, sns_obj->ae_ctrl_param.sns_ae_param.fCurFps, vts);
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }

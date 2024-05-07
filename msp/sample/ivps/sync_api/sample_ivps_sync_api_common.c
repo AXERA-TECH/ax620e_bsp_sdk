@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -225,7 +225,7 @@ static AX_S32 AX_IVPS_DrawOsd(IVPS_ENGINE_ID_E eEngineId, const AX_VIDEO_FRAME_T
     switch (eEngineId)
     {
     case IVPS_ENGINE_ID_TDP:
-        ret = AX_IVPS_DrawOsdTdp(ptSrc, tCanvas, arrBmp, 1, ptDst);
+        ret = AX_IVPS_DrawOsdTdp(ptSrc, tCanvas, arrBmp, 32, ptDst);
         break;
     default:
         ret = -1;
@@ -354,27 +354,36 @@ AX_S32 SAMPLE_IVPS_Csc(IVPS_ENGINE_ID_E eEngineId, const AX_VIDEO_FRAME_T *ptSrc
  *       The u64PhyAddr[0] of ptDst should be set. If format is AX_YUV420_SEMIPLANAR, u64PhyAddr[1] should be set.
  */
 AX_S32 SAMPLE_IVPS_FlipAndRotation(const AX_VIDEO_FRAME_T *ptSrcFrame,
-                                   AX_S32 nFlipCode, AX_S32 nRotation, char *strFilePath)
+                                   AX_S32 nFlipCode, AX_S32 nRotation, AX_S32 nFormat, char *strFilePath)
 {
     AX_S32 ret = 0;
     AX_VIDEO_FRAME_T tDstFrame = {0};
     AX_BLK BlkId;
     AX_U32 nImgSize;
 
-    ALOGI("Rotate u32Width =%d", ptSrcFrame->u32Width);
-    tDstFrame.enImgFormat = ptSrcFrame->enImgFormat;
-    tDstFrame.u32Height = ptSrcFrame->u32Width;
-    tDstFrame.u32Width = ptSrcFrame->u32Height;
-    tDstFrame.u32PicStride[0] = ptSrcFrame->u32Height;
-    nImgSize = CalcImgSize(ptSrcFrame->u32PicStride[0], ptSrcFrame->u32Width,
-                           ALIGN_UP(ptSrcFrame->u32Height, 64), ptSrcFrame->enImgFormat, 16);
-    CHECK_RESULT(BufPoolBlockAddrGet(-1, nImgSize, &tDstFrame.u64PhyAddr[0], (AX_VOID **)&tDstFrame.u64VirAddr[0], &BlkId));
-    tDstFrame.u64PhyAddr[1] = tDstFrame.u64PhyAddr[0] + ptSrcFrame->u32PicStride[0] * ALIGN_UP(ptSrcFrame->u32Height, 64);
+    printf("nFlipCode:%d nRotation:%d nFormat:%d\n", nFlipCode, nRotation, nFormat);
+    tDstFrame.enImgFormat = nFormat;
+    if (nRotation == AX_IVPS_ROTATION_90 || nRotation == AX_IVPS_ROTATION_270)
+    {
+        tDstFrame.u32Height = ptSrcFrame->u32Width;
+        tDstFrame.u32Width = ptSrcFrame->u32Height;
+        tDstFrame.u32PicStride[0] = ptSrcFrame->u32Height;
+    }
+    else
+    {
+        tDstFrame.u32Width = ptSrcFrame->u32Width;
+        tDstFrame.u32Height = ptSrcFrame->u32Height;
+        tDstFrame.u32PicStride[0] = ptSrcFrame->u32PicStride[0];
+    }
 
-    ret = AX_IVPS_FlipAndRotationTdp(ptSrcFrame, 1, AX_IVPS_ROTATION_90, &tDstFrame);
+    nImgSize = CalcImgSize(tDstFrame.u32PicStride[0], tDstFrame.u32Width,tDstFrame.enImgFormat, tDstFrame.enImgFormat, 2);
+    CHECK_RESULT(BufPoolBlockAddrGet(-1, nImgSize, &tDstFrame.u64PhyAddr[0], (AX_VOID **)&tDstFrame.u64VirAddr[0], &BlkId));
+    tDstFrame.u64PhyAddr[1] = tDstFrame.u64PhyAddr[0] + tDstFrame.u32PicStride[0] * tDstFrame.u32Height;
+
+    ret = AX_IVPS_FlipAndRotationTdp(ptSrcFrame, nFlipCode, nRotation, &tDstFrame);
     if (ret)
     {
-        ALOGE("ret=0x%x", ret);
+        ALOGE("FlipAndRotationTdp, ret=0x%x", ret);
         return ret;
     }
 
@@ -750,8 +759,8 @@ AX_S32 SAMPLE_IVPS_DrawOsd(IVPS_ENGINE_ID_E eEngineId, const AX_VIDEO_FRAME_T *p
         tBmpAttr[i].enRgbFormat = ptOverlay->enImgFormat;
         tBmpAttr[i].u32BmpWidth = ptOverlay->u32Width;
         tBmpAttr[i].u32BmpHeight = ptOverlay->u32Height;
-        tBmpAttr[i].u32DstXoffset = 128;
-        tBmpAttr[i].u32DstYoffset = 80;
+        tBmpAttr[i].u32DstXoffset = 128 + i * 16;
+        tBmpAttr[i].u32DstYoffset = 80 +  i * 8;
         tBmpAttr[i].u64PhyAddr = ptOverlay->u64PhyAddr[0];
     }
     ret = AX_IVPS_DrawOsd(eEngineId, ptSrcFrame, &tCanvas, tBmpAttr, &tDstFrame);

@@ -147,7 +147,8 @@
                 "max_iqp":51,
                 "min_iprop":10,
                 "max_iprop":40,
-                "bitRate":8192
+                "bitRate":8192,
+                "gop":120
             }]
         },
         "OSD":{
@@ -317,7 +318,8 @@
                 "max_iqp":51,
                 "min_iprop":10,
                 "max_iprop":40,
-                "bitRate":8192
+                "bitRate":8192,
+                "gop":120
             }]
         },
         "OSD":{

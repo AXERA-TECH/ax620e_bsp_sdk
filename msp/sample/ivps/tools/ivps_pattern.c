@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -331,9 +331,70 @@ static AX_VOID FillSmpteRGB24(const UTIL_RGB_INFO_T *stRGB, AX_VOID *pMem,
     }
 }
 
-static AX_VOID FillSmpteRGB32(const UTIL_RGB_INFO_T *stRGB, AX_VOID *pMem,
-                              AX_U32 u32Width, AX_U32 u32Height,
-                              AX_U32 u32Stride)
+static AX_VOID FillSmpteARGB1555(const UTIL_RGB_INFO_T *stRGB, AX_VOID *pMem,
+                                 AX_U32 u32Width, AX_U32 u32Height, AX_U32 u32Stride, AX_BOOL isBigEnd)
+{
+    const AX_U16 u16ColorsTop[] = {
+        MAKE_RGBA(stRGB, 192, 192, 192, 255), /* grey */
+        MAKE_RGBA(stRGB, 192, 192, 0, 255),   /* yellow */
+        MAKE_RGBA(stRGB, 0, 192, 192, 255),   /* cyan */
+        MAKE_RGBA(stRGB, 0, 192, 0, 255),     /* green */
+        MAKE_RGBA(stRGB, 192, 0, 192, 255),   /* magenta */
+        MAKE_RGBA(stRGB, 192, 0, 0, 255),     /* red */
+        MAKE_RGBA(stRGB, 0, 0, 192, 255),     /* blue */
+    };
+    const AX_U16 u16ColorsMiddle[] = {
+        MAKE_RGBA(stRGB, 0, 0, 192, 127),     /* blue */
+        MAKE_RGBA(stRGB, 19, 19, 19, 127),    /* black */
+        MAKE_RGBA(stRGB, 192, 0, 192, 127),   /* magenta */
+        MAKE_RGBA(stRGB, 19, 19, 19, 127),    /* black */
+        MAKE_RGBA(stRGB, 0, 192, 192, 127),   /* cyan */
+        MAKE_RGBA(stRGB, 19, 19, 19, 127),    /* black */
+        MAKE_RGBA(stRGB, 192, 192, 192, 127), /* grey */
+    };
+    const AX_U16 u16ColorsBottom[] = {
+        MAKE_RGBA(stRGB, 0, 33, 76, 255),     /* in-phase */
+        MAKE_RGBA(stRGB, 255, 255, 255, 255), /* super white */
+        MAKE_RGBA(stRGB, 50, 0, 106, 255),    /* quadrature */
+        MAKE_RGBA(stRGB, 19, 19, 19, 255),    /* black */
+        MAKE_RGBA(stRGB, 9, 9, 9, 255),       /* 3.5% */
+        MAKE_RGBA(stRGB, 19, 19, 19, 255),    /* 7.5% */
+        MAKE_RGBA(stRGB, 29, 29, 29, 255),    /* 11.5% */
+        MAKE_RGBA(stRGB, 19, 19, 19, 255),    /* black */
+    };
+    AX_U32 u32X;
+    AX_U32 u32Y;
+
+    for (u32Y = 0; u32Y < u32Height * 6 / 9; ++u32Y)
+    {
+        for (u32X = 0; u32X < u32Width; ++u32X)
+            ((AX_U16 *)pMem)[u32X] = u16ColorsTop[u32X * 7 / u32Width];
+        pMem += u32Stride;
+    }
+
+    for (; u32Y < u32Height * 7 / 9; ++u32Y)
+    {
+        for (u32X = 0; u32X < u32Width; ++u32X)
+            ((AX_U16 *)pMem)[u32X] = u16ColorsMiddle[u32X * 7 / u32Width];
+        pMem += u32Stride;
+    }
+
+    for (; u32Y < u32Height; ++u32Y)
+    {
+        for (u32X = 0; u32X < u32Width * 5 / 7; ++u32X)
+            ((AX_U16 *)pMem)[u32X] =
+                u16ColorsBottom[u32X * 4 / (u32Width * 5 / 7)];
+        for (; u32X < u32Width * 6 / 7; ++u32X)
+            ((AX_U16 *)pMem)[u32X] =
+                u16ColorsBottom[(u32X - u32Width * 5 / 7) * 3 / (u32Width / 7) + 4];
+        for (; u32X < u32Width; ++u32X)
+            ((AX_U16 *)pMem)[u32X] = u16ColorsBottom[7];
+        pMem += u32Stride;
+    }
+}
+
+static AX_VOID FillSmpteARGB8888(const UTIL_RGB_INFO_T *stRGB, AX_VOID *pMem,
+                              AX_U32 u32Width, AX_U32 u32Height, AX_U32 u32Stride, AX_BOOL isBigEnd)
 {
     const AX_U32 u32ColorsTop[] = {
         MAKE_RGBA(stRGB, 192, 192, 192, 255), /* grey */
@@ -383,11 +444,9 @@ static AX_VOID FillSmpteRGB32(const UTIL_RGB_INFO_T *stRGB, AX_VOID *pMem,
     for (; u32Y < u32Height; ++u32Y)
     {
         for (u32X = 0; u32X < u32Width * 5 / 7; ++u32X)
-            ((AX_U32 *)pMem)[u32X] =
-                u32ColorsBottom[u32X * 4 / (u32Width * 5 / 7)];
+            ((AX_U32 *)pMem)[u32X] = u32ColorsBottom[u32X * 4 / (u32Width * 5 / 7)];
         for (; u32X < u32Width * 6 / 7; ++u32X)
-            ((AX_U32 *)pMem)[u32X] =
-                u32ColorsBottom[(u32X - u32Width * 5 / 7) * 3 / (u32Width / 7) + 4];
+            ((AX_U32 *)pMem)[u32X] = u32ColorsBottom[(u32X - u32Width * 5 / 7) * 3 / (u32Width / 7) + 4];
         for (; u32X < u32Width; ++u32X)
             ((AX_U32 *)pMem)[u32X] = u32ColorsBottom[7];
         pMem += u32Stride;
@@ -409,23 +468,33 @@ AX_S32 PatternSmpteFill(AX_IMG_FORMAT_E enPixFmt, AX_U32 u32Width, AX_U32 u32Hei
     switch (enPixFmt)
     {
     case AX_FORMAT_YUV420_SEMIPLANAR:
+    case AX_FORMAT_YUV420_SEMIPLANAR_VU:
         FillSmpteYUV(u32Width, u32Height, u32Stride, u8Mem, u8Mem + u32Stride * u32Height,
                      u8Mem + u32Stride * u32Height + 1);
         break;
     case AX_FORMAT_RGB565:
+    case AX_FORMAT_BGR565:
         FillSmpteRGB16(&stRG16_Info, u8Mem, u32Width, u32Height, u32Stride);
         break;
     case AX_FORMAT_RGB888:
+    case AX_FORMAT_BGR888:
         FillSmpteRGB24(&stRG24_Info, u8Mem, u32Width, u32Height, u32Stride);
         break;
     case AX_FORMAT_ARGB1555:
-        FillSmpteRGB16(&stAR15_Info, u8Mem, u32Width, u32Height, u32Stride);
+    case AX_FORMAT_ABGR1555:
+        FillSmpteARGB1555(&stAR12_Info, u8Mem, u32Width, u32Height, u32Stride, AX_FALSE);
         break;
-    case AX_FORMAT_ARGB4444:
-        FillSmpteRGB16(&stAR12_Info, u8Mem, u32Width, u32Height, u32Stride);
+    case AX_FORMAT_RGBA5551:
+    case AX_FORMAT_BGRA5551:
+        FillSmpteARGB1555(&stAR12_Info, u8Mem, u32Width, u32Height, u32Stride, AX_TRUE);
         break;
     case AX_FORMAT_ARGB8888:
-        FillSmpteRGB32(&stAR24_Info, u8Mem, u32Width, u32Height, u32Stride);
+    case AX_FORMAT_ABGR8888:
+        FillSmpteARGB8888(&stAR24_Info, u8Mem, u32Width, u32Height, u32Stride, AX_FALSE);
+        break;
+    case AX_FORMAT_RGBA8888:
+    case AX_FORMAT_BGRA8888:
+        FillSmpteARGB8888(&stAR24_Info, u8Mem, u32Width, u32Height, u32Stride, AX_TRUE);
         break;
     default:
         printf("%s:%d unsupported fomat, fmt: %d\n", __func__, __LINE__, enPixFmt);

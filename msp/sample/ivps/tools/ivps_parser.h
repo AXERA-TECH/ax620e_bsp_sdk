@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -47,6 +47,7 @@ extern "C"
 
         AX_S32 nRepeatCount;       /* -n */
         AX_S32 nRegionNum;         /* -r */
+        AX_BOOL bRegionStop;       /* --region_stop */
         AX_S32 nStreamNum;
 
         AX_U8 nLinkMode;           /* -l */
@@ -64,19 +65,23 @@ extern "C"
         AX_BOOL bAlphaBlend;       /* --alphablend */
         AX_BOOL bOsd;              /* --osd */
         AX_BOOL bMosaic;           /* --mosaic */
-        AX_BOOL bCover;            /* --cover */
+        AX_BOOL bMask;             /* --mask */
         AX_BOOL bCropResizeV2;     /* --cropresize2 */
         AX_BOOL bCropResizeV3;     /* --cropresize3 */
         AX_BOOL bAlphaBlendV2;     /* --alphablend2 */
-        AX_BOOL bAlphaBlendV3;     /* --alphablend3*/
+        AX_BOOL bAlphaBlendV3;     /* --alphablend3 */
         AX_POOL_SOURCE_E ePoolSrc; /* --pool_type */
         AX_U8 nOutChnNum;
         IVPS_GRP nIvpsGrp;
         IVPS_CHN_INFO_T tChnInfo[5];
         AX_BOOL bCropInfo;         /* --crop */
+        AX_BOOL bFewPool;          /* --FewPool test */
         AX_IVPS_CROP_INFO_T tCropInfo;
         AX_BOOL bLdcAttr;          /* --ldc */
         AX_IVPS_LDC_ATTR_T tLdcAttr;
+        AX_U8 nAngle; /* --angle; 0: 0 degree; 1: 90 degree; 2: 180 degree; 3: 270 degree */
+        AX_U8 nFlip; /* --flip; 0: 0 no flip; 1: flip up and down; 2: mirror right and left; 3: flip&mirror */
+        AX_U8 nFormat; /* --format */
     } IVPS_ARG_T;
 
     AX_BOOL ThreadLoopStateGet(AX_VOID);

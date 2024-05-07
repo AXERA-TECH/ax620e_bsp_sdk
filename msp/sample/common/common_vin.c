@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -23,7 +23,6 @@
 #include "common_vin.h"
 #include "common_type.h"
 #include "common_config.h"
-#include "ax_vin_api_int.h"
 
 
 
@@ -50,12 +49,18 @@ AX_S32 COMMON_VIN_GetSnsConfig(SAMPLE_SNS_TYPE_E eSnsType,
         break;
     case SAMPLE_SNS_BT601:
     case SAMPLE_SNS_BT656:
+        memcpy(ptSnsAttr, &gBT656SnsAttr, sizeof(AX_SNS_ATTR_T));
+        memcpy(ptSnsClkAttr, &gBT656SnsClkAttr, sizeof(AX_SNS_CLK_ATTR_T));
+        memcpy(pDevAttr, &gBT656DevAttr, sizeof(AX_VIN_DEV_ATTR_T));
+        memcpy(pPipeAttr, &gBT656PipeAttr, sizeof(AX_VIN_PIPE_ATTR_T));
+        memcpy(&pChnAttr[0], &gBT656Chn0Attr, sizeof(AX_VIN_CHN_ATTR_T));
+        break;
     case SAMPLE_SNS_BT1120:
-        memcpy(ptSnsAttr, &gBTSnsAttr, sizeof(AX_SNS_ATTR_T));
-        memcpy(ptSnsClkAttr, &gBTSnsClkAttr, sizeof(AX_SNS_CLK_ATTR_T));
-        memcpy(pDevAttr, &gBTDevAttr, sizeof(AX_VIN_DEV_ATTR_T));
-        memcpy(pPipeAttr, &gBTPipeAttr, sizeof(AX_VIN_PIPE_ATTR_T));
-        memcpy(&pChnAttr[0], &gBTChn0Attr, sizeof(AX_VIN_CHN_ATTR_T));
+        memcpy(ptSnsAttr, &gBT1120SnsAttr, sizeof(AX_SNS_ATTR_T));
+        memcpy(ptSnsClkAttr, &gBT1120SnsClkAttr, sizeof(AX_SNS_CLK_ATTR_T));
+        memcpy(pDevAttr, &gBT1120DevAttr, sizeof(AX_VIN_DEV_ATTR_T));
+        memcpy(pPipeAttr, &gBT1120PipeAttr, sizeof(AX_VIN_PIPE_ATTR_T));
+        memcpy(&pChnAttr[0], &gBT1120Chn0Attr, sizeof(AX_VIN_CHN_ATTR_T));
         break;
     case SAMPLE_SNS_LVDS:
         memcpy(ptSnsAttr, &gLvdsSnsAttr, sizeof(AX_SNS_ATTR_T));

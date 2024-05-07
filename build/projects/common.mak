@@ -33,3 +33,23 @@ define AddKM2Bytes
     done; \
     echo $$sum;
 endef
+
+
+# Calculates the location of each partition in the flash.
+define calculate_flash_base
+$(shell echo "$(1)" | sed 's/$(2)/*/' | cut -d '*' -f 1 | tr ',' '\n' | awk '\
+{\
+  if ($$0 ~ /[0-9]*K/) {\
+    sub(/K*/, "", $$0);\
+    cur = $$0 * 1024;\
+    sum += cur;\
+  } else if ($$0 ~ /[0-9]*M/) {\
+    sub(/M*/, "", $$0);\
+    cur = $$0 * 1024 * 1024;\
+    sum += cur;\
+  }\
+}\
+END {\
+  printf "0x%x", sum - cur;\
+}')
+endef

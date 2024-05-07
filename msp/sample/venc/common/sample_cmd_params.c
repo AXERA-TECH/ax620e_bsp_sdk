@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -73,7 +73,8 @@ AX_VOID SampleSetDefaultParams(SAMPLE_VENC_CMD_PARA_T *pstPara)
     pstPara->sliceNum = 2;
 
     pstPara->bSaveStrm = AX_TRUE;
-    pstPara->syncType = -1; /* block mode */
+    pstPara->syncSend = -1; /* block mode */
+    pstPara->syncGet = -1; /* block mode */
     pstPara->rcModeNew = SAMPLE_RC_FIXQP;
     pstPara->IQpDelta = -2;
     pstPara->vq = AX_VENC_VBR_QUALITY_LEVEL_INV;
@@ -189,7 +190,8 @@ static SAMPLE_OPTION_T options[] = {
     {"bPerf", '0', 1},
     {"vbCnt", '0', 1},
     {"chnNum", 'N', 1},
-    {"syncType", '0', 1},
+    {"syncSend", '0', 1},
+    {"syncGet", '0', 1},
 
     {"bChnCustom", '0', 1},
     {"codecType", '0', 1},
@@ -235,6 +237,8 @@ static SAMPLE_OPTION_T options[] = {
     {"qpMapQpType", '0', 1},
     {"qpMapBlkUnit", '0', 1},
     {"qpMapBlkType", '0', 1},
+    {"svcRegionNum", '0', 1},
+    {"svcQpMod", '0', 1},
     {"enableEncodeOnce", '0', 1},
     {"roiEnable", '0', 1},
     {"vencRoiMap", '0', 1},
@@ -366,6 +370,7 @@ static SAMPLE_OPTION_T options[] = {
     {"colorPrimaries", '0', 1},
     {"transferCharacter", '0', 1},
     {"matrixCoeffs", '0', 1},
+    {"bSetPartition", '0', 1},
     {NULL, 0, 0} /* Format of last line */
 };
 
@@ -649,8 +654,12 @@ AX_S32 SampleCmdLineParse(AX_S32 argc, AX_CHAR **argv, SAMPLE_VENC_CMD_PARA_T *p
                 cml->vbCnt = atoi(optarg);
                 break;
             }
-            if (strcmp(pPrm->longOpt, "syncType") == 0) {
-                cml->syncType = atoi(optarg);
+            if (strcmp(pPrm->longOpt, "syncSend") == 0) {
+                cml->syncSend = atoi(optarg);
+                break;
+            }
+            if (strcmp(pPrm->longOpt, "syncGet") == 0) {
+                cml->syncGet = atoi(optarg);
                 break;
             }
             if (strcmp(pPrm->longOpt, "bChnCustom") == 0) {
@@ -731,6 +740,14 @@ AX_S32 SampleCmdLineParse(AX_S32 argc, AX_CHAR **argv, SAMPLE_VENC_CMD_PARA_T *p
             }
             if (strcmp(pPrm->longOpt, "qpMapBlkUnit") == 0) {
                 cml->qpMapBlkUnit = atoi(optarg);
+                break;
+            }
+            if (strcmp(pPrm->longOpt, "svcRegionNum") == 0) {
+                cml->svcRegionNum = atoi(optarg);
+                break;
+            }
+            if (strcmp(pPrm->longOpt, "svcQpMod") == 0) {
+                cml->svcQpMod = atoi(optarg);
                 break;
             }
             if (strcmp(pPrm->longOpt, "enableEncodeOnce") == 0) {
@@ -1013,7 +1030,10 @@ AX_S32 SampleCmdLineParse(AX_S32 argc, AX_CHAR **argv, SAMPLE_VENC_CMD_PARA_T *p
                 cml->matrixCoeffs = atoi(optarg);
                 break;
             }
-
+            if (strcmp(pPrm->longOpt, "bSetPartition") == 0) {
+                cml->bSetPartition = atoi(optarg);
+                break;
+            }
             break;
         default:
             SAMPLE_LOG_ERR("unknow options:%c.\n", prm.short_opt);

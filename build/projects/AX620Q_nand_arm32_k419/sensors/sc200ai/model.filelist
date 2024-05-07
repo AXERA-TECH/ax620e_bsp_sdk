@@ -1,6 +1,6 @@
-@dir: msp/out/arm_glibc
+@dir: msp/out/$(MSP_OUT_DIR)
 etc/models/aiisp/SC200AI_HDR_1920x1080*.axmodel
-etc/models/aiisp/SC200AI_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0000_MULTI2_00000641975_240115_AX620E.axmodel
+etc/models/aiisp/SC200AI_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0000_MULTI2_00000695723_240308_AX620E.axmodel
 etc/sc200ai_sdr_2lane.ini
 etc/sc200ai_sdr_2lane_620q.ini
 etc/sc200ai_hdr_2lane.ini
@@ -19,3 +19,5 @@ etc/sc200ai_single_sdr_2lane_entry.ini
 etc/sc200ai_single_sdr_2lane_entry_620q.ini
 etc/sc200ai_double_sdr_online_entry_620q.ini
 etc/sc200ai_double_hdr_online_entry_620q.ini
+etc/sc200ai_hdr_2x_ratio_1to1.bin
+etc/sc200ai_hdr_2x_ratio_default.bin

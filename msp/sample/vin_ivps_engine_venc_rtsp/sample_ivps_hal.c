@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -471,7 +471,9 @@ void visualize_infer_result(IVPS_RGN_HANDLE handle, SAMPLE_ENGINE_Results *objec
         // printf("x y w h: %d %d %d %d\n", disp[i].uDisp.tPolygon.tRect.nX, disp[i].uDisp.tPolygon.tRect.nY, disp[i].uDisp.tPolygon.tRect.nW, disp[i].uDisp.tPolygon.tRect.nH);
         disp[i].uDisp.tPolygon.nLineWidth = 3;
         disp[i].uDisp.tPolygon.bSolid = AX_FALSE;
-        disp[i].uDisp.tPolygon.bCornerRect = AX_FALSE;
+        disp[i].uDisp.tPolygon.tCornerRect.bEnable = AX_FALSE;
+        disp[i].uDisp.tPolygon.tCornerRect.nHorLength = 20;
+        disp[i].uDisp.tPolygon.tCornerRect.nVerLength = 10;
         disp[i].uDisp.tPolygon.nAlpha = 255;
         disp[i].uDisp.tPolygon.nColor = objects->objs[i].color;
     }

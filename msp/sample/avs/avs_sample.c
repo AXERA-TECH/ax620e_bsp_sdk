@@ -1,13 +1,12 @@
-/**********************************************************************************
+/**************************************************************************************************
  *
- * Copyright (c) 2019-2020 Beijing AXera Technology Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Beijing AXera Technology Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Beijing AXera Technology Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
- **********************************************************************************/
-
+ **************************************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -71,6 +70,8 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
         goto err2;
     }
 
+    AVSParameterFree(pAVSBaseParam);
+
     s32Ret = AX_POOL_Exit();
     if (AX_SUCCESS != s32Ret) {
         SAMPLE_ERR_LOG("AX_POOL_Exit failed! Error Code:0x%X\n", s32Ret);
@@ -80,9 +81,13 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
     if (AX_SUCCESS != s32Ret) {
         SAMPLE_ERR_LOG("AX_SYS_Deinit failed! Error Code:0x%X\n", s32Ret);
     }
+
+    free(pAVSBaseParam);
+
     return 0;
 
 err2:
+    AVSParameterFree(pAVSBaseParam);
     AX_POOL_Exit();
 err1:
     AX_SYS_Deinit();

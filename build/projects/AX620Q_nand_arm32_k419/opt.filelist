@@ -1,9 +1,9 @@
-@dir: msp/out/arm_glibc
+@dir: msp/out/$(MSP_OUT_DIR)
 third-party/lib/libfaac.so* usr/lib/
 third-party/lib/libsamplerate.so* usr/lib/
 third-party/lib/libtinyalsa.so* usr/lib/
 
-@dir: msp/out/arm_glibc
+@dir: msp/out/$(MSP_OUT_DIR)
 bin/FRTDemo/* bin/FRTDemo/
 -bin/FRTDemo/frtdemo_s
 bin/OPALDemo/* bin/OPALDemo/
@@ -11,13 +11,19 @@ bin/OPALDemo/* bin/OPALDemo/
 bin/tuning-server bin/
 bin/sample_vin bin/
 bin/sample_audio bin/
+bin/sample_skel bin/
 bin/sample_uvc/* bin/
 bin/ax_npuscene bin/
 
-@dir: msp/out/arm_glibc
-etc/skelModels/ax_ax620E_bv_algo_model_*.axmodel etc/skelModels/
+@dir: msp/out/$(MSP_OUT_DIR)
+etc/skelModels/ax_ax620E_bvc_algo_model_*.axmodel etc/skelModels/
+etc/skelModels/ax_ax620E_lpr_algo_model_*.axmodel etc/skelModels/
+etc/skelModels/ax_ax620E_plate_det_algo_model_*.axmodel etc/skelModels/
+etc/skelModels/ax_ax620E_face_algo_model_*.axmodel etc/skelModels/
+etc/skelModels/ax_ax620E_faceblur_algo_model_*.axmodel etc/skelModels/
+etc/skelModels/ax_ax620E_facewhat_algo_model_*.axmodel etc/skelModels/
 
-@dir: msp/out/arm_glibc
+@dir: msp/out/$(MSP_OUT_DIR)
 lib/libax_ae.so
 lib/libax_awb.so
 lib/libax_af.so
@@ -34,8 +40,5 @@ lib/libax_proton.so
 lib/libax_sys.so
 lib/libax_venc.so
 lib/libax_opal.so
-lib/libax_skel_tiny.so lib/libax_skel.so
-lib/libax_lpcm.so
-lib/libax_g711u.so
-lib/libax_g711a.so
+lib/libax_skel.so
 lib/libax_faac.so

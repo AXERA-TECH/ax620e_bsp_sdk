@@ -1,21 +1,21 @@
-CUR_PATH            := $(shell pwd)
-HOME_PATH           := $(abspath $(CUR_PATH)/../../..)
+CUR_PATH			:= $(shell pwd)
+HOME_PATH			:= $(abspath $(CUR_PATH)/../../..)
 
 include $(HOME_PATH)/build/color.mk
 include $(HOME_PATH)/build/config.mak
 
-PRJ_OUT_HOME        := $(HOME_PATH)/build/out/$(PROJECT)
-OBJ_OUT_PATH        := $(PRJ_OUT_HOME)/objs
-SRC_RELATIVE_PATH   := $(subst $(HOME_PATH)/,,$(SRC_PATH))
-TARGET_OUT_PATH     := $(OBJ_OUT_PATH)/$(SRC_RELATIVE_PATH)
+PRJ_OUT_HOME		:= $(HOME_PATH)/build/out/$(PROJECT)
+OBJ_OUT_PATH		:= $(PRJ_OUT_HOME)/objs
+SRC_RELATIVE_PATH	:= $(subst $(HOME_PATH)/,,$(SRC_PATH))
+TARGET_OUT_PATH		:= $(OBJ_OUT_PATH)/$(SRC_RELATIVE_PATH)
 
-SRC_PATH            := $(CUR_PATH)
-SAMPLE_PATH         := $(CUR_PATH)/..
-OUT_PATH            := $(MSP_OUT_PATH)
-LIB_PATH            := $(MSP_OUT_PATH)/lib
-SSL_PATH            := $(HOME_PATH)/third-party/openssl/$(ARCH)
-LIVE_PATH           := $(HOME_PATH)/third-party/live/out/$(ARCH)/$(LIBC)
-OPENCV_PATH         := $(HOME_PATH)/third-party/opencv-4.5.5
+SRC_PATH			:= $(CUR_PATH)
+SAMPLE_PATH			:= $(CUR_PATH)/..
+OUT_PATH			:= $(MSP_OUT_PATH)
+LIB_PATH			:= $(MSP_OUT_PATH)/lib
+SSL_PATH			:= $(HOME_PATH)/third-party/openssl/$(ARCH)
+LIVE_PATH			:= $(HOME_PATH)/third-party/live/out/$(ARCH)/$(LIBC)
+OPENCV_PATH			:= $(HOME_PATH)/third-party/opencv
 
 USE_OPENSSL			:= no
 
@@ -33,6 +33,7 @@ SRCS				+= $(SAMPLE_PATH)/common/common_sys.c
 SRCS				+= $(SAMPLE_PATH)/common/common_vin.c
 SRCS				+= $(SAMPLE_PATH)/common/common_isp.c
 SRCS				+= $(SAMPLE_PATH)/common/common_nt.c
+SRCS			    += $(SAMPLE_PATH)/common/common_hw.c
 SRCCPPS				:= $(wildcard $(SAMPLE_PATH)/rtsp/*.cpp)
 SRCCPPS				+= $(wildcard $(SRC_PATH)/*.cpp)
 
@@ -58,11 +59,11 @@ DEPS				:= $(OBJS:%.o=%.d)
 TARGET				:= $(MOD_NAME)
 
 # build flags
-CPPFLAGS			:= --std=c++11 -fopenmp
+CPPFLAGS			:= --std=c++11
 CFLAGS				:= ${EXEC_FLAG}
 
 ifeq ($(debug),yes)
-CFLAGS				+= -fopenmp -Wall -O0 -ggdb3
+CFLAGS				+= -Wall -O0 -ggdb3
 else
 CFLAGS				+= -Wall -O2
 endif
@@ -87,10 +88,10 @@ CLIB				+= -lax_af
 CLIB				+= -lax_venc
 CLIB				+= -lax_ivps
 CLIB				+= -lax_sys
-CLIB				+= -lm -lpthread -lrt -ldl -lstdc++ -fopenmp
+CLIB				+= -lm -lpthread -lrt -ldl -lstdc++
 CLIB				+= -L$(OPENCV_PATH)/lib/$(ARCH)/$(LIBC)
 CLIB				+= -L$(OPENCV_PATH)/lib/$(ARCH)/$(LIBC)/opencv4/3rdparty/
-CLIB				+= -Wl,--start-group -lopencv_imgcodecs -lopencv_imgproc -lopencv_core -ldl -lm -lpthread -lrt -littnotify -ltegra_hal -llibjpeg-turbo -llibwebp -llibpng -llibtiff -llibopenjp2 -lzlib -Wl,--end-group
+CLIB				+= -Wl,--start-group -lopencv_imgcodecs -lopencv_imgproc -lopencv_core -ldl -lm -lpthread -lrt -llibjpeg-turbo -llibwebp -llibpng -llibtiff -llibopenjp2 -lzlib -Wl,--end-group
 ifeq ($(USE_OPENSSL),yes)
 CLIB				+= -L$(SSL_PATH)/$(LIBC)/lib -lssl -lcrypto
 endif
@@ -98,6 +99,7 @@ CLIB				+= -L$(LIVE_PATH)/lib -lliveMedia -lgroupsock -lBasicUsageEnvironment -l
 
 # install
 INSTALL_BIN			:= $(TARGET)
+MV_TARGET			:= $(INSTALL_BIN)
 
 # link
 LINK = $(CC)

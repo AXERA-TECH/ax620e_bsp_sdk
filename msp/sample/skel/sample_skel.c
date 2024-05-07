@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Shanghai) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Shanghai) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Shanghai) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -19,7 +19,6 @@
 #include "YuvHandler.h"
 #include "ax_skel_api.h"
 #include "ax_sys_api.h"
-#include "ax_vdec_api.h"
 #include "ax_ivps_api.h"
 #include "ax_venc_api.h"
 #include "ax_buffer_tool.h"
@@ -28,6 +27,7 @@
 #include "frameMgr.h"
 #include "attrParser.h"
 #include "statMgr.h"
+#include "common_vdec_api.h"
 
 #ifndef ALIGN_UP
 #define ALIGN_UP(x, align) ((((x) + ((align) - 1)) / (align)) * (align))
@@ -55,6 +55,12 @@
 #define SAMPLE_SKEL_SHIFT_LEFT_ALIGN(a) (1 << (a))
 #define SAMPLE_SKEL_VDEC_WIDTH_ALIGN     SAMPLE_SKEL_SHIFT_LEFT_ALIGN(8)
 #define SAMPLE_SKEL_HEIGHT_ALIGN     SAMPLE_SKEL_SHIFT_LEFT_ALIGN(6)
+
+#define RUN_COMMAND(format, ...)    do {   \
+                                        char cmd[512];   \
+                                        snprintf(cmd, 512, format, ##__VA_ARGS__);  \
+                                        system(cmd);    \
+                                    } while(0);
 
 AX_VOID LogSaveToFile(FILE *file, const char *fmt, ...) {
     if (file) {
@@ -145,12 +151,9 @@ static AX_VOID ShowUsage(AX_VOID) {
                 "\t\t1: STD-VNPU Default\n"
                 "\t\t2: STD-VNPU1\n"
                 "\t\t3: STD-VNPU2\n");
-    printf("-p, \tSkel PPL((unsigned int), default=4)\n"
-                "\t\t1: AX_SKEL_PPL_BODY\n"
-                "\t\t2: AX_SKEL_PPL_POSE\n"
-                "\t\t3: AX_SKEL_PPL_FH\n"
-                "\t\t4: AX_SKEL_PPL_HVCP\n"
-                "\t\t5: AX_SKEL_PPL_FACE_FEATURE\n");
+    printf("-p, \tSkel PPL((unsigned int), default=1)\n"
+                "\t\t1: AX_SKEL_PPL_HVCP\n"
+                "\t\t2: AX_SKEL_PPL_FACE\n");
     printf("-v, \tLog level((unsigned int), default=5)\n"
                 "\t\t0: LOG_EMERGENCY_LEVEL\n"
                 "\t\t1: LOG_ALERT_LEVEL\n"
@@ -471,9 +474,9 @@ AX_S32 ParseConfigParam(const AX_SKEL_CONFIG_T *pstConfig) {
                     if (pstConfig->pstItems[i].nValueSize == sizeof(AX_SKEL_TARGET_CONFIG_T)) {
                         AX_SKEL_TARGET_CONFIG_T *pstConf = (AX_SKEL_TARGET_CONFIG_T *)pstConfig->pstItems[i].pstrValue;
                         if (pstConf->pstItems) {
-                            for (size_t j = 0; j < pstConf->nSize; j ++) {
+                            for (AX_U32 j = 0; j < pstConf->nSize; j ++) {
                                 if (pstConf->pstItems[j].pstrObjectCategory) {
-                                    ALOGI("SKEL set %s: [%ld]%s", pstConfig->pstItems[i].pstrType, j, pstConf->pstItems[j].pstrObjectCategory);
+                                    ALOGI("SKEL set %s: [%d]%s", pstConfig->pstItems[i].pstrType, j, pstConf->pstItems[j].pstrObjectCategory);
                                 }
                             }
                         }
@@ -489,9 +492,9 @@ AX_S32 ParseConfigParam(const AX_SKEL_CONFIG_T *pstConfig) {
                     if (pstConfig->pstItems[i].nValueSize == sizeof(AX_SKEL_TARGET_CONFIG_T)) {
                         AX_SKEL_TARGET_CONFIG_T *pstConf = (AX_SKEL_TARGET_CONFIG_T *)pstConfig->pstItems[i].pstrValue;
                         if (pstConf->pstItems) {
-                            for (size_t j = 0; j < pstConf->nSize; j ++) {
+                            for (AX_U32 j = 0; j < pstConf->nSize; j ++) {
                                 if (pstConf->pstItems[j].pstrObjectCategory) {
-                                    ALOGI("SKEL set %s: [%ld]%s", pstConfig->pstItems[i].pstrType, j, pstConf->pstItems[j].pstrObjectCategory);
+                                    ALOGI("SKEL set %s: [%d]%s", pstConfig->pstItems[i].pstrType, j, pstConf->pstItems[j].pstrObjectCategory);
                                 }
                             }
                         }
@@ -507,8 +510,8 @@ AX_S32 ParseConfigParam(const AX_SKEL_CONFIG_T *pstConfig) {
                     if (pstConfig->pstItems[i].nValueSize == sizeof(AX_SKEL_ANALYZER_CONFIG_T)) {
                         AX_SKEL_ANALYZER_CONFIG_T *pstConf = (AX_SKEL_ANALYZER_CONFIG_T *)pstConfig->pstItems[i].pstrValue;
                         if (pstConf->peItems) {
-                            for (size_t j = 0; j < pstConf->nSize; j ++) {
-                                ALOGI("SKEL set %s: [%ld]%d", pstConfig->pstItems[i].pstrType, j, pstConf->peItems[j]);
+                            for (AX_U32 j = 0; j < pstConf->nSize; j ++) {
+                                ALOGI("SKEL set %s: [%d]%d", pstConfig->pstItems[i].pstrType, j, pstConf->peItems[j]);
                             }
                         }
                         else {
@@ -649,6 +652,81 @@ int LoadFileToMem(FILE *pFile, AX_U64 nPhyAddr, AX_VOID *pVirAddr, AX_S32 nSize)
     return nReadSize;
 }
 
+int DecodeJpeg(FILE* InputFileHandle, AX_U64 OneYUVDataPhy, AX_VOID* OneYUVDataVir, AX_U32 nWidth, AX_U32 nHeight)
+{
+    SAMPLE_INPUT_FILE_INFO_T stStreamInfo;
+    SAMPLE_STREAM_BUF_T stStreamBuf;
+    size_t nReadLen = 0;
+    AX_U64 streamPhyAddr = 0;
+    AX_VOID *pStreamVirAddr = NULL;
+    AX_VDEC_DEC_ONE_FRM_T decOneFrmParam;
+    size_t nFileSize = 0;
+    AX_U32 heightAlign = 0;
+    AX_U32 frmStride = 0;
+    frmStride = AX_COMM_ALIGN(nWidth * 8, AX_VDEC_WIDTH_ALIGN * 8) / 8;
+    heightAlign = ALIGN_UP(nHeight, 16);
+    AX_U32 nFrameSize = heightAlign * frmStride * 3 / 2;
+    
+    memset(&stStreamInfo, 0, sizeof(SAMPLE_INPUT_FILE_INFO_T));
+    memset(&stStreamBuf, 0, sizeof(SAMPLE_STREAM_BUF_T));
+    memset(&decOneFrmParam, 0, sizeof(AX_VDEC_DEC_ONE_FRM_T));
+
+    rewind(InputFileHandle);
+    fseek(InputFileHandle, 0, SEEK_END);
+    nFileSize = (size_t)ftello(InputFileHandle);
+
+    stStreamInfo.fInput = InputFileHandle;
+    stStreamInfo.sFileSize = nFileSize;
+
+    stStreamBuf.uBufSize = ((AX_U32)nFileSize) > STREAM_BUFFER_MAX_SIZE ? STREAM_BUFFER_MAX_SIZE : nFileSize;
+    int ret = AX_SYS_MemAlloc(&streamPhyAddr, (AX_VOID **)&pStreamVirAddr,
+                            stStreamBuf.uBufSize, 0x100, (AX_S8 *)"vdec_input_stream");
+    if (ret != AX_SUCCESS) {
+        ALOGE("AX_SYS_MemAlloc FAILED! uBufSize:0x%x ret:0x%x\n",
+                        stStreamBuf.uBufSize, ret);
+        return -1;
+    }
+
+    stStreamBuf.tBufAddr.pVirAddr = pStreamVirAddr;
+    stStreamBuf.tBufAddr.u64PhyAddr = streamPhyAddr;
+
+    ret = StreamParserReadFrameJpeg(&stStreamInfo, &stStreamBuf, &nReadLen);
+    if (0 != ret) {
+        ALOGE("StreamParserReadFrameJpeg failed! ret = 0x%x", ret);
+        AX_SYS_MemFree(streamPhyAddr, pStreamVirAddr);
+        return -1;
+    }
+
+    if (!nReadLen) {
+        ALOGE("read jpeg frame FAILED!\n");
+        AX_SYS_MemFree(streamPhyAddr, pStreamVirAddr);
+        ret = AX_ERR_VDEC_STRM_ERROR;
+        return ret;
+    }
+
+    decOneFrmParam.stStream.pu8Addr = (AX_U8*)stStreamBuf.tBufAddr.pVirAddr;
+    decOneFrmParam.stStream.u64PhyAddr = stStreamBuf.tBufAddr.u64PhyAddr;
+    decOneFrmParam.stStream.u32StreamPackLen = (AX_U32)nReadLen;
+
+    decOneFrmParam.stFrame.u64VirAddr[0] = (AX_ULONG)OneYUVDataVir;
+    decOneFrmParam.stFrame.u64VirAddr[1] = (AX_ULONG)OneYUVDataVir + frmStride * heightAlign;
+    decOneFrmParam.stFrame.u64PhyAddr[0] = OneYUVDataPhy;
+    decOneFrmParam.stFrame.u64PhyAddr[1] = OneYUVDataPhy + frmStride * heightAlign;
+    decOneFrmParam.stFrame.u32FrameSize  = nFrameSize;
+
+    ret = AX_VDEC_JpegDecodeOneFrame(&decOneFrmParam);
+    if (ret != AX_SUCCESS) {
+        ALOGE("AX_VDEC_JpegDecodeOneFrame FAILED! ret:0x%x %s\n",
+                        ret, SampleVdecRetStr(ret));
+        AX_SYS_MemFree(streamPhyAddr, pStreamVirAddr);
+        return ret;
+    }
+
+    AX_SYS_MemFree(streamPhyAddr, pStreamVirAddr);
+
+    return 0; 
+}
+
 int LoadFileToMemExt(const AX_CHAR *pFile, AX_U64 *pPhyAddr, AX_VOID **ppVirAddr, AX_U32 *pLen)
 {
     /* Reading input file */
@@ -691,61 +769,6 @@ int LoadFileToMemExt(const AX_CHAR *pFile, AX_U64 *pPhyAddr, AX_VOID **ppVirAddr
     return 0;
 }
 
-int JpegDecodeOneFrame(const AX_CHAR *inputFile, AX_U32 *nStride, AX_U32 *nWidth, AX_U32 *nHeight, AX_U64 *pPhyAddr, AX_VOID **ppVirAddr, AX_U64 *pLen)
-{
-    AX_U32 nFileSize = 0;
-    AX_U64 streamPhyAddr = 0;
-    AX_VOID *pStreamVirAddr = NULL;
-    AX_U64 outPhyAddrDst = 0;
-    AX_VOID *poutVirAddrDst = NULL;
-    AX_S32 widthAlign = 4096;
-    AX_S32 heightAlign = 4096;
-    AX_VDEC_DEC_ONE_FRM_T decOneFrmParam;
-
-    AX_S32 nRet = LoadFileToMemExt(inputFile, &streamPhyAddr, &pStreamVirAddr, &nFileSize);
-
-    if (nRet != 0
-        || streamPhyAddr == 0
-        || pStreamVirAddr == NULL) {
-        ALOGE("Load input file fail");
-        return -1;
-    }
-
-    memset(&decOneFrmParam, 0x0, sizeof(AX_VDEC_DEC_ONE_FRM_T));
-    AX_U32 noutDstSize = AX_VIN_GetImgBufferSize(heightAlign, widthAlign, AX_FORMAT_YUV420_SEMIPLANAR, NULL, SAMPLE_SKEL_VDEC_WIDTH_ALIGN);
-    nRet = AX_SYS_MemAlloc(&outPhyAddrDst, (AX_VOID **)&poutVirAddrDst,
-                             noutDstSize, 0x1000, (AX_S8 *)"SKEL_VDEC");
-
-    decOneFrmParam.stStream.pu8Addr = pStreamVirAddr;
-    decOneFrmParam.stStream.u64PhyAddr = streamPhyAddr;
-    decOneFrmParam.stStream.u32StreamPackLen = nFileSize;
-
-    decOneFrmParam.stFrame.u64VirAddr[0] = (AX_U64)poutVirAddrDst;
-    decOneFrmParam.stFrame.u64VirAddr[1] = (AX_U64)poutVirAddrDst + widthAlign * heightAlign;
-    decOneFrmParam.stFrame.u64PhyAddr[0] = outPhyAddrDst;
-    decOneFrmParam.stFrame.u64PhyAddr[1] = outPhyAddrDst + widthAlign * heightAlign;
-
-    nRet = AX_VDEC_JpegDecodeOneFrame(&decOneFrmParam);
-
-    if (nRet != AX_SUCCESS) {
-        ALOGE("AX_VDEC_JpegDecodeOneFrame fail nRet=0x%X", nRet);
-        goto EXIT;
-    }
-
-EXIT:
-    if (nRet != 0) {
-        if (outPhyAddrDst != 0) {
-            AX_SYS_MemFree(outPhyAddrDst, poutVirAddrDst);
-        }
-    }
-    else {
-        *pPhyAddr = outPhyAddrDst;
-        *ppVirAddr = poutVirAddrDst;
-    }
-
-    return nRet;
-}
-
 int EncodeOneFrameToJpeg(const AX_CHAR *dstFile, AX_U32 nStride, AX_U32 nWidth, AX_U32 nHeight, AX_U64 nPhyAddr, AX_VOID *pVirAddr, AX_U32 nLen) {
     AX_S32 s32Ret = AX_SUCCESS;
 
@@ -780,7 +803,7 @@ int EncodeOneFrameToJpeg(const AX_CHAR *dstFile, AX_U32 nStride, AX_U32 nWidth, 
     stJpegEncodeOnceParam.u64PhyAddr[1] = stJpegEncodeOnceParam.u64PhyAddr[0] + stJpegEncodeOnceParam.u32PicStride[0] * stJpegEncodeOnceParam.u32Height;
     stJpegEncodeOnceParam.u64PhyAddr[2] = 0;
 
-    stJpegEncodeOnceParam.u64VirAddr[0] = (AX_U64)pVirAddr;
+    stJpegEncodeOnceParam.u64VirAddr[0] = (AX_ULONG)pVirAddr;
     stJpegEncodeOnceParam.u64VirAddr[1] = stJpegEncodeOnceParam.u64VirAddr[0] + stJpegEncodeOnceParam.u32PicStride[0] * stJpegEncodeOnceParam.u32Height;
     stJpegEncodeOnceParam.u64VirAddr[2] = 0;
 
@@ -833,6 +856,7 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
     AX_S32 nRet = 0;
     AX_S32 c;
     AX_S32 isExit = 0;
+    AX_BOOL bJpgFile = AX_FALSE;
     FILE *InputFileHandle = NULL;
     const AX_CHAR *InputFile = NULL;
     const AX_CHAR *InputResolution = NULL;
@@ -879,7 +903,6 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
     // AX_U32 nHumantracksize = 0;
     // AX_U32 nVehicletracksize = 0;
     // AX_U32 nCycletracksize = 0;
-    AX_BOOL bJpgFile = AX_FALSE;
     AX_U64 nSkelFrameId = 1;
 
 #if defined(SAMPLE_SKEL_BUILD_VERSION)
@@ -952,18 +975,7 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
         }
     }
 
-    if (InputFile) {
-        AX_U32 nInputFileLen = strlen(InputFile);
-
-        if (nInputFileLen > 4 && (strcasecmp(&InputFile[nInputFileLen - 4], ".jpg") == 0)) {
-            bJpgFile = AX_TRUE;
-        }
-    }
-
-    // TODO:
-    bJpgFile = AX_FALSE;
-
-    if (isExit || !InputFile || (!bJpgFile  && !InputResolution) || (nPPL < AX_SKEL_PPL_BODY || nPPL >= (AX_SKEL_PPL_MAX))
+    if (isExit || !InputFile || !InputResolution || (nPPL < AX_SKEL_PPL_HVCP) || (nPPL > AX_SKEL_PPL_MAX)
         || (log_level < 0 || log_level >= SKEL_LOG_MAX)
         || (fConfidence < 0 || fConfidence > 1)
         || (nDetectType < 0 || nDetectType > 2)
@@ -971,6 +983,14 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
         || (nNpuType > 3)) {
         ShowUsage();
         exit(0);
+    }
+
+    if (InputFile) {
+        AX_U32 nInputFileLen = strlen(InputFile);
+
+        if (nInputFileLen > 4 && (strcasecmp(&InputFile[nInputFileLen - 4], ".jpg") == 0)) {
+            bJpgFile = AX_TRUE;
+        }
     }
 
     if (nRepeatTimes <= 0) {
@@ -992,38 +1012,18 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
 
     // clear output
     if (SaveResultPath) {
-        AX_CHAR szPath[512] = {0};
-        snprintf(szPath, 511, "rm %s -rf", SaveResultPath);
-        system(szPath);
-
-        // create path
-        snprintf(szPath, 511, "mkdir %s -p", SaveResultPath);
-        system(szPath);
-
-        snprintf(szPath, 511, "%s/%s", SaveResultPath, SKEL_SAMPLE_OUTPUT_BODY_PATH);
-        mkdir(szPath, S_IRWXU | S_IRWXG | S_IRWXO);
-
-        snprintf(szPath, 511, "%s/%s", SaveResultPath, SKEL_SAMPLE_OUTPUT_VEHICLE_PATH);
-        mkdir(szPath, S_IRWXU | S_IRWXG | S_IRWXO);
-
-        snprintf(szPath, 511, "%s/%s", SaveResultPath, SKEL_SAMPLE_OUTPUT_CYCLE_PATH);
-        mkdir(szPath, S_IRWXU | S_IRWXG | S_IRWXO);
-
-        snprintf(szPath, 511, "%s/%s", SaveResultPath, SKEL_SAMPLE_OUTPUT_FACE_PATH);
-        mkdir(szPath, S_IRWXU | S_IRWXG | S_IRWXO);
-
-        snprintf(szPath, 511, "%s/%s", SaveResultPath, SKEL_SAMPLE_OUTPUT_PLATE_PATH);
-        mkdir(szPath, S_IRWXU | S_IRWXG | S_IRWXO);
+        RUN_COMMAND("rm -rf %s", SaveResultPath);
+        RUN_COMMAND("mkdir -p %s", SaveResultPath);
+        RUN_COMMAND("mkdir -p %s/%s", SaveResultPath, SKEL_SAMPLE_OUTPUT_BODY_PATH);
+        RUN_COMMAND("mkdir -p %s/%s", SaveResultPath, SKEL_SAMPLE_OUTPUT_VEHICLE_PATH);
+        RUN_COMMAND("mkdir -p %s/%s", SaveResultPath, SKEL_SAMPLE_OUTPUT_CYCLE_PATH);
+        RUN_COMMAND("mkdir -p %s/%s", SaveResultPath, SKEL_SAMPLE_OUTPUT_FACE_PATH);
+        RUN_COMMAND("mkdir -p %s/%s", SaveResultPath, SKEL_SAMPLE_OUTPUT_PLATE_PATH);
     }
 
     if (ReWritePath) {
-        AX_CHAR szPath[512] = {0};
-        snprintf(szPath, 511, "rm %s -rf", ReWritePath);
-        system(szPath);
-
-        // create path
-        snprintf(szPath, 511, "mkdir %s -p", ReWritePath);
-        system(szPath);
+        RUN_COMMAND("rm -rf %s", ReWritePath);
+        RUN_COMMAND("mkdir -p %s", ReWritePath);
     }
 
     if (InputResolution) {
@@ -1049,23 +1049,26 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
 
     ALOGI("AX_IVPS_Init nRet = 0x%x", nRet);
 
-    if (bJpgFile) {
-        AX_VDEC_MOD_ATTR_T stVdecModAttr;
-        memset(&stVdecModAttr, 0x00, sizeof(stVdecModAttr));
-        stVdecModAttr.u32MaxGroupCount = 1;
-        nRet = AX_VDEC_Init(&stVdecModAttr);
-
-        ALOGI("AX_VDEC_Init nRet = 0x%x", nRet);
-    }
-
     AX_VENC_MOD_ATTR_T stVencModAttr;
     memset(&stVencModAttr, 0x00, sizeof(stVencModAttr));
     stVencModAttr.enVencType = AX_VENC_MULTI_ENCODER;
     stVencModAttr.stModThdAttr.u32TotalThreadNum = 1;
     stVencModAttr.stModThdAttr.bExplicitSched = AX_FALSE;
     nRet = AX_VENC_Init(&stVencModAttr);
+    if (AX_SUCCESS != nRet) {
+        ALOGE("AX_VENC_Init FAILED! ret:0x%x\n", nRet);
+        goto EXIT0;
+    }
 
     ALOGI("AX_VENC_Init nRet = 0x%x", nRet);
+
+    nRet = AX_VDEC_Init(NULL);
+    if (AX_SUCCESS != nRet) {
+        ALOGE("AX_VDEC_Init FAILED! ret:0x%x\n", nRet);
+        goto EXIT0;
+    }
+
+    ALOGI("AX_VDEC_Init nRet = 0x%x", nRet);
 
     // init engine
     AX_ENGINE_NPU_ATTR_T npu_attr;
@@ -1097,44 +1100,24 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
         goto EXIT0;
     }
 
-    if (bJpgFile) {
-        JpegDecodeOneFrame(InputFile, &nStride, &nWidth, &nHeight, &YUVDataPhy, &YUVDataVir, &nFileSize);
+    nOneSize = nWidth * nHeight * 3 / 2;
+    nFrameSize = nStride * nHeight * 3 / 2;
 
-        if (nRet != 0
-            || YUVDataPhy == 0
-            || YUVDataVir == NULL) {
-            ALOGE("Load input file fail");
-            goto EXIT1;
-        }
+    InputFileHandle = LoadFile(InputFile, &nFileSize);
+
+    if (bJpgFile) {
+        InputFileFrameCnt = 1;
     }
     else {
-        // create frame mgr
-        FrameMgrCreate(nFrameDepth + nCacheListDepth);
-
-        nOneSize = nWidth * nHeight * 3 / 2;
-        nFrameSize = nStride * nHeight * 3 / 2;
-
-        InputFileHandle = LoadFile(InputFile, &nFileSize);
-
         if (!InputFileHandle
-            || (nFileSize % nOneSize) != 0) {
+        || (nFileSize % nOneSize) != 0) {
             ALOGE("%s file is not %dx%d", InputFile, nWidth, nHeight);
             goto EXIT1;
         }
 
         InputFileFrameCnt = nFileSize / nOneSize;
-
     }
-
-    AX_POOL_CONFIG_T stPoolConfig;
-    memset(&stPoolConfig, 0, sizeof(AX_POOL_CONFIG_T));
-    stPoolConfig.MetaSize = 8192;
-    stPoolConfig.BlkCnt = 1;
-    stPoolConfig.BlkSize = nFrameSize;
-    stPoolConfig.CacheMode = AX_POOL_CACHE_MODE_NONCACHE;
-    memset(stPoolConfig.PartitionName, 0, sizeof(stPoolConfig.PartitionName));
-    strcpy((AX_CHAR *)stPoolConfig.PartitionName, "anonymous");
-    AX_S32 poolId = AX_POOL_CreatePool(&stPoolConfig);
+    
 
     if (nWidth%2 == 1
         || nHeight%2 == 1) {
@@ -1219,8 +1202,8 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
             goto EXIT1;
         }
 
-        for (size_t i = 0; i < pstCapability->nPPLConfigSize; i++) {
-            ALOGI("SKEL capability[%ld]: (ePPL: %d, PPLConfigKey: %s)", i, pstCapability->pstPPLConfig[i].ePPL,
+        for (AX_U32 i = 0; i < pstCapability->nPPLConfigSize; i++) {
+            ALOGI("SKEL capability[%d]: (ePPL: %d, PPLConfigKey: %s)", i, pstCapability->pstPPLConfig[i].ePPL,
                   pstCapability->pstPPLConfig[i].pstrPPLConfigKey);
         }
 
@@ -1693,8 +1676,10 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
     if (InputFileFrameCnt > 1) {
         InputFileFrameCnt = InputFileFrameCnt + BLACK_VIDEO_FRAME_COUNT;
     }
-    AX_BLK blkId = AX_INVALID_BLOCKID;
-    blkId = AX_POOL_GetBlock(poolId, nFrameSize, NULL);
+
+    // create frame mgr
+    FrameMgrCreate(nFrameSize, nFrameDepth + nCacheListDepth);
+
     for (AX_U32 nRepeat = 0; nRepeat < nRepeatTimes; nRepeat++) {
         ALOGN("#####SKEL Process times: %d", nRepeat + 1);
 
@@ -1704,10 +1689,8 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
         STAT_OBJECT_NUM_T tObjectPushNum = {0};
 
         for (AX_U32 nFrameCnt = 0; nFrameCnt < InputFileFrameCnt; nFrameCnt++) {
+            AX_BLK blkId = AX_INVALID_BLOCKID;
 
-            if (AX_INVALID_BLOCKID == blkId) {
-                ALOGE("blk id is invaild");
-            }
             if (InputFileFrameCnt != 1) {
                 if (FrameSkipCtrl(nSrcFrameRate, nDstFrameRate, nSkelFrameId)) {
                     nSkelFrameId ++;
@@ -1720,7 +1703,7 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
                     continue;
                 }
                 else {
-                    if (!FrameMgrGet(&YUVDataPhy, &YUVDataVir, nFrameSize, nSkelFrameId, blkId)) {
+                    if (!FrameMgrGet(&YUVDataPhy, &YUVDataVir, nFrameSize, nSkelFrameId, &blkId)) {
 
                         ALOGE("FrameMgrGet fail");
 
@@ -1746,10 +1729,8 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
                         LoadFileToMem(InputFileHandle, YUVDataPhy, YUVDataVir, nOneSize);
                     }
                 }
-            }
-            if (InputFileFrameCnt == 1) {
-
-                FrameMgrGet(&YUVDataPhy, &YUVDataVir, nFrameSize, nSkelFrameId,blkId);
+            } else {
+                FrameMgrGet(&YUVDataPhy, &YUVDataVir, nFrameSize, nSkelFrameId, &blkId);
 
                 if (nRet != 0
                     || YUVDataPhy == 0
@@ -1758,25 +1739,34 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
                     goto EXIT1;
                 }
 
-                if (nOneSize != nFrameSize) {
-                    nRet = AX_SYS_MemAlloc(&OneYUVDataPhy, (AX_VOID **)&OneYUVDataVir, nOneSize, 256, (AX_S8 *)"SKEL_TEST");
-
-                    nRet = LoadFileToMem(InputFileHandle, OneYUVDataPhy, OneYUVDataVir, nOneSize);
-
-                    NV12ToStrideNV12(OneYUVDataPhy,
-                                    OneYUVDataVir,
-                                    nOneSize,
-                                    nWidth,
-                                    nHeight,
-                                    YUVDataPhy,
-                                    YUVDataVir,
-                                    nFrameSize,
-                                    nStride,
-                                    nHeight
-                                    );
+                if (bJpgFile) {
+                    nRet = DecodeJpeg(InputFileHandle, YUVDataPhy, YUVDataVir, nWidth, nHeight);
+                    if (0 != nRet) {
+                        ALOGE("DecodeJpeg failed!");
+                        goto EXIT3;
+                    }
                 }
                 else {
-                    nRet = LoadFileToMem(InputFileHandle, YUVDataPhy, YUVDataVir, nFrameSize);
+                    if (nOneSize != nFrameSize) {
+                        nRet = AX_SYS_MemAlloc(&OneYUVDataPhy, (AX_VOID **)&OneYUVDataVir, nOneSize, 256, (AX_S8 *)"SKEL_TEST");
+
+                        nRet = LoadFileToMem(InputFileHandle, OneYUVDataPhy, OneYUVDataVir, nOneSize);
+
+                        NV12ToStrideNV12(OneYUVDataPhy,
+                                        OneYUVDataVir,
+                                        nOneSize,
+                                        nWidth,
+                                        nHeight,
+                                        YUVDataPhy,
+                                        YUVDataVir,
+                                        nFrameSize,
+                                        nStride,
+                                        nHeight
+                                        );
+                    }
+                    else {
+                        nRet = LoadFileToMem(InputFileHandle, YUVDataPhy, YUVDataVir, nFrameSize);
+                    }
                 }
             }
             stFrame.stFrame.u32Width = nWidth;
@@ -1789,8 +1779,8 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
             stFrame.stFrame.u64PhyAddr[0] = YUVDataPhy;
             stFrame.stFrame.u64PhyAddr[1] = YUVDataPhy + nStride * nHeight;
             stFrame.stFrame.u64PhyAddr[2] = 0;
-            stFrame.stFrame.u64VirAddr[0] = (AX_U64)(YUVDataVir);
-            stFrame.stFrame.u64VirAddr[1] = (AX_U64)(YUVDataVir + nStride * nHeight);
+            stFrame.stFrame.u64VirAddr[0] = (AX_ULONG)(YUVDataVir);
+            stFrame.stFrame.u64VirAddr[1] = (AX_ULONG)(YUVDataVir + nStride * nHeight);
             stFrame.stFrame.u64VirAddr[2] = 0;
             stFrame.stFrame.u32BlkId[0] = blkId;
             stFrame.stFrame.u32BlkId[1] = 0;
@@ -1811,6 +1801,8 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
 
                 usleep(1000);
             }
+
+            FrameMgrRelease(blkId);
 
             nProcessElasped = get_tick_count() - nStartTime;
 
@@ -1856,13 +1848,13 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
 
             AX_U32 nSkelSize = 0;
             AI_Detection_SkelResult_t Skels[SKEL_SAMPLE_OBJECT_SIZE] = {0};
-            for (size_t i = 0; i < pstResult->nObjectSize; i++) {
+            for (AX_U32 i = 0; i < pstResult->nObjectSize; i++) {
                 AX_SKEL_OBJECT_ITEM_T *pstItems = &pstResult->pstObjectItems[i];
 
                 ALOGI("\t\tFrameId: %lld", pstItems->nFrameId);
                 ALOGI("\t\tTrackId: %lld, TrackState: %d", pstItems->nTrackId, pstItems->eTrackState);
 
-                ALOGN("\t\tRect[%ld] %s: [%f, %f, %f, %f], Confidence: %f", i, pstItems->pstrObjectCategory,
+                ALOGN("\t\tRect[%d] %s: [%f, %f, %f, %f], Confidence: %f", i, pstItems->pstrObjectCategory,
                     pstItems->stRect.fX,
                     pstItems->stRect.fY, pstItems->stRect.fW,
                     pstItems->stRect.fH, pstItems->fConfidence);
@@ -1885,12 +1877,12 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
                                     pstItems->stRect.fW, pstItems->stRect.fH,
                                     pstItems->fConfidence);
 
-                    ALOGN("\t\t[%ld]Point Set Size: %d", i, pstItems->nPointSetSize);
+                    ALOGN("\t\t[%d]Point Set Size: %d", i, pstItems->nPointSetSize);
 
                     // point
                     Skels[nSkelSize].nPointNum = AX_MIN(DETECT_SKEL_POINT_COUNT, pstItems->nPointSetSize);
-                    for (size_t j = 0; j < Skels[i].nPointNum; j++) {
-                        ALOGI("\t\t\tPoint[%ld] %s: [%f, %f] Confidence: %f", j, pstItems->pstPointSet[j].pstrObjectCategory,
+                    for (AX_U32 j = 0; j < Skels[i].nPointNum; j++) {
+                        ALOGI("\t\t\tPoint[%d] %s: [%f, %f] Confidence: %f", j, pstItems->pstPointSet[j].pstrObjectCategory,
                             pstItems->pstPointSet[j].stPoint.fX,
                             pstItems->pstPointSet[j].stPoint.fY,
                             pstItems->pstPointSet[j].fConfidence);
@@ -1903,6 +1895,17 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
                                         pstItems->pstPointSet[j].stPoint.fX,
                                         pstItems->pstPointSet[j].stPoint.fY,
                                         pstItems->pstPointSet[j].fConfidence);
+                    }
+
+                    //face attr
+                    if(nPPL == AX_SKEL_PPL_FACE){
+                        ALOGN("\t\tFace Attribute:");
+                        ALOGI("\t\t\tfYaw %f,",pstItems->stFaceAttr.fYaw);
+                        ALOGI("\t\t\tfPitch %f,",pstItems->stFaceAttr.fPitch);
+                        ALOGI("\t\t\tfRoll %f,",pstItems->stFaceAttr.fRoll);
+                        ALOGI("\t\t\tfMask %f,",pstItems->stFaceAttr.fMask);
+                        ALOGI("\t\t\tage %d",pstItems->stFaceAttr.nAge);
+                        ALOGI("\t\t\tgender %d",pstItems->stFaceAttr.nGender);
                     }
                     nSkelSize ++;
                 }
@@ -2042,7 +2045,7 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
                     && 0 < pstItems->nFeatureSize
                     && SaveResultPath) {
                     AX_CHAR strFile[256] = {0};
-                    sprintf(strFile, "%s/%s/frame%lld_feature_%s_%ld.db",
+                    sprintf(strFile, "%s/%s/frame%lld_feature_%s_%d.db",
                         SaveResultPath, pstItems->pstrObjectCategory,
                         pstItems->stCropFrame.nFrameId,
                         pstItems->pstrObjectCategory, i);
@@ -2061,8 +2064,8 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
                 ALOGI("\t\tMeta Size: %d", pstItems->nMetaInfoSize);
                 if (pstItems->pstMetaInfo
                     && 0 < pstItems->nMetaInfoSize) {
-                    for (size_t i = 0; i < pstItems->nMetaInfoSize; i++) {
-                        ALOGI("\t\tMetaInfo[%ld] %s: \n%s", i, pstItems->pstMetaInfo[i].pstrType, pstItems->pstMetaInfo[i].pstrValue);
+                    for (AX_U32 i = 0; i < pstItems->nMetaInfoSize; i++) {
+                        ALOGI("\t\tMetaInfo[%d] %s: \n%s", i, pstItems->pstMetaInfo[i].pstrType, pstItems->pstMetaInfo[i].pstrValue);
                     }
                 }
 
@@ -2070,8 +2073,8 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
                 ALOGI("\t\tBind Size: %d", pstItems->nObjectBindSize);
                 if (pstItems->pstObjectBind
                     && 0 < pstItems->nObjectBindSize) {
-                    for (size_t i = 0; i < pstItems->nObjectBindSize; i++) {
-                        ALOGI("\t\t[%s] [TrackId] %lld bind to ObjectBind[%ld]: %s [TrackId] %lld",
+                    for (AX_U32 i = 0; i < pstItems->nObjectBindSize; i++) {
+                        ALOGI("\t\t[%s] [TrackId] %lld bind to ObjectBind[%d]: %s [TrackId] %lld",
                             pstItems->pstrObjectCategory, pstItems->nTrackId, i,
                             pstItems->pstObjectBind[i].pstrObjectCategoryBind, pstItems->pstObjectBind[i].nTrackId);
                     }
@@ -2080,8 +2083,8 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
 
             ALOGI("\tnCacheListSize: %d", pstResult->nCacheListSize);
             if (pstResult->pstCacheList) {
-                for (size_t i = 0; i < pstResult->nCacheListSize; i++) {
-                    ALOGI("\t\tCacheList[%ld] FrameId: %lld", i, pstResult->pstCacheList[i].nFrameId);
+                for (AX_U32 i = 0; i < pstResult->nCacheListSize; i++) {
+                    ALOGI("\t\tCacheList[%d] FrameId: %lld", i, pstResult->pstCacheList[i].nFrameId);
                 }
             }
 
@@ -2136,56 +2139,11 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
 
                             DrawPoint(&YUVImage, x0, y0, 4, x0 * (4 - 1), y0 * (4 - 1), YUV_DARK_GREEN);
                         }
-
-                        // draw line
-                        if (nPPL == AX_SKEL_PPL_POSE) {
-                            for (size_t j = 0; j < sizeof(pairs) / sizeof(struct skeleton); j++) {
-                                YUV_COLOR LineColor = YUV_RED;
-                                switch (pairs[i].left_right_neutral) {
-                                    case 0:
-                                        LineColor = YUV_BLUE;
-                                        break;
-                                    case 1:
-                                        LineColor = YUV_DARK_GREEN;
-                                        break;
-                                    default:
-                                        LineColor = YUV_RED;
-                                        break;
-                                }
-
-                                AX_S32 x1 = (AX_S32)(Skels[i].tPoint[pairs[j].connection[0]].fX);
-                                AX_S32 y1 = (AX_S32)(Skels[i].tPoint[pairs[j].connection[0]].fY);
-                                AX_S32 x2 = (AX_S32)(Skels[i].tPoint[pairs[j].connection[1]].fX);
-                                AX_S32 y2 = (AX_S32)(Skels[i].tPoint[pairs[j].connection[1]].fY);
-
-                                x1 = AX_MIN(x1, (AX_S32)(nWidth - 1));
-                                x1 = AX_MAX(x1, 0);
-                                y1 = AX_MIN(y1, (AX_S32)(nHeight - 1));
-                                y1 = AX_MAX(y1, 0);
-                                x2 = AX_MIN(x2, (AX_S32)(nWidth - 1));
-                                x2 = AX_MAX(x2, 0);
-                                y2 = AX_MIN(y2, (AX_S32)(nHeight - 1));
-                                y2 = AX_MAX(y2, 0);
-
-                                DrawLine(&YUVImage, x1, y1, x2, y2, LineColor, 1);
-                            }
-                        }
                     }
                 }
 
                 AX_CHAR arrWrFile[512] = {0};
-                if (bJpgFile) {
-                    AX_CHAR arrTmpWrFile[256] = {0};
-                    AX_U32 nInputFileLen = strlen(InputFile);
-
-                    sprintf(arrTmpWrFile, "%s", InputFile);
-                    arrTmpWrFile[nInputFileLen - 4] = 0;
-
-                    sprintf(arrWrFile, "%s_result_%d_%d.jpg", arrTmpWrFile, nFrameCnt + 1, nRepeat + 1);
-                }
-                else {
-                    sprintf(arrWrFile, "%s_result_%d_%d.jpg", InputFile, nFrameCnt + 1, nRepeat + 1);
-                }
+                sprintf(arrWrFile, "%s_result_%d_%d.jpg", InputFile, nFrameCnt + 1, nRepeat + 1);
 
                 AX_CHAR *fileName = NULL;
                 AX_U32 fileNameLen = strlen(arrWrFile);
@@ -2212,10 +2170,6 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
                 sprintf(fullFileName, "%s/%s", ReWritePath, fileName);
 
                 EncodeOneFrameToJpeg((AX_CHAR *)fullFileName, nStride, nWidth, nHeight, YUVDataWrPhy, YUVDataWrVir, nFrameSize);
-            }
-
-            if (InputFileFrameCnt != 1) {
-                FrameMgr(pstResult);
             }
 
             if (pstResult) {
@@ -2261,11 +2215,6 @@ AX_S32 main(AX_S32 argc, AX_CHAR *argv[]) {
             ReLoadFile(InputFileHandle);
         }
     }
-    if (AX_INVALID_BLOCKID != blkId){
-        AX_POOL_ReleaseBlock(blkId);
-    }
-
-    nRet= AX_POOL_DestroyPool(poolId);
 
     // if(AX_SUCCESS != nRet){
     //     ALOGE("AX_POOL_DestroyPool failed! Error Code:0x%X\n", nRet);
@@ -2318,15 +2267,15 @@ EXIT0:
         }
     }
 
+    FrameMgrDestroy();
+
     if (fpResultFile) {
         fclose(fpResultFile);
     }
 
-    AX_VENC_Deinit();
+    AX_VDEC_Deinit();
 
-    if (bJpgFile) {
-        AX_VDEC_Deinit();
-    }
+    AX_VENC_Deinit();
 
     AX_IVPS_Deinit();
 

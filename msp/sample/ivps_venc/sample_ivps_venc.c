@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -52,7 +52,6 @@ static void *VencGetStreamProc(void *arg)
 
     if (pStrm == NULL) {
         ALOGE("Open output file error!");
-        return NULL;
     }
 
     while (AX_TRUE == pstPara->bThreadStart && !ThreadLoopStateGet()) {
@@ -61,8 +60,10 @@ static void *VencGetStreamProc(void *arg)
         if (AX_SUCCESS == s32Ret) {
             totalGetStream++;
 
-            fwrite(stStream.stPack.pu8Addr, 1, stStream.stPack.u32Len, pStrm);
-            fflush(pStrm);
+            if (pStrm) {
+                fwrite(stStream.stPack.pu8Addr, 1, stStream.stPack.u32Len, pStrm);
+                fflush(pStrm);
+            }
 
             s32Ret = AX_VENC_ReleaseStream(pstPara->VeChn, &stStream);
             if (AX_SUCCESS != s32Ret) {
@@ -291,7 +292,7 @@ static AX_S32 SAMPLE_VENC_Init(SAMPLE_VENC_PARAM_T *pVencParam)
 
 static AX_S32 SampleVencDeInit(AX_S32 nChnNum)
 {
-    AX_S32 VencChn = 0, s32Ret = 0;
+    AX_S32 VencChn = 0, s32Ret = 0, s32Retry = 5;
 
     for (VencChn = 0; VencChn < nChnNum; VencChn++) {
 
@@ -301,10 +302,20 @@ static AX_S32 SampleVencDeInit(AX_S32 nChnNum)
             return s32Ret;
         }
 
-        s32Ret = AX_VENC_DestroyChn(VencChn);
-        if (0 != s32Ret) {
-            ALOGE("VencChn %d:AX_VENC_DestroyChn failed,s32Ret:0x%x", VencChn, s32Ret);
-            return s32Ret;
+        s32Retry = 5;
+        do {
+            s32Ret = AX_VENC_DestroyChn(VencChn);
+            if (AX_ERR_VENC_BUSY == s32Ret) {
+                ALOGE("VencChn %d:AX_VENC_DestroyChn return AX_ERR_VENC_BUSY,retry...", VencChn);
+                --s32Retry;
+                usleep(100 * 1000);
+            } else {
+                break;
+            }
+        } while (s32Retry >= 0);
+
+        if (s32Retry == -1 || AX_SUCCESS != s32Ret) {
+            ALOGE("VencChn %d: AX_VENC_DestroyChn failed, s32Retry=%d, s32Ret=0x%x\n", VencChn, s32Retry, s32Ret);
         }
 
         if (AX_TRUE == gGetStreamPara[VencChn].bThreadStart) {

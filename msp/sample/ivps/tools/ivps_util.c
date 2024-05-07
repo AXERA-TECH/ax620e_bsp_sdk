@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -650,7 +650,29 @@ AX_S32 PatternAutoGen(AX_POOL PoolId, AX_IMG_FORMAT_E eImgFormat, AX_U16 nStride
         nImageSize = nImageSize * 3 / 2;
         break;
     case AX_FORMAT_RGB888:
+    case AX_FORMAT_BGR888:
         nImageSize = nImageSize * 3;
+        nStride = nStride * 3;
+        break;
+    case AX_FORMAT_ARGB1555:
+    case AX_FORMAT_RGBA5551:
+    case AX_FORMAT_ABGR1555:
+    case AX_FORMAT_BGRA5551:
+    case AX_FORMAT_ARGB4444:
+    case AX_FORMAT_RGBA4444:
+    case AX_FORMAT_ABGR4444:
+    case AX_FORMAT_BGRA4444:
+    case AX_FORMAT_RGB565:
+    case AX_FORMAT_BGR565:
+        nImageSize = nImageSize * 2;
+        nStride = nStride * 2;
+        break;
+    case AX_FORMAT_ARGB8888:
+    case AX_FORMAT_RGBA8888:
+    case AX_FORMAT_ABGR8888:
+    case AX_FORMAT_BGRA8888:
+        nImageSize = nImageSize * 4;
+        nStride = nStride * 4;
         break;
     default:
         ALOGE("unsupported fomat, fmt: %d", eImgFormat);
@@ -967,9 +989,9 @@ AX_VOID SaveFile(AX_VIDEO_FRAME_T *tDstFrame, AX_S32 nGrpIdx, AX_S32 nChnIdx,
         }
         else
         {
-            tDstFrame->u64VirAddr[0] = (AX_ULONG)AX_SYS_Mmap(tDstFrame->u64PhyAddr[0], nPixelSize * 3);
-            fwrite((AX_VOID *)((AX_ULONG)tDstFrame->u64VirAddr[0]), 1, nPixelSize * 3, fp);
-            s32Ret1 = AX_SYS_Munmap((AX_VOID *)(AX_ULONG)tDstFrame->u64VirAddr[0], nPixelSize * 3);
+            tDstFrame->u64VirAddr[0] = (AX_ULONG)AX_SYS_Mmap(tDstFrame->u64PhyAddr[0], nPixelSize * 4);
+            fwrite((AX_VOID *)((AX_ULONG)tDstFrame->u64VirAddr[0]), 1, nPixelSize * 4, fp);
+            s32Ret1 = AX_SYS_Munmap((AX_VOID *)(AX_ULONG)tDstFrame->u64VirAddr[0], nPixelSize * 4);
         }
         break;
     }

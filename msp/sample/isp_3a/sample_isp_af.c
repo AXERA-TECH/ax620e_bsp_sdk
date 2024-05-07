@@ -1,13 +1,12 @@
-/**********************************************************************************
+/**************************************************************************************************
  *
- * Copyright (c) 2019-2020 Beijing AXera Technology Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Beijing AXera Technology Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Beijing AXera Technology Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
- **********************************************************************************/
-
+ **************************************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>

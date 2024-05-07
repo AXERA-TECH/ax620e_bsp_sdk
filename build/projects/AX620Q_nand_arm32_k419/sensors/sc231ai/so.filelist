@@ -1,0 +1,2 @@
+@dir: msp/out/$(MSP_OUT_DIR)
+lib/libsns_sc231ai.so

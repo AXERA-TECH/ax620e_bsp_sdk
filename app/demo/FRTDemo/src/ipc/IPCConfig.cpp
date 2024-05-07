@@ -1,3 +1,13 @@
+/**************************************************************************************************
+ *
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ *
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
+ * may not be copied or distributed in any isomorphic form without the prior
+ * written consent of Axera Semiconductor Co., Ltd.
+ *
+ **************************************************************************************************/
+
 #include "IPCConfig.h"
 #include "CommonUtils.hpp"
 #include "OptionHelper.h"
@@ -9,21 +19,6 @@ AX_BOOL CIPCConfig::Init(AX_VOID) {
 
     m_tPPLConfig.strAppName = "FRTDemo";
     m_tPPLConfig.strPPLName = CCommonUtils::GetPPLSpecification();
-
-    return AX_TRUE;
-}
-
-AX_BOOL CIPCConfig::InitPost() {
-    WEB_CAMERA_ATTR_T tAttr = CWebOptionHelper::GetInstance()->GetCamera(0);
-    tAttr.bCaptureEnable = AX_FALSE;
-    CWebOptionHelper::GetInstance()->SetCamera(0, tAttr);
-    AX_S32 nScenario = 0;
-    CCmdLineParser::GetInstance()->GetScenario(nScenario);
-    if (E_APP_SCENARIO_DEFAULT == nScenario) {
-        WEB_CAMERA_ATTR_T tAttr = CWebOptionHelper::GetInstance()->GetCamera(1);
-        tAttr.bCaptureEnable = AX_FALSE;
-        CWebOptionHelper::GetInstance()->SetCamera(1, tAttr);
-    }
 
     return AX_TRUE;
 }

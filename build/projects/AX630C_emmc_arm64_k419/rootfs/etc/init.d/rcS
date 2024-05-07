@@ -1,0 +1,43 @@
+#!/bin/sh
+
+if [ -e /etc/init.d/S99checkboot ]; then
+	chmod 755 /etc/init.d/S99checkboot
+fi
+if [ -e /etc/init.d/S99checkota ]; then
+	chmod 755 /etc/init.d/S99checkota
+fi
+
+mknod /dev/null c 1 3
+
+mkdir -p /opt/data/AXSyslog/kernel
+mount -t pstore pstore /sys/fs/pstore
+sysctl -w vm.min_free_kbytes=5120
+
+hwclock -s &
+chmod 755 /soc/scripts/auto_load_all_drv.sh
+/soc/scripts/auto_load_all_drv.sh
+
+for i in /etc/init.d/S??* ;do
+
+     # Ignore dangling symlinks (if any).
+     [ ! -f "$i" ] && continue
+
+     case "$i" in
+	*.sh)
+	    # Source shell script for speed.
+	    (
+		trap - INT QUIT TSTP
+		set start
+		. $i
+	    )
+	    ;;
+	*)
+	    # No sh extension, so fork subprocess.
+	    $i start
+	    ;;
+    esac
+done
+
+/soc/scripts/usb-acm.sh start
+/etc/init.d/axsyslogd start
+/etc/init.d/axklogd start

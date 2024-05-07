@@ -52,6 +52,9 @@ Usage:/opt/bin/sample_vin_ivps_venc_rtsp for help
                 1: 90 degree
                 2: 180 degree
                 3: 270 degree
+        -s(optional): Enable select to get encode stream.
+                0: Disable(default)
+                1: Enable
 
 举例一：dummySensor，SDR模式，RTSP推流，运行命令如下：
 /opt/bin/sample_vin_ivps_venc_rtsp -c 0 -m 0 -e 1 -l 0 -r 1

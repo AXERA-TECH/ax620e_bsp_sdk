@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -30,7 +30,7 @@
 extern "C" {
 #endif
 
-#define MAX_ENCODE_ONCE_NUM (2)
+#define MAX_ENCODE_ONCE_NUM (5)
 
 #define MAX_WIDTH_DEFAULT     (16384)
 #define MAX_HEIGHT_DEFAULT    (16384)

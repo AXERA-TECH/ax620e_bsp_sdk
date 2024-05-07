@@ -1,9 +1,19 @@
+/**************************************************************************************************
+ *
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ *
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
+ * may not be copied or distributed in any isomorphic form without the prior
+ * written consent of Axera Semiconductor Co., Ltd.
+ *
+ **************************************************************************************************/
+
 #ifndef _SAMPLE_ENGINE_H_
 #define _SAMPLE_ENGINE_H_
 #include "ax_sys_api.h"
 #include "ax_ivps_api.h"
 
-#define SAMPLE_ENGINE_MODEL_FILE "./models/yolov5s.axmodel"
+#define SAMPLE_ENGINE_MODEL_FILE "/opt/data/npu/models/yolov5s.axmodel"
 #define SAMPLE_ENGINE_OBJ_MAX_COUNT 32
 #define INFER_WIDTH     640
 #define INFER_HEIHGT    640

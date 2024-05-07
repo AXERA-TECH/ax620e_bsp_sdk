@@ -1,4 +1,4 @@
-@dir: msp/out
+@dir: msp/out/$(MSP_OUT_DIR)
 #etc/models/aiisp/MIS2032_HDR_1920x1080*.axmodel
 #etc/models/aiisp/MIS2032_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0000_00000546006_231106_AX620E.axmodel
 etc/mis2032_sdr_2lane.ini
@@ -23,3 +23,5 @@ etc/mis2032_sdr_online.ini
 etc/mis2032_hdr_4lane.ini
 etc/mis2032_single_hdr_4lane_entry.ini
 etc/mis2032_single_sdr_online_entry.ini
+etc/mis2032_hdr_2x_ratio_1to1.bin
+etc/mis2032_hdr_2x_ratio_default.bin

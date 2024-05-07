@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -46,7 +46,6 @@ AX_S32 SampleMemInit(SAMPLE_VENC_CMD_PARA_T *pCml)
         SAMPLE_LOG_ERR("Create pool err.\n");
         goto FREE_SYS;
     }
-
     return 0;
 
 FREE_SYS:
@@ -56,28 +55,32 @@ FREE_SYS:
         s32Ret = -1;
     }
 
-    return s32Ret;
+    return -1;
 }
 
 AX_S32 SampleMemDeinit(SAMPLE_VENC_CMD_PARA_T *pCml)
 {
     AX_S32 s32Ret = -1;
-
+    AX_S32 poolId = pCml->poolId;
     if (AX_INVALID_POOLID != pCml->poolId) {
         s32Ret = AX_POOL_DestroyPool(pCml->poolId);
         if (s32Ret) {
             SAMPLE_LOG_ERR("Pool destroy error, ret=%d.\n", s32Ret);
             return -1;
         }
+        pCml->poolId = AX_INVALID_POOLID;
     }
-
-    if (pCml->bDynRes && (AX_INVALID_POOLID != pCml->poolIdDynRes)) {
-        s32Ret = AX_POOL_DestroyPool(pCml->poolIdDynRes);
-        if (s32Ret) {
-            SAMPLE_LOG_ERR("Pool destroy error, ret=%d.\n", s32Ret);
-            return -1;
+    if (poolId != pCml->poolIdDynRes) {
+        if (pCml->bDynRes && (AX_INVALID_POOLID != pCml->poolIdDynRes)) {
+            s32Ret = AX_POOL_DestroyPool(pCml->poolIdDynRes);
+            if (s32Ret) {
+                SAMPLE_LOG_ERR("Pool destroy error, ret=%d.\n", s32Ret);
+                return -1;
+            }
+            pCml->poolId = AX_INVALID_POOLID;
         }
     }
+
 
     s32Ret = AX_SYS_Deinit();
     if (s32Ret) {

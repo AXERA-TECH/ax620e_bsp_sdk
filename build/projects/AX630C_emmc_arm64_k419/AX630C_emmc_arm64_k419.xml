@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--  [tag] FDLLevel: 1, one level FDL; 2, two level FDL                    -->
+<!--  [tag] Partitions:                                                     -->
+<!--        [attribute]   strategy: 0, not partition                        -->
+<!--                                1, partition                            -->
+<!--  [tag] Img:                                                            -->
+<!--        [attribute]   name: GUI display                                 -->
+<!--        [attribute] select: 0, GUI selected                             -->
+<!--                            1, GUI not selected                         -->
+<!--        [attribute]   flag: mask value combined by below options (|)    -->
+<!--                            0x01, need input a file                     -->
+<!--                            0x02, must be selected                      -->
+<!--              [tag]     ID: Internel used, not changed                  -->
+<!--              [tag]   Type: Internel used, not changed                  -->
+<!--              [tag]   Auth:                                             -->
+<!--                      [attribute] algo: 0, No Auth                      -->
+<!--                                        1, MD5                          -->
+<!--                                        2, crc16                        -->
+<!--              [tag]   File: Download file name                          -->
+<!--              [tag]   Description: GUI display                          -->
+<Config>
+	<Project alias="AX620E" name="AX620E" version="1.0">
+		<FDLLevel>2</FDLLevel>
+		<!-- Unit: 0, 1M Byte; 1, 512K Byte; 2, 1K Byte; 3, 1 Byte; 4, 1Sector -->
+		<Partitions strategy="1" unit="2">
+			<!-- The env partition size cannot be manually changed. -->
+		</Partitions>
+		<ImgList>
+			<Img flag="2" name="INIT" select="1">
+				<ID>INIT</ID>
+				<Type>INIT</Type>
+				<Block>
+					<Base>0x0</Base>
+					<Size>0x0</Size>
+				</Block>
+				<File />
+				<Auth algo="0" />
+				<Description>Handshake with romcode</Description>
+			</Img>
+			<Img flag="3" name="EIP" select="1">
+				<ID>EIP</ID>
+				<Type>EIP</Type>
+				<Block>
+					<Base>0x3000000</Base>
+					<Size>0x0</Size>
+				</Block>
+				<File />
+				<Auth algo="0" />
+				<Description>Download eip image file</Description>
+			</Img>
+			<Img flag="3" name="FDL1" select="1">
+				<ID>FDL1</ID>
+				<Type>FDL1</Type>
+				<Block>
+					<Base>0x3000000</Base>
+					<Size>0x0</Size>
+				</Block>
+				<File />
+				<Auth algo="0" />
+				<Description>Download FDL1 image file</Description>
+			</Img>
+			<Img flag="3" name="FDL2" select="1">
+				<ID>FDL2</ID>
+				<Type>FDL2</Type>
+				<Block>
+					<Base>0x5C000000</Base>
+					<Size>0x0</Size>
+				</Block>
+				<File />
+				<Auth algo="0" />
+				<Description>Download FDL2 image file</Description>
+			</Img>
+			<Img flag="0" name="ERASEENV" select="0">
+				<ID>ERASEENV</ID>
+				<Type>ERASEFLASH</Type>
+				<Block id="env">
+					<Base>0x0</Base>
+					<Size>0x0</Size>
+				</Block>
+				<File />
+				<Auth algo="0" />
+				<Description>Erase env partition</Description>
+			</Img>
+		</ImgList>
+	</Project>
+</Config>

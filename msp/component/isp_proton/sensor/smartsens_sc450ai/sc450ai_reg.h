@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Shanghai) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Shanghai) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Shanghai) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -66,7 +66,10 @@ AX_U32 sc450ai_set_vts(ISP_PIPE_ID nPipeId, AX_U32 vts);
 AX_U32 sc450ai_get_vts_s(ISP_PIPE_ID nPipeId);
 AX_U32 sc450ai_set_vts_s(ISP_PIPE_ID nPipeId, AX_U32 vts_s);
 
-AX_S32 sc450ai_write_settings(ISP_PIPE_ID nPipeId, AX_U32 setindex);
+AX_S32 sc450ai_get_vts_from_setting(ISP_PIPE_ID nPipeId, camera_i2c_reg_array *setting, AX_U32 reg_cnt, AX_U32 *vts);
+
+AX_S32 sc450ai_select_setting(ISP_PIPE_ID nPipeId, camera_i2c_reg_array **setting, AX_U32 *cnt);
+AX_S32 sc450ai_write_settings(ISP_PIPE_ID nPipeId);
 
 AX_S32 sc450ai_set_bus_info(ISP_PIPE_ID nPipeId, AX_SNS_COMMBUS_T tSnsBusInfo);
 AX_S32 sc450ai_get_bus_num(ISP_PIPE_ID nPipeId);

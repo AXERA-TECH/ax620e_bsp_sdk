@@ -138,7 +138,8 @@
   --qpMapQpType                         0: disable qpmap; 1: deltaQp; 2: absQp
   --qpMapBlkUnit                        0: 64x64, 1: 32x32, 2: 16x16;
   --qpMapBlkType                        0: disable; 1: skip mode; 2: Ipcm mode
-```
+  --svcRegionNum                        set svc region num, 1 - 32
+  --svcQpMod                            0: delta qp 1 abs qp
 
   -r[n] --rcMode                        0: CBR 1: VBR 2: AVBR 3: QPMAP 4:FIXQP 5:CVBR. [0]
 
@@ -240,16 +241,18 @@
 ```
   --ut                                  encoder feature test. [0]
                                         1024: run all case below.
-                                        0: UT_CASE_NORMAL               1: UT_CASE_BIT_RATE
-                                        2: UT_CASE_RESET_CHN            3: UT_CASE_VENC_ROI
-                                        4: UT_CASE_FRAME_RATE           5: UT_CASE_CHN_ATTR
-                                        6: UT_CASE_RC_MODE              7: UT_CASE_VUI
-                                        8: UT_CASE_JPEG_ENCODE_ONCE     9: UT_CASE_JPEG_PARAM
-                                        10:UT_CASE_VIR_INTRA_INTERVAL   11:UT_CASE_INTRA_REFRESH
-                                        12:UT_CASE_RESOLUTION           13:UT_CASE_REQUEST_IDR
-                                        14:UT_CASE_SELECT_CHN           15:UT_CASE_SET_USR_DATA
-                                        16:UT_CASE_RATE_JAM             17:UT_CASE_SUPER_FRAME
-                                        18:UT_CASE_SLICE_SPLIT          19:UT_CASE_JPEG_RESOLUTION
-                                        20:UT_CASE_QP_AND_GOP           21:UT_CASE_OSD
-                                        22:UT_CASE_BPS_ADAPT            23:UT_CASE_GOP_LEN
+                                        0: UT_CASE_NORMAL                1: UT_CASE_BIT_RATE
+                                        2: UT_CASE_RESET_CHN             3: UT_CASE_VENC_ROI
+                                        4: UT_CASE_FRAME_RATE            5: UT_CASE_CHN_ATTR
+                                        6: UT_CASE_RC_MODE               7: UT_CASE_VUI
+                                        8: UT_CASE_JPEG_ENCODE_ONCE      9: UT_CASE_JPEG_PARAM
+                                        10:UT_CASE_VIR_INTRA_INTERVAL    11:UT_CASE_INTRA_REFRESH
+                                        12:UT_CASE_RESOLUTION            13:UT_CASE_REQUEST_IDR
+                                        14:UT_CASE_SELECT_CHN            15:UT_CASE_SET_USR_DATA
+                                        16:UT_CASE_RATE_JAM              17:UT_CASE_SUPER_FRAME
+                                        18:UT_CASE_SLICE_SPLIT           19:UT_CASE_JPEG_RESOLUTION
+                                        20:UT_CASE_QP_AND_GOP            21:UT_CASE_OSD
+                                        22:UT_CASE_BPS_ADAPT             23:UT_CASE_GOP_LEN
+                                        24:UT_CASE_BLOCK_NOBLOCK_TIMEOUT 25:UT_CASE_STD_SELECT
+                                        26:UT_CASE_STD_EPOLL            27:UT_CASE_SVC
 ```

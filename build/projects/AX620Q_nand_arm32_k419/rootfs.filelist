@@ -1,4 +1,4 @@
-@dir:rootfs/arm/glibc/rootfs
+@dir:rootfs/$(ARCH)/$(LIBC)/rootfs
 bin/*
 dev/*
 etc/*
@@ -11,10 +11,14 @@ usr/sbin/*
 usr/share/*
 var/* var
 
-@dir: tools
-ax_lookat/bin/CHIP_AX620E/arm/ax_lookat usr/bin
+@dir:rootfs/$(ARCH)/$(LIBC)/rootfs_extend
+usr/sbin/lsz
+usr/sbin/lrz
 
-@dir: build/projects/AX620Q_nand_arm32_k419/rootfs
+@dir:tools
+ax_lookat/bin/CHIP_AX620E/$(ARCH)/$(LIBC)/ax_lookat usr/bin
+
+@dir: build/projects/$(PROJECT)/rootfs
 etc/inittab
 etc/fstab
 etc/syslog.conf

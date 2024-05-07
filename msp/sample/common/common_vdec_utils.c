@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -582,6 +582,8 @@ FILE *OutputFileOpen(AX_CHAR **ppOutputFile, const SAMPLE_VDEC_OUTPUT_INFO_T *pI
                            ret, pFileOut, AX_VDEC_FILE_NAME_LEN);
             goto ERR_RET_OUTPUTFILE;
         }
+
+        *ppOutputFile = pFileOut;
     } else {
         pFileOut = *ppOutputFile;
     }
@@ -1082,8 +1084,8 @@ static AX_S32 __StreamReadFrameInRingBuf(const SAMPLE_INPUT_FILE_INFO_T *pstBsIn
         right_len = uBufSize - oOffset;
         sReadLen = fread(pBufRd, 1, right_len, pstBsInfo->fInput);
         if (sReadLen != uBufSize - oOffset) {
-            SAMPLE_CRIT_LOG("fread FAILED! sReadLen:0x%x != (uBufSize:0x%x - oOffset:0x%lx):0x%x",
-                           sReadLen, uBufSize, oOffset, right_len);
+            SAMPLE_CRIT_LOG("fread FAILED! sReadLen:0x%x != (uBufSize:0x%x - oOffset:0x%llx):0x%x",
+                           sReadLen, uBufSize, (AX_U64)oOffset, right_len);
             sRet = AX_ERR_VDEC_RUN_ERROR;
             goto ERR_RET;
         }
@@ -1091,8 +1093,8 @@ static AX_S32 __StreamReadFrameInRingBuf(const SAMPLE_INPUT_FILE_INFO_T *pstBsIn
         left_len = oStreamLen - (uBufSize - oOffset);
         tmp_len = fread(pBufStart, 1, left_len, pstBsInfo->fInput);
         if (tmp_len != left_len) {
-            SAMPLE_CRIT_LOG("fread FAILED! tmp_len:0x%x != left_len:0x%x, oStreamLen:0x%x uBufSize:0x%x oOffset:0x%lx",
-                               tmp_len, left_len, (AX_U32)oStreamLen, uBufSize, oOffset);
+            SAMPLE_CRIT_LOG("fread FAILED! tmp_len:0x%x != left_len:0x%x, oStreamLen:0x%x uBufSize:0x%x oOffset:0x%llx",
+                               tmp_len, left_len, (AX_U32)oStreamLen, uBufSize, (AX_U64)oOffset);
             sRet = AX_ERR_VDEC_RUN_ERROR;
             goto ERR_RET;
         }
@@ -1760,6 +1762,9 @@ AX_S32 VdecUserPicEnable(AX_VDEC_GRP VdGrp, SAMPLE_VDEC_USERPIC_T *pstVdecUserPi
         } else {
             *pContSendStm = AX_FALSE;
         }
+        /* wait release frm */
+        while (pstCtx->recvFrmCnt[VdGrp] != pstCtx->releaseFrmCnt[VdGrp])
+            usleep(5000);
 
         SAMPLE_LOG("VdGrp=%d, AX_VDEC_EnableUserPic finish!\n", VdGrp);
 
@@ -2179,4 +2184,53 @@ AX_VOID SampelVdecSetThreadName(const char *nameFmt, ...)
     va_end(args);
 
     prctl(PR_SET_NAME, name, NULL, NULL, NULL);
+}
+
+AX_U64 SampleGetFileSize(char * pFileName)
+{
+    AX_CHAR cmd[256] = {0};
+    FILE *pInfo = NULL;
+    AX_U64 fileSize = 0;
+    AX_S32 ret = 0;
+    AX_U32 i = 0;
+
+    SAMPLE_LOG_TMP("calu file: %s\n", pFileName);
+    sprintf(cmd, "stat %s > fileInfo.txt", pFileName);
+
+    ret = system(cmd);
+    if (ret)
+        return -1;
+
+    pInfo = fopen("fileInfo.txt", "rb");
+    if (NULL == pInfo)
+        return -1;
+
+    fgets(cmd, 256, pInfo);
+    SAMPLE_LOG_TMP("file: %s\n", cmd);
+    fgets(cmd, 256, pInfo);
+    SAMPLE_LOG_TMP("info: %s\n", cmd);
+    fclose(pInfo);
+
+    if (strlen(cmd) < 10) {
+        return -1;
+    }
+
+    while(cmd[i]) {
+        if (('0' <= cmd[i]) && ('9' >= cmd[i]))
+            break;
+
+        SAMPLE_LOG_TMP("pos %d char %c\n", i, cmd[i]);
+        i++;
+    }
+
+    while(cmd[i]) {
+        SAMPLE_LOG_TMP("pos %d char %c\n", i, cmd[i]);
+        if (('0' > cmd[i]) || ('9' < cmd[i]))
+            break;
+
+        fileSize = fileSize * 10 + (cmd[i] - '0');
+        i++;
+    }
+
+    return fileSize;
 }

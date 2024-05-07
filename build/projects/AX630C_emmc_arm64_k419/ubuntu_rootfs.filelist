@@ -1,0 +1,36 @@
+@dir: rootfs/$(ARCH)/$(LIBC)/rootfs
+usr/bin/fw_printenv
+usr/bin/fw_setenv
+bin/axbox
+bin/axdmesg
+bin/busybox
+usr/bin/axver
+usr/bin/ax_clk
+etc/ax_syslog.conf
+etc/init.d/axsyslogd
+etc/init.d/axklogd
+sbin/axsyslogd
+sbin/axklogd
+lib/libax_syslog.so
+lib/libatomic.so*
+-opt/*
+@dir: rootfs/$(ARCH)/$(LIBC)/rootfs_extend
+etc/wpa_supplicant.conf
+usr/lib/*
+-usr/lib/gconv
+lib/*
+usr/sbin/wpa_passphrase
+sbin/iwconfig
+sbin/iwlist
+usr/bin/hostapd_cli
+usr/sbin/hostapd
+usr/sbin/iw
+usr/sbin/wpa_cli
+usr/sbin/wpa_supplicant
+@dir: rootfs/$(ARCH)/$(LIBC)/rootfs_tools
+*
+@dir: build/projects
+$(PROJECT)/rootfs/etc/* etc/
+
+@dir: tools
+ax_lookat/bin/CHIP_AX620E/$(ARCH)/$(LIBC)/ax_lookat usr/bin

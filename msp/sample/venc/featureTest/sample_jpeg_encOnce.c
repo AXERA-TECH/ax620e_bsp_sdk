@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -185,6 +185,7 @@ static AX_S32 JpegEncodeOneFrame(SAMPLE_VENC_ENCODEONCEFRAME_PARA_T *pCmdl)
     AX_U32 i = 0;
     SAMPLE_ROI_CFG_T roiCfg;
     AX_S32 testId = 0;
+    AX_S32 index = 0;
 
     if (NULL == pCmdl) {
         SAMPLE_LOG_ERR("pCmdl == NULL!\n");
@@ -334,21 +335,22 @@ static AX_S32 JpegEncodeOneFrame(SAMPLE_VENC_ENCODEONCEFRAME_PARA_T *pCmdl)
                 if (AX_SUCCESS != s32Ret) {
                     SAMPLE_LOG_ERR("AX_VENC_JpegGetThumbnail failed, s32Ret=0x%x\n", s32Ret);
                 } else {
-#if 0
-                    AX_CHAR fileName[30];
-                    FILE *pStrm = NULL;
 
-                    sprintf(fileName, "./ut_jpeg/thumbnai_%dx%d.jpg", stJpegEncodeOnceParam.u32ThumbWidth, stJpegEncodeOnceParam.u32ThumbHeight);
-                    pStrm = fopen(fileName, "wb");
-                    if (NULL == pStrm) {
-                        SAMPLE_LOG_ERR("Open thumbnail output file error!\n");
-                    } else {
-                        fwrite(pThumbVirtAddr, 1, u32ThumbSize, pStrm);
-                        fflush(pStrm);
-                        fclose(pStrm);
-                        pStrm = NULL;
+                    if (pCmdl->bSaveStrm) {
+                        AX_CHAR fileName[40];
+                        FILE *pStrm = NULL;
+
+                        sprintf(fileName, "./ut_jpeg/thumbnai_%dx%d_%d.jpg", stJpegEncodeOnceParam.u32ThumbWidth, stJpegEncodeOnceParam.u32ThumbHeight, index++);
+                        pStrm = fopen(fileName, "wb");
+                        if (NULL == pStrm) {
+                            SAMPLE_LOG_ERR("Open thumbnail output file error!\n");
+                        } else {
+                            fwrite(pThumbVirtAddr, 1, u32ThumbSize, pStrm);
+                            fflush(pStrm);
+                            fclose(pStrm);
+                            pStrm = NULL;
+                        }
                     }
-#endif
                 }
 
                 AX_SYS_MemFree(u64ThumbPhyAddr, pThumbVirtAddr);
@@ -357,6 +359,8 @@ static AX_S32 JpegEncodeOneFrame(SAMPLE_VENC_ENCODEONCEFRAME_PARA_T *pCmdl)
 
         if (stJpegEncodeOnceParam.ulPhyAddr && (NULL != stJpegEncodeOnceParam.pu8Addr)) {
             AX_SYS_MemFree(stJpegEncodeOnceParam.ulPhyAddr, stJpegEncodeOnceParam.pu8Addr);
+            stJpegEncodeOnceParam.ulPhyAddr = 0;
+            stJpegEncodeOnceParam.pu8Addr = NULL;
         }
     }
 

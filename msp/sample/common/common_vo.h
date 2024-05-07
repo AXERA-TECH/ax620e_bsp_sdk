@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -32,6 +32,7 @@
 #define SAMPLE_VO_DEV_MAX 2
 #define SAMPLE_FB_PER_DEV_MAX   2
 #define SAMPLE_VO_FRAME_MAX 50
+#define SAMPLE_VO_SYNC_USER_MAX 4
 
 #define VO_FILE_BLOCK_SIZE 1024
 //#define VO_PATH_LEN (64)
@@ -120,6 +121,7 @@ typedef struct axSAMPLE_COMM_VO_DEV_CONFIG_S {
     AX_VO_INTF_TYPE_E       enVoIntfType;
     AX_VO_INTF_SYNC_E       enIntfSync;
     AX_VO_OUT_FMT_E         enVoOutfmt;
+    AX_U32                  u32SyncIndex;
 
     AX_BOOL                 setCsc;
     AX_VO_CSC_T             vo_csc;

@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -31,15 +31,26 @@ AX_S32 main(AX_S32 argc, char *argv[])
     CHECK_RESULT(AX_SYS_Init());
 
     /* Create common pool */
-    arrBlkInfo[0].nSize = CalcImgSize(1920, 1920, 1080, AX_FORMAT_RGBA8888, 16);
-    arrBlkInfo[0].nCnt = 6;
-    arrBlkInfo[1].nSize = CalcImgSize(3840, 3840, 2160, AX_FORMAT_RGBA8888, 16);
-    arrBlkInfo[1].nCnt = 2;
-    ret = IVPS_CommonPoolCreate(&arrBlkInfo[0], 2);
-    if (ret)
-    {
-        ALOGE("AX_IVPS_Init failed, ret=0x%x.", ret);
-        goto error0;
+    if (pIvpsArg->bFewPool) {
+        arrBlkInfo[0].nSize = CalcImgSize(3840, 3840, 2160, AX_FORMAT_RGBA8888, 16);
+        arrBlkInfo[0].nCnt = 5;
+        ret = IVPS_CommonPoolCreate(&arrBlkInfo[0], 1);
+        if (ret)
+        {
+            ALOGE("AX_IVPS_Init failed, ret=0x%x.", ret);
+            goto error0;
+        }
+    } else {
+        arrBlkInfo[0].nSize = CalcImgSize(1920, 1920, 1080, AX_FORMAT_RGBA8888, 16);
+        arrBlkInfo[0].nCnt = 6;
+        arrBlkInfo[1].nSize = CalcImgSize(3840, 3840, 2160, AX_FORMAT_RGBA8888, 16);
+        arrBlkInfo[1].nCnt = 2;
+        ret = IVPS_CommonPoolCreate(&arrBlkInfo[0], 2);
+        if (ret)
+        {
+            ALOGE("AX_IVPS_Init failed, ret=0x%x.", ret);
+            goto error0;
+        }
     }
 
     printf("pIvpsArg->ePoolSrc:%d", pIvpsArg->ePoolSrc);
@@ -117,7 +128,7 @@ AX_S32 main(AX_S32 argc, char *argv[])
             ALOGE("IVPS_StartRegion failed");
             goto error3;
         }
-        IVPS_RegionUpdateThreadStart(pIvpsArg->nRegionNum, pGrp);
+        IVPS_RegionUpdateThreadStart(pIvpsArg->nRegionNum, pGrp, pIvpsArg->bRegionStop);
     }
 
     printf("bCropInfo:%d nIvpsGrp:%d\n", pIvpsArg->bCropInfo, pGrp->nIvpsGrp);
@@ -152,6 +163,11 @@ AX_S32 main(AX_S32 argc, char *argv[])
         break;
     }
 
+    if (pIvpsArg->nRegionNum > 0 && pIvpsArg->bRegionStop)
+    {
+        IVPS_StopRegionById(0);
+    }
+
     while (!ThreadLoopStateGet() && (gSampleIvpsMain.nIvpsRepeatNum || pIvpsArg->nStreamNum))
     {
         sleep(1);
@@ -161,7 +177,7 @@ AX_S32 main(AX_S32 argc, char *argv[])
     /* Stop IVPS region */
     if (pIvpsArg->nRegionNum > 0)
     {
-        IVPS_RegionUpdateThreadStop();
+        IVPS_RegionUpdateThreadStop(pIvpsArg->bRegionStop);
         IVPS_StopRegion();
     }
 

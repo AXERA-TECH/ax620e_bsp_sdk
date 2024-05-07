@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -78,6 +78,7 @@ int main(int argc, char **argv)
     time_t saved_time1, saved_time2;
     time_t time_diff;
     int test_result = 0;
+    int retry_cnt = 0;
 
     while ((opt = getopt(argc, argv, "c:d:h")) != -1) {
         switch (opt) {
@@ -100,9 +101,15 @@ int main(int argc, char **argv)
 
     fprintf(stderr, "Starting RTC Test ...\n");
     stop_ntp();
+OPEN_DEV:
     fd = open(rtc_dev, O_RDONLY);
     if (fd ==  -1) {
         perror(rtc_dev);
+        if (errno == EBUSY && retry_cnt < 3){
+            retry_cnt++;
+            usleep(3000000);
+            goto OPEN_DEV;
+        }
         start_ntp();
         return -1;
     }

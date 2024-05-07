@@ -1,16 +1,16 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
 #include "sample_ivps_main.h"
 
-AX_S32 SAMPLE_FillCanvasWithCover(const AX_IVPS_RGN_CANVAS_INFO_T *ptCanvas)
+static AX_S32 SAMPLE_FillCanvasWithMaskByCpu(const AX_IVPS_RGN_CANVAS_INFO_T *ptCanvas)
 {
     AX_IVPS_GDI_ATTR_T tAttr;
 
@@ -127,17 +127,23 @@ AX_S32 SAMPLE_FillCanvasWithCover(const AX_IVPS_RGN_CANVAS_INFO_T *ptCanvas)
     return 0;
 }
 
-AX_S32 SAMPLE_FillFrameWithCover(const AX_VIDEO_FRAME_T *pstVFrame, const SAMPLE_IVPS_COVER_T *ptIvpsCover, char *strFilePath)
+AX_S32 SAMPLE_FillFrameWithMaskByCpu(const AX_VIDEO_FRAME_T *pstVFrame, const SAMPLE_IVPS_MASK_T *ptMask, char *strFilePath)
 {
-    AX_IVPS_RGN_CANVAS_INFO_T tCanvas;
-    AX_IVPS_GDI_ATTR_T tAttr;
+    AX_IVPS_RGN_CANVAS_INFO_T tCanvas = {0};
+    AX_IVPS_GDI_ATTR_T tAttr = {0};
     AX_VIDEO_FRAME_T tVFrame;
 
     printf("AX_IVPS_DrawLine\n");
     tCanvas.eFormat = AX_FORMAT_YUV420_SEMIPLANAR;
+    if (!pstVFrame->u64VirAddr[0])
+    {
+        ALOGE("u64VirAddr is NULL!");
+        return -1;
+    }
     tCanvas.pVirAddr = (AX_VOID *)((AX_ULONG)pstVFrame->u64VirAddr[0]);
     tCanvas.nStride = pstVFrame->u32PicStride[0];
     tCanvas.nW = pstVFrame->u32Width;
+    tCanvas.nUVOffset = 0;
     if (pstVFrame->u64PhyAddr[1])
     {
         tCanvas.nH = (pstVFrame->u64PhyAddr[1] - pstVFrame->u64PhyAddr[0]) / tCanvas.nStride;
@@ -174,7 +180,7 @@ AX_S32 SAMPLE_FillFrameWithCover(const AX_VIDEO_FRAME_T *pstVFrame, const SAMPLE
 
     AX_IVPS_DrawLine(&tCanvas, tAttr, tPoint, 4);
 
-    /* tAttr.nThick = 2; */
+    tAttr.nThick = 5;
     tAttr.nColor = 0xFF0080;
     tPoint[0].nX = 800;
     tPoint[0].nY = 800;
@@ -189,7 +195,7 @@ AX_S32 SAMPLE_FillFrameWithCover(const AX_VIDEO_FRAME_T *pstVFrame, const SAMPLE
 
     AX_IVPS_RECT_T tRect;
 
-    /* tAttr.nThick = 2; */
+    tAttr.nThick = 10;
     tAttr.bSolid = AX_FALSE;
     tAttr.nColor = 0xFFFF80;
     tRect.nX = 1000;
@@ -199,7 +205,27 @@ AX_S32 SAMPLE_FillFrameWithCover(const AX_VIDEO_FRAME_T *pstVFrame, const SAMPLE
 
     AX_IVPS_DrawRect(&tCanvas, tAttr, tRect);
 
+
+    tAttr.nThick = 3;
+    tAttr.bSolid = AX_FALSE;
+    tAttr.nColor = 0x0000FF;
+    tAttr.tCornerRect.bEnable = AX_TRUE;
+    tAttr.tCornerRect.nHorLength = 50;
+    tAttr.tCornerRect.nVerLength = 70;
+    tRect.nX = 1000;
+    tRect.nY = 100;
+    tRect.nW = 800;
+    tRect.nH = 500;
+
+    AX_IVPS_DrawRect(&tCanvas, tAttr, tRect);
+
     tVFrame = *pstVFrame;
     SaveFile(&tVFrame, 0, 0, strFilePath, "CPUDraw");
+    return 0;
+}
+
+AX_S32 SAMPLE_IVPS_DrawMask(IVPS_ENGINE_ID_E eEngineId, const AX_VIDEO_FRAME_T *ptSrc, const SAMPLE_IVPS_MASK_T *ptMask, char *strFilePath)
+{
+    SAMPLE_FillFrameWithMaskByCpu(ptSrc, ptMask, strFilePath);
     return 0;
 }

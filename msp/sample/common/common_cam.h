@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -59,7 +59,7 @@ typedef struct {
     AX_SNS_CLK_ATTR_T       tSnsClkAttr;
     AX_VIN_DEV_ATTR_T       tDevAttr;
     AX_VIN_DEV_BIND_PIPE_T  tDevBindPipe;
-    AX_VIN_PIPE_ATTR_T      tPipeAttr;
+    AX_VIN_PIPE_ATTR_T      tPipeAttr[AX_VIN_MAX_PIPE_NUM];
     SAMPLE_PIPE_INFO_T      tPipeInfo[AX_VIN_MAX_PIPE_NUM];
     AX_VIN_CHN_ATTR_T       tChnAttr[AX_VIN_CHN_ID_MAX];
     AX_BOOL                 bChnEn[AX_VIN_CHN_ID_MAX];
@@ -71,7 +71,7 @@ typedef struct {
     AX_ISP_AF_REGFUNCS_T    tAfFuncs;
     AX_ISP_LSC_REGFUNCS_T   tLscFuncs;
 
-    AX_SENSOR_REGISTER_FUNC_T *ptSnsHdl;
+    AX_SENSOR_REGISTER_FUNC_T *ptSnsHdl[AX_VIN_MAX_PIPE_NUM];
 } AX_CAMERA_T;
 AX_S32 COMMON_NPU_Init();
 AX_S32 COMMON_CAM_Init(AX_VOID);

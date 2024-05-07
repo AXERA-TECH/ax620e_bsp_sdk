@@ -130,12 +130,6 @@ endif
 # build flags
 CFLAGS            := ${EXEC_FLAG} --std=c++11 -Wall -Wl,-rpath-link=$(LIB_PATH):$(BIN_PATH)/lib:$(3RD_PATH)/lib:$(MP4_PATH)/lib
 
-ifeq ($(ARCH),arm)
-CFLAGS            += -DARM32
-else
-CFLAGS            += -DARM64
-endif
-
 ifeq ($(debug),yes)
 CFLAGS            += -O0 -ggdb3
 else
@@ -170,13 +164,6 @@ endif
 
 ifeq ($(USE_OPENSSL),no)
 CFLAGS            += -DNO_OPENSSL
-endif
-
-ifeq ($(ARCH),arm)
-CFLAGS            += -DARM32
-CFLAGS            += -Wno-psabi
-else
-CFLAGS            += -DARM64
 endif
 
 CFLAGS            += -DOS04A10_SUPPORT
@@ -228,13 +215,27 @@ endif
 CLIB            += -L$(LIVE_PATH)/lib -lliveMedia -lgroupsock -lBasicUsageEnvironment -lUsageEnvironment
 CLIB            += -L$(RESOURCE_PATH)/lib/$(ARCH)/$(LIBC)/appweb -lappweb -lmpr -lhttp
 
-CLIB            += -L$(3RD_PATH)/tinyalsa/lib/$(ARCH)/$(LIBC)
-CLIB            += -ltinyalsa
-CLIB            += -L$(3RD_PATH)/faac/lib/$(ARCH)/$(LIBC)
-CLIB            += -lfaac
-CLIB            += -L$(3RD_PATH)/libsamplerate/lib/$(ARCH)/$(LIBC)
-CLIB            += -lsamplerate
+# audio
+CLIB            += -L$(3RD_PATH)/tinyalsa/lib/$(ARCH)/$(LIBC) -ltinyalsa
+CLIB            += -L$(3RD_PATH)/libsamplerate/lib/$(ARCH)/$(LIBC) -lsamplerate
 
+# aac
+ifeq ($(APP_AAC_SUPPORT), faac)
+CFLAGS          += -DAPP_FAAC_SUPPORT
+CLIB            += -L$(3RD_PATH)/faac/lib/$(ARCH)/$(LIBC) -lfaac
+CLIB            += -lax_faac
+else ifeq ($(APP_AAC_SUPPORT), fdk)
+CFLAGS          += -DAPP_FDK_SUPPORT
+CLIB            += -L$(3RD_PATH)/fdk-aac/lib/$(ARCH)/$(LIBC) -lfdk-aac
+CLIB            += -lax_fdk
+endif
+
+# opus
+ifeq ($(APP_OPUS_SUPPORT),yes)
+CFLAGS          += -DAPP_OPUS_SUPPORT
+CLIB            += -L$(3RD_PATH)/opus/lib/$(ARCH)/$(LIBC) -lopus
+CLIB            += -lax_opus
+endif
 
 ifeq ($(MP4ENC_SUPPORT),yes)
 CLIB            += -L$(MP4_PATH)/lib/$(ARCH)/$(LIBC) -l:libmp4.a

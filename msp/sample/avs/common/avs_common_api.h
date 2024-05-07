@@ -1,8 +1,19 @@
+/**************************************************************************************************
+ *
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ *
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
+ * may not be copied or distributed in any isomorphic form without the prior
+ * written consent of Axera Semiconductor Co., Ltd.
+ *
+ **************************************************************************************************/
+
 #ifndef __AVS_COMMON_API_H__
 #define __AVS_COMMON_API_H__
 
 #include "ax_base_type.h"
 #include "avs_common_utils.h"
+#include "ini_parser.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -46,10 +57,12 @@ typedef struct _SAMPLE_AVS_BASE_PARA
     AX_S32 s32InputComLevel;
     AX_BOOL bOutputCompress;
     AX_S32 s32OutputComLevel;
+    INI_DICT *ini;
 }SAMPLE_AVS_BASE_PARA_T;
 
-void AVSParameterDefault(SAMPLE_AVS_BASE_PARA_T* pAVSBaseParam);
+AX_VOID AVSParameterDefault(SAMPLE_AVS_BASE_PARA_T* pAVSBaseParam);
 AX_S32 AVSParameterGet(AX_S32 argc, AX_CHAR **argv, SAMPLE_AVS_BASE_PARA_T* pAVSBaseParam);
+AX_VOID AVSParameterFree(SAMPLE_AVS_BASE_PARA_T* pAVSBaseParam);
 AX_S32 SampleAVSUsage(SAMPLE_AVS_BASE_PARA_T* pAVSBaseParam);
 
 #ifdef __cplusplus

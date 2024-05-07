@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -158,8 +158,8 @@ static AX_VOID __set_vin_attr(AX_CAMERA_T *pCam, SAMPLE_SNS_TYPE_E eSnsType, AX_
     pCam->tDevAttr.eSnsMode = eHdrMode;
     pCam->eHdrMode = eHdrMode;
     pCam->eSysMode = eSysMode;
-    pCam->tPipeAttr.eSnsMode = eHdrMode;
-    pCam->tPipeAttr.bAiIspEnable = bAiispEnable;
+    pCam->tPipeAttr[pCam->nPipeId].eSnsMode = eHdrMode;
+    pCam->tPipeAttr[pCam->nPipeId].bAiIspEnable = bAiispEnable;
     if (eHdrMode > AX_SNS_LINEAR_MODE) {
         pCam->tDevAttr.eSnsOutputMode = AX_SNS_DOL_HDR;
     }
@@ -211,18 +211,18 @@ static AX_U32 __sample_case_single_dummy(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYPE_
 
     for (i = 0; i < pCommonArgs->nCamCnt; i++) {
         pCam = &pCamList[i];
+        pCam->nPipeId = 0;
         COMMON_VIN_GetSnsConfig(eSnsType, &pCam->tMipiAttr, &pCam->tSnsAttr,
                                 &pCam->tSnsClkAttr, &pCam->tDevAttr,
-                                &pCam->tPipeAttr, pCam->tChnAttr);
+                                &pCam->tPipeAttr[pCam->nPipeId], pCam->tChnAttr);
 
 
         pCam->nDevId = 0;
         pCam->nRxDev = 0;
-        pCam->nPipeId = 0;
         pCam->tSnsClkAttr.nSnsClkIdx = 0;
         pCam->tDevBindPipe.nNum =  1;
         pCam->tDevBindPipe.nPipeId[0] = pCam->nPipeId;
-        pCam->ptSnsHdl = COMMON_ISP_GetSnsObj(eSnsType);
+        pCam->ptSnsHdl[pCam->nPipeId] = COMMON_ISP_GetSnsObj(eSnsType);
         pCam->eBusType = COMMON_ISP_GetSnsBusType(eSnsType);
         pCam->eLoadRawNode = eLoadRawNode;
         __set_pipe_hdr_mode(&pCam->tDevBindPipe.nHDRSel[0], eHdrMode);
@@ -247,16 +247,16 @@ static AX_U32 __sample_case_single_os04a10(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYP
     SAMPLE_LOAD_RAW_NODE_E eLoadRawNode = pVinParam->eLoadRawNode;
     pCommonArgs->nCamCnt = 1;
     pCam = &pCamList[0];
+    pCam->nPipeId = 0;
     COMMON_VIN_GetSnsConfig(eSnsType, &pCam->tMipiAttr, &pCam->tSnsAttr,
                             &pCam->tSnsClkAttr, &pCam->tDevAttr,
-                            &pCam->tPipeAttr, pCam->tChnAttr);
+                            &pCam->tPipeAttr[pCam->nPipeId], pCam->tChnAttr);
     pCam->nDevId = 0;
     pCam->nRxDev = 0;
-    pCam->nPipeId = 0;
     pCam->tSnsClkAttr.nSnsClkIdx = 0;
     pCam->tDevBindPipe.nNum =  1;
     pCam->tDevBindPipe.nPipeId[0] = pCam->nPipeId;
-    pCam->ptSnsHdl = COMMON_ISP_GetSnsObj(eSnsType);
+    pCam->ptSnsHdl[pCam->nPipeId] = COMMON_ISP_GetSnsObj(eSnsType);
     pCam->eBusType = COMMON_ISP_GetSnsBusType(eSnsType);
     pCam->eLoadRawNode = eLoadRawNode;
     __set_pipe_hdr_mode(&pCam->tDevBindPipe.nHDRSel[0], eHdrMode);
@@ -282,9 +282,10 @@ static AX_U32 __sample_case_double_os04a10(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYP
     for (i = 0; i < pCommonArgs->nCamCnt; i++) {
         pCam = &pCamList[i];
         pCam->nNumber = i;
+        pCam->nPipeId = i;
         COMMON_VIN_GetSnsConfig(eSnsType, &pCam->tMipiAttr, &pCam->tSnsAttr,
                                 &pCam->tSnsClkAttr, &pCam->tDevAttr,
-                                &pCam->tPipeAttr, pCam->tChnAttr);
+                                &pCam->tPipeAttr[pCam->nPipeId], pCam->tChnAttr);
 
         pCam->nDevId = i;
         if (i == 0) {
@@ -297,11 +298,10 @@ static AX_U32 __sample_case_double_os04a10(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYP
             else
                 pCam->nI2cAddr = 0x36;
         }
-        pCam->nPipeId = i;
         pCam->tSnsClkAttr.nSnsClkIdx = 0;
         pCam->tDevBindPipe.nNum =  1;
         pCam->tDevBindPipe.nPipeId[0] = pCam->nPipeId;
-        pCam->ptSnsHdl = COMMON_ISP_GetSnsObj(eSnsType);
+        pCam->ptSnsHdl[pCam->nPipeId] = COMMON_ISP_GetSnsObj(eSnsType);
         pCam->eBusType = COMMON_ISP_GetSnsBusType(eSnsType);
         if (eHdrMode == AX_SNS_LINEAR_MODE)
             pCam->tSnsAttr.nSettingIndex = 4;

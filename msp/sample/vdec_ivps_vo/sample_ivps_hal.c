@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -119,18 +119,43 @@ AX_S32 SampleIVPS_Init(AX_U32 u32GrpNum, AX_U32 u32StartGrp, AX_U32 width, AX_U3
         return -1;
     }
 
-    ch = 1;
+    ch = 0;
     stPipelineAttr.nOutChnNum = 1;
     stPipelineAttr.tFilter[ch][0].bEngage = AX_TRUE;
     stPipelineAttr.tFilter[ch][0].tFRC.fSrcFrameRate = 30;
     stPipelineAttr.tFilter[ch][0].tFRC.fDstFrameRate = 30;
     stPipelineAttr.tFilter[ch][0].nDstPicWidth = width;
     stPipelineAttr.tFilter[ch][0].nDstPicHeight = height;
-    stPipelineAttr.tFilter[ch][0].nDstPicStride = stPipelineAttr.tFilter[ch][0].nDstPicWidth;
+    stPipelineAttr.tFilter[ch][0].nDstPicStride = VDEC_ALIGN_UP(width, 16);
     stPipelineAttr.tFilter[ch][0].eDstPicFormat = AX_FORMAT_YUV420_SEMIPLANAR;
-    stPipelineAttr.tFilter[ch][0].eEngine = AX_IVPS_ENGINE_TDP;
+    stPipelineAttr.tFilter[ch][0].eEngine = AX_IVPS_ENGINE_GDC;
     stPipelineAttr.tFilter[ch][0].tTdpCfg.eRotation = AX_IVPS_ROTATION_0;
     stPipelineAttr.tFilter[ch][0].tCompressInfo.enCompressMode = AX_COMPRESS_MODE_NONE;
+
+    ch++;
+    stPipelineAttr.tFilter[ch][0].bEngage = AX_TRUE;
+    stPipelineAttr.tFilter[ch][0].tFRC.fSrcFrameRate = 30;
+    stPipelineAttr.tFilter[ch][0].tFRC.fDstFrameRate = 30;
+    stPipelineAttr.tFilter[ch][0].nDstPicWidth = width;
+    stPipelineAttr.tFilter[ch][0].nDstPicHeight = height;
+    stPipelineAttr.tFilter[ch][0].nDstPicStride = VDEC_ALIGN_UP(width, 16);
+    stPipelineAttr.tFilter[ch][0].eDstPicFormat = AX_FORMAT_YUV420_SEMIPLANAR;
+    stPipelineAttr.tFilter[ch][0].eEngine = AX_IVPS_ENGINE_SCL;
+    stPipelineAttr.tFilter[ch][0].tTdpCfg.eRotation = AX_IVPS_ROTATION_0;
+    stPipelineAttr.tFilter[ch][0].tCompressInfo.enCompressMode = AX_COMPRESS_MODE_NONE;
+
+    stPipelineAttr.tFilter[ch][1].bEngage = AX_TRUE;
+    stPipelineAttr.tFilter[ch][1].tFRC.fSrcFrameRate = 30;
+    stPipelineAttr.tFilter[ch][1].tFRC.fDstFrameRate = 30;
+    stPipelineAttr.tFilter[ch][1].nDstPicWidth = width;
+    stPipelineAttr.tFilter[ch][1].nDstPicHeight = height;
+    stPipelineAttr.tFilter[ch][1].nDstPicStride = VDEC_ALIGN_UP(width, 16);
+    stPipelineAttr.tFilter[ch][1].eDstPicFormat = AX_FORMAT_YUV420_SEMIPLANAR;
+    stPipelineAttr.tFilter[ch][1].eEngine = AX_IVPS_ENGINE_TDP;
+    stPipelineAttr.tFilter[ch][1].tTdpCfg.eRotation = AX_IVPS_ROTATION_0;
+    stPipelineAttr.tFilter[ch][1].tTdpCfg.bVoOsd = AX_FALSE;
+    stPipelineAttr.tFilter[ch][1].tCompressInfo.enCompressMode = AX_COMPRESS_MODE_NONE;
+
     stPipelineAttr.nOutFifoDepth[ch - 1] = 0;
 
     stGrpAttr.ePipeline = AX_IVPS_PIPELINE_DEFAULT;
@@ -148,12 +173,19 @@ AX_S32 SampleIVPS_Init(AX_U32 u32GrpNum, AX_U32 u32StartGrp, AX_U32 width, AX_U3
         }
 
         PoolAttr.ePoolSrc = AX_POOL_SOURCE_PRIVATE;
-        PoolAttr.nFrmBufNum =12;
+        PoolAttr.nFrmBufNum = 12;
+
+        axRet = AX_IVPS_SetGrpPoolAttr(ivpsGrpId, &PoolAttr);
+        if (IVPS_SUCC != axRet)
+        {
+            SAMPLE_ERR_LOG("AX_IVPS_SetGrpPoolAttr(Grp: %d) failed, ret=0x%x.", ivpsGrpId, axRet);
+            return -3;
+        }
 
         axRet = AX_IVPS_SetChnPoolAttr(ivpsGrpId, 0, &PoolAttr);
         if (IVPS_SUCC != axRet)
         {
-            SAMPLE_ERR_LOG("AX_IVPS_SetGrpPoolAttr(Grp: %d) failed, ret=0x%x.", ivpsGrpId, axRet);
+            SAMPLE_ERR_LOG("AX_IVPS_SetChnPoolAttr(Grp: %d) failed, ret=0x%x.", ivpsGrpId, axRet);
             return -3;
         }
 

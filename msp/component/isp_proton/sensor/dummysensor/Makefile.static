@@ -32,21 +32,21 @@ OUTPUT 			:= $(TARGET_OUT_PATH)/.obj_a
 # source
 SRCS 			+= $(wildcard $(SRC_I2C_PATH)/*.c) \
 					$(wildcard $(CUR_PATH)/*.c) \
-					$(wildcard $(COMMON_SRC_PATH)/*.c) \
+					$(wildcard $(COMMON_SRC_PATH)/*.c)
 
 CINCLUDE		+=  -I$(SRC_I2C_PATH)/ \
 					-I$(OUT_PATH)/include \
 					-I$(SNS_PATH)/include \
 					-I$(COMMON_PATH)/include \
-                    			-I$(BASE_PATH)/common/include \
+					-I$(BASE_PATH)/common/include \
 					-I$(SNS_PATH)/dummysensor \
 					-I$(GENERATED_PATH)
 
 OBJS 			:= $(SRCS:%.c=$(OUTPUT)/%.o)
-DEPS				:= $(OBJS:%.o=%.d)
+DEPS			:= $(OBJS:%.o=%.d)
 
 # static lib
-LINKNAME	:= lib$(MOD_NAME).a
+LINKNAME		:= lib$(MOD_NAME).a
 STATIC_TARGET	:= $(LINKNAME)
 
 # build flags

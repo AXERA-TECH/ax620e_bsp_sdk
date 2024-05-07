@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -67,15 +67,9 @@ extern "C" {
 #define AX_VDEC_WIDTH_ALIGN     (16)
 #define AX_VDEC_HEIGHT_ALIGN     (16)
 
-#define SAMPLE_VDEC_OUTPUT_FRAMEBUF_CNT     (8)
-#define SAMPLE_VDEC_INPUT_FIFO_DEPTH        (32)
-#define SAMPLE_VDEC_REF_BLK_CNT             (AX_VDEC_MAX_OUTPUT_FIFO_DEPTH)
+#define SAMPLE_VDEC_REF_BLK_CNT             (AX_VDEC_MAX_FRAME_BUF_CNT)
 #define SAMPLE_VDEC_FRAME_CNT               (1)
 #define SAMPLE_VDEC_MAX_STREAM_CNT          AX_VDEC_MAX_GRP_NUM
-
-#define AX_VDEC_LOSSY_YUV_LITE_WIDTH        128
-#define AX_VDEC_LOSSY_YUV_LITE_HEIGHT       2
-#define AX_VDEC_LOSSY_COMP_LEVEL_FACTOR     32
 
 typedef struct {
     int num;
@@ -109,8 +103,8 @@ typedef struct axSAMPLE_VDEC_USERPIC_T {
 
 typedef struct axSAMPLE_INPUT_FILE_INFO_T {
     FILE *fInput;
-    size_t curPos;
-    size_t sFileSize;
+    off_t curPos;
+    off_t sFileSize;
     AX_PAYLOAD_TYPE_E enDecType;
 } SAMPLE_INPUT_FILE_INFO_T;
 
@@ -217,6 +211,8 @@ typedef struct axSAMPLE_VDEC_CMD_PARAM_T {
     AX_BOOL bGetGrpPrm;
     AX_BOOL bRepeatTest; /* create and destroy vdgrp 30 times */
     AX_BOOL bSelectMode;
+    AX_BOOL bSkipRelease;
+    AX_BOOL bSkipFrms;
     AX_VDEC_DISPLAY_MODE_E enDisplayMode;
 
     /* user pic */
@@ -325,8 +321,6 @@ typedef struct axSAMPLE_VDEC_CONTEXT_T {
     SAMPLE_VDEC_OUTPUT_INFO_T outInfo;
 
     AX_VDEC_GRP_STATUS_E GrpStatus[AX_VDEC_MAX_GRP_NUM];
-    pthread_mutex_t GrpTidMutex[AX_VDEC_MAX_GRP_NUM];
-    pthread_mutex_t RecvTidMutex[AX_VDEC_MAX_GRP_NUM];
     AX_S32 GrpPID[AX_VDEC_MAX_GRP_NUM];
     pthread_t GrpTid[AX_VDEC_MAX_GRP_NUM];
     pthread_t GrpChnRecvTid[AX_VDEC_MAX_GRP_NUM];
@@ -335,6 +329,8 @@ typedef struct axSAMPLE_VDEC_CONTEXT_T {
 
     AX_BLK blkRef[AX_VDEC_MAX_GRP_NUM][SAMPLE_VDEC_REF_BLK_CNT];
     SAMPLE_VDEC_ARGS_T stVdecGrpArgs[AX_VDEC_MAX_GRP_NUM];
+    AX_U64 recvFrmCnt[AX_VDEC_MAX_GRP_NUM];
+    AX_U64 releaseFrmCnt[AX_VDEC_MAX_GRP_NUM];
 } SAMPLE_VDEC_CONTEXT_T;
 
 const char *SampleVdecRetStr(AX_S32 rv);

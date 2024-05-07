@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -34,6 +34,18 @@ COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleDummySdr[] = {
 
 COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleOs04a10Sdr[] = {
     {2688, 1520, 2688, AX_FORMAT_BAYER_RAW_10BPP_PACKED, 12, AX_COMPRESS_MODE_LOSSY, 4},      /* vin raw16 use */
+};
+
+// SC450AI
+COMMON_SYS_POOL_CFG_T gtSysCommPoolSingleOs450aiSdr[] = {
+    {2688, 1520, 2688, AX_FORMAT_YUV420_SEMIPLANAR, 3, AX_COMPRESS_MODE_LOSSY, 4},    /* vin nv21/nv21 use */
+    {2688, 1520, 2688, AX_FORMAT_YUV420_SEMIPLANAR, 4},    /* vin nv21/nv21 use */
+    {1920, 1080, 1920, AX_FORMAT_YUV420_SEMIPLANAR, 3},    /* vin nv21/nv21 use */
+    {720, 576, 720, AX_FORMAT_YUV420_SEMIPLANAR, 3},    /* vin nv21/nv21 use */
+};
+
+COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleOs450aiSdr[] = {
+    {2688, 1520, 2688, AX_FORMAT_BAYER_RAW_10BPP_PACKED, 8, AX_COMPRESS_MODE_LOSSY, 4},      /* vin raw10 use */
 };
 
 static AX_CAMERA_T gCams[MAX_CAMERAS] = {0};
@@ -98,7 +110,7 @@ static AX_ISP_IQ_LDC_PARAM_T ldc_param = {
 
 
 SAMPLE_VIN_PARAM_T gtVinParam = {
-    SAMPLE_VIN_SINGLE_OS08A20,
+    SAMPLE_VIN_SINGLE_OS04A10,
     COMMON_VIN_SENSOR,
     AX_SNS_LINEAR_MODE,
     LOAD_RAW_NONE,
@@ -173,8 +185,8 @@ static AX_VOID __set_vin_attr(AX_CAMERA_T *pCam, SAMPLE_SNS_TYPE_E eSnsType, AX_
     pCam->tDevAttr.eSnsMode = eHdrMode;
     pCam->eHdrMode = eHdrMode;
     pCam->eSysMode = eSysMode;
-    pCam->tPipeAttr.eSnsMode = eHdrMode;
-    pCam->tPipeAttr.bAiIspEnable = bAiispEnable;
+    pCam->tPipeAttr[pCam->nPipeId].eSnsMode = eHdrMode;
+    pCam->tPipeAttr[pCam->nPipeId].bAiIspEnable = bAiispEnable;
     if (eHdrMode > AX_SNS_LINEAR_MODE) {
         pCam->tDevAttr.eSnsOutputMode = AX_SNS_DOL_HDR;
     }
@@ -207,17 +219,17 @@ static AX_U32 __sample_case_single_dummy(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYPE_
 
     for (i = 0; i < pCommonArgs->nCamCnt; i++) {
         pCam = &pCamList[i];
+        pCam->nPipeId = 0;
         COMMON_VIN_GetSnsConfig(eSnsType, &pCam->tMipiAttr, &pCam->tSnsAttr,
                                 &pCam->tSnsClkAttr, &pCam->tDevAttr,
-                                &pCam->tPipeAttr, pCam->tChnAttr);
+                                &pCam->tPipeAttr[pCam->nPipeId], pCam->tChnAttr);
 
         pCam->nDevId = 0;
         pCam->nRxDev = 0;
-        pCam->nPipeId = 0;
         pCam->tSnsClkAttr.nSnsClkIdx = 0;
         pCam->tDevBindPipe.nNum =  1;
         pCam->tDevBindPipe.nPipeId[0] = pCam->nPipeId;
-        pCam->ptSnsHdl = COMMON_ISP_GetSnsObj(eSnsType);
+        pCam->ptSnsHdl[pCam->nPipeId] = COMMON_ISP_GetSnsObj(eSnsType);
         pCam->eBusType = COMMON_ISP_GetSnsBusType(eSnsType);
         pCam->eLoadRawNode = eLoadRawNode;
         __set_pipe_hdr_mode(&pCam->tDevBindPipe.nHDRSel[0], eHdrMode);
@@ -282,14 +294,14 @@ static AX_U32 __sample_case_single_os04a10(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYP
     pCam = &pCamList[0];
     COMMON_VIN_GetSnsConfig(eSnsType, &pCam->tMipiAttr, &pCam->tSnsAttr,
                             &pCam->tSnsClkAttr, &pCam->tDevAttr,
-                            &pCam->tPipeAttr, pCam->tChnAttr);
+                            &pCam->tPipeAttr[pCam->nPipeId], pCam->tChnAttr);
     pCam->nDevId = 0;
     pCam->nRxDev = 0;
     pCam->nPipeId = 0;
     pCam->tSnsClkAttr.nSnsClkIdx = 0;
     pCam->tDevBindPipe.nNum =  1;
     pCam->tDevBindPipe.nPipeId[0] = pCam->nPipeId;
-    pCam->ptSnsHdl = COMMON_ISP_GetSnsObj(eSnsType);
+    pCam->ptSnsHdl[pCam->nPipeId] = COMMON_ISP_GetSnsObj(eSnsType);
     pCam->eBusType = COMMON_ISP_GetSnsBusType(eSnsType);
     __set_pipe_hdr_mode(&pCam->tDevBindPipe.nHDRSel[0], eHdrMode);
     __set_vin_attr(pCam, eSnsType, eHdrMode, eSysMode, pVinParam->bAiispEnable);
@@ -297,6 +309,48 @@ static AX_U32 __sample_case_single_os04a10(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYP
         pCam->tPipeInfo[j].ePipeMode = SAMPLE_PIPE_MODE_VIDEO;
         pCam->tPipeInfo[j].bAiispEnable = pVinParam->bAiispEnable;
         strncpy(pCam->tPipeInfo[j].szBinPath, "null.bin", sizeof(pCam->tPipeInfo[j].szBinPath));
+    }
+    return 0;
+}
+
+static AX_U32 __sample_case_single_sc450ai(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYPE_E eSnsType,
+        SAMPLE_VIN_PARAM_T *pVinParam, COMMON_SYS_ARGS_T *pCommonArgs)
+{
+    AX_CAMERA_T *pCam = NULL;
+    COMMON_VIN_MODE_E eSysMode = pVinParam->eSysMode;
+    AX_SNS_HDR_MODE_E eHdrMode = pVinParam->eHdrMode;
+    AX_S32 j = 0;
+    SAMPLE_LOAD_RAW_NODE_E eLoadRawNode = pVinParam->eLoadRawNode;
+    pCommonArgs->nCamCnt = 1;
+
+    pCam = &pCamList[0];
+    pCam->nPipeId = 0;
+    COMMON_VIN_GetSnsConfig(eSnsType, &pCam->tMipiAttr, &pCam->tSnsAttr,
+                                &pCam->tSnsClkAttr, &pCam->tDevAttr,
+                                &pCam->tPipeAttr[pCam->nPipeId], pCam->tChnAttr);
+    pCam->nDevId = 0;
+    pCam->nRxDev = 0;
+    pCam->tSnsClkAttr.nSnsClkIdx = 0;
+    pCam->tDevBindPipe.nNum =  1;
+    pCam->eLoadRawNode = eLoadRawNode;
+    pCam->tDevBindPipe.nPipeId[0] = pCam->nPipeId;
+    pCam->ptSnsHdl[pCam->nPipeId] = COMMON_ISP_GetSnsObj(eSnsType);
+    pCam->eBusType = COMMON_ISP_GetSnsBusType(eSnsType);
+    pCam->eInputMode = AX_INPUT_MODE_MIPI;
+    __set_pipe_hdr_mode(&pCam->tDevBindPipe.nHDRSel[0], eHdrMode);
+    __set_vin_attr(pCam, eSnsType, eHdrMode, eSysMode, pVinParam->bAiispEnable);
+    for (j = 0; j < pCam->tDevBindPipe.nNum; j++) {
+        pCam->tPipeInfo[j].ePipeMode = SAMPLE_PIPE_MODE_VIDEO;
+        pCam->tPipeInfo[j].bAiispEnable = pVinParam->bAiispEnable;
+        if (pCam->tPipeInfo[j].bAiispEnable) {
+            if (eHdrMode <= AX_SNS_LINEAR_MODE) {
+                strncpy(pCam->tPipeInfo[j].szBinPath, "/opt/etc/sc450ai_sdr_dual3dnr.bin", sizeof(pCam->tPipeInfo[j].szBinPath));
+            } else {
+                strncpy(pCam->tPipeInfo[j].szBinPath, "/opt/etc/sc450ai_hdr_2x_ainr.bin", sizeof(pCam->tPipeInfo[j].szBinPath));
+            }
+        } else {
+            strncpy(pCam->tPipeInfo[j].szBinPath, "null.bin", sizeof(pCam->tPipeInfo[j].szBinPath));
+        }
     }
     return 0;
 }
@@ -326,6 +380,21 @@ static AX_U32 __sample_case_config(SAMPLE_VIN_PARAM_T *pVinParam, COMMON_SYS_ARG
 
         /* cams config */
         __sample_case_single_os04a10(pCamList, eSnsType, pVinParam, pCommonArgs);
+        break;
+    case SAMPLE_VIN_SINGLE_SC450AI:
+        eSnsType = SMARTSENS_SC450AI;
+        /* comm pool config */
+        __cal_dump_pool(gtSysCommPoolSingleOs450aiSdr, pVinParam->eHdrMode, pVinParam->nDumpFrameNum);
+        pCommonArgs->nPoolCfgCnt = sizeof(gtSysCommPoolSingleOs450aiSdr) / sizeof(gtSysCommPoolSingleOs450aiSdr[0]);
+        pCommonArgs->pPoolCfg = gtSysCommPoolSingleOs450aiSdr;
+
+        /* private pool config */
+        __cal_dump_pool(gtPrivatePoolSingleOs450aiSdr, pVinParam->eHdrMode, pVinParam->nDumpFrameNum);
+        pPrivArgs->nPoolCfgCnt = sizeof(gtPrivatePoolSingleOs450aiSdr) / sizeof(gtPrivatePoolSingleOs450aiSdr[0]);
+        pPrivArgs->pPoolCfg = gtPrivatePoolSingleOs450aiSdr;
+
+        /* cams config */
+        __sample_case_single_sc450ai(pCamList, eSnsType, pVinParam, pCommonArgs);
         break;
     case SAMPLE_VIN_SINGLE_DUMMY:
     default:
@@ -439,7 +508,6 @@ static void *VencGetStreamProc(void *arg)
 
     if (pStrm == NULL) {
         ALOGE("Open output file error!");
-        return NULL;
     }
 
     while (AX_TRUE == pstPara->bThreadStart && !ThreadLoopStateGet()) {
@@ -449,7 +517,7 @@ static void *VencGetStreamProc(void *arg)
             totalGetStream++;
             SAMPLE_DeltaPtsStatistic(pstPara->VeChn, &stStream);            /* save 30 frames default */
             /* save 30 frames default */
-            if(totalGetStream <= 30){
+            if (pStrm && totalGetStream <= 30){
                 fwrite(stStream.stPack.pu8Addr, 1, stStream.stPack.u32Len, pStrm);
                 fflush(pStrm);
             }
@@ -676,7 +744,7 @@ static AX_S32 SAMPLE_VENC_Init(AX_S32 nChnNum, AX_IVPS_ROTATION_E eRotAngle)
 
 static AX_S32 SampleVencDeInit(AX_S32 nChnNum)
 {
-    AX_S32 VencChn = 0, s32Ret = 0;
+    AX_S32 VencChn = 0, s32Ret = 0, s32Retry = 5;
 
     for (VencChn = 0; VencChn < nChnNum; VencChn++) {
 
@@ -686,10 +754,20 @@ static AX_S32 SampleVencDeInit(AX_S32 nChnNum)
             return s32Ret;
         }
 
-        s32Ret = AX_VENC_DestroyChn(VencChn);
-        if (0 != s32Ret) {
-            ALOGE("VencChn %d:AX_VENC_DestroyChn failed,s32Ret:0x%x", VencChn, s32Ret);
-            return s32Ret;
+        s32Retry = 5;
+        do {
+            s32Ret = AX_VENC_DestroyChn(VencChn);
+            if (AX_ERR_VENC_BUSY == s32Ret) {
+                ALOGE("VencChn %d:AX_VENC_DestroyChn return AX_ERR_VENC_BUSY,retry...", VencChn);
+                --s32Retry;
+                usleep(100 * 1000);
+            } else {
+                break;
+            }
+        } while (s32Retry >= 0);
+
+        if (s32Retry == -1 || AX_SUCCESS != s32Ret) {
+            ALOGE("VencChn %d: AX_VENC_DestroyChn failed, s32Retry=%d, s32Ret=0x%x\n", VencChn, s32Retry, s32Ret);
         }
 
         if (AX_TRUE == gGetStreamPara[VencChn].bThreadStart) {
@@ -1115,6 +1193,7 @@ AX_VOID PrintHelp()
     printf("\t-c: VIN Sensor Type\n");
     printf("\t\t0: Single DummySensor\n");
     printf("\t\t1: Single OS04A10\n");
+    printf("\t\t2: Single SC450AI\n");
 
     printf("\n\t-m(optional): Work Mode\n");
     printf("\t\t0: LoadRaw Mode\n");
@@ -1147,7 +1226,11 @@ AX_VOID PrintHelp()
     printf("\t\t2: 180 degree\n");
     printf("\t\t3: 270 degree\n");
 
+    printf("\nOS04A10:\n");
     printf("\nExample:\n\tsample_vin_ivps_engine_ venc_rtsp -c 1 -m 1 -e 1 -r 1\n");
+
+    printf("\nSC450AI:\n");
+    printf("\nExample:\n\tsample_vin_ivps_engine_ venc_rtsp -c 2 -m 1 -e 1 -r 1\n");
 }
 
 static AX_VOID SigInt(AX_S32 signo)

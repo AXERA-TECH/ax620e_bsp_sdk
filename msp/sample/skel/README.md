@@ -29,12 +29,9 @@ options:
                 1: STD-VNPU Default
                 2: STD-VNPU1
                 3: STD-VNPU2
--p,     Skel PPL((unsigned int), default=4)
-                1: AX_SKEL_PPL_BODY
-                2: AX_SKEL_PPL_POSE
-                3: AX_SKEL_PPL_FH
-                4: AX_SKEL_PPL_HVCFP
-                5: AX_SKEL_PPL_FACE_FEATURE
+-p,     Skel PPL((unsigned int), default=1)
+                1: AX_SKEL_PPL_HVCP
+                2: AX_SKEL_PPL_FACE_FEATURE
 -v,     Log level((unsigned int), default=5)
                 0: LOG_EMERGENCY_LEVEL
                 1: LOG_ALERT_LEVEL
@@ -60,7 +57,7 @@ options:
 -H 表示检测人形数目限制
 -V 表示检测机动车数目限制
 -C 表示检测非机动车数目限制
--p 表示选择算法[默认: AX_SKEL_PPL_HVCFP]
+-p 表示选择算法[默认: AX_SKEL_PPL_HVCP]
 -v 表示选择LOG级别[默认: LOG_NOTICE_LEVEL]
 -h 打印帮助信息
 

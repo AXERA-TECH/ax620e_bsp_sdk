@@ -1,11 +1,73 @@
 #encoding=utf-8
+import re
 import os
 import sys
+import subprocess
+import random
+
+append_target='''
+.PHONY: {target}
+{target}:
+	@$(ECHO) -e $(GREEN) "$@..." $(DONE)
+'''
+
+global_variables = {
+    "PROJECT"       : None,
+    "LIBC"          : None,
+    "ARCH"          : None,
+    "MSP_OUT_DIR"   : None,
+    "OSDRV_OUT_DIR" : None,
+    "KERNEL_DIR"    : None
+}
+
+def get_project_cfg(prj_name, prj_mak):
+    prj_mak = os.path.abspath(prj_mak)
+    if not os.path.exists(prj_mak):
+        raise Exception(f"file: {prj_mak} not exists!!!")
+        sys.exit(-1)
+    fdir  = os.path.dirname(prj_mak)
+    fname = os.path.basename(prj_mak)
+    rand_num = random.randint(1000, 10000)
+    ftmp  = os.path.join(fdir, f"{fname.split('.')[0]}_{rand_num}.tmp")
+    os.system(f"cp {prj_mak} {ftmp}")
+    target_name = f"get_info{rand_num}"
+    get_info = append_target.format(target=target_name)
+    with open(ftmp, "a") as f:
+        f.write(get_info)
+    cmd = f"make -f {ftmp} p={prj_name} {target_name} -p"
+    process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    output, error = process.communicate()
+    os.system(f"rm -rf {ftmp}")
+    if process.returncode == 0:
+        outputs = output.decode('utf-8')
+    else:
+        print(f" failed to execut cmd {cmd}, returncode: {process.returncode}, error: {error.decode('utf-8')}")
+        sys.exit(-1)
+    lines = [line.strip() for line in outputs.split("\n") if line.strip() and not line.startswith("#")]
+
+    return lines
+
+def get_global_variables(prj_name, filename):
+    lines = get_project_cfg(prj_name, filename)
+    for line in lines:
+        line = line.strip()
+        if line.startswith("#"):
+            continue
+        for k in global_variables.keys():
+            ptn = r"{}\s*[?,:,+]?=\s*([^#\s]+)".format(k)
+            matched = re.search(ptn, line)
+            if matched:
+                global_variables[k] = matched.groups()[0]
+                print("global_variables: {}:{}".format(k, global_variables[k]))
+
+    for k in global_variables.keys():
+        if global_variables[k] is None:
+            raise ValueError("global_variables: {} is None !!!".format(k))
 
 def copy_files(src_dir, src_file_list, dst_dir):
-    if not os.path.exists(src_dir):
+    '''if not os.path.exists(src_dir):
         print(f"Error: {src_dir} does not exist.")
-        return False
+        return False'''
 
     if not os.path.exists(src_file_list):
         print(f"Error: {src_file_list} does not exist.")
@@ -13,6 +75,16 @@ def copy_files(src_dir, src_file_list, dst_dir):
 
     with open(src_file_list, "r") as f:
         file_list = [line.strip() for line in f if line.strip() and not line.startswith("#")]
+    file_content = "\n".join(file_list)
+
+    for key, value in global_variables.items():
+        if value:
+            file_content = file_content.replace(f"$({key})", value)
+
+    print("========================================")
+    print(file_content)
+    print("========================================")
+    file_list = file_content.split("\n")
 
     rm_file_list = []
     file_dir = ""
@@ -63,14 +135,19 @@ def copy_files(src_dir, src_file_list, dst_dir):
     return True
 
 if __name__ == "__main__":
-    if len(sys.argv) != 4:
+    if len(sys.argv) != 6:
         print("para error!")
-        print("usage: cpoy_files.py src_dir src_file_list dst_dir")
+        print("usage: {project} {project_mak} cpoy_files.py src_dir src_file_list dst_dir")
         sys.exit(-1)
 
-    src_dir = sys.argv[1]
-    src_file_list = sys.argv[2]
-    dst_dir = sys.argv[3]
+    prj_name      = sys.argv[1]
+    project_mak   = sys.argv[2]
+    src_dir       = sys.argv[3]
+    src_file_list = sys.argv[4]
+    dst_dir       = sys.argv[5]
+
+    global_variables["PROJECT"]=prj_name.strip()
+    get_global_variables(prj_name, project_mak)
 
     if not copy_files(src_dir, src_file_list, dst_dir):
         sys.exit(-1)

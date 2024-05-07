@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -66,7 +66,7 @@ AX_S32 FramePoolInit(AX_VDEC_GRP VdGrp, AX_U32 FrameSize, AX_POOL *PoolId, AX_U3
         SAMPLE_CRIT_LOG("Attach pool err. 0x%x\n", s32Ret);
     }
 
-    SAMPLE_LOG_TMP("FramePoolInit successfully cnt %d size %#x! %d\n", s32PoolId, u32FrameBufCnt, FrameSize);
+    SAMPLE_LOG_TMP("FramePoolInit successfully s32PoolId %d cnt %#x size %d\n", s32PoolId, u32FrameBufCnt, FrameSize);
 
     return s32Ret;
 }
@@ -246,10 +246,10 @@ void *VdecFrameFunc(void *arg)
     }
     else {
         if (pstCmd->enDecType == PT_JPEG) {
-            uBufSize = ((AX_U32)inputFileSize) > STREAM_BUFFER_MIN_SIZE ? inputFileSize : STREAM_BUFFER_MIN_SIZE;
+            uBufSize = inputFileSize > STREAM_BUFFER_MIN_SIZE ? inputFileSize : STREAM_BUFFER_MIN_SIZE;
             tStreamBuf.uBufSize = uBufSize > STREAM_BUFFER_MAX_SIZE ? STREAM_BUFFER_MAX_SIZE : uBufSize;
         } else {
-            tStreamBuf.uBufSize = ((AX_U32)inputFileSize) > STREAM_BUFFER_MAX_SIZE ? STREAM_BUFFER_MAX_SIZE : inputFileSize;
+            tStreamBuf.uBufSize = inputFileSize > STREAM_BUFFER_MAX_SIZE ? STREAM_BUFFER_MAX_SIZE : inputFileSize;
         }
     }
 
@@ -272,7 +272,7 @@ void *VdecFrameFunc(void *arg)
     pstStreamMem = (AX_U8 *)tStreamBuf.tBufAddr.pVirAddr;
     if (enDecType == PT_H264) {
         SAMPLE_H264_SPS_DATA_T sps_data;
-        AX_U32 parse_len = ((AX_U32)inputFileSize) >= SEEK_NALU_MAX_LEN ? SEEK_NALU_MAX_LEN : inputFileSize;
+        AX_U32 parse_len = inputFileSize >= SEEK_NALU_MAX_LEN ? SEEK_NALU_MAX_LEN : inputFileSize;
         memset(&sps_data, 0, sizeof(SAMPLE_H264_SPS_DATA_T));
 
         read_size = fread(pstStreamMem, sizeof(AX_U8), (size_t)parse_len, fInput);
@@ -286,15 +286,6 @@ void *VdecFrameFunc(void *arg)
         sRet = h264_parse_sps(pstStreamMem, parse_len, &sps_data);
         SAMPLE_LOG_TMP("h264_parse_sps sRet:0x%x sps_data.height:%d, sps_data.width:%d parse_len:%d",
                    sRet, sps_data.height, sps_data.width, parse_len);
-        if (sRet == AX_SUCCESS) {
-            if (pstCmd->u32PicWidth < sps_data.width) {
-                pstCmd->u32PicWidth = sps_data.width;
-            }
-
-            if (pstCmd->u32PicHeight < sps_data.height) {
-                pstCmd->u32PicHeight = sps_data.height;
-            }
-        }
     }
 
     uWidth = pstCmd->u32PicWidth;
@@ -385,7 +376,7 @@ void *VdecFrameFunc(void *arg)
                                     VdGrp, s32Ret);
                     goto ERR_RET_STOP_RECV;
                 }
-                SAMPLE_LOG_TMP("grp %d ffmpeg init %s size %ld\n", VdGrp, sFile, inputFileSize);
+                SAMPLE_LOG_TMP("grp %d ffmpeg init %s size %lld\n", VdGrp, sFile, (AX_U64)inputFileSize);
             } else {
                 fseek(pstBitStreamInfo->stBsInfo.fInput, 0, SEEK_SET);
             }
@@ -395,7 +386,7 @@ void *VdecFrameFunc(void *arg)
 #else
         fseek(pstBitStreamInfo->stBsInfo.fInput, 0, SEEK_SET);
 #endif
-        SAMPLE_LOG_TMP("grp %d start read file %s size %ld\n", VdGrp, sFile, inputFileSize);
+        SAMPLE_LOG_TMP("grp %d start read file %s size %lld\n", VdGrp, sFile, (AX_U64)inputFileSize);
 
         do {
             if ((enDecType == PT_H264) || (enDecType == PT_H265)) {
@@ -492,10 +483,13 @@ void *VdecFrameFunc(void *arg)
                 }
             }
 
-            if (pstCmd->u32StreamFps) {
-                u64FrameCnt++;
+            u64FrameCnt++;
+            if (pstCmd->bSkipFrms && (u64FrameCnt & 1))
+                tStrInfo.u64PTS = -1; /* dec not out put */
+            else if (pstCmd->u32StreamFps)
                 tStrInfo.u64PTS = u64FrameCnt * 1000000 / pstCmd->u32StreamFps;
-            }
+            else
+                tStrInfo.u64PTS = u64FrameCnt;
 
             s32Ret = AX_VDEC_SendStream(VdGrp, &tStrInfo, -1);
             if (s32Ret != AX_SUCCESS) {

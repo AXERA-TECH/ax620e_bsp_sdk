@@ -1,3 +1,4 @@
+AX_PRJ_LIST += AX630C_emmc_arm64_k419
 AX_PRJ_LIST += AX620Q_nand_arm32_k419
 
 ifneq ($(MAKECMDGOALS),plist)

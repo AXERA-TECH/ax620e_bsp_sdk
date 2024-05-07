@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -111,14 +111,17 @@ int main(int argc, char *argv[])
             pstCmd->pNewInputFilePath = NULL;
         }
 
-        if (NULL != pstCmd->pOutputFilePath) {
-            free(pstCmd->pOutputFilePath);
-            pstCmd->pOutputFilePath = NULL;
-        }
-
         if (NULL != pstCmd->pUsrPicFilePath) {
             free(pstCmd->pUsrPicFilePath);
             pstCmd->pUsrPicFilePath = NULL;
+        }
+
+        for (idx = pstCmd->uStartGrpId; idx < pstCmd->uStartGrpId + pstCmd->uGrpCount; idx++) {
+            if (pstVdecCtx->pOutputFilePath[idx])
+                free(pstVdecCtx->pOutputFilePath[idx]);
+
+            if (pstVdecCtx->pOutputFilePath1[idx])
+                free(pstVdecCtx->pOutputFilePath1[idx]);
         }
 
         free(pstVdecCtx);
@@ -148,11 +151,6 @@ ERR_RET:
             if (NULL != pstCmd->pNewInputFilePath) {
                 free(pstCmd->pNewInputFilePath);
                 pstCmd->pNewInputFilePath = NULL;
-            }
-
-            if (NULL != pstCmd->pOutputFilePath) {
-                free(pstCmd->pOutputFilePath);
-                pstCmd->pOutputFilePath = NULL;
             }
 
             if (NULL != pstCmd->pUsrPicFilePath) {

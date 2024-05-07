@@ -1,3 +1,13 @@
+/**************************************************************************************************
+ *
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ *
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
+ * may not be copied or distributed in any isomorphic form without the prior
+ * written consent of Axera Semiconductor Co., Ltd.
+ *
+ **************************************************************************************************/
+
 #ifndef _AX_VO_INI_H_
 #define _AX_VO_INI_H_
 
@@ -50,8 +60,7 @@ typedef enum {
     AX_VO_INI_K_D_WORK_MODE = AX_VO_INI_K_D_BASE,
     AX_VO_INI_K_D_INTERFACE,
     AX_VO_INI_K_D_SYNC_TYPE,
-    AX_VO_INI_K_D_LAYERS,
-    AX_VO_INI_K_D_LAYER_INDEX,
+    AX_VO_INI_K_D_SYNC_USER_INDEX,
     AX_VO_INI_K_D_WBC_ENABLE,
     AX_VO_INI_K_D_WBC_TYPE,
     AX_VO_INI_K_D_WBC_MODE,

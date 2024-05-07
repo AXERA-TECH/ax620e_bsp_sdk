@@ -31,4 +31,4 @@ lib:
 	$(VERB) $(MAKE) -f Makefile.dynamic
 
 	@echo -e $(GREEN)"Build static $@ ..."  $(DONE)
-	#$(VERB) $(MAKE) -f Makefile.static
+	$(VERB) $(MAKE) -f Makefile.static

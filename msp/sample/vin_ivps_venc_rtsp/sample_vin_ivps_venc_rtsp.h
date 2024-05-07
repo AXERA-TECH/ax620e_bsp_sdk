@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -40,6 +40,12 @@ typedef struct _stVencGetStreamParam
     AX_BOOL bThreadStart;
     AX_PAYLOAD_TYPE_E ePayloadType;
 } VENC_GETSTREAM_PARAM_T;
+typedef struct
+{
+    AX_S32 chnNum;
+    AX_BOOL bGetStrmStart;
+    pthread_t getStrmPid;
+} SAMPLE_VENC_SELECT_PARA_T;
 
 typedef struct _stRCInfo
 {
@@ -97,6 +103,7 @@ typedef struct {
     AX_VIN_IVPS_MODE_E eMode;
     AX_IVPS_ROTATION_E eRotAngle;
     AX_U32 statDeltaPtsFrmNum;
+    AX_U32 bVencSelect;
 } SAMPLE_VIN_PARAM_T;
 
 typedef struct {

@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -28,6 +28,11 @@
 #include "ax_ao_api.h"
 #include "ax_global_type.h"
 #include "ax_acodec_api.h"
+#include "ax_aac.h"
+
+#ifndef CHIP_TYPE_AX620Q
+#include "ax_opus.h"
+#endif
 
 #define FILE_NAME_SIZE      128
 #define STRING_LEN      128
@@ -594,9 +599,6 @@ static void PrintHelp()
     printf("  --lpf-freq:             lpf frequency.              (support int), default: 3000\n");
     printf("  --lpf-db:               lpf db.                     (support int), default: 0\n");
     printf("  --eq:                   eq enable.                  (support int), default: 0\n");
-    printf("  --dis-nca9555:          nca9555 disable.            (support int), default: 0\n");
-    printf("  --dis-620q_version_1_0: 620q_1_0 pa disable.       (support int), default: 0\n");
-    printf("  --dis-620q_version_1_1: 620q_1_1 pa disable.       (support int), default: 0\n");
 }
 
 enum LONG_OPTION {
@@ -890,7 +892,6 @@ static int AudioInput()
         pthread_join(aedRecvTid, NULL);
     }
 
-DIS_AI_AED:
     if (gDbDetection) {
        ret = AX_AI_DisableAed(card, device);
         if(ret){
@@ -1067,7 +1068,7 @@ static int AudioOutput()
     stAttr.bInsertSilence = gInsertSilence;
     ret = AX_AO_SetPubAttr(card,device,&stAttr);
     if (ret) {
-        printf("AX_AI_SetPubAttr failed! ret = %x", ret);
+        printf("AX_AO_SetPubAttr failed! ret = %x", ret);
         goto AO_DEINIT;
     }
 
@@ -1508,7 +1509,7 @@ static int AudioEncodeLink()
     AX_AENC_G723_ENCODER_ATTR_T stG723EncoderAttr = {
         .u32BitRate = 24000
     };
-
+#ifndef CHIP_TYPE_AX620Q
     AX_AENC_OPUS_ENCODER_ATTR_T opusEncoderAttr = {
         .enApplication = AX_OPUS_APPLICATION_RESTRICTED_LOWDELAY,
         .u32SamplingRate = gRate,
@@ -1516,7 +1517,7 @@ static int AudioEncodeLink()
         .s32BitrateBps = 32000,
         .f32FramesizeInMs = 10.0
     };
-
+#endif
     pstAttr.enType = payloadType;
     pstAttr.u32BufSize = 8;
     pstAttr.enLinkMode = AX_LINK_MODE;
@@ -1527,6 +1528,15 @@ static int AudioEncodeLink()
             pstAttr.u32PtNumPerFrm = 480;
         }
         pstAttr.pValue = &aacEncoderAttr;
+#ifndef CHIP_TYPE_AX620Q
+        ret = AX_AENC_FdkInit();
+#else
+        ret = AX_AENC_FaacInit();
+#endif
+        if (ret) {
+            printf("AX_AENC_AAC_Init error: %x\n", ret);
+            goto DEINIT_AENC;
+        }
     } else if (payloadType == PT_G726) {
         pstAttr.u32PtNumPerFrm = 480;
         pstAttr.pValue = &stG726EncoderAttr;
@@ -1534,8 +1544,15 @@ static int AudioEncodeLink()
         pstAttr.u32PtNumPerFrm = 480;
         pstAttr.pValue = &stG723EncoderAttr;
     } else if (payloadType == PT_OPUS) {
+#ifndef CHIP_TYPE_AX620Q
         pstAttr.u32PtNumPerFrm = (AX_U32)((AX_F32)gRate * (opusEncoderAttr.f32FramesizeInMs / 1000.0));
         pstAttr.pValue = &opusEncoderAttr;
+        ret = AX_AENC_OpusInit();
+        if (ret) {
+            printf("AX_AENC_OpusInit error: %x\n", ret);
+            goto DEINIT_AENC;
+        }
+#endif
     } else {
         pstAttr.u32PtNumPerFrm = 1024;
         pstAttr.pValue = NULL;
@@ -1544,7 +1561,7 @@ static int AudioEncodeLink()
     ret = AX_AENC_CreateChn(aeChn, &pstAttr);
     if (ret) {
         printf("AX_AENC_CreateChn error: %x\n", ret);
-        goto DEINIT_AENC;
+        goto DEINIT_AENC_PAYLOADTYPE;
     }
 
     if ((payloadType == PT_AAC) && (gTransType == AX_AAC_TRANS_TYPE_RAW)) {
@@ -1571,6 +1588,30 @@ static int AudioEncodeLink()
     ret = AX_AENC_DestroyChn(aeChn);
     if(ret){
         printf("AX_AENC_DestroyChn failed! ret= %x\n",ret);
+    }
+
+DEINIT_AENC_PAYLOADTYPE:
+    switch (payloadType) {
+    case PT_AAC:
+#ifndef CHIP_TYPE_AX620Q
+        ret = AX_AENC_FdkDeInit();
+#else
+        ret = AX_AENC_FaacDeInit();
+#endif
+        if (ret) {
+            printf("AX_AENC_AAC_DeInit failed! ret = %x \n",ret);
+        }
+        break;
+    case PT_OPUS:
+#ifndef CHIP_TYPE_AX620Q
+        ret = AX_AENC_OpusDeInit();
+        if (ret) {
+            printf("AX_AENC_OpusDeInit error: %x\n", ret);
+        }
+#endif
+        break;
+    default:
+        break;
     }
 DEINIT_AENC:
     ret = AX_AENC_DeInit();
@@ -1668,7 +1709,7 @@ static int AudioDecodeLink()
     stAttr.bInsertSilence = gInsertSilence;
     ret = AX_AO_SetPubAttr(card,device,&stAttr);
     if (ret) {
-        printf("AX_AI_SetPubAttr failed! ret = %x", ret);
+        printf("AX_AO_SetPubAttr failed! ret = %x", ret);
         goto AO_DEINIT;
     }
 
@@ -1765,11 +1806,12 @@ static int AudioDecodeLink()
         .u32BitRate = 24000
     };
 
+#ifndef CHIP_TYPE_AX620Q
     AX_ADEC_OPUS_DECODER_ATTR_T opusDecoderAttr ={
         .u32SamplingRate = gRate,
         .s32Channels = gAencChannels
     };
-
+#endif
     ADEC_CHN adChn = 0;
     AX_ADEC_CHN_ATTR_T pstAttr;
     pstAttr.enType = payloadType;
@@ -1779,6 +1821,15 @@ static int AudioDecodeLink()
     switch (payloadType) {
     case PT_AAC:
         pstAttr.pValue = &aacDecoderAttr;
+#ifndef CHIP_TYPE_AX620Q
+        ret = AX_ADEC_FdkInit();
+#else
+        ret = AX_ADEC_FaacInit();
+#endif
+        if (ret) {
+            printf("AX_ADEC_AAC_Init error: %x\n", ret);
+            goto DEINIT_ADEC;
+        }
         break;
     case PT_G726:
         pstAttr.pValue = &stG726DecoderAttr;
@@ -1787,7 +1838,14 @@ static int AudioDecodeLink()
         pstAttr.pValue = &stG723DecoderAttr;
         break;
     case PT_OPUS:
+#ifndef CHIP_TYPE_AX620Q
         pstAttr.pValue = &opusDecoderAttr;
+        ret = AX_ADEC_OpusInit();
+        if (ret) {
+            printf("AX_ADEC_ScOpus_Init error: %x\n", ret);
+            goto DEINIT_ADEC;
+        }
+#endif
         break;
     default:
         pstAttr.pValue = NULL;
@@ -1796,7 +1854,7 @@ static int AudioDecodeLink()
     ret = AX_ADEC_CreateChn(adChn, &pstAttr);
     if (ret) {
         printf("AX_ADEC_CreateChn error: %x\n", ret);
-        goto DEINIT_ADEC;
+        goto DEINIT_ADEC_PAYLOADTYPE;
     }
 
     ret = AX_ADEC_AttachPool(adChn, PoolId);
@@ -2000,6 +2058,29 @@ DESTROY_ADEC:
     ret = AX_ADEC_DestroyChn(adChn);
     if (ret) {
         printf("AX_ADEC_DestroyChn failed!ret = %x \n",ret);
+    }
+DEINIT_ADEC_PAYLOADTYPE:
+    switch (payloadType) {
+    case PT_AAC:
+#ifndef CHIP_TYPE_AX620Q
+        ret = AX_ADEC_FdkDeInit();
+#else
+        ret = AX_ADEC_FaacDeInit();
+#endif
+        if (ret) {
+            printf("AX_ADEC_AAC_DeInit failed! ret = %x \n",ret);
+        }
+        break;
+    case PT_OPUS:
+#ifndef CHIP_TYPE_AX620Q
+        ret = AX_ADEC_OpusDeInit();
+        if (ret) {
+            printf("AX_ADEC_OpusDeInit error: %x\n", ret);
+        }
+#endif
+        break;
+    default:
+        break;
     }
 DEINIT_ADEC:
     ret = AX_ADEC_DeInit();
@@ -2261,13 +2342,13 @@ int main(int argc, char *argv[])
         exit(0);
     }
 
-    if (!strncmp(argv[optind], "ai_aenc", 7)) {
+    if (!strcmp(argv[optind], "ai_aenc")) {
         AudioEncodeLink();
-    } else if (!strncmp(argv[optind], "adec_ao", 7)) {
-       AudioDecodeLink();
-    } else if (!strncmp(argv[optind], "ai", 2)) {
+    } else if (!strcmp(argv[optind], "adec_ao")) {
+        AudioDecodeLink();
+    } else if (!strcmp(argv[optind], "ai")) {
         AudioInput();
-    } else if (!strncmp(argv[optind], "ao", 2)) {
+    } else if (!strcmp(argv[optind], "ao")) {
         AudioOutput();
     } else {
         printf("Unknown command: %s\n", argv[optind]);

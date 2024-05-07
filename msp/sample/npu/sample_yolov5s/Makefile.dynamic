@@ -17,7 +17,7 @@ COMMON_PATH			:= $(BASE_PATH)/common
 
 INC_PATH			:= $(abspath $(CUR_PATH)/../include)
 THIRD_PATH			:= $(HOME_PATH)/third-party
-OPENCV_PATH			:= $(THIRD_PATH)/opencv-4.5.5
+OPENCV_PATH			:= $(THIRD_PATH)/opencv
 
 include $(HOME_PATH)/build/config.mak
 
@@ -50,12 +50,7 @@ CLIB				+= -L$(OPENCV_PATH)/lib/$(ARCH)/$(LIBC)/opencv4/3rdparty
 
 CLIB				+= -lstdc++
 
-ifeq ($(ARCH), arm)
-CLIB				+= -Wl,--start-group -lopencv_imgcodecs -lopencv_imgproc -lopencv_core -ldl -lm -lpthread -lrt -littnotify -llibjpeg-turbo -llibwebp -llibpng -llibtiff -llibopenjp2 -lzlib -Wl,--end-group
-endif
-ifeq ($(ARCH), arm64)
-CLIB				+= -Wl,--start-group -lopencv_imgcodecs -lopencv_imgproc -lopencv_core -ldl -lm -lpthread -lrt -littnotify -llibjpeg-turbo -llibwebp -llibpng -llibtiff -llibopenjp2 -ltegra_hal -lzlib -Wl,--end-group
-endif
+CLIB				+= -Wl,--start-group -lopencv_imgcodecs -lopencv_imgproc -lopencv_core -ldl -lm -lpthread -lrt -llibjpeg-turbo -llibwebp -llibpng -llibtiff -llibopenjp2 -lzlib -Wl,--end-group
 
 CLIB				+= -lax_sys -lax_engine
 

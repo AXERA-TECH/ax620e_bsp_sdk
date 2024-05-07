@@ -1,7 +1,8 @@
-@dir: msp/out/arm_glibc
-etc/models/aiisp/C4395_SDR_2560x1440_10b_HCG_ISP1_A16X_I4-16X_0000_00000642712_240116_AX620E.axmodel
+@dir: msp/out/$(MSP_OUT_DIR)
+etc/models/aiisp/C4395_SDR_2560x1440_10b_HCG_ISP1_A16X_I4-16X_0000_00000695349_240308_AX620E.axmodel
 etc/c4395_sdr_online.ini
 etc/c4395_single_sdr_online_entry.ini
 etc/c4395_sdr_online_620q.ini
 etc/c4395_single_sdr_online_entry_620q.ini
-
+etc/c4395_hdr_2x_ratio_1to1.bin
+etc/c4395_hdr_2x_ratio_default.bin

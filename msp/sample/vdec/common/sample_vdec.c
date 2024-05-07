@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -237,7 +237,7 @@ static AX_S32 __VdecRecvFrame(AX_VDEC_GRP VdGrp, SAMPLE_VDEC_CONTEXT_T *pstVdecC
                 sRet = ret;
                 goto ERR_RET;
             } else if (AX_ERR_VDEC_NOT_PERM == ret) {
-                SAMPLE_CRIT_LOG("VdGrp=%d, AX_VDEC_GetFrame AX_ERR_VDEC_NOT_PERM\n",
+                SAMPLE_LOG("VdGrp=%d, AX_VDEC_GetFrame AX_ERR_VDEC_NOT_PERM\n",
                                 VdGrp);
                 sRet = ret;
                 goto ERR_RET;
@@ -246,6 +246,8 @@ static AX_S32 __VdecRecvFrame(AX_VDEC_GRP VdGrp, SAMPLE_VDEC_CONTEXT_T *pstVdecC
             SAMPLE_LOG("VdGrp=%d, AX_VDEC_GetFrame FAILED! ret=0x%x %s\n",
                             VdGrp, ret, SampleVdecRetStr(ret));
             continue;
+        } else {
+            pstVdecCtx->recvFrmCnt[VdGrp]++;
         }
 
 #if 0
@@ -381,8 +383,10 @@ static AX_S32 __VdecRecvFrame(AX_VDEC_GRP VdGrp, SAMPLE_VDEC_CONTEXT_T *pstVdecC
                     sRet = AX_ERR_VDEC_RUN_ERROR;
                     goto ERR_RET;
                 } else {
-                    if (pstVdecCtx->pOutputFilePath[VdGrp] == NULL)
-                        pstVdecCtx->pOutputFilePath[VdGrp] = pOutputFilePath;
+                    SAMPLE_LOG_TMP("old path %p new %p\n", pstVdecCtx->pOutputFilePath[VdGrp], pOutputFilePath);
+                    if (pstVdecCtx->pOutputFilePath[VdGrp] != NULL)
+                        free(pstVdecCtx->pOutputFilePath[VdGrp]);
+                    pstVdecCtx->pOutputFilePath[VdGrp] = pOutputFilePath;
                 }
 
                 pstVdecCtx->pOutputFd[VdGrp] = fp_out;
@@ -422,18 +426,22 @@ static AX_S32 __VdecRecvFrame(AX_VDEC_GRP VdGrp, SAMPLE_VDEC_CONTEXT_T *pstVdecC
         if (!pstFrameInfo->stVFrame.u64PhyAddr[0])
             continue;
 
-        ret = AX_VDEC_ReleaseFrame(VdGrp, pstFrameInfo);
-        if (ret) {
-            if ((AX_ERR_VDEC_FLOW_END != ret) && (pstVdecCtx->GrpStatus[VdGrp] == AX_VDEC_GRP_START_RECV)) {
-                sRet = ret;
-                SAMPLE_CRIT_LOG("VdGrp=%d, AX_VDEC_ReleaseFrame FAILED! res:0x%x %s \n"
-                                "u64PhyAddr[0]:0x%llX, BlkId[0]:0x%x, BlkId[1]:0x%x\n",
-                                VdGrp, ret, SampleVdecRetStr(ret), pstFrameInfo->stVFrame.u64PhyAddr[0],
-                                pstFrameInfo->stVFrame.u32BlkId[0], pstFrameInfo->stVFrame.u32BlkId[1]);
-                goto ERR_RET;
+        if (!pstCmd->bSkipRelease) {
+            ret = AX_VDEC_ReleaseFrame(VdGrp, pstFrameInfo);
+            if (ret) {
+                if ((AX_ERR_VDEC_FLOW_END != ret) && (pstVdecCtx->GrpStatus[VdGrp] == AX_VDEC_GRP_START_RECV)) {
+                    sRet = ret;
+                    SAMPLE_CRIT_LOG("VdGrp=%d, AX_VDEC_ReleaseFrame FAILED! res:0x%x %s \n"
+                                    "u64PhyAddr[0]:0x%llX, BlkId[0]:0x%x, BlkId[1]:0x%x\n",
+                                    VdGrp, ret, SampleVdecRetStr(ret), pstFrameInfo->stVFrame.u64PhyAddr[0],
+                                    pstFrameInfo->stVFrame.u32BlkId[0], pstFrameInfo->stVFrame.u32BlkId[1]);
+                    goto ERR_RET;
+                }
+            } else {
+                pstVdecCtx->releaseFrmCnt[VdGrp]++;
             }
         }
-
+        pstCmd->bSkipRelease = AX_FALSE;
 #if 0
         if (pstCmd->bMultiLck) {
             AX_S32 sRefCnt = 0;
@@ -536,6 +544,14 @@ static void *_VdecRecvThread(void *arg)
     SAMPLE_LOG("uGrpCount:%d Enter while(1) SelectGrp \n", uGrpCount);
 
     while (1) {
+        if (pstVdecCtx->GrpStatus[uStartGrpId] == AX_VDEC_GRP_START_RECV || s_ThreadExit) {
+            break;
+        }
+
+        usleep(1000);
+    }
+
+    while (1) {
         if (s_ThreadExit) {
             SAMPLE_LOG("s_ThreadExit:%d, so break\n", s_ThreadExit);
             break;
@@ -549,6 +565,9 @@ static void *_VdecRecvThread(void *arg)
                 goto ERR_RET;
             } else if (AX_ERR_VDEC_FLOW_END == sRet) {
                 SAMPLE_NOTICE_LOG("recv AX_ERR_VDEC_FLOW_END");
+                goto ERR_RET;
+            } else if (AX_ERR_VDEC_NOT_PERM == sRet) {
+                SAMPLE_NOTICE_LOG("recv AX_ERR_VDEC_NOT_PERM");
                 goto ERR_RET;
             }
 
@@ -644,14 +663,16 @@ ERR_RET:
                         s_ThreadExit, pstGrpSet->u32GrpCount);
     }
 
-    gettimeofday(&pstVdecCtx->Timeend, NULL);
-    AX_U32 total_usec = 1000000 * (pstVdecCtx->Timeend.tv_sec - pstVdecCtx->Timebegin.tv_sec)
-                        + pstVdecCtx->Timeend.tv_usec - pstVdecCtx->Timebegin.tv_usec;
-    float total_msec = (float)total_usec / 1000.f;
-    float msec_per_frame = total_msec / (float)pstVdecCtx->u64SelectFrameCnt;
+    if (pstVdecCtx->u64SelectFrameCnt) {
+        gettimeofday(&pstVdecCtx->Timeend, NULL);
+        AX_U32 total_usec = 1000000 * (pstVdecCtx->Timeend.tv_sec - pstVdecCtx->Timebegin.tv_sec)
+                            + pstVdecCtx->Timeend.tv_usec - pstVdecCtx->Timebegin.tv_usec;
+        float total_msec = (float)total_usec / 1000.f;
+        float msec_per_frame = total_msec / (float)pstVdecCtx->u64SelectFrameCnt;
 
-    SAMPLE_LOG_TMP("uGrpCount=%d, msec per frame: %.1f, AVG FPS: %.1f. total msec:%.1f, total frame count:%lld \n",
-                 uGrpCount, msec_per_frame, 1000.f / msec_per_frame, total_msec, pstVdecCtx->u64SelectFrameCnt);
+        SAMPLE_LOG_TMP("uGrpCount=%d, msec per frame: %.1f, AVG FPS: %.1f. total msec:%.1f, total frame count:%lld \n",
+                    uGrpCount, msec_per_frame, 1000.f / msec_per_frame, total_msec, pstVdecCtx->u64SelectFrameCnt);
+    }
 
     SAMPLE_LOG_TMP(" RecvThread exit, last VdGrp=%d\n", VdGrp);
     return NULL;
@@ -773,13 +794,13 @@ static AX_S32 __VdecInputModeFrame(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
     SAMPLE_VDEC_CONTEXT_T *pstCtx = NULL;
     AX_U32 uBufSize = 0;
     size_t sReadLen = 0;
-    AX_U32 uSendPicNum = 0;
+    AX_U64 u64SendPicNum = 0;
     AX_BOOL bContSendStm = AX_TRUE;
     AX_S32 sMilliSec = -1;
     AX_BOOL bPerfTest = AX_FALSE;
     AX_BOOL bReadFrm = AX_TRUE;
-    AX_U64 u64InputPts = 1;
     AX_S32 sLoopDecNum = 0;
+    AX_BOOL bSkipRelease = AX_FALSE;
 
     if (NULL == pstFuncArgs) {
         SAMPLE_CRIT_LOG("NULL == pstFuncArgs\n");
@@ -825,6 +846,7 @@ static AX_S32 __VdecInputModeFrame(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
     pstStreamInfo->enDecType = pstCmd->enDecType;
     uBufSize = pstStreamBuf->uBufSize;
     sLoopDecNum = pstCmd->sLoopDecNum;
+    bSkipRelease = pstCmd->bSkipRelease;
     SAMPLE_LOG("begin to decoder. uBufSize=%d\n", uBufSize);
 
     while (1) {
@@ -869,7 +891,7 @@ static AX_S32 __VdecInputModeFrame(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
                 }
 #endif
             } else if (pstCmd->enDecType == PT_JPEG) {
-                if (!(bPerfTest && uSendPicNum)) {
+                if (!(bPerfTest && u64SendPicNum)) {
                     sRet = StreamParserReadFrameJpeg(pstStreamInfo, pstStreamBuf, &sReadLen);
                     if (sRet) {
                         SAMPLE_CRIT_LOG("VdGrp=%d, StreamParserReadFrameJpeg FAILED! ret:0x%x\n", VdGrp, sRet);
@@ -887,12 +909,13 @@ static AX_S32 __VdecInputModeFrame(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
             tStrInfo.bEndOfFrame = AX_TRUE;
             tStrInfo.bEndOfStream = AX_FALSE;
 
-            if (pstCmd->u32StreamFps)
-                u64InputPts = (uSendPicNum + 1) * 1000000 / pstCmd->u32StreamFps;
+            if (pstCmd->bSkipFrms && (u64SendPicNum & 1))
+                tStrInfo.u64PTS = -1; /* dec not out put */
+            else if (pstCmd->u32StreamFps)
+                tStrInfo.u64PTS = (u64SendPicNum + 1) * 1000000 / pstCmd->u32StreamFps;
             else
-                u64InputPts++;
+                tStrInfo.u64PTS = u64SendPicNum;
 
-            tStrInfo.u64PTS = u64InputPts;
             tStrInfo.u64PrivateData = 0xAFAF5A5A;
         } else {
             if (pstCmd->enDecType == PT_JPEG) {
@@ -950,8 +973,8 @@ static AX_S32 __VdecInputModeFrame(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
             }
         }
 
-        SAMPLE_LOG("VdGrp=%d, before AX_VDEC_SendStream, uSendPicNum:%d, sReadLen:0x%lx",
-                   VdGrp, uSendPicNum, sReadLen);
+        SAMPLE_LOG("VdGrp=%d, before AX_VDEC_SendStream, u64SendPicNum:%d, sReadLen:0x%lx",
+                   VdGrp, u64SendPicNum, sReadLen);
 
         SAMPLE_LOG("VdGrp=%d, tStrInfo.pu8Addr:%p, tStrInfo.u64PhyAddr:0x%llx, sRecvPicNum:%d ",
                    VdGrp, tStrInfo.pu8Addr, tStrInfo.u64PhyAddr, pstCmd->sRecvPicNum);
@@ -967,7 +990,7 @@ static AX_S32 __VdecInputModeFrame(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
         sRet = AX_VDEC_SendStream(VdGrp, &tStrInfo, sMilliSec);
         if (sRet != AX_SUCCESS) {
             if (sRet == AX_ERR_VDEC_FLOW_END) {
-                SAMPLE_LOG("VdGrp=%d, AX_VDEC_SendStream ret AX_ERR_VDEC_FLOW_END, uSendPicNum:%d\n", VdGrp, uSendPicNum);
+                SAMPLE_LOG("VdGrp=%d, AX_VDEC_SendStream ret AX_ERR_VDEC_FLOW_END, u64SendPicNum:%d\n", VdGrp, u64SendPicNum);
                 break;
             } else if (sRet == AX_ERR_VDEC_QUEUE_FULL) {
                 bReadFrm = AX_FALSE;
@@ -987,14 +1010,18 @@ static AX_S32 __VdecInputModeFrame(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
         }
 
         bReadFrm = AX_TRUE;
-        uSendPicNum ++;
+        u64SendPicNum ++;
 
-        if (pstCmd->bResetGrp && (uSendPicNum == 10)) {
+        if (pstCmd->bResetGrp && (u64SendPicNum == 10)) {
             ret = AX_VDEC_StopRecvStream(VdGrp);
             if (AX_SUCCESS == ret)
                 SAMPLE_LOG_TMP("================= VdGrp=%d, AX_VDEC_StopRecvStream success \n", VdGrp);
             else
                 SAMPLE_CRIT_LOG("VdGrp=%d,  AX_VDEC_StopRecvStream FAILED! ret:0x%x", VdGrp, ret);
+
+            /* wait release frm */
+            while (pstCtx->recvFrmCnt[VdGrp] != pstCtx->releaseFrmCnt[VdGrp] && !bSkipRelease)
+                usleep(5000);
 
             ret = AX_VDEC_ResetGrp(VdGrp);
             if (AX_SUCCESS == ret)
@@ -1010,7 +1037,7 @@ static AX_S32 __VdecInputModeFrame(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
                 SAMPLE_CRIT_LOG("VdGrp=%d,  AX_VDEC_StartRecvStream FAILED! ret:0x%x", VdGrp, ret);
         }
 
-        if (uSendPicNum == pstCmd->usrPicIdx) {
+        if (u64SendPicNum == pstCmd->usrPicIdx) {
             sRet = VdecUserPicEnable(VdGrp, pstFuncArgs->tUsrPicArgs.pstVdecUserPic,
                                      &bContSendStm, pstCtx);
             if (sRet != AX_SUCCESS){
@@ -1026,7 +1053,7 @@ static AX_S32 __VdecInputModeFrame(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
             }
         }
 
-        if (uSendPicNum == pstCmd->sRecvPicNum)
+        if (u64SendPicNum == pstCmd->sRecvPicNum)
             sLoopDecNum = 0;
     }
 
@@ -1048,7 +1075,7 @@ static AX_S32 __VdecInputModeCompact(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
     SAMPLE_VDEC_CONTEXT_T *pstCtx = NULL;
     AX_U32 uBufSize = 0;
     size_t sReadLen = 0;
-    AX_U32 uSendPicNum = 0;
+    AX_U32 u64SendPicNum = 0;
     AX_BOOL bContSendStm = AX_TRUE;
     AX_S32 sMilliSec = -1;
     AX_BOOL bPerfTest = AX_FALSE;
@@ -1144,7 +1171,7 @@ static AX_S32 __VdecInputModeCompact(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
                 }
 #endif
             } else if (pstCmd->enDecType == PT_JPEG) {
-                if (!(bPerfTest && uSendPicNum)) {
+                if (!(bPerfTest && u64SendPicNum)) {
                     sRet = StreamParserReadFrameJpeg(pstStreamInfo, pstStreamBuf, &sReadLen);
                     if (sRet) {
                         SAMPLE_CRIT_LOG("VdGrp=%d, StreamParserReadFrameJpeg FAILED! ret:0x%x\n", VdGrp, sRet);
@@ -1220,8 +1247,8 @@ static AX_S32 __VdecInputModeCompact(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
             }
         }
 
-        SAMPLE_LOG("VdGrp=%d, before AX_VDEC_SendStream, uSendPicNum:%d, sReadLen:0x%lx",
-                   VdGrp, uSendPicNum, sReadLen);
+        SAMPLE_LOG("VdGrp=%d, before AX_VDEC_SendStream, u64SendPicNum:%d, sReadLen:0x%lx",
+                   VdGrp, u64SendPicNum, sReadLen);
 
         SAMPLE_LOG("VdGrp=%d, tStrInfo.pu8Addr:%p, tStrInfo.u64PhyAddr:0x%llx, sRecvPicNum:%d ",
                    VdGrp, tStrInfo.pu8Addr, tStrInfo.u64PhyAddr, pstCmd->sRecvPicNum);
@@ -1234,7 +1261,7 @@ static AX_S32 __VdecInputModeCompact(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
             gettimeofday(&pstCtx->Timebegin, NULL);
         }
 
-        SAMPLE_LOG_N("new frm %d ptr %p size %d\n", uSendPicNum, tStrInfo.pu8Addr, tStrInfo.u32StreamPackLen);
+        SAMPLE_LOG_N("new frm %d ptr %p size %d\n", u64SendPicNum, tStrInfo.pu8Addr, tStrInfo.u32StreamPackLen);
         u32TmpSize = tStrInfo.u32StreamPackLen / 4;
 
         for (int sendCnt = 0; sendCnt < 4; sendCnt++) {
@@ -1254,7 +1281,7 @@ static AX_S32 __VdecInputModeCompact(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
             sRet = AX_VDEC_SendStream(VdGrp, &tStrInfoTmp, sMilliSec);
             if (sRet != AX_SUCCESS) {
                 if (sRet == AX_ERR_VDEC_FLOW_END) {
-                    SAMPLE_LOG("VdGrp=%d, AX_VDEC_SendStream ret AX_ERR_VDEC_FLOW_END, uSendPicNum:%d\n", VdGrp, uSendPicNum);
+                    SAMPLE_LOG("VdGrp=%d, AX_VDEC_SendStream ret AX_ERR_VDEC_FLOW_END, u64SendPicNum:%d\n", VdGrp, u64SendPicNum);
                     break;
                 } else if (sRet == AX_ERR_VDEC_QUEUE_FULL) {
                     bReadFrm = AX_FALSE;
@@ -1275,9 +1302,9 @@ static AX_S32 __VdecInputModeCompact(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
         }
 
         bReadFrm = AX_TRUE;
-        uSendPicNum ++;
+        u64SendPicNum ++;
 
-        if (uSendPicNum == pstCmd->usrPicIdx) {
+        if (u64SendPicNum == pstCmd->usrPicIdx) {
             sRet = VdecUserPicEnable(VdGrp, pstFuncArgs->tUsrPicArgs.pstVdecUserPic,
                                      &bContSendStm, pstCtx);
             if (sRet != AX_SUCCESS){
@@ -1293,7 +1320,7 @@ static AX_S32 __VdecInputModeCompact(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
             }
         }
 
-        if (uSendPicNum == pstCmd->sRecvPicNum)
+        if (u64SendPicNum == pstCmd->sRecvPicNum)
             sLoopDecNum = 0;
     }
 
@@ -1316,7 +1343,7 @@ static AX_S32 __VdecInputModeSlice(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
     SAMPLE_VDEC_CONTEXT_T *pstCtx = NULL;
     AX_U32 uBufSize = 0;
     size_t sReadLen = 0;
-    AX_U32 uSendPicNum = 0;
+    AX_U32 u64SendPicNum = 0;
     AX_BOOL bContSendStm = AX_TRUE;
     AX_S32 sMilliSec = -1;
     AX_BOOL bPerfTest = AX_FALSE;
@@ -1416,7 +1443,7 @@ static AX_S32 __VdecInputModeSlice(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
                 }
 #endif
             } else if (pstCmd->enDecType == PT_JPEG) {
-                if (!(bPerfTest && uSendPicNum)) {
+                if (!(bPerfTest && u64SendPicNum)) {
                     sRet = StreamParserReadFrameJpeg(pstStreamInfo, pstStreamBuf, &sReadLen);
                     if (sRet) {
                         SAMPLE_CRIT_LOG("VdGrp=%d, StreamParserReadFrameJpeg FAILED! ret:0x%x\n", VdGrp, sRet);
@@ -1492,8 +1519,8 @@ static AX_S32 __VdecInputModeSlice(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
             }
         }
 
-        SAMPLE_LOG("VdGrp=%d, before AX_VDEC_SendStream, uSendPicNum:%d, sReadLen:0x%lx",
-                   VdGrp, uSendPicNum, sReadLen);
+        SAMPLE_LOG("VdGrp=%d, before AX_VDEC_SendStream, u64SendPicNum:%d, sReadLen:0x%lx",
+                   VdGrp, u64SendPicNum, sReadLen);
 
         SAMPLE_LOG("VdGrp=%d, tStrInfo.pu8Addr:%p, tStrInfo.u64PhyAddr:0x%llx, sRecvPicNum:%d ",
                    VdGrp, tStrInfo.pu8Addr, tStrInfo.u64PhyAddr, pstCmd->sRecvPicNum);
@@ -1521,7 +1548,7 @@ static AX_S32 __VdecInputModeSlice(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
                     tStrInfoTmp.u32StreamPackLen = uPos + uZeroCount;
                     tStrInfoTmp.pu8Addr = puStrAddr;
                     tStrInfoTmp.u64PhyAddr = tStrInfo.u64PhyAddr + (puStrAddr - tStrInfo.pu8Addr);
-                    SAMPLE_LOG("frm %d slice %d data: %#x %#x %#x %#x %#x\n", uSendPicNum, uSliceCnt,
+                    SAMPLE_LOG("frm %d slice %d data: %#x %#x %#x %#x %#x\n", u64SendPicNum, uSliceCnt,
                                    puStrAddr[0], puStrAddr[1], puStrAddr[2], puStrAddr[3], puStrAddr[4]);
                     puStrAddr += tStrInfoTmp.u32StreamPackLen;
                     u32TmpSize -= tStrInfoTmp.u32StreamPackLen;
@@ -1532,7 +1559,7 @@ static AX_S32 __VdecInputModeSlice(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
                     tStrInfoTmp.u32StreamPackLen = u32TmpSize;
                     tStrInfoTmp.pu8Addr = puStrAddr;
                     tStrInfoTmp.u64PhyAddr = tStrInfo.u64PhyAddr + (puStrAddr - tStrInfo.pu8Addr);
-                    SAMPLE_LOG("frm %d last slice %d data:  %#x %#x %#x %#x %#x %#x\n", uSendPicNum, uSliceCnt,
+                    SAMPLE_LOG("frm %d last slice %d data:  %#x %#x %#x %#x %#x %#x\n", u64SendPicNum, uSliceCnt,
                                    puStrAddr[0], puStrAddr[1], puStrAddr[2], puStrAddr[3], puStrAddr[4], puStrAddr[5]);
                 }
             } else {
@@ -1547,7 +1574,7 @@ static AX_S32 __VdecInputModeSlice(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
             sRet = AX_VDEC_SendStream(VdGrp, &tStrInfoTmp, sMilliSec);
             if (sRet != AX_SUCCESS) {
                 if (sRet == AX_ERR_VDEC_FLOW_END) {
-                    SAMPLE_LOG("VdGrp=%d, AX_VDEC_SendStream ret AX_ERR_VDEC_FLOW_END, uSendPicNum:%d\n", VdGrp, uSendPicNum);
+                    SAMPLE_LOG("VdGrp=%d, AX_VDEC_SendStream ret AX_ERR_VDEC_FLOW_END, u64SendPicNum:%d\n", VdGrp, u64SendPicNum);
                     break;
                 } else if (sRet == AX_ERR_VDEC_QUEUE_FULL) {
                     bReadFrm = AX_FALSE;
@@ -1568,9 +1595,9 @@ static AX_S32 __VdecInputModeSlice(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
         } while (AX_FALSE == tStrInfoTmp.bEndOfFrame);
 
         bReadFrm = AX_TRUE;
-        uSendPicNum ++;
+        u64SendPicNum ++;
 
-        if (uSendPicNum == pstCmd->usrPicIdx) {
+        if (u64SendPicNum == pstCmd->usrPicIdx) {
             sRet = VdecUserPicEnable(VdGrp, pstFuncArgs->tUsrPicArgs.pstVdecUserPic,
                                      &bContSendStm, pstCtx);
             if (sRet != AX_SUCCESS){
@@ -1586,7 +1613,7 @@ static AX_S32 __VdecInputModeSlice(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
             }
         }
 
-        if (uSendPicNum == pstCmd->sRecvPicNum)
+        if (u64SendPicNum == pstCmd->sRecvPicNum)
             sLoopDecNum = 0;
     }
 
@@ -1625,11 +1652,7 @@ static AX_S32 __VdecCreateUserPool(SAMPLE_VDEC_ARGS_T *pstFuncArgs)
                                         pstVdGrpAttr->enCodecType);
 
     pstPoolConfig->MetaSize = 512;
-    if (pstVdecCtx && pstVdecCtx->tCmdParam.u32FrameBufCnt >= 8) {
-        pstPoolConfig->BlkCnt = pstVdecCtx->tCmdParam.u32FrameBufCnt + 2;
-    } else {
-        pstPoolConfig->BlkCnt = 8;
-    }
+    pstPoolConfig->BlkCnt = pstVdecCtx->tCmdParam.u32FrameBufCnt;
 
     SAMPLE_LOG("Get FrameSize is 0x%x %d, BlkCnt:%d\n",
                 FrameSize, FrameSize, pstPoolConfig->BlkCnt);
@@ -1852,6 +1875,9 @@ static AX_S32 __VdecInputModeStream(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
                 SAMPLE_LOG_TMP("================= VdGrp=%d, AX_VDEC_StopRecvStream success \n", VdGrp);
             else
                 SAMPLE_CRIT_LOG("VdGrp=%d,  AX_VDEC_StopRecvStream FAILED! ret:0x%x", VdGrp, ret);
+
+            /* wait release frm */
+            sleep(1);
 
             ret = AX_VDEC_ResetGrp(VdGrp);
             if (AX_SUCCESS == ret)
@@ -2173,10 +2199,10 @@ static void *_VdecGroupThreadMain(void *arg)
 
     inputFileSize = pstVdecCtx->oInputFileSize[VdGrp] > pstVdecCtx->oNewInputFileSize[VdGrp] ? \
                     pstVdecCtx->oInputFileSize[VdGrp] : pstVdecCtx->oNewInputFileSize[VdGrp];
-    SAMPLE_LOG_TMP("bDynRes:%d file:%s - %s, pInputFd:%p - %p, FileSize: %ld :%ld - %ld",
+    SAMPLE_LOG_TMP("bDynRes:%d file:%s - %s, pInputFd:%p - %p, FileSize: %lld :%lld - %lld",
                pstCmd->bDynRes, pstCmd->pInputFilePath, pstCmd->pNewInputFilePath,
-               pstVdecCtx->pInputFd[VdGrp], pstVdecCtx->pNewInputFd[VdGrp],inputFileSize,
-               pstVdecCtx->oInputFileSize[VdGrp], pstVdecCtx->oNewInputFileSize[VdGrp]);
+               pstVdecCtx->pInputFd[VdGrp], pstVdecCtx->pNewInputFd[VdGrp], (AX_U64)inputFileSize,
+               (AX_U64)pstVdecCtx->oInputFileSize[VdGrp], (AX_U64)pstVdecCtx->oNewInputFileSize[VdGrp]);
 
 #ifdef AX_VDEC_FFMPEG_ENABLE
     SAMPLE_BITSTREAM_INFO_T *pstBitStreamInfo = &pstVdecCtx->stBitStreamInfo[VdGrp];
@@ -2201,10 +2227,10 @@ static void *_VdecGroupThreadMain(void *arg)
         tStreamBuf.uBufSize = STREAM_BUFFER_MAX_SIZE_HIGH_RES;
     } else {
         if (pstCmd->enDecType == PT_JPEG) {
-            uBufSize = ((AX_U32)inputFileSize) > STREAM_BUFFER_MIN_SIZE ? inputFileSize : STREAM_BUFFER_MIN_SIZE;
+            uBufSize = inputFileSize > STREAM_BUFFER_MIN_SIZE ? inputFileSize : STREAM_BUFFER_MIN_SIZE;
             tStreamBuf.uBufSize = uBufSize > STREAM_BUFFER_MAX_SIZE ? STREAM_BUFFER_MAX_SIZE : uBufSize;
         } else {
-            tStreamBuf.uBufSize = ((AX_U32)inputFileSize) > STREAM_BUFFER_MAX_SIZE ? STREAM_BUFFER_MAX_SIZE : inputFileSize;
+            tStreamBuf.uBufSize = inputFileSize > STREAM_BUFFER_MAX_SIZE ? STREAM_BUFFER_MAX_SIZE : inputFileSize;
         }
     }
 
@@ -2234,7 +2260,8 @@ static void *_VdecGroupThreadMain(void *arg)
     pstStreamMem = (AX_U8 *)tStreamBuf.tBufAddr.pVirAddr;
 
     if (pstCmd->enDecType == PT_H264) {
-        SAMPLE_H264_SPS_DATA_T sps_data;
+        AX_VDEC_STREAM_T vdecStream = {0};
+        AX_VDEC_BITSTREAM_INFO_T sps_data;
         AX_U32 parse_len = ((AX_U32)pstVdecCtx->oInputFileSize[VdGrp]) >= SEEK_NALU_MAX_LEN ? SEEK_NALU_MAX_LEN : pstVdecCtx->oInputFileSize[VdGrp];
         memset(&sps_data, 0, sizeof(SAMPLE_H264_SPS_DATA_T));
 
@@ -2246,18 +2273,12 @@ static void *_VdecGroupThreadMain(void *arg)
         }
         rewind(fInput);
 
-        sRet = h264_parse_sps(pstStreamMem, parse_len, &sps_data);
-        SAMPLE_LOG("h264_parse_sps sRet:0x%x sps_data.height:%d, sps_data.width:%d parse_len:%d",
-                   sRet, sps_data.height, sps_data.width, parse_len);
-        if (sRet == AX_SUCCESS) {
-            if (pstCmd->u32PicWidth < sps_data.width) {
-                pstCmd->u32PicWidth = sps_data.width;
-            }
+        vdecStream.pu8Addr = pstStreamMem;
+        vdecStream.u32StreamPackLen = parse_len;
 
-            if (pstCmd->u32PicHeight < sps_data.height) {
-                pstCmd->u32PicHeight = sps_data.height;
-            }
-        }
+        sRet = AX_VDEC_ExtractStreamHeaderInfo(&vdecStream, PT_H264, &sps_data);
+        SAMPLE_LOG_TMP("h264_parse_sps sRet:0x%x sps_data.height:%d, sps_data.width:%d u32RefFramesNum:%d u32BitDepthY %d\n",
+                   sRet, sps_data.u32Height, sps_data.u32Width, sps_data.u32RefFramesNum, sps_data.u32BitDepthY);
     }
 
     pstVdGrpAttr = &pstFuncArgs->tVdGrpAttr;
@@ -2881,7 +2902,7 @@ int Sample_VdecJpegDecodeOneFrame(SAMPLE_VDEC_CMD_PARAM_T *pstCmd)
     if (pstCmd->highRes)
         stStreamBuf.uBufSize = STREAM_BUFFER_MAX_SIZE_HIGH_RES;
     else
-        stStreamBuf.uBufSize = ((AX_U32)inputFileSize) > STREAM_BUFFER_MAX_SIZE ? STREAM_BUFFER_MAX_SIZE : inputFileSize;
+        stStreamBuf.uBufSize = inputFileSize > STREAM_BUFFER_MAX_SIZE ? STREAM_BUFFER_MAX_SIZE : inputFileSize;
     s32Ret = AX_SYS_MemAlloc(&streamPhyAddr, (AX_VOID **)&pStreamVirAddr,
                              stStreamBuf.uBufSize, 0x100, (AX_S8 *)"vdec_input_stream");
     if (s32Ret != AX_SUCCESS) {

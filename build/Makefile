@@ -12,14 +12,10 @@ UBOOT_PATH		:= $(HOME_PATH)/boot/uboot
 ATF_PATH		:= $(HOME_PATH)/boot/atf
 KERNEL_PATH		:= $(HOME_PATH)/kernel/linux
 SAMPLE_PATH		:= $(HOME_PATH)/msp/sample
-ifeq ($(AX_SPL_RISCV_SUPPORT),TRUE)
+ifeq ($(AX_BOOT_OPTIMIZATION_SUPPORT),TRUE)
 RISCV_PATH		:= $(HOME_PATH)/riscv
 endif
 
-
-ifneq (,$(findstring $(PROJECT), "AX630C_fastemmc_arm64_k515" "AX630C_fastemmc_arm64_k419" "AX630C_fastemmc_arm32_k419"))
-RISCV_PATH		:= $(HOME_PATH)/riscv
-endif
 OSDRV_PATH		:= $(HOME_PATH)/kernel/osdrv
 ROOTFS_PATH		:= $(HOME_PATH)/rootfs
 APP_PATH		:= $(HOME_PATH)/app
@@ -48,10 +44,7 @@ SUBDIRS			+= $(BL1_PATH) \
 			$(MSP_PATH) \
 			$(APP_PATH)
 
-ifeq ($(AX_SPL_RISCV_SUPPORT),TRUE)
-SUBDIRS			+=$(RISCV_PATH)
-endif
-ifneq (,$(findstring $(PROJECT), "AX630C_fastemmc_arm64_k515" "AX630C_fastemmc_arm64_k419" "AX630C_fastemmc_arm32_k419"))
+ifeq ($(AX_BOOT_OPTIMIZATION_SUPPORT),TRUE)
 SUBDIRS			+=$(RISCV_PATH)
 endif
 
@@ -84,10 +77,7 @@ install: $(SUBDIRS_INSTALL)
 ifeq ($(SUPPORT_CPIO),TRUE)
 	@$(MAKE) -C $(KERNEL_PATH) all install
 endif
-ifeq ($(AX_SPL_RISCV_SUPPORT),TRUE)
-	@$(MAKE) -C $(RISCV_PATH) all install
-endif
-ifneq (,$(findstring $(PROJECT), "AX630C_fastemmc_arm64_k515" "AX630C_fastemmc_arm64_k419" "AX630C_fastemmc_arm32_k419"))
+ifeq ($(AX_BOOT_OPTIMIZATION_SUPPORT),TRUE)
 	@$(MAKE) -C $(RISCV_PATH) all install
 endif
 	@echo -e $(GREEN)"\nInstall success!!\n"  $(DONE)
@@ -97,7 +87,7 @@ clean:	$(SUBDIRS_CLEAN)
 	@echo -e $(GREEN)"\nClean success!!\n"  $(DONE)
 
 axp: image
-	@bash axp_make.sh -p $(PROJECT) -v $(SDK_VERSION) -o $(SUPPORT_OPTEE) -z $(SUPPPORT_GZIPD) -s "$(SENSOR_TYPE)" -a $(AX_SUPPORT_AB_PART)
+	@bash axp_make.sh -p "$(PROJECT)" -v "$(SDK_VERSION)" -o "$(SUPPORT_OPTEE)" -z "$(SUPPPORT_GZIPD)" -s "$(SENSOR_TYPE)" -d "$(DETECT_TYPE)" -a "$(AX_SUPPORT_AB_PART)" -l "$(LIBC)" -f "$(FLASH_PARTITIONS)"
 	@echo -e $(GREEN)"\nMake AXP success!!\n"  $(DONE)
 
 image:

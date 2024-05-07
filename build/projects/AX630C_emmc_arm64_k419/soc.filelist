@@ -1,0 +1,8 @@
+@dir: build/projects
+$(PROJECT)/soc/scripts/* scripts/
+
+@dir: kernel/osdrv/out/$(OSDRV_OUT_DIR)
+ko/*.ko ko/
+
+@dir: rootfs/$(ARCH)/$(LIBC)/rootfs
+opt/scripts/* scripts/

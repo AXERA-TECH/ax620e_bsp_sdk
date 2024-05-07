@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -34,6 +34,7 @@ COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleDummySdr[] = {
 COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleOs04a10Sdr[] = {
     {2688, 1520, 2688, AX_FORMAT_BAYER_RAW_10BPP_PACKED, 12, AX_COMPRESS_MODE_LOSSY, 4},      /* vin raw16 use */
 };
+static SAMPLE_VENC_SELECT_PARA_T gstVencSelectPara;
 
 static AX_CAMERA_T gCams[MAX_CAMERAS] = {0};
 static SAMPLE_RTSP_PARAM_T gRtspParam;
@@ -172,8 +173,8 @@ static AX_VOID __set_vin_attr(AX_CAMERA_T *pCam, SAMPLE_SNS_TYPE_E eSnsType, AX_
     pCam->tDevAttr.eSnsMode = eHdrMode;
     pCam->eHdrMode = eHdrMode;
     pCam->eSysMode = eSysMode;
-    pCam->tPipeAttr.eSnsMode = eHdrMode;
-    pCam->tPipeAttr.bAiIspEnable = bAiispEnable;
+    pCam->tPipeAttr[pCam->nPipeId].eSnsMode = eHdrMode;
+    pCam->tPipeAttr[pCam->nPipeId].bAiIspEnable = bAiispEnable;
     if (eHdrMode > AX_SNS_LINEAR_MODE) {
         pCam->tDevAttr.eSnsOutputMode = AX_SNS_DOL_HDR;
     }
@@ -206,17 +207,17 @@ static AX_U32 __sample_case_single_dummy(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYPE_
 
     for (i = 0; i < pCommonArgs->nCamCnt; i++) {
         pCam = &pCamList[i];
+        pCam->nPipeId = 0;
         COMMON_VIN_GetSnsConfig(eSnsType, &pCam->tMipiAttr, &pCam->tSnsAttr,
                                 &pCam->tSnsClkAttr, &pCam->tDevAttr,
-                                &pCam->tPipeAttr, pCam->tChnAttr);
+                                &pCam->tPipeAttr[pCam->nPipeId], pCam->tChnAttr);
 
         pCam->nDevId = 0;
         pCam->nRxDev = 0;
-        pCam->nPipeId = 0;
         pCam->tSnsClkAttr.nSnsClkIdx = 0;
         pCam->tDevBindPipe.nNum =  1;
         pCam->tDevBindPipe.nPipeId[0] = pCam->nPipeId;
-        pCam->ptSnsHdl = COMMON_ISP_GetSnsObj(eSnsType);
+        pCam->ptSnsHdl[pCam->nPipeId] = COMMON_ISP_GetSnsObj(eSnsType);
         pCam->eBusType = COMMON_ISP_GetSnsBusType(eSnsType);
         pCam->eLoadRawNode = eLoadRawNode;
         __set_pipe_hdr_mode(&pCam->tDevBindPipe.nHDRSel[0], eHdrMode);
@@ -279,16 +280,16 @@ static AX_U32 __sample_case_single_os04a10(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYP
     AX_S32 j = 0;
     pCommonArgs->nCamCnt = 1;
     pCam = &pCamList[0];
+    pCam->nPipeId = 0;
     COMMON_VIN_GetSnsConfig(eSnsType, &pCam->tMipiAttr, &pCam->tSnsAttr,
                             &pCam->tSnsClkAttr, &pCam->tDevAttr,
-                            &pCam->tPipeAttr, pCam->tChnAttr);
+                            &pCam->tPipeAttr[pCam->nPipeId], pCam->tChnAttr);
     pCam->nDevId = 0;
     pCam->nRxDev = 0;
-    pCam->nPipeId = 0;
     pCam->tSnsClkAttr.nSnsClkIdx = 0;
     pCam->tDevBindPipe.nNum =  1;
     pCam->tDevBindPipe.nPipeId[0] = pCam->nPipeId;
-    pCam->ptSnsHdl = COMMON_ISP_GetSnsObj(eSnsType);
+    pCam->ptSnsHdl[pCam->nPipeId] = COMMON_ISP_GetSnsObj(eSnsType);
     pCam->eBusType = COMMON_ISP_GetSnsBusType(eSnsType);
     __set_pipe_hdr_mode(&pCam->tDevBindPipe.nHDRSel[0], eHdrMode);
     __set_vin_attr(pCam, eSnsType, eHdrMode, eSysMode, pVinParam->bAiispEnable);
@@ -408,6 +409,83 @@ static AX_VOID SAMPLE_DeltaPtsStatistic(AX_S32 Chn, AX_VENC_STREAM_T *pstStream)
     return;
 }
 
+static AX_VOID *SAMPLE_VencSelectGetStreamProc(AX_VOID *arg)
+{
+    AX_S32 s32Ret = -1;
+    AX_VENC_STREAM_T stStream;
+    AX_U64 totalGetStream = 0;
+    SAMPLE_VENC_SELECT_PARA_T *pstArg = (SAMPLE_VENC_SELECT_PARA_T *)arg;
+    AX_VENC_RECV_PIC_PARAM_T stRecvParam;
+
+    AX_S32 maxFd = 0;
+    AX_S32 VencFd[AX_MAX_VENC_CHN_NUM];
+    fd_set read_fds;
+
+    memset(&stStream, 0, sizeof(stStream));
+    for (AX_S32 i = 0; i < pstArg->chnNum; i++) {
+        s32Ret = AX_VENC_StartRecvFrame(i, &stRecvParam);
+        if (AX_SUCCESS != s32Ret) {
+            ALOGE("AX_VENC_StartRecvFrame failed, s32Ret:0x%x", s32Ret);
+            return NULL;
+        }
+
+        VencFd[i] = AX_VENC_GetFd(i);
+        if (VencFd[i] <= 0) {
+            SAMPLE_LOG_ERR("VencFd[%d]=0x%x is invalid.\n", i, VencFd[i]);
+            goto EXIT;
+        }
+        if (maxFd < VencFd[i])
+            maxFd = VencFd[i];
+    }
+
+    while (pstArg->bGetStrmStart && !ThreadLoopStateGet()) {
+        FD_ZERO(&read_fds);
+        for (AX_S32 i = 0; i < pstArg->chnNum; i++)
+            FD_SET(VencFd[i], &read_fds);
+        s32Ret = select(maxFd + 1, &read_fds, NULL, NULL, NULL);
+        if (s32Ret < 0) {
+            ALOGE("select failed!\n");
+            break;
+        } else if (s32Ret == 0) {
+            ALOGE("get venc stream time out.\n");
+            continue;
+        } else {
+            for (AX_S32 VeChn = 0; VeChn < pstArg->chnNum; VeChn++) {
+                if (!FD_ISSET(VencFd[VeChn], &read_fds))
+                    continue;
+                s32Ret = AX_VENC_GetStream(VeChn, &stStream, 0);
+                if (AX_SUCCESS == s32Ret) {
+                    totalGetStream++;
+
+                    /* Send to RTSP */
+                    if (gRtspParam.pRtspHandle) {
+                        AX_BOOL bIFrame = (AX_VENC_INTRA_FRAME == stStream.stPack.enCodingType) ? AX_TRUE : AX_FALSE;
+                        AX_Rtsp_SendNalu(gRtspParam.pRtspHandle, VeChn, stStream.stPack.pu8Addr, stStream.stPack.u32Len,
+                                            stStream.stPack.u64PTS, bIFrame);
+                        ALOGI("VencChn %d: u64PTS:%lld pu8Addr:%p u32Len:%d enCodingType:%d", VeChn,
+                            stStream.stPack.u64PTS, stStream.stPack.pu8Addr, stStream.stPack.u32Len, stStream.stPack.enCodingType);
+                    }
+
+                    s32Ret = AX_VENC_ReleaseStream(VeChn, &stStream);
+                    if (AX_SUCCESS != s32Ret) {
+                        ALOGE("VencChn %d: AX_VENC_ReleaseStream failed!s32Ret:0x%x", VeChn, s32Ret);
+                        goto EXIT;
+                    }
+                } else if (AX_ERR_VENC_FLOW_END == s32Ret) {
+                    ALOGI2("VencChn %d: AX_VENC_GetStream end flow,exit!", VeChn);
+                    goto EXIT;
+                }
+            }
+        }
+    }
+
+EXIT:
+
+    ALOGI("CHN[%d] Total get %llu encoded frames. getStream Exit!", VeChn, totalGetStream);
+    return (void *)(intptr_t)s32Ret;
+}
+
+
 /* venc get stream task */
 static void *VencGetStreamProc(void *arg)
 {
@@ -438,7 +516,6 @@ static void *VencGetStreamProc(void *arg)
 
     if (pStrm == NULL) {
         ALOGE("Open output file error!");
-        return NULL;
     }
 
     while (AX_TRUE == pstPara->bThreadStart && !ThreadLoopStateGet()) {
@@ -448,7 +525,7 @@ static void *VencGetStreamProc(void *arg)
             totalGetStream++;
             SAMPLE_DeltaPtsStatistic(pstPara->VeChn, &stStream);            /* save 30 frames default */
             /* save 30 frames default */
-            if(totalGetStream <= 30){
+            if(pStrm && totalGetStream <= 30){
                 fwrite(stStream.stPack.pu8Addr, 1, stStream.stPack.u32Len, pStrm);
                 fflush(pStrm);
             }
@@ -484,7 +561,16 @@ EXIT:
     return NULL;
 }
 
-static AX_S32 SAMPLE_VENC_Init(AX_S32 nChnNum, AX_IVPS_ROTATION_E eRotAngle)
+static AX_S32 SAMPLE_VencStartSelectGetStream(SAMPLE_VENC_SELECT_PARA_T *pstArg)
+{
+    AX_S32 s32Ret;
+
+    s32Ret = pthread_create(&pstArg->getStrmPid, 0, SAMPLE_VencSelectGetStreamProc, (AX_VOID *)pstArg);
+
+    return s32Ret;
+}
+
+static AX_S32 SAMPLE_VENC_Init(AX_S32 nChnNum, AX_IVPS_ROTATION_E eRotAngle, AX_U32 bVencSelect)
 {
     AX_VENC_CHN_ATTR_T stVencChnAttr;
     VIDEO_CONFIG_T config = { 0 };
@@ -662,20 +748,34 @@ static AX_S32 SAMPLE_VENC_Init(AX_S32 nChnNum, AX_IVPS_ROTATION_E eRotAngle)
             ALOGE("VencChn %d: AX_VENC_CreateChn failed, s32Ret:0x%x", VencChn, ret);
             return -1;
         }
-
-        /* create get output stream thread */
-        gGetStreamPara[VencChn].VeChn = VencChn;
-        gGetStreamPara[VencChn].bThreadStart = AX_TRUE;
-        gGetStreamPara[VencChn].ePayloadType = config.ePayloadType;
-        pthread_create(&gGetStreamPid[VencChn], NULL, VencGetStreamProc, (void *)&gGetStreamPara[VencChn]);
+        if(!bVencSelect) {
+            /* create get output stream thread */
+            gGetStreamPara[VencChn].VeChn = VencChn;
+            gGetStreamPara[VencChn].bThreadStart = AX_TRUE;
+            gGetStreamPara[VencChn].ePayloadType = config.ePayloadType;
+            pthread_create(&gGetStreamPid[VencChn], NULL, VencGetStreamProc, (void *)&gGetStreamPara[VencChn]);
+        }
     }
-
+    if(bVencSelect) {
+        gstVencSelectPara.chnNum = nChnNum;
+        gstVencSelectPara.bGetStrmStart = AX_TRUE;
+        SAMPLE_VencStartSelectGetStream(&gstVencSelectPara);
+    }
     return 0;
 }
 
-static AX_S32 SAMPLE_VENC_DeInit(AX_S32 nChnNum)
+static AX_S32 SAMPLE_VencStopSelect()
 {
-    AX_S32 VencChn = 0, s32Ret = 0;
+    if (gstVencSelectPara.bGetStrmStart) {
+        gstVencSelectPara.bGetStrmStart = AX_FALSE;
+        pthread_join(gstVencSelectPara.getStrmPid, NULL);
+    }
+    return AX_SUCCESS;
+}
+
+static AX_S32 SAMPLE_VENC_DeInit(AX_S32 nChnNum, AX_BOOL bVencSelect)
+{
+    AX_S32 VencChn = 0, s32Ret = 0, s32Retry = 5;
 
     for (VencChn = 0; VencChn < nChnNum; VencChn++) {
 
@@ -685,10 +785,20 @@ static AX_S32 SAMPLE_VENC_DeInit(AX_S32 nChnNum)
             return s32Ret;
         }
 
-        s32Ret = AX_VENC_DestroyChn(VencChn);
-        if (0 != s32Ret) {
-            ALOGE("VencChn %d:AX_VENC_DestroyChn failed,s32Ret:0x%x", VencChn, s32Ret);
-            return s32Ret;
+        s32Retry = 5;
+        do {
+            s32Ret = AX_VENC_DestroyChn(VencChn);
+            if (AX_ERR_VENC_BUSY == s32Ret) {
+                ALOGE("VencChn %d:AX_VENC_DestroyChn return AX_ERR_VENC_BUSY,retry...", VencChn);
+                --s32Retry;
+                usleep(100 * 1000);
+            } else {
+                break;
+            }
+        } while (s32Retry >= 0);
+
+        if (s32Retry == -1 || AX_SUCCESS != s32Ret) {
+            ALOGE("VencChn %d: AX_VENC_DestroyChn failed, s32Retry=%d, s32Ret=0x%x\n", VencChn, s32Retry, s32Ret);
         }
 
         if (AX_TRUE == gGetStreamPara[VencChn].bThreadStart) {
@@ -696,6 +806,8 @@ static AX_S32 SAMPLE_VENC_DeInit(AX_S32 nChnNum)
             pthread_join(gGetStreamPid[VencChn], NULL);
         }
     }
+    if (bVencSelect)
+        SAMPLE_VencStopSelect();
     s32Ret = AX_VENC_Deinit();
     if (AX_SUCCESS != s32Ret) {
         ALOGE("AX_VENC_Deinit failed, s32Ret=0x%x", s32Ret);
@@ -985,7 +1097,7 @@ static AX_S32 SAMPLE_VIN_IVPS_VENC_RTSP(SAMPLE_VIN_PARAM_T *pVinParam)
     }
 
     /* Step6: VENC init */
-    s32Ret = SAMPLE_VENC_Init(pVinParam->nOutChnNum, pVinParam->eRotAngle);
+    s32Ret = SAMPLE_VENC_Init(pVinParam->nOutChnNum, pVinParam->eRotAngle, pVinParam->bVencSelect);
     if (AX_SUCCESS != s32Ret) {
         ALOGE("SAMPLE_VENC_Init failed, ret:0x%x", s32Ret);
         goto EXIT_FAIL5;
@@ -1067,7 +1179,7 @@ static AX_S32 SAMPLE_VIN_IVPS_VENC_RTSP(SAMPLE_VIN_PARAM_T *pVinParam)
 EXIT_FAIL7:
     COMMON_NT_DeInit();
 EXIT_FAIL6:
-    SAMPLE_VENC_DeInit(pVinParam->nOutChnNum);
+    SAMPLE_VENC_DeInit(pVinParam->nOutChnNum, pVinParam->bVencSelect);
 EXIT_FAIL5:
     SAMPLE_IVPS_DeInit(pVinParam->nGrpId, pVinParam->nOutChnNum);
 EXIT_FAIL4:
@@ -1121,6 +1233,10 @@ AX_VOID PrintHelp()
     printf("\t\t2: 180 degree\n");
     printf("\t\t3: 270 degree\n");
 
+    printf("\n\t-s(optional): Enable select to get encode stream.\n");
+    printf("\t\t0: Disable(default)\n");
+    printf("\t\t1: Enable\n");
+
     printf("\nExample1(offline):\n\t/opt/bin/sample_vin_ivps_venc_rtsp -c 1 -m 1 -e 1 -r 1\n");
     printf("\nExample2(GDC->VPP online):\n\t/opt/bin/sample_vin_ivps_venc_rtsp -c 1 -m 1 -e 1 -r 1 -z 1\n");
     printf("\nExample3(ITP->VPP online):\n\t/opt/bin/sample_vin_ivps_venc_rtsp -c 1 -m 1 -e 1 -r 1 -z 2\n");
@@ -1156,7 +1272,7 @@ int main(int argc, char *argv[])
         exit(0);
     }
 
-    while ((c = getopt(argc, argv, "c:m:e:l:d:a:r:h:v:z:t:n:")) != -1) {
+    while ((c = getopt(argc, argv, "c:m:e:l:d:a:r:h:v:z:t:n:s:")) != -1) {
         isExit = 0;
         switch (c) {
         case 'c':
@@ -1200,6 +1316,9 @@ int main(int argc, char *argv[])
                 ALOGE("-n not less than %d!\n", SAMPLE_MIN_DELTAPTS_NUM);
                 isExit = AX_TRUE;
             }
+            break;
+         case 's':
+            gtVinParam.bVencSelect = atoi(optarg);
             break;
         default:
             isExit = 1;

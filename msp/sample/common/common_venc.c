@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -144,6 +144,7 @@ AX_S32 COMMON_VENC_Start(VENC_CHN VeChn, AX_PAYLOAD_TYPE_E enType, SAMPLE_VENC_R
 AX_S32 COMMON_VENC_Stop(VENC_CHN VeChn)
 {
     AX_S32 s32Ret;
+    AX_S32 s32Retry = 5;
 
     s32Ret = AX_VENC_StopRecvFrame(VeChn);
     if (AX_SUCCESS != s32Ret) {
@@ -151,12 +152,21 @@ AX_S32 COMMON_VENC_Stop(VENC_CHN VeChn)
         return -1;
     }
 
-    usleep(100*1000);
+    usleep(100 * 1000);
 
-    s32Ret = AX_VENC_DestroyChn(VeChn);
-    if (AX_SUCCESS != s32Ret) {
-        SAMPLE_LOG_ERR("chn-%d: AX_VENC_DestroyChn failed with%#x! \n", VeChn, s32Ret);
-        return -1;
+    do {
+        s32Ret = AX_VENC_DestroyChn(VeChn);
+        if (AX_ERR_VENC_BUSY == s32Ret) {
+            SAMPLE_LOG_WARN("chn-%d: AX_VENC_DestroyChn return AX_ERR_VENC_BUSY,retry...\n", VeChn);
+            --s32Retry;
+            usleep(100 * 1000);
+        } else {
+            break;
+        }
+    } while (s32Retry >= 0);
+
+    if (s32Retry == -1 || AX_SUCCESS != s32Ret) {
+        SAMPLE_LOG_ERR("chn-%d: AX_VENC_DestroyChn failed, s32Retry=%d, s32Ret=0x%x\n", VeChn, s32Retry, s32Ret);
     }
 
     return AX_SUCCESS;
@@ -614,7 +624,7 @@ AX_VOID *COMMON_VENC_SendFrameProc(AX_VOID *arg)
     AX_BOOL bLoopEncode;
     AX_U32 encFrmNum;
     const AX_CHAR *fileInput;
-    AX_S32 syncType;
+    AX_S32 syncType = -1;
     AX_IMG_FORMAT_E eFmt;
     AX_U32 width;
     AX_U32 height;
@@ -630,7 +640,12 @@ AX_VOID *COMMON_VENC_SendFrameProc(AX_VOID *arg)
     VENC_CHN VeChn = pstArg->VeChn;
     bLoopEncode = pstArg->bLoopEncode;
     encFrmNum = pstArg->encFrmNum;
-    syncType = pstArg->syncType;
+
+    if (pstArg->ut == UT_CASE_BLOCK_NOBLOCK_TIMEOUT) {
+        syncType = pstArg->syncType;
+        SAMPLE_LOG("chn-%d: UT_CASE_BLOCK_NOBLOCK_TIMEOUT syncSend = %d\n", VeChn, syncType);
+    }
+
     eFmt = pstArg->eFmt;
     width = pstArg->width;
     height = pstArg->height;
@@ -780,6 +795,14 @@ AX_VOID *COMMON_VENC_GetStreamProc(AX_VOID *arg)
     AX_S32 testId = pstArg->testId;
     AX_CHAR esName[50];
     AX_PAYLOAD_TYPE_E enType = pstArg->enType;
+    AX_S32 syncType = 100;
+    AX_S32 CacheType = 0;
+    AX_U64 PhyAddr = 0;
+
+    if (testId == UT_CASE_BLOCK_NOBLOCK_TIMEOUT) {
+        syncType = pstArg->syncType;
+        SAMPLE_LOG("chn-%d: UT_CASE_BLOCK_NOBLOCK_TIMEOUT syncGet = %d\n", VeChn, syncType);
+    }
 
     memset(&stStream, 0, sizeof(stStream));
     memset(esName, 0, 50);
@@ -809,9 +832,17 @@ AX_VOID *COMMON_VENC_GetStreamProc(AX_VOID *arg)
     while (pstArg->bGetStrmStart) {
         if (pstArg->bQueryStatus)
             COMMON_VENC_QueryStatus_Debug(VeChn);
-
-        s32Ret = AX_VENC_GetStream(VeChn, &stStream, 100);
+        s32Ret = AX_VENC_GetStream(VeChn, &stStream, syncType);
         if (AX_SUCCESS == s32Ret) {
+
+            if (!pstArg->bSourcePool) {
+                /* ringbuf mode, stream virtaddr is cache type by default */
+                s32Ret = AX_SYS_MemGetBlockInfoByVirt(stStream.stPack.pu8Addr, &PhyAddr, &CacheType);
+                if (CacheType != AX_MEM_CACHED) {
+                    SAMPLE_LOG_ERR("chn-%d: unexpected result,we expect to get cache type but it didn't,CacheType=%d.\n", VeChn, CacheType);
+                }
+            }
+
             s32Ret = COMMON_VENC_WriteStream(pstArg, AX_TRUE, totalGetStream, pStrm, &stStream);
             if (AX_SUCCESS != s32Ret)
                 SAMPLE_LOG_ERR("COMMON_VENC_WriteStream err.\n");

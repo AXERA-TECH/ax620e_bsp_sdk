@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -35,7 +35,7 @@ AX_S32 SAMPLE_IVPS_SyncApi(const IVPS_ARG_T *ptArg, const SAMPLE_IVPS_GRP_T *pGr
 
     if (ptArg->bFlipRotation)
     {
-        ret = SAMPLE_IVPS_FlipAndRotation(&pGrp->tFrameInput, 1, AX_IVPS_ROTATION_90, pGrp->pFilePath);
+        ret = SAMPLE_IVPS_FlipAndRotation(&pGrp->tFrameInput, ptArg->nFlip, ptArg->nAngle, ptArg->nFormat, pGrp->pFilePath);
         if (ret)
         {
             ALOGE("SAMPLE_IVPS_FlipAndRotation failed, ret=0x%x.", ret);
@@ -388,7 +388,14 @@ AX_S32 SAMPLE_IVPS_SyncApi(const IVPS_ARG_T *ptArg, const SAMPLE_IVPS_GRP_T *pGr
             goto error1;
         }
     }
+
+    if (ptArg->bMask)
+    {
+        SAMPLE_IVPS_DrawMask(IVPS_ENGINE_ID_CPU, &pGrp->tFrameInput, &gSampleIvpsRegion.tMask, pGrp->pFilePath);
+    }
+
     return 0;
+
 error1:
     if (tOverlay.u32BlkId[0])
     {
@@ -399,11 +406,4 @@ error1:
         }
     }
     return ret;
-}
-
-AX_S32 SAMPLE_IVPS_SyncApiRegion(const IVPS_ARG_T *ptArg, const SAMPLE_IVPS_GRP_T *pGrp,
-                                 const SAMPLE_IVPS_REGION_T *ptRegion)
-{
-    SAMPLE_FillFrameWithCover(&pGrp->tFrameInput, &ptRegion->tCover, pGrp->pFilePath);
-    return 0;
 }

@@ -51,6 +51,12 @@ TARGET							:= $(MOD_NAME)
 # build flags
 CFLAGS							:= ${EXEC_FLAG} -Wall -Wl,-rpath-link=$(LIB_PATH)
 
+ifneq ($(asan),yes)
+CFLAGS							+= -static
+else
+CFLAGS							+= -static-libasan
+endif
+
 ifeq ($(debug),yes)
 CFLAGS	+= -O0 -ggdb3
 else

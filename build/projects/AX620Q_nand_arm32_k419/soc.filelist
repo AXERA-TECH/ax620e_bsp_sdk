@@ -1,4 +1,4 @@
-@dir: kernel/osdrv/out/arm_glibc_linux-4.19.125
+@dir: kernel/osdrv/out/$(OSDRV_OUT_DIR)
 ko/ax_sys.ko.xz     ko/ax_sys.ko
 ko/ax_cmm.ko.xz     ko/ax_cmm.ko
 ko/ax_pool.ko.xz    ko/ax_pool.ko
@@ -20,9 +20,9 @@ ko/ax_perf_monitor.ko.xz   ko/ax_perf_monitor.ko
 opt/scripts/* scripts/
 
 @dir: build/projects
-AX620Q_nand_arm32_k419/soc/scripts/* scripts/
+$(PROJECT)/soc/scripts/* scripts/
 
-@dir: build/out/AX620Q_nand_arm32_k419/objs/kernel/linux
+@dir: build/out/$(PROJECT)/objs/kernel/linux
 ko/grace.ko.xz     ko/grace.ko
 ko/lockd.ko.xz     ko/lockd.ko
 ko/nfs.ko.xz       ko/nfs.ko

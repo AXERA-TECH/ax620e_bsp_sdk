@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -262,7 +262,7 @@ static AX_CHAR *key_str[AX_VO_INI_K_BUTT] = {
     "layer_img_width",
     "layer_img_height",
     "layer_img_fmt",
-    "layer_sync_sode",
+    "layer_sync_mode",
     "layer_primary_chnId",
     "layer_frame_rate",
     "layer_fifo_depth",
@@ -286,8 +286,7 @@ static AX_CHAR *key_str[AX_VO_INI_K_BUTT] = {
     "disp_work_mode",
     "disp_interface_type",
     "disp_sync_type",
-    "disp_layers",
-    "disp_layer_index",
+    "disp_sync_user_index",
     "disp_wbc_enable",
     "disp_wbc_type",
     "disp_wbc_mode",
@@ -957,6 +956,22 @@ static AX_S32 VO_INI_GET_KEY_VAL(AX_CHAR *pstr, AX_VOID *pConfig,
                     if (!strcmp(stSplitStr.pStr[i], vo_intf_sync_str[sync])) {
                         pVoConfig->stVoDev[i].enIntfSync = sync;
                     }
+                }
+            }
+        }
+        break;
+    }
+
+    case AX_VO_INI_K_D_SYNC_USER_INDEX: {
+        if (type == AX_VO_INI_S_LAYER_DISPLAY) {
+            pVoConfig = (SAMPLE_VO_CONFIG_S *)pConfig;
+
+            for (i = 0; i < stSplitStr.u32StrNr; i++) {
+                pVoConfig->stVoDev[i].u32SyncIndex = strtoul(stSplitStr.pStr[i], NULL, 0);
+                if (pVoConfig->stVoDev[i].u32SyncIndex >= SAMPLE_VO_SYNC_USER_MAX) {
+                    SAMPLE_PRT("VoDev[%d] u32SyncIndex(%d) invalid\n", i, pVoConfig->stVoDev[i].u32SyncIndex);
+                    ret = -1;
+                    break;
                 }
             }
         }

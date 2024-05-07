@@ -34,15 +34,10 @@ sample_audio ai -D 0- d 0 --hpf 1 --hpf-freq 200 --hpf-db -12 --lpf 1 --lpf-freq
 举例九：内置codec 下行HPF LPF EQ
 sample_audio ao -D 0 -d 1 --hpf 1 --hpf-freq 200 --hpf-db -12 --lpf 1 --lpf-freq 3000 --lpf-db 0 --eq 1
 
-举例十：去掉pop音操作  不同的型号的DEMO板子是不一样的
-sample_audio  ao -D 0 -d 1 -r 16000 --dis-nca9555 1           //630C DEMO
-sample_audio  ao -D 0 -d 1 -r 16000 --dis-620q_version_1_0 1  //620Q 1.0 DEMO
-sample_audio  ao -D 0 -d 1 -r 16000 --dis-620q_version_1_1 1  //620Q 1.1 DEMO
-
 3）示例运行结果：
 运行成功后，执行Ctrl+C退出，在当前目录应生成wave文件，用户可打开看实际效果。
 
 4）注意事项：
 （1）声卡号和设备号，请参考/dev/snd/，举例说明:
-   pcmC0D0p: card 0, device 0, playback device
-   pcmC0D1c: card 0, device 1, capture device
+   pcmC0D0c: card 0, device 0, capture device
+   pcmC0D1p: card 0, device 1, playback device

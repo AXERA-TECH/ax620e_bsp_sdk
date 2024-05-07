@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -25,7 +25,6 @@ extern "C" {
 
 #define SAMPLE_ALL_CODEC_TYPE   (4)
 #define UT_DEFAULT_ENC_NUM      (3)
-#define SAMPLE_MAX_TESTCASE_NUM (32)
 
 #define SAMPLE_VENC_MIN_BLK_CNT (1)
 #define SAMPLE_VENC_MAX_BLK_CNT (100)

@@ -1,0 +1,53 @@
+#!/bin/sh
+
+function get_env() {
+	fw_printenv | grep ${1}= | awk -F = '{ print $2 }'
+}
+
+start() {
+	bootsystem=`get_env "bootsystem"`
+
+	echo "Starting check system"
+
+	if [ "$bootsystem" = "A" ]; then
+		devmem 0x2390028 32 0x10
+		echo "set slota bootable is true"
+	elif [ "$bootsystem" = "B" ]; then
+		devmem 0x2390028 32 0x20
+		echo "set slotb bootable is true"
+	fi
+}
+
+switch_systema() {
+	devmem 0x2390028 32 0x14
+	devmem 0x239002C 32 0x8
+	echo "you can reboot, switch to system A"
+}
+
+switch_systemb() {
+	devmem 0x2390028 32 0x28
+	devmem 0x239002C 32 0x4
+	echo "you can reboot, switch to system B"
+}
+
+stop() {
+	echo "check boot stop"
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	systemA)
+		switch_systema
+		;;
+	systemB)
+		switch_systemb
+		;;
+	stop)
+		stop
+		;;
+	*)
+		exit 1
+esac
+exit $?

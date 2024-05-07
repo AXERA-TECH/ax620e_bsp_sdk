@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -60,8 +60,9 @@ AX_S32 IVPS_AttrChangeThreadStop(AX_VOID);
 /* From sample_ivps_region.c */
 AX_S32 IVPS_StartRegion(AX_U32 nRegionNum);
 AX_S32 IVPS_StopRegion(AX_VOID);
-AX_S32 IVPS_RegionUpdateThreadStart(AX_S32 nRegionNum, SAMPLE_IVPS_GRP_T *pGrp);
-AX_S32 IVPS_RegionUpdateThreadStop(AX_VOID);
+AX_S32 IVPS_StopRegionById(AX_S32 nRegionId);
+AX_S32 IVPS_RegionUpdateThreadStart(AX_S32 nRegionNum, SAMPLE_IVPS_GRP_T *pGrp, AX_BOOL bStopTest);
+AX_S32 IVPS_RegionUpdateThreadStop(AX_BOOL bStopTest);
 
 /* From sample_ivps_link.c */
 AX_S32 SAMPLE_IVPS_LinkIvps(const IVPS_ARG_T *ptArg, AX_S32 nGrpIdx, AX_S32 nChnIdx, SAMPLE_IVPS_GRP_T *pGrp);

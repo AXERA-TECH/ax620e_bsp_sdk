@@ -1,3 +1,13 @@
+/**************************************************************************************************
+ *
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ *
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
+ * may not be copied or distributed in any isomorphic form without the prior
+ * written consent of Axera Semiconductor Co., Ltd.
+ *
+ **************************************************************************************************/
+
 #include "sample_engine.h"
 
 #include "detection.hpp"
@@ -57,7 +67,7 @@ const float NMS_THRESHOLD = 0.45f;
 
 const char *AX_CMM_SESSION_NAME = "npu";
 
-const std::vector<std::string> WANT_CLASSES = {"person"};
+const std::vector<std::string> WANT_CLASSES = {};
 
 typedef enum
 {
@@ -187,21 +197,24 @@ static void post_process(AX_ENGINE_IO_INFO_T *io_info, AX_ENGINE_IO_T *io_data, 
         detection::generate_proposals_255(stride, ptr, PROB_THRESHOLD, proposals, DEFAULT_IMG_W, DEFAULT_IMG_H, ANCHORS, prob_threshold_u_sigmoid);
     }
 
-    for (auto iter = proposals.begin(); iter != proposals.end();)
+    if (!want_classes.empty())
     {
-        bool found = false;
-        for (const auto &cls : want_classes)
+        for (auto iter = proposals.begin(); iter != proposals.end();)
         {
-            if (CLASS_NAMES[iter->label] == cls)
+            bool found = false;
+            for (const auto &cls : want_classes)
             {
-                found = true;
-                break;
+                if (CLASS_NAMES[iter->label] == cls)
+                {
+                    found = true;
+                    break;
+                }
             }
+            if (!found)
+                iter = proposals.erase(iter);
+            else
+                iter++;
         }
-        if (!found)
-            iter = proposals.erase(iter);
-        else
-            iter++;
     }
 
     detection::get_out_bbox(proposals, objects, NMS_THRESHOLD, DEFAULT_IMG_H, DEFAULT_IMG_W, DEFAULT_RTSP_H, DEFAULT_RTSP_W);

@@ -33,6 +33,7 @@ SRCS			+= $(SAMPLE_PATH)/common/common_sys.c
 SRCS			+= $(SAMPLE_PATH)/common/common_vin.c
 SRCS			+= $(SAMPLE_PATH)/common/common_isp.c
 SRCS			+= $(SAMPLE_PATH)/common/common_nt.c
+SRCS			+= $(SAMPLE_PATH)/common/common_hw.c
 SRCCPPS			:= $(wildcard $(SAMPLE_PATH)/rtsp/*.cpp)
 
 
@@ -64,6 +65,7 @@ CFLAGS			+= -Werror -Wall -O2
 endif
 
 CFLAGS			+= -ldl
+CFLAGS			+= -DSAMPLE_BUILD_STATIC
 
 ifeq ($(USE_OPENSSL),no)
 CFLAGS            += -DNO_OPENSSL
@@ -72,25 +74,37 @@ endif
 # dependency
 CLIB			+= -Wl,-rpath-link=$(OUT_PATH)/lib
 CLIB			+= -L$(OUT_PATH)/lib -l:libax_ivps.a
-CLIB			+= -l:libax_venc.a
+CLIB			+= -lstdc++
 CLIB			+= -l:libax_sys.a
-CLIB			+= -l:libax_ae.a
-CLIB			+= -l:libax_awb.a
-CLIB			+= -l:libax_af.a
+CLIB			+= -lm -lpthread -lrt
+CLIB			+= -l:libax_nt_ctrl.a
 CLIB			+= -l:libax_proton.a
 ifeq ($(CHIP_TYPE), AX620Q)
 CLIB			+= -l:libax_engine_tiny.a
 else
 CLIB			+= -l:libax_engine.a
 endif
+CLIB			+= -l:libax_interpreter.a
+CLIB			+= -l:libax_ae.a
+CLIB			+= -l:libax_awb.a
+CLIB			+= -l:libax_af.a
 CLIB			+= -l:libax_mipi.a
-CLIB			+= -lm -lpthread -lrt -ldl -lstdc++
 CLIB			+= -l:libax_nt_stream.a
-CLIB			+= -l:libax_nt_ctrl.a
+CLIB			+= -l:libax_venc.a
+CLIB			+= -lm -lpthread
+#CLIB			+= -lm -lpthread -lrt -ldl -lstdc++
 ifeq ($(USE_OPENSSL),yes)
 CLIB            += -L$(SSL_PATH)/$(LIBC)/lib -lssl -lcrypto
 endif
 CLIB			+= -L$(LIVE_PATH)/lib -lliveMedia -lgroupsock -lBasicUsageEnvironment -lUsageEnvironment
+CLIB			+= -l:libsns_dummy.a
+CLIB			+= -l:libsns_os04a10.a
+
+CLIB			+= -l:libax_sys.a
+CLIB			+= -lrt
+CLIB			+= -lm
+CLIB			+= -ldl
+CLIB			+= -lstdc++
 
 # install
 INSTALL_BIN	:= $(TARGET)

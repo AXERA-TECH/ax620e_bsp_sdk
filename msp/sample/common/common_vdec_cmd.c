@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -60,6 +60,10 @@ static void __PrintHelp_Com()
     printf("  --res:                stream resolution (--res=WidthxHeight, default: 1920x1920.\n");
     printf("  --highRes:            for high resolution test(for only one group of jdec).  \n"
             "                           (0: disable, 1: enable. default: 0\n");
+    printf("  --bDynRes:            dynamic resolution test of jdec. \n"
+            "                           1: enable. 0: disable. default: 0\n");
+    printf("  --newInput:           another input file for jdec dynamic resolution test.\n");
+
     printf("  --uStartGrpId:        start group id. (0-15), default: 0\n");
     printf("  --enDisplayMode:      display mode. (0: preview mode, 1: playback mode), default: 1\n");
     printf("  --enFrameBufSrc:      output frame buf source  (1: private pool, 2: user pool), default: 2, \n");
@@ -78,6 +82,8 @@ static void __PrintHelp_Com()
     printf("  --bGetGrpPrm:         whether get grp prm. 1: enable. 0: disable. default: 0\n");
     printf("  --bRepeatTest:        create and destroy vdgrp multi times. 1: enable. 0: disable. default: 0\n");
     printf("  --bSleep:             whether add sleep operation when decode. 1: enable. 0: disable. default: 0\n");
+    printf("  --bSkipRelease:       skip one frm release, to test reset/destroy. 1: enable. 0: disable. default: 0\n");
+    printf("  --bSkipFrms:          skip frms by set pts to -1: enable. 0: disable. default: 0\n");
 
     printf("  --usrPicFile:         user picture file. (for inserting user picture.\n");
     printf("  --usrPicIdx:          Specifies which frame to insert the user picture after. (default: 7\n");
@@ -181,6 +187,10 @@ static AX_S32 __SampleInitOptions(SAMPLE_OPTION_T **ppOptions, SAMPLE_OPTION_NAM
     ret = SampleOptionsFill(pOptions, i++, "bGetVuiParam", '0', AX_TRUE);
     if (ret) goto ERR_RET_LOG;
     ret = SampleOptionsFill(pOptions, i++, "bResetGrp", '0', AX_TRUE);
+    if (ret) goto ERR_RET_LOG;
+    ret = SampleOptionsFill(pOptions, i++, "bSkipRelease", '0', AX_TRUE);
+    if (ret) goto ERR_RET_LOG;
+    ret = SampleOptionsFill(pOptions, i++, "bSkipFrms", '0', AX_TRUE);
     if (ret) goto ERR_RET_LOG;
     ret = SampleOptionsFill(pOptions, i++, "bSleep", '0', AX_TRUE);
     if (ret) goto ERR_RET_LOG;
@@ -664,6 +674,10 @@ AX_S32 VdecCmdLineParseAndCheck(AX_S32 argc, AX_CHAR **argv, SAMPLE_VDEC_CMD_PAR
                pstCmd->bGetVuiParam = atoi(optarg);
             } else if (strcmp(pPrm->longOpt, "bResetGrp") == 0) {
                pstCmd->bResetGrp = atoi(optarg);
+            } else if (strcmp(pPrm->longOpt, "bSkipRelease") == 0) {
+               pstCmd->bSkipRelease = atoi(optarg);
+            } else if (strcmp(pPrm->longOpt, "bSkipFrms") == 0) {
+               pstCmd->bSkipFrms = atoi(optarg);
             } else if (strcmp(pPrm->longOpt, "bSleep") == 0) {
                pstCmd->bSleep = atoi(optarg);
             } else if (strcmp(pPrm->longOpt, "bGetDispMode") == 0) {
@@ -872,7 +886,7 @@ AX_S32 VdecDefaultParamsSet(SAMPLE_VDEC_CMD_PARAM_T *pstCmdPara)
     pstCmd->sStreamSize = 10 * 1024;
     pstCmd->pollingTime = 10;
     pstCmd->usrPicIdx = 7;
-    pstCmd->u32FrameBufCnt = 7;
+    pstCmd->u32FrameBufCnt = 8;
     pstCmd->uStartGrpId = 0;
     pstCmd->u32StreamFps = 0;
     pstCmd->bFfmpegEnable = AX_FALSE;
@@ -894,6 +908,8 @@ AX_S32 VdecDefaultParamsSet(SAMPLE_VDEC_CMD_PARAM_T *pstCmdPara)
     pstCmd->bGetGrpPrm = AX_FALSE;
     pstCmd->bRepeatTest = AX_FALSE;
     pstCmd->bSleep = AX_FALSE;
+    pstCmd->bSkipRelease = AX_FALSE;
+    pstCmd->bSkipFrms = AX_FALSE;
 
     return 0;
 }

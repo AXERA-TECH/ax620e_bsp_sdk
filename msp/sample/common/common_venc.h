@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -26,7 +26,43 @@
 
 #define USER_SET_PTS_VALUE      (12345678)
 
+#define SAMPLE_MAX_TESTCASE_NUM (32)
+
 typedef AX_S32 (*TestFunction)(AX_S32 VeChn, AX_VOID *handle);
+
+typedef enum
+{
+    UT_CASE_NORMAL = 0,
+    UT_CASE_BIT_RATE,
+    UT_CASE_RESET_CHN,
+    UT_CASE_VENC_ROI = 3,
+    UT_CASE_FRAME_RATE,
+    UT_CASE_CHN_ATTR,
+    UT_CASE_RC_MODE = 6,
+    UT_CASE_VUI,
+    UT_CASE_JPEG_ENCODE_ONCE,
+    UT_CASE_JPEG_PARAM = 9,
+    UT_CASE_VIR_INTRA_INTERVAL,
+    UT_CASE_INTRA_REFRESH, /* GDR */
+    UT_CASE_RESOLUTION = 12,
+    UT_CASE_REQUEST_IDR,
+    UT_CASE_SELECT_CHN,
+    UT_CASE_SET_USR_DATA = 15,
+    UT_CASE_RATE_JAM,
+    UT_CASE_SUPER_FRAME,
+    UT_CASE_SLICE_SPLIT = 18,
+    UT_CASE_JPEG_RESOLUTION = 19,
+    UT_CASE_QP_AND_GOP,
+    UT_CASE_OSD = 21,
+    UT_CASE_BPS_ADAPT,
+    UT_CASE_GOP_LEN,
+    UT_CASE_BLOCK_NOBLOCK_TIMEOUT,
+    UT_CASE_STD_SELECT,
+    UT_CASE_STD_EPOLL,
+    UT_CASE_SVC,
+    SAMPLE_TESTCASE_BUTT = SAMPLE_MAX_TESTCASE_NUM,
+} SAMPLE_TESTCASE_ID_E;
+
 typedef enum
 {
     SAMPLE_CODEC_H264 = 0,
@@ -71,7 +107,8 @@ typedef struct axSAMPLE_VENC_CMD_PARA_T
     AX_U32 strideY;
     AX_U32 strideU;
     AX_U32 strideV;
-    AX_S32 syncType; /* -1: block; 0: non-block; x(>0): wait for x milliSec */
+    AX_S32 syncSend; /* for send frame, -1: block; 0: non-block; x(>0): wait for x milliSec */
+    AX_S32 syncGet; /* for get stream, -1: block; 0: no n-block; x(>0): wait for x milliSec */
     AX_S32 startQp;  /* start qp for first IDR */
 
     /* common channel params */
@@ -150,6 +187,10 @@ typedef struct axSAMPLE_VENC_CMD_PARA_T
 
     /* gop params */
     AX_U16 gopMode; /*0: normalP; 1: oneLTR; 2: svc-t */
+
+    /* svc param */
+    AX_U16 svcRegionNum;  /* svc region cnt */
+    AX_U16 svcQpMod;      /* svc qp mod: 1 absQp 0 deltaQp */
 
     /* filter the bit streams at different layer by temporalID in svc-t mode.
      * 0 : save the 0 layer bit stream.
@@ -250,6 +291,7 @@ typedef struct axSAMPLE_VENC_CMD_PARA_T
     AX_U8 matrixCoeffs;
     AX_U32 u32StartChan;
     AX_BOOL bSleep;
+    AX_BOOL bSetPartition;
 } SAMPLE_VENC_CMD_PARA_T;
 
 typedef struct axSAMPLE_VENC_SENDFRAME_PARA_T
@@ -286,6 +328,10 @@ typedef struct axSAMPLE_VENC_SENDFRAME_PARA_T
     AX_U16 qpMapQpType;  /* 0: disable qpmap; 1: deltaQp; 2: absQp */
     AX_U16 qpMapBlkType; /* 0: disable block mode; 1: skip mode; 2: Ipcm mode */
     AX_U16 qpMapBlkUnit; /* 0: 64x64; 1: 32x32; 2: 16x16; 3: 8x8(h.264 not support 8x8).*/
+
+    AX_U16 svcRegionNum;  /* svc region cnt */
+    AX_U16 svcQpMod;      /* svc qp mod: 1 absQp 0 deltaQp */
+
     AX_S32 qpMapSize;
     AX_S32 maxCuSize; /* h264: 16; h265: 64 */
 
@@ -379,6 +425,7 @@ typedef struct axSAMPLE_VENC_GETSTREAM_PARA_T
     AX_U32 grpId;
     AX_U32 startChn;
     AX_BOOL bSleep;
+    AX_BOOL bSourcePool;
     AX_F32 srcFrameRate; /* RW; Range:[1, 240]; the input frame rate of the venc chnnel */
     AX_F32 dstFrameRate; /* RW; Range:[1, 240]; the output frame rate of the venc chnnel */
     /* output stream suffix */

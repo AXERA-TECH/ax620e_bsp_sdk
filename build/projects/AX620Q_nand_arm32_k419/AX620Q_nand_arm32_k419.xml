@@ -24,14 +24,6 @@
 		<!-- Unit: 0, 1M Byte; 1, 512K Byte; 2, 1K Byte; 3, 1 Byte; 4, 1Sector -->
 		<Partitions strategy="1" unit="2">
 			<!-- The env partition size cannot be manually changed. -->
-			<Partition gap="0" id="spl" size="1024" />
-			<Partition gap="0" id="ddrinit" size="512" />
-			<Partition gap="0" id="uboot" size="1280" />
-			<Partition gap="0" id="env" size="512" />
-			<Partition gap="0" id="param" size="4096" />
-			<Partition gap="0" id="dtb" size="512" />
-			<Partition gap="0" id="kernel" size="32768" />
-			<Partition gap="0" id="rootfs" size="0xffffffff" />
 		</Partitions>
 		<ImgList>
 			<Img flag="2" name="INIT" select="1">
@@ -78,28 +70,6 @@
 				<Auth algo="0" />
 				<Description>Download FDL2 image file</Description>
 			</Img>
-			<Img flag="1" name="DDRINIT" select="1">
-				<ID>DDRINIT</ID>
-				<Type>CODE</Type>
-				<Block id="ddrinit">
-					<Base>0x0</Base>
-					<Size>0x0</Size>
-				</Block>
-				<File />
-				<Auth algo="0" />
-				<Description>Download ddrinit image file</Description>
-			</Img>
-			<Img flag="1" name="UBOOT" select="1">
-				<ID>UBOOT</ID>
-				<Type>CODE</Type>
-				<Block id="uboot">
-					<Base>0x0</Base>
-					<Size>0x0</Size>
-				</Block>
-				<File />
-				<Auth algo="0" />
-				<Description>Download UBOOT image file</Description>
-			</Img>
 			<Img flag="0" name="ERASEENV" select="0">
 				<ID>ERASEENV</ID>
 				<Type>ERASEFLASH</Type>
@@ -110,61 +80,6 @@
 				<File />
 				<Auth algo="0" />
 				<Description>Erase env partition</Description>
-			</Img>
-			<Img flag="1" name="PARAM" select="1">
-				<ID>PARAM</ID>
-				<Type>CODE</Type>
-				<Block id="param">
-					<Base>0x0</Base>
-					<Size>0x0</Size>
-				</Block>
-				<File />
-				<Auth algo="0" />
-				<Description>Download param image file</Description>
-			</Img>
-			<Img flag="1" name="DTB" select="1">
-				<ID>DTB</ID>
-				<Type>CODE</Type>
-				<Block id="dtb">
-					<Base>0x0</Base>
-					<Size>0x0</Size>
-				</Block>
-				<File />
-				<Auth algo="0" />
-				<Description>Download kernel dtb file</Description>
-			</Img>
-			<Img flag="1" name="KERNEL" select="1">
-				<ID>KERNEL</ID>
-				<Type>CODE</Type>
-				<Block id="kernel">
-					<Base>0x0</Base>
-					<Size>0x0</Size>
-				</Block>
-				<File />
-				<Auth algo="0" />
-				<Description>Download kernel image file</Description>
-			</Img>
-			<Img flag="1" name="ROOTFS" select="1">
-				<ID>ROOTFS</ID>
-				<Type>CODE</Type>
-				<Block id="rootfs">
-					<Base>0x0</Base>
-					<Size>0x0</Size>
-				</Block>
-				<File />
-				<Auth algo="0" />
-				<Description>Download rootfs image file</Description>
-			</Img>
-			<Img flag="1" name="SPL" select="1">
-				<ID>SPL</ID>
-				<Type>CODE</Type>
-				<Block id="spl">
-					<Base>0x0</Base>
-					<Size>0x0</Size>
-				</Block>
-				<File />
-				<Auth algo="0" />
-				<Description>Download spl image file</Description>
 			</Img>
 		</ImgList>
 	</Project>

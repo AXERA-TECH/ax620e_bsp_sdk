@@ -1,10 +1,11 @@
+
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -17,7 +18,6 @@
 #include <sys/prctl.h>
 
 #include "ax_vin_api.h"
-#include "ax_vin_api_int.h"
 #include "ax_isp_api.h"
 #include "ax_vin_error_code.h"
 #include "ax_mipi_rx_api.h"
@@ -160,7 +160,14 @@ static AX_S32 __common_cam_open(AX_CAMERA_T *pCam)
     AX_U32 nRxDev = pCam->nRxDev;
     AX_INPUT_MODE_E eInputMode = pCam->eInputMode;
 
-    axRet = COMMON_ISP_ResetSnsObj(nPipeId, nDevId, pCam->ptSnsHdl);
+    /* confige sensor clk */
+    axRet = AX_ISP_OpenSnsClk(pCam->tSnsClkAttr.nSnsClkIdx, pCam->tSnsClkAttr.eSnsClkRate);
+    if (0 != axRet) {
+        COMM_ISP_PRT("AX_ISP_OpenSnsClk failed, nRet=0x%x.\n", axRet);
+        return -1;
+    }
+
+    axRet = COMMON_ISP_ResetSnsObj(nPipeId, nDevId, pCam->ptSnsHdl[pCam->nPipeId]);
     if (0 != axRet) {
         COMM_CAM_PRT("COMMON_ISP_ResetSnsObj failed, ret=0x%x.\n", axRet);
         return -1;
@@ -180,14 +187,14 @@ static AX_S32 __common_cam_open(AX_CAMERA_T *pCam)
 
     for (i = 0; i < pCam->tDevBindPipe.nNum; i++) {
         nPipeId = pCam->tDevBindPipe.nPipeId[i];
-        pCam->tPipeAttr.bAiIspEnable = pCam->tPipeInfo[i].bAiispEnable;
-        axRet = COMMON_VIN_SetPipeAttr(pCam->eSysMode, pCam->eLoadRawNode, nPipeId, &pCam->tPipeAttr);
+        pCam->tPipeAttr[pCam->nPipeId].bAiIspEnable = pCam->tPipeInfo[i].bAiispEnable;
+        axRet = COMMON_VIN_SetPipeAttr(pCam->eSysMode, pCam->eLoadRawNode, nPipeId, &pCam->tPipeAttr[pCam->nPipeId]);
         if (0 != axRet) {
             COMM_CAM_PRT("COMMON_ISP_SetPipeAttr failed, ret=0x%x.\n", axRet);
             return -1;
         }
         if (pCam->bRegisterSns) {
-            axRet = COMMON_ISP_RegisterSns(nPipeId, nDevId, pCam->eBusType, pCam->ptSnsHdl, pCam->nI2cAddr);
+            axRet = COMMON_ISP_RegisterSns(nPipeId, nDevId, pCam->eBusType, pCam->ptSnsHdl[pCam->nPipeId], pCam->nI2cAddr);
             if (0 != axRet) {
                 COMM_CAM_PRT("COMMON_ISP_RegisterSns failed, ret=0x%x.\n", axRet);
                 return -1;
@@ -198,7 +205,7 @@ static AX_S32 __common_cam_open(AX_CAMERA_T *pCam)
                 return -1;
             }
         }
-        axRet = COMMON_ISP_Init(nPipeId, pCam->ptSnsHdl, pCam->bRegisterSns, pCam->bUser3a,
+        axRet = COMMON_ISP_Init(nPipeId, pCam->ptSnsHdl[pCam->nPipeId], pCam->bRegisterSns, pCam->bUser3a,
                                 &pCam->tAeFuncs, &pCam->tAwbFuncs, &pCam->tAfFuncs, &pCam->tLscFuncs,
                                 pCam->tPipeInfo[i].szBinPath);
         if (0 != axRet) {

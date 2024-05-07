@@ -29,6 +29,12 @@ CINCLUDE		+= -I$(SRC_PATH) \
 
 CINCLUDE		+=	-I$(HOME_PATH)/third-party/tinyalsa/include \
 				    -I$(HOME_PATH)/third-party/libsamplerate/include
+ifeq ($(CHIP_TYPE), AX620Q)
+CINCLUDE		+=	-I$(HOME_PATH)/third-party/faac/include
+else
+CINCLUDE		+=	-I$(HOME_PATH)/third-party/opus/include/opus \
+					-I$(HOME_PATH)/third-party/fdk-aac/include/fdk-aac
+endif
 
 OBJS			:= $(addprefix $(OUTPUT)/,$(notdir $(patsubst %.c,%.o,$(SRCS))))
 DEPS			:= $(OBJS:%.o=%.d)
@@ -37,23 +43,50 @@ TARGET			:= $(MOD_NAME)
 
 CFLAGS			:= ${EXEC_FLAG}
 
+ifneq ($(asan),yes)
+CFLAGS			+= -static
+else
+CFLAGS			+= -static-libasan
+endif
+ifeq ($(CHIP_TYPE), AX620Q)
+CFLAGS			+= -DCHIP_TYPE_AX620Q
+endif
+
 # build flags
 ifeq ($(debug),yes)
-CFLAGS			+= -Wall -O0 -ggdb3
+CFLAGS			+= -Werror -Wall -O0 -ggdb3
 else
-CFLAGS			+= -Wall -O2
+CFLAGS			+= -Werror -Wall -O2
+endif
+ifeq ($(CHIP_TYPE), AX620Q)
+CFLAGS			+= -D CHIP_TYPE_AX620Q
 endif
 
 # dependency
 #CLIB			+= -Wl,-rpath-link=$(OUT_PATH)/lib
 CLIB			+= -L$(OUT_PATH)/lib
-CLIB			+= -L$(HOME_PATH)/third-party/tinyalsa/lib/$(ARCH)/$(LIBC)
-CLIB			+= -ltinyalsa
-CLIB			+= -L$(HOME_PATH)/third-party/libsamplerate/lib/$(ARCH)/$(LIBC)
-CLIB			+= -lsamplerate
 CLIB			+= -l:libax_audio.a
 CLIB			+= -l:libax_audio_3a.a
 CLIB			+= -l:libax_sys.a
+ifeq ($(CHIP_TYPE), AX620Q)
+CLIB			+= -l:libax_faac.a
+else
+CLIB			+= -l:libax_fdk.a
+CLIB			+= -l:libax_opus.a
+endif
+CLIB			+= -L$(HOME_PATH)/third-party/tinyalsa/lib/$(ARCH)/$(LIBC)
+CLIB			+= -l:libtinyalsa.a
+CLIB			+= -L$(HOME_PATH)/third-party/libsamplerate/lib/$(ARCH)/$(LIBC)
+CLIB			+= -l:libsamplerate.a
+ifeq ($(CHIP_TYPE), AX620Q)
+CLIB			+= -L$(HOME_PATH)/third-party/faac/lib/$(ARCH)/$(LIBC)
+CLIB			+= -l:libfaac.a
+else
+CLIB			+= -L$(HOME_PATH)/third-party/fdk-aac/lib/$(ARCH)/$(LIBC)
+CLIB			+= -l:libfdk-aac.a
+CLIB			+= -L$(HOME_PATH)/third-party/opus/lib/$(ARCH)/$(LIBC)
+CLIB			+= -l:libopus.a
+endif
 CLIB			+= -lm -lpthread
 CLIB			+= -ldl
 

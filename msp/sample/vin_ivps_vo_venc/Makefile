@@ -19,17 +19,17 @@ all: lib
 
 clean:
 	$(VERB) $(MAKE) -f Makefile.dynamic clean
-	#$(VERB) $(MAKE) -f Makefile.static clean
+	$(VERB) $(MAKE) -f Makefile.static clean
 	@echo -e $(GREEN)"\nClean $@ success!!\n"  $(DONE)
 
 install:
 	@echo -e $(GREEN)"Install $@ ..."  $(DONE)
 	$(VERB) $(MAKE) -f Makefile.dynamic install
-	#$(VERB) $(MAKE) -B -f Makefile.static install
+	$(VERB) $(MAKE) -f Makefile.static install
 
 lib:
 	@echo -e $(GREEN)"Build dynamic $@ ..."  $(DONE)
 	$(VERB) $(MAKE) -f Makefile.dynamic
 
 	@echo -e $(GREEN)"Build static $@ ..."  $(DONE)
-	#$(VERB) $(MAKE) -B -f Makefile.static
+	$(VERB) $(MAKE) -f Makefile.static

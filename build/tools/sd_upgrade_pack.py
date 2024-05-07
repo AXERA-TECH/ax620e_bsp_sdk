@@ -95,14 +95,10 @@ def pack_sd_boot(path, optee=False):
                 shutil.copyfile(os.path.realpath(file), os.path.dirname(os.path.realpath(file)) + '/sd_boot_pack/' + 'kernel.img')
             if(fnmatch.fnmatch(file, '*_signed.dtb') == True):
                 shutil.copyfile(os.path.realpath(file), os.path.dirname(os.path.realpath(file)) + '/sd_boot_pack/' + 'dtb.img')
-            if(file == 'atf_bl31_signed.bin'):
-                shutil.copyfile(os.path.realpath(file), os.path.dirname(os.path.realpath(file)) + '/sd_boot_pack/' + 'atf.img')
             if(fnmatch.fnmatch(file, 'spl*_k???_sd_signed.bin') == True):
                 shutil.copyfile(os.path.realpath(file), os.path.dirname(os.path.realpath(file)) + '/sd_boot_pack/' + 'boot.bin')
-            if(optee and (file == 'optee_signed.bin')):
-                shutil.copyfile(os.path.realpath(file), os.path.dirname(os.path.realpath(file)) + '/sd_boot_pack/' + 'optee.img')
-            if(fnmatch.fnmatch(file, 'ddrinit_*_signed.bin') == True):
-                shutil.copyfile(os.path.realpath(file), os.path.dirname(os.path.realpath(file)) + '/sd_boot_pack/' + 'ddrinit.img')
+            if(file == 'atf_bl31_signed.bin'):
+                shutil.copyfile(os.path.realpath(file), os.path.dirname(os.path.realpath(file)) + '/sd_boot_pack/' + 'atf.img')
         except:
             continue
     f = os.listdir(os.path.dirname(os.path.realpath(file)) + '/sd_boot_pack/')

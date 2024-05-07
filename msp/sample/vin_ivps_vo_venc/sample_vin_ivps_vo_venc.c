@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -14,13 +14,8 @@
 
 /* comm pool */
 COMMON_SYS_POOL_CFG_T gtSysCommPoolSingleDummySdr[] = {
-    {3840, 2160, 3840, AX_FORMAT_BAYER_RAW_16BPP, 25},      /* vin raw16 use */
-    {3840, 2160, 3840, AX_FORMAT_YUV420_SEMIPLANAR, 10},    /* vin nv21/nv21 use */
-    {3840, 2160, 3840, AX_FORMAT_YUV420_SEMIPLANAR, 4},     /* vin rltm hist buffer used temp */
-};
-
-COMMON_SYS_POOL_CFG_T gtSysCommPoolSingleOs08a20Sdr[] = {
-    {3840, 2160, 3840, AX_FORMAT_YUV420_SEMIPLANAR, 12},    /* vin nv21/nv21 use */
+    {2688, 1520, 2688, AX_FORMAT_BAYER_RAW_16BPP, 6},      /*vin raw16 use */
+    {2688, 1520, 2688, AX_FORMAT_YUV420_SEMIPLANAR,4,  AX_COMPRESS_MODE_LOSSY, 4},    /*vin nv21/nv21 use */
 };
 
 COMMON_SYS_POOL_CFG_T gtSysCommPoolSingleOs04a10Sdr[] = {
@@ -32,12 +27,8 @@ COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleDummySdr[] = {
     {3840, 2160, 3840, AX_FORMAT_BAYER_RAW_16BPP, 10},
 };
 
-COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleOs08a20Sdr[] = {
-    {3840, 2160, 3840, AX_FORMAT_BAYER_RAW_16BPP, 10 * 2},      /* vin raw16 use */
-};
-
 COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleOs04a10Sdr[] = {
-    {2688, 1520, 2688, AX_FORMAT_BAYER_RAW_16BPP, 10 * 2},      /* vin raw16 use */
+    {2688, 1520, 2688, AX_FORMAT_BAYER_RAW_10BPP_PACKED, 12, AX_COMPRESS_MODE_LOSSY, 4},
 };
 
 static SAMPLE_RTSP_PARAM_T gRtspParam;
@@ -127,17 +118,17 @@ static AX_VOID __set_vin_attr(AX_CAMERA_T *pCam, SAMPLE_SNS_TYPE_E eSnsType, AX_
     pCam->tDevAttr.eSnsMode = eHdrMode;
     pCam->eHdrMode = eHdrMode;
     pCam->eSysMode = eSysMode;
-    pCam->tPipeAttr.eSnsMode = eHdrMode;
-    pCam->tPipeAttr.bAiIspEnable = bAiispEnable;
+    pCam->tPipeAttr[pCam->nPipeId].eSnsMode = eHdrMode;
+    pCam->tPipeAttr[pCam->nPipeId].bAiIspEnable = bAiispEnable;
     if (eHdrMode > AX_SNS_LINEAR_MODE) {
         pCam->tDevAttr.eSnsOutputMode = AX_SNS_DOL_HDR;
     }
 
     if (COMMON_VIN_LOADRAW == eSysMode &&
-        pCam->tPipeAttr.ePipeWorkMode == 0x1 &&
+        pCam->tPipeAttr[pCam->nPipeId].ePipeWorkMode == 0x1 &&
         pCam->eLoadRawNode == LOAD_RAW_IFE) {
         pCam->tDevAttr.ePixelFmt = AX_FORMAT_BAYER_RAW_16BPP;
-        pCam->tPipeAttr.ePixelFmt = AX_FORMAT_BAYER_RAW_16BPP;
+        pCam->tPipeAttr[pCam->nPipeId].ePixelFmt = AX_FORMAT_BAYER_RAW_16BPP;
     }
 
     if (COMMON_VIN_TPG == eSysMode) {
@@ -170,7 +161,7 @@ static AX_U32 __sample_case_single_dummy(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYPE_
         pCam = &pCamList[i];
         COMMON_VIN_GetSnsConfig(eSnsType, &pCam->tMipiAttr, &pCam->tSnsAttr,
                                 &pCam->tSnsClkAttr, &pCam->tDevAttr,
-                                &pCam->tPipeAttr, pCam->tChnAttr);
+                                &pCam->tPipeAttr[pCam->nPipeId], pCam->tChnAttr);
 
         pCam->nDevId = 0;
         pCam->nRxDev = 0;
@@ -178,7 +169,7 @@ static AX_U32 __sample_case_single_dummy(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYPE_
         pCam->tSnsClkAttr.nSnsClkIdx = 0;
         pCam->tDevBindPipe.nNum =  1;
         pCam->tDevBindPipe.nPipeId[0] = pCam->nPipeId;
-        pCam->ptSnsHdl = COMMON_ISP_GetSnsObj(eSnsType);
+        pCam->ptSnsHdl[pCam->nPipeId] = COMMON_ISP_GetSnsObj(eSnsType);
         pCam->eBusType = COMMON_ISP_GetSnsBusType(eSnsType);
         pCam->eLoadRawNode = eLoadRawNode;
         __set_pipe_hdr_mode(&pCam->tDevBindPipe.nHDRSel[0], eHdrMode);
@@ -243,14 +234,14 @@ static AX_U32 __sample_case_single_os04a10(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYP
     pCam = &pCamList[0];
     COMMON_VIN_GetSnsConfig(eSnsType, &pCam->tMipiAttr, &pCam->tSnsAttr,
                             &pCam->tSnsClkAttr, &pCam->tDevAttr,
-                            &pCam->tPipeAttr, pCam->tChnAttr);
+                            &pCam->tPipeAttr[pCam->nPipeId], pCam->tChnAttr);
     pCam->nDevId = 0;
     pCam->nRxDev = 0;
     pCam->nPipeId = 0;
     pCam->tSnsClkAttr.nSnsClkIdx = 0;
     pCam->tDevBindPipe.nNum =  1;
     pCam->tDevBindPipe.nPipeId[0] = pCam->nPipeId;
-    pCam->ptSnsHdl = COMMON_ISP_GetSnsObj(eSnsType);
+    pCam->ptSnsHdl[pCam->nPipeId] = COMMON_ISP_GetSnsObj(eSnsType);
     pCam->eBusType = COMMON_ISP_GetSnsBusType(eSnsType);
     __set_pipe_hdr_mode(&pCam->tDevBindPipe.nHDRSel[0], eHdrMode);
     __set_vin_attr(pCam, eSnsType, eHdrMode, eSysMode, pVinParam->bAiispEnable);
@@ -277,7 +268,7 @@ static AX_U32 __sample_case_config(SAMPLE_VIN_PARAM_T *pVinParam, COMMON_SYS_ARG
         eSnsType = OMNIVISION_OS04A10;
         /* comm pool config */
         __cal_dump_pool(gtSysCommPoolSingleOs04a10Sdr, pVinParam->eHdrMode, pVinParam->nDumpFrameNum);
-        pCommonArgs->nPoolCfgCnt = sizeof(gtSysCommPoolSingleOs08a20Sdr) / sizeof(gtSysCommPoolSingleOs04a10Sdr[0]);
+        pCommonArgs->nPoolCfgCnt = sizeof(gtSysCommPoolSingleOs04a10Sdr) / sizeof(gtSysCommPoolSingleOs04a10Sdr[0]);
         pCommonArgs->pPoolCfg = gtSysCommPoolSingleOs04a10Sdr;
 
         /* private pool config */
@@ -340,7 +331,6 @@ static void *VencGetStreamProc(void *arg)
 
     if (pStrm == NULL) {
         ALOGE("Open output file error!");
-        return NULL;
     }
 
     while (AX_TRUE == pstPara->bThreadStart && !ThreadLoopStateGet()) {
@@ -350,7 +340,7 @@ static void *VencGetStreamProc(void *arg)
             totalGetStream++;
 
             /* save 30 frames default */
-            if(totalGetStream <= 30){
+            if (pStrm && totalGetStream <= 30){
                 fwrite(stStream.stPack.pu8Addr, 1, stStream.stPack.u32Len, pStrm);
                 fflush(pStrm);
             }
@@ -569,7 +559,7 @@ static AX_S32 SampleVencInit(AX_S32 nChnNum)
 
 static AX_S32 SampleVencDeInit(AX_S32 nChnNum)
 {
-    AX_S32 VencChn = 0, s32Ret = 0;
+    AX_S32 VencChn = 0, s32Ret = 0, s32Retry = 5;
 
     for (VencChn = 0; VencChn < nChnNum; VencChn++) {
 
@@ -579,10 +569,20 @@ static AX_S32 SampleVencDeInit(AX_S32 nChnNum)
             return s32Ret;
         }
 
-        s32Ret = AX_VENC_DestroyChn(VencChn);
-        if (0 != s32Ret) {
-            ALOGE("VencChn %d:AX_VENC_DestroyChn failed,s32Ret:0x%x", VencChn, s32Ret);
-            return s32Ret;
+        s32Retry = 5;
+        do {
+            s32Ret = AX_VENC_DestroyChn(VencChn);
+            if (AX_ERR_VENC_BUSY == s32Ret) {
+                ALOGE("VencChn %d:AX_VENC_DestroyChn return AX_ERR_VENC_BUSY,retry...", VencChn);
+                --s32Retry;
+                usleep(100 * 1000);
+            } else {
+                break;
+            }
+        } while (s32Retry >= 0);
+
+        if (s32Retry == -1 || AX_SUCCESS != s32Ret) {
+            ALOGE("VencChn %d: AX_VENC_DestroyChn failed, s32Retry=%d, s32Ret=0x%x\n", VencChn, s32Retry, s32Ret);
         }
 
         if (AX_TRUE == gGetStreamPara[VencChn].bThreadStart) {

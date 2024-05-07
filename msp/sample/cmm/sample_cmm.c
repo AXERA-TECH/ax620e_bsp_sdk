@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -27,7 +27,6 @@
 #include <semaphore.h>
 #include "ax_sys_api.h"
 #include "ax_base_type.h"
-#include "ax_dma_api.h"
 
 #define APP_PAGE_SIZE (4096)
 #define DEFAULT_1_M 1024 * 1024
@@ -36,58 +35,58 @@
 typedef struct {
     AX_VOID *aVir;
     AX_U64 aPhy;
-    AX_U64 size;
+    AX_BOOL bIsCached;
 } ADDR_BUF_T;
 
-typedef struct {
-    AX_S32 descNum;
-    AX_S32 size;
-    AX_U32 endian;
-    ADDR_BUF_T srcBuf[16];
-    ADDR_BUF_T dstBuf[16];
-} dma_cfg_t;
-
-static AX_U32 AX_DMA_FUNC_1D(ADDR_BUF_T *srcBuf, ADDR_BUF_T *dstBuf, AX_U32 size, AX_BOOL isSync)
+static AX_S32 AX_MEMCPY_FUNC(ADDR_BUF_T *srcBuf, ADDR_BUF_T *dstBuf, AX_U32 size)
 {
-    AX_U32 fd = 0;
-    AX_DMA_MSG_T dmaMsg;
-    AX_DMA_DESC_T *descBuf;
-    AX_DMA_XFER_STAT_T xferStat;
-    memset(&xferStat, 0, sizeof(AX_DMA_XFER_STAT_T));
+    AX_S32 nRet, nResult = 0;
+    AX_VOID *pSrcVirAddr = NULL;
+    AX_VOID *pDstVirAddr = NULL;
 
-    if ((fd = AX_DMA_Open(AX_TRUE)) < 0) {
-        printf("AX_DMA_Open error\n");
-        return -1;
+    if (srcBuf->bIsCached) {
+        pSrcVirAddr = AX_SYS_Mmap(srcBuf->aPhy, size);
+        if (!pSrcVirAddr) {
+            printf("AX_SYS_Mmap pSrcVirAddr failed\n");
+            nResult = -1;
+            goto EXIT;
+        }
+    } else {
+       pSrcVirAddr = srcBuf->aVir;
     }
 
-    descBuf = malloc(sizeof(AX_DMA_DESC_T) * 1);
-    if (!descBuf) {
-        AX_DMA_Close(fd);
-        return -1;
+    if (dstBuf->bIsCached) {
+        pDstVirAddr = AX_SYS_Mmap(dstBuf->aPhy, size);
+        if (!pDstVirAddr) {
+            printf("AX_SYS_Mmap pDstVirAddr failed\n");
+            nResult = -1;
+            goto EXIT;
+        }
+    } else {
+       pDstVirAddr = dstBuf->aVir;
     }
-    dmaMsg.u32DescNum = 1;
-    dmaMsg.eEndian = 0;//0:Little-Endian 1:Big-Endian
-    dmaMsg.eDmaMode = AX_DMA_1D;
-    dmaMsg.pDescBuf = descBuf;
-    dmaMsg.pCbArg = NULL;
-    dmaMsg.pfnCallBack = NULL;
 
-    descBuf->u64PhySrc = srcBuf->aPhy;
-    descBuf->u64PhyDst = dstBuf->aPhy;
-    descBuf->u32Size = size;
+    memcpy(pDstVirAddr, pSrcVirAddr, size);
 
-    xferStat.s32Id = AX_DMA_Cfg(fd, &dmaMsg);
-    if (xferStat.s32Id < 1) {
-        printf("AX_DMA_Cfg err xferStat.s32Id %d\n", xferStat.s32Id);
-        free((AX_DMA_DESC_T *)dmaMsg.pDescBuf);
-        AX_DMA_Close(fd);
-        return -1;
+EXIT:
+
+    if ((pSrcVirAddr != NULL) && (pSrcVirAddr != srcBuf->aVir)) {
+        nRet = AX_SYS_Munmap(pSrcVirAddr, size);
+        if (nRet != 0) {
+            printf("AX_SYS_Munmap pSrcVirAddr failed\n");
+            nResult = -1;
+        }
     }
-    AX_DMA_Start(fd, xferStat.s32Id);
-    AX_DMA_Waitdone(fd, &xferStat, -1);
-    free((AX_DMA_DESC_T *)dmaMsg.pDescBuf);
-    AX_DMA_Close(fd);
-    return 0;
+
+    if ((pDstVirAddr != NULL) && (pDstVirAddr != dstBuf->aVir)) {
+        nRet = AX_SYS_Munmap(pDstVirAddr, size);
+        if (nRet != 0) {
+            printf("AX_SYS_Munmap pDstVirAddr failed\n");
+            nResult = -1;
+        }
+    }
+
+    return nResult;
 }
 
 /*
@@ -491,12 +490,14 @@ static int ax_mem_cmm_test_007(void)
 
         srcBuf.aPhy = src_phyaddr[j];
         srcBuf.aVir = src_pviraddr[j];
+        srcBuf.bIsCached = AX_TRUE;
         dstBuf.aPhy = dst_phyaddr[j];
         dstBuf.aVir = dst_pviraddr[j];
+        dstBuf.bIsCached = AX_FALSE;
 
-        //printf("begin DMA transfer: src_phyaddr:0x%llx dst_phyaddr:0x%llx size:%d\n",src_phyaddr[j], dst_phyaddr[j], l_size);
-        AX_DMA_FUNC_1D(&srcBuf, &dstBuf, l_size , AX_TRUE);
-        //printf("after DMA transfer\n");
+        //printf("begin MEMCPY transfer: src_phyaddr:0x%llx dst_phyaddr:0x%llx size:%d\n",src_phyaddr[j], dst_phyaddr[j], l_size);
+        AX_MEMCPY_FUNC(&srcBuf, &dstBuf, l_size);
+        //printf("after MEMCPY transfer\n");
 
         for (i = 0; i < l_size; i++) {
             if (dst_pviraddr[j][i] != src_pviraddr[j][i]) {
@@ -588,12 +589,14 @@ static int ax_mem_cmm_test_008(void)
 
         srcBuf.aPhy = src_phyaddr[j];
         srcBuf.aVir = src_pviraddr[j];
+        srcBuf.bIsCached = AX_FALSE;
         dstBuf.aPhy = dst_phyaddr[j];
         dstBuf.aVir = dst_pviraddr[j];
+        dstBuf.bIsCached = AX_TRUE;
 
-        //printf("begin DMA transfer: src_phyaddr:0x%llx dst_phyaddr:0x%llx size:%d\n",src_phyaddr[j], dst_phyaddr[j], l_size);
-        AX_DMA_FUNC_1D(&srcBuf, &dstBuf, l_size , AX_TRUE);
-        //printf("after DMA transfer\n");
+        //printf("begin MEMCPY transfer: src_phyaddr:0x%llx dst_phyaddr:0x%llx size:%d\n",src_phyaddr[j], dst_phyaddr[j], l_size);
+        AX_MEMCPY_FUNC(&srcBuf, &dstBuf, l_size);
+        //printf("after MEMCPY transfer\n");
 
         nRet = AX_SYS_MinvalidateCache(dst_phyaddr[j], (AX_VOID *)dst_pviraddr[j], l_size);
         if (nRet != 0) {
@@ -689,10 +692,12 @@ static int ax_mem_cmm_test_009(void)
 
         srcBuf.aPhy = src_phyaddr;
         srcBuf.aVir = src_pviraddr;
+        srcBuf.bIsCached = AX_TRUE;
         dstBuf.aPhy = dst_phyaddr;
         dstBuf.aVir = dst_pviraddr;
+        dstBuf.bIsCached = AX_FALSE;
 
-        AX_DMA_FUNC_1D(&srcBuf, &dstBuf, l_size , AX_TRUE);
+        AX_MEMCPY_FUNC(&srcBuf, &dstBuf, l_size);
 
         for (i = offset; i < l_size; i++) {
             if ((((AX_U8 *)dst_pviraddr)[i]) != (((AX_U8 *)src_pviraddr)[i])) {
@@ -778,12 +783,14 @@ static int ax_mem_cmm_test_010(void)
 
         srcBuf.aPhy = src_phyaddr;
         srcBuf.aVir = src_pviraddr;
+        srcBuf.bIsCached = AX_TRUE;
         dstBuf.aPhy = dst_phyaddr;
         dstBuf.aVir = dst_pviraddr;
+        dstBuf.bIsCached = AX_FALSE;
 
-        //printf("begin DMA transfer: src_phyaddr:0x%llx dst_phyaddr:0x%llx size:%d\n",src_phyaddr[j], dst_phyaddr[j], l_size);
-        AX_DMA_FUNC_1D(&srcBuf, &dstBuf, l_size , AX_TRUE);
-        //printf("after DMA transfer\n");
+        //printf("begin MEMCPY transfer: src_phyaddr:0x%llx dst_phyaddr:0x%llx size:%d\n",src_phyaddr[j], dst_phyaddr[j], l_size);
+        AX_MEMCPY_FUNC(&srcBuf, &dstBuf, l_size);
+        //printf("after MEMCPY transfer\n");
 
         for (i = offset; i < l_size; i++) {
             if (((AX_U8 *)dst_pviraddr)[i] != ((AX_U8 *)src_pviraddr)[i]) {
@@ -868,12 +875,14 @@ static int ax_mem_cmm_test_011(void)
 
         srcBuf.aPhy = src_phyaddr;
         srcBuf.aVir = src_pviraddr;
+        srcBuf.bIsCached = AX_TRUE;
         dstBuf.aPhy = dst_phyaddr;
         dstBuf.aVir = dst_pviraddr;
+        dstBuf.bIsCached = AX_FALSE;
 
-        //printf("begin DMA transfer: src_phyaddr:0x%llx dst_phyaddr:0x%llx size:%d\n",src_phyaddr[j], dst_phyaddr[j], l_size);
-        AX_DMA_FUNC_1D(&srcBuf, &dstBuf, l_size , AX_TRUE);
-        //printf("after DMA transfer\n");
+        //printf("begin MEMCPY transfer: src_phyaddr:0x%llx dst_phyaddr:0x%llx size:%d\n",src_phyaddr[j], dst_phyaddr[j], l_size);
+        AX_MEMCPY_FUNC(&srcBuf, &dstBuf, l_size);
+        //printf("after MEMCPY transfer\n");
 
         for (i = offset; i < l_size/4+offset; i++) {
             if (((AX_U8 *)dst_pviraddr)[i] != ((AX_U8 *)src_pviraddr)[i]) {
@@ -957,12 +966,14 @@ static int ax_mem_cmm_test_012(void)
 
         srcBuf.aPhy = src_phyaddr;
         srcBuf.aVir = src_pviraddr;
+        srcBuf.bIsCached = AX_TRUE;
         dstBuf.aPhy = dst_phyaddr;
         dstBuf.aVir = dst_pviraddr;
+        dstBuf.bIsCached = AX_FALSE;
 
-        //printf("begin DMA transfer: src_phyaddr:0x%llx dst_phyaddr:0x%llx size:%d\n",src_phyaddr[j], dst_phyaddr[j], l_size);
-        AX_DMA_FUNC_1D(&srcBuf, &dstBuf, l_size , AX_TRUE);
-        //printf("after DMA transfer\n");
+        //printf("begin MEMCPY transfer: src_phyaddr:0x%llx dst_phyaddr:0x%llx size:%d\n",src_phyaddr[j], dst_phyaddr[j], l_size);
+        AX_MEMCPY_FUNC(&srcBuf, &dstBuf, l_size);
+        //printf("after MEMCPY transfer\n");
 
         //should fail
         for (i = offset; i < l_size/2+offset; i++) {

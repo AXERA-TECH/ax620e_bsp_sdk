@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -535,7 +535,7 @@ static AX_S32 SampleCommPoolInit()
 
 static AX_S32 SampleJencStart()
 {
-    AX_S32 s32Ret;
+    AX_S32 s32Ret, s32Retry = 5;
     AX_U32 cid;
     AX_VENC_JPEG_PARAM_T stJpegParam;
     AX_VENC_CHN_ATTR_T stVencChnAttr;
@@ -604,7 +604,22 @@ END:
         }
 
         AX_VENC_StopRecvFrame(cid);
-        AX_VENC_DestroyChn(cid);
+
+        s32Retry = 5;
+        do {
+            s32Ret = AX_VENC_DestroyChn(cid);
+            if (AX_ERR_VENC_BUSY == s32Ret) {
+                SAMPLE_ERR_LOG("VencChn %d:AX_VENC_DestroyChn return AX_ERR_VENC_BUSY,retry...", cid);
+                --s32Retry;
+                usleep(100 * 1000);
+            } else {
+                break;
+            }
+        } while (s32Retry >= 0);
+
+        if (s32Retry == -1 || AX_SUCCESS != s32Ret) {
+            SAMPLE_ERR_LOG("VencChn %d: AX_VENC_DestroyChn failed, s32Retry=%d, s32Ret=0x%x\n", cid, s32Retry, s32Ret);
+        }
 
         SAMPLE_LOG("JencChn %d exit!\n", cid);
     }

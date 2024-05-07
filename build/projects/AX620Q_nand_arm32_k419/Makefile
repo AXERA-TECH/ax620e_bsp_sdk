@@ -14,6 +14,7 @@ MKFS_UBIFS        := $(TOOLS_PATH)/mkubifs/mkfs.ubifs
 MK_UBINIZE        := $(TOOLS_PATH)/mkubifs/ubinize
 COPY_FILE         := $(BUILD_PATH)/tools/copy_files.py
 MAKE_SQUASHFS     := $(TOOLS_PATH)/mksquashfs/mksquashfs
+PROJECT_MAK       := $(BUILD_PATH)/projects/$(PROJECT)/project.mak
 
 #rootfs
 SRC_ROOTFS_DIR    := $(HOME_PATH)
@@ -23,6 +24,8 @@ ROOTFS_UBI_IMG    := rootfs.ubifs
 SOC_UBI_IMG       := soc.ubifs
 OPT_UBI_IMG       := opt.ubifs
 rootfs_img_size   := $(call KM2Bytes,$(ROOTFS_PARTITION_SIZE))
+MODIFY_FSTAB_FILE := $(BUILD_PATH)/tools/modify_fstab.sh
+OUT_FSTAB_FILE    := $(DST_ROOTFS_DIR)/etc/fstab
 
 #soc
 SRC_SOC_DIR       := $(HOME_PATH)
@@ -80,7 +83,7 @@ rootfs:
 	@$(MKDIR) -p $(DST_ROOTFS_DIR)/opt
 	@$(MKDIR) $(DST_ROOTFS_DIR)/var/www
 	@$(MKDIR) $(IMAGE_OUTDIR)
-	@python3 $(COPY_FILE) $(SRC_ROOTFS_DIR) rootfs.filelist $(DST_ROOTFS_DIR)
+	@python3 $(COPY_FILE) $(PROJECT) $(PROJECT_MAK) $(SRC_ROOTFS_DIR) rootfs.filelist $(DST_ROOTFS_DIR)
 	@cp -rf $(FSTAB_FILE) $(DST_ROOTFS_DIR)/etc/fstab
 	@cp -rf rootfs/etc/fw_env.config $(DST_ROOTFS_DIR)/etc/
 	@cp -rf rootfs/etc/init.d/rcS $(DST_ROOTFS_DIR)/etc/init.d/
@@ -88,6 +91,8 @@ rootfs:
 ifneq ($(findstring yes, $(debugkconfig) $(debug)),)
 	echo "/soc/scripts/kmemleak_scan.sh &" >> $(DST_ROOTFS_DIR)/etc/init.d/rcS
 endif
+	@chmod 755 $(MODIFY_FSTAB_FILE)
+	@bash $(MODIFY_FSTAB_FILE) $(OUT_FSTAB_FILE) "$(FLASH_PARTITIONS)"
 
 install:
 	@$(ECHO) -e $(GREEN) "rootfs $@..." $(DONE)
@@ -103,7 +108,7 @@ image: rootfs_image param_image
 rootfs_image:
 	@$(ECHO) -e $(GREEN) "making $@ ..." $(DONE)
 #soc
-	@python3 $(COPY_FILE) $(SRC_SOC_DIR) soc.filelist $(DST_SOC_DIR)
+	@python3 $(COPY_FILE) $(PROJECT) $(PROJECT_MAK) $(SRC_SOC_DIR) soc.filelist $(DST_SOC_DIR)
 	@chmod 755 $(DST_SOC_DIR)/scripts/*.sh
 ifneq ($(strip $(CMM_POOL_PARAM)),)
 	@sed -i "s/cmmpool*=.*/cmmpool=$(CMM_POOL_PARAM)/g" $(DST_SOC_DIR)/scripts/auto_load_all_drv.sh
@@ -122,14 +127,14 @@ ifeq ($(asan), yes)
 	@cp -rf $(CROSS_LIB_PATH)/libasan*.so* $(DST_OPT_DIR)/lib
 endif
 	@mkdir -p $(DST_OPT_DIR)/etc/models/aiisp
-	@python3 $(COPY_FILE) $(SRC_OPT_DIR) opt.filelist $(DST_OPT_DIR)
+	@python3 $(COPY_FILE) $(PROJECT) $(PROJECT_MAK) $(SRC_OPT_DIR) opt.filelist $(DST_OPT_DIR)
 	@for element in $(SENSOR_TYPE); do \
 		if [ ! -d $(CUR_DIR)/sensors/$$element ]; then \
 			echo "Error: Unsupported sensor: $$element"; \
 			exit 1; \
 		fi; \
-		python3 $(COPY_FILE) $(SRC_OPT_DIR) $(CUR_DIR)/sensors/$$element/so.filelist $(DST_OPT_DIR); \
-		python3 $(COPY_FILE) $(SRC_OPT_DIR) $(CUR_DIR)/sensors/$$element/model.filelist $(DST_OPT_DIR); \
+		python3 $(COPY_FILE) $(PROJECT) $(PROJECT_MAK) $(SRC_OPT_DIR) $(CUR_DIR)/sensors/$$element/so.filelist $(DST_OPT_DIR); \
+		python3 $(COPY_FILE) $(PROJECT) $(PROJECT_MAK) $(SRC_OPT_DIR) $(CUR_DIR)/sensors/$$element/model.filelist $(DST_OPT_DIR); \
 	done
 	@mkdir -p $(DST_OPT_DIR)/data
 	@mkdir -p $(DST_OPT_DIR)/usr/bin

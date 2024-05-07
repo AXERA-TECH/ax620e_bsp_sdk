@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Shanghai) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Shanghai) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Shanghai) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -37,7 +37,7 @@ int i2c_init(AX_U8 bus_num, AX_U16 slave_addr)
     i2c_fd = open(device_name, O_RDWR);
     if (i2c_fd < 0) {
         printf("Open /dev/i2c-%d error!\n", bus_num);
-        return -1;
+        return I2C_RET_FAILURE;
     }
 
     ret = ioctl(i2c_fd, I2C_SLAVE_FORCE, slave_addr);
@@ -54,9 +54,9 @@ int i2c_exit(int i2c_fd)
     if (i2c_fd >= 0) {
         close(i2c_fd);
         i2c_fd = -1;
-        return 0;
+        return I2C_RET_SUCCESS;
     }
-    return -1;
+    return I2C_RET_FAILURE;
 }
 
 int I2cSwapBytes(

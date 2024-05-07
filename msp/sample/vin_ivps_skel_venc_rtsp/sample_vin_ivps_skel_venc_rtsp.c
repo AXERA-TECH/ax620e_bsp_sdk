@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -12,7 +12,6 @@
 #include "sample_ivps_hal.h"
 #include "ax_skel_api.h"
 #include <sys/prctl.h>
-#include "algo.h"
 
 AX_U32 chn_num = 3;
 #define ALGO_CHN (1)
@@ -177,8 +176,8 @@ static AX_VOID __set_vin_attr(AX_CAMERA_T *pCam, SAMPLE_SNS_TYPE_E eSnsType, AX_
     pCam->tDevAttr.eSnsMode = eHdrMode;
     pCam->eHdrMode = eHdrMode;
     pCam->eSysMode = eSysMode;
-    pCam->tPipeAttr.eSnsMode = eHdrMode;
-    pCam->tPipeAttr.bAiIspEnable = bAiispEnable;
+    pCam->tPipeAttr[pCam->nPipeId].eSnsMode = eHdrMode;
+    pCam->tPipeAttr[pCam->nPipeId].bAiIspEnable = bAiispEnable;
     if (eHdrMode > AX_SNS_LINEAR_MODE) {
         pCam->tDevAttr.eSnsOutputMode = AX_SNS_DOL_HDR;
     }
@@ -211,17 +210,17 @@ static AX_U32 __sample_case_single_dummy(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYPE_
 
     for (i = 0; i < pCommonArgs->nCamCnt; i++) {
         pCam = &pCamList[i];
+        pCam->nPipeId = 0;
         COMMON_VIN_GetSnsConfig(eSnsType, &pCam->tMipiAttr, &pCam->tSnsAttr,
                                 &pCam->tSnsClkAttr, &pCam->tDevAttr,
-                                &pCam->tPipeAttr, pCam->tChnAttr);
+                                &pCam->tPipeAttr[pCam->nPipeId], pCam->tChnAttr);
 
         pCam->nDevId = 0;
         pCam->nRxDev = 0;
-        pCam->nPipeId = 0;
         pCam->tSnsClkAttr.nSnsClkIdx = 0;
         pCam->tDevBindPipe.nNum =  1;
         pCam->tDevBindPipe.nPipeId[0] = pCam->nPipeId;
-        pCam->ptSnsHdl = COMMON_ISP_GetSnsObj(eSnsType);
+        pCam->ptSnsHdl[pCam->nPipeId] = COMMON_ISP_GetSnsObj(eSnsType);
         pCam->eBusType = COMMON_ISP_GetSnsBusType(eSnsType);
         pCam->eLoadRawNode = eLoadRawNode;
         pCam->eInputMode = AX_INPUT_MODE_MIPI;
@@ -286,14 +285,14 @@ static AX_U32 __sample_case_single_os04a10(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYP
     pCam = &pCamList[0];
     COMMON_VIN_GetSnsConfig(eSnsType, &pCam->tMipiAttr, &pCam->tSnsAttr,
                             &pCam->tSnsClkAttr, &pCam->tDevAttr,
-                            &pCam->tPipeAttr, pCam->tChnAttr);
+                            &pCam->tPipeAttr[pCam->nPipeId], pCam->tChnAttr);
     pCam->nDevId = 0;
     pCam->nRxDev = 0;
     pCam->nPipeId = 0;
     pCam->tSnsClkAttr.nSnsClkIdx = 0;
     pCam->tDevBindPipe.nNum =  1;
     pCam->tDevBindPipe.nPipeId[0] = pCam->nPipeId;
-    pCam->ptSnsHdl = COMMON_ISP_GetSnsObj(eSnsType);
+    pCam->ptSnsHdl[pCam->nPipeId] = COMMON_ISP_GetSnsObj(eSnsType);
     pCam->eBusType = COMMON_ISP_GetSnsBusType(eSnsType);
     __set_pipe_hdr_mode(&pCam->tDevBindPipe.nHDRSel[0], eHdrMode);
     __set_vin_attr(pCam, eSnsType, eHdrMode, eSysMode, pVinParam->bAiispEnable);
@@ -383,7 +382,6 @@ static void *VencGetStreamProc(void *arg)
 
     if (pStrm == NULL) {
         ALOGE("Open output file error!");
-        return NULL;
     }
 
     while (AX_TRUE == pstPara->bThreadStart && !ThreadLoopStateGet()) {
@@ -393,7 +391,7 @@ static void *VencGetStreamProc(void *arg)
             totalGetStream++;
 
             /* save 30 frames default */
-            if(totalGetStream <= 30){
+            if (pStrm && totalGetStream <= 30){
                 fwrite(stStream.stPack.pu8Addr, 1, stStream.stPack.u32Len, pStrm);
                 fflush(pStrm);
             }
@@ -618,7 +616,7 @@ static AX_S32 SampleVencInit(AX_S32 nChnNum)
 
 static AX_S32 SampleVencDeInit(AX_S32 nChnNum)
 {
-    AX_S32 VencChn = 0, s32Ret = 0;
+    AX_S32 VencChn = 0, s32Ret = 0, s32Retry = 5;
 
     for (VencChn = 0; VencChn < nChnNum; VencChn++) {
 
@@ -628,10 +626,20 @@ static AX_S32 SampleVencDeInit(AX_S32 nChnNum)
             return s32Ret;
         }
 
-        s32Ret = AX_VENC_DestroyChn(VencChn);
-        if (0 != s32Ret) {
-            ALOGE("VencChn %d:AX_VENC_DestroyChn failed,s32Ret:0x%x", VencChn, s32Ret);
-            return s32Ret;
+        s32Retry = 5;
+        do {
+            s32Ret = AX_VENC_DestroyChn(VencChn);
+            if (AX_ERR_VENC_BUSY == s32Ret) {
+                ALOGE("VencChn %d:AX_VENC_DestroyChn return AX_ERR_VENC_BUSY,retry...", VencChn);
+                --s32Retry;
+                usleep(100 * 1000);
+            } else {
+                break;
+            }
+        } while (s32Retry >= 0);
+
+        if (s32Retry == -1 || AX_SUCCESS != s32Ret) {
+            ALOGE("VencChn %d: AX_VENC_DestroyChn failed, s32Retry=%d, s32Ret=0x%x\n", VencChn, s32Retry, s32Ret);
         }
 
         if (AX_TRUE == gGetStreamPara[VencChn].bThreadStart) {
@@ -800,7 +808,9 @@ AX_S32 draw_rect(IVPS_RGN_HANDLE handle, AX_SKEL_RESULT_T *pstResult, float aspe
         }
         disp[i].uDisp.tPolygon.nLineWidth = 3;
         disp[i].uDisp.tPolygon.bSolid = AX_FALSE;
-        disp[i].uDisp.tPolygon.bCornerRect = AX_FALSE;
+        disp[i].uDisp.tPolygon.tCornerRect.bEnable = AX_FALSE;
+        disp[i].uDisp.tPolygon.tCornerRect.nHorLength = 20;
+        disp[i].uDisp.tPolygon.tCornerRect.nVerLength = 10;
         disp[i].uDisp.tPolygon.nAlpha = 255;
         disp[i].uDisp.tPolygon.nColor = 0;
     }
@@ -817,7 +827,7 @@ AX_S32 draw_rect(IVPS_RGN_HANDLE handle, AX_SKEL_RESULT_T *pstResult, float aspe
 
 static AX_VOID SkelResultCallback(AX_SKEL_HANDLE pHandle, AX_SKEL_RESULT_T *pstResult, AX_VOID *rgn_handles) {
 
-    if(rgn_handles == NULL){
+    if(rgn_handles == NULL || (!pstResult)){
         ALOGI("rgn_handles is null\n");
         return;
     }
@@ -834,42 +844,10 @@ static AX_VOID SkelResultCallback(AX_SKEL_HANDLE pHandle, AX_SKEL_RESULT_T *pstR
     return;
 }
 
-static AX_S32 SampleSkelInit(){
-    // init
-    AX_S32 s32Ret = 0;
-    AX_SKEL_INIT_PARAM_T stInitParam = {0};
-    stInitParam.pStrModelDeploymentPath = "/opt/etc/skelModels";
-    s32Ret = AX_SKEL_Init(&stInitParam);
-    if(s32Ret != 0){
-        ALOGE("AX_SKEL_Init error");
-    }
-
-    //create handle
-    AX_SKEL_HANDLE_PARAM_T stHandleParam = {0};
-    stHandleParam.ePPL = (AX_SKEL_PPL_E)4;//hvcp
-    stHandleParam.nFrameDepth = 1;
-    stHandleParam.nFrameCacheDepth = 1;
-    stHandleParam.nIoDepth = 0;
-    stHandleParam.nWidth = 1920;
-    stHandleParam.nHeight = 1080;
-
-    s32Ret = AX_SKEL_Create(&stHandleParam, &g_pSkelHandle);
-    if(s32Ret != 0){
-        ALOGE("AX_SKEL_Create error");
-    }
-    return s32Ret;
-}
-
-static void SampleSkelDeInit(){
-    AX_SKEL_Destroy(g_pSkelHandle);
-    AX_SKEL_DeInit();
-}
-
-static AX_VOID *GetFrameThreadForAI(AX_VOID *pThreadParam)
-{
-    IVPS_GET_THREAD_PARAM_T *t = (IVPS_GET_THREAD_PARAM_T *)pThreadParam;
+static IVPS_RGN_HANDLE* SampleRgnInit(){
+    IVPS_GET_THREAD_PARAM_T *t = (IVPS_GET_THREAD_PARAM_T *)&s_sample_ivps_thread_param[1];
     IVPS_GRP IvpsGrp = t->nIvpsGrp;
-    IVPS_CHN IvpsChn = t->nIvpsChn;
+    // IVPS_CHN IvpsChn = t->nIvpsChn;
     prctl(PR_SET_NAME, "SAMPLE_IVPS_GET_AI");
 
     //rgn
@@ -905,8 +883,80 @@ static AX_VOID *GetFrameThreadForAI(AX_VOID *pThreadParam)
         }
 
     }
-    ret = AX_SKEL_RegisterResultCallback(g_pSkelHandle, SkelResultCallback, (void*)rgn_handles);
+    return rgn_handles;
 
+}
+static AX_S32 SampleSkelInit(IVPS_RGN_HANDLE *rgn_handles){
+    // init
+    AX_S32 s32Ret = 0;
+    AX_SKEL_INIT_PARAM_T stInitParam = {0};
+    stInitParam.pStrModelDeploymentPath = "/opt/etc/skelModels";
+    s32Ret = AX_SKEL_Init(&stInitParam);
+    if(s32Ret != 0){
+        ALOGE("AX_SKEL_Init error");
+    }
+
+    //create handle
+    AX_SKEL_HANDLE_PARAM_T stHandleParam = {0};
+    stHandleParam.ePPL = AX_SKEL_PPL_HVCP;//hvcp
+    stHandleParam.nFrameDepth = 1;
+    stHandleParam.nFrameCacheDepth = 1;
+    stHandleParam.nIoDepth = 0;
+    stHandleParam.nWidth = 1920;
+    stHandleParam.nHeight = 1080;
+
+    s32Ret = AX_SKEL_Create(&stHandleParam, &g_pSkelHandle);
+    if(s32Ret != 0){
+        ALOGE("AX_SKEL_Create error");
+    }
+    else{
+        s32Ret = AX_SKEL_RegisterResultCallback(g_pSkelHandle, SkelResultCallback, (void*)rgn_handles);
+    }
+    return s32Ret;
+}
+
+static AX_S32 SampleSkelDeInit()
+{
+    if (g_pSkelHandle) {
+        AX_SKEL_Destroy(g_pSkelHandle);
+        g_pSkelHandle =  NULL;
+    }
+    AX_SKEL_DeInit();
+    return 0;
+}
+
+static AX_VOID SampleRgnDeInit(IVPS_RGN_HANDLE *rgn_handles){
+    IVPS_GET_THREAD_PARAM_T *t = (IVPS_GET_THREAD_PARAM_T *)&s_sample_ivps_thread_param[1];
+    IVPS_GRP IvpsGrp = t->nIvpsGrp;
+    //IVPS_CHN IvpsChn = t->nIvpsChn;
+    for (int i = 0; i < chn_num; i++)
+    {
+        if(i != ALGO_CHN){
+            AX_S32 ret = AX_IVPS_RGN_DetachFromFilter(rgn_handles[i], IvpsGrp, ((i + 1) << 4) + 1);
+            if (ret != 0)
+            {
+                ALOGE("AX_IVPS_RGN_DetachFromFilter failed, ret=0x%x.\n", ret);
+            }
+            ret = AX_IVPS_RGN_Destroy(rgn_handles[i]);
+            if (ret != 0)
+            {
+                ALOGE("AX_IVPS_RGN_Destroy chn:%d failed, ret=0x%x.\n", i, ret);
+            }
+        }
+    }
+
+    free(rgn_handles);
+    rgn_handles = NULL;
+    free(aspect_w);
+    free(aspect_h);
+
+}
+
+static AX_VOID *GetFrameThreadForAI(AX_VOID *pThreadParam)
+{
+    IVPS_GET_THREAD_PARAM_T *t = (IVPS_GET_THREAD_PARAM_T *)&s_sample_ivps_thread_param[1];
+    IVPS_GRP IvpsGrp = t->nIvpsGrp;
+    IVPS_CHN IvpsChn = t->nIvpsChn;
     AX_VIDEO_FRAME_T tVideoFrame;
     while (!gLoopExit) {
         memset(&tVideoFrame, 0, sizeof(AX_VIDEO_FRAME_T));
@@ -939,27 +989,6 @@ static AX_VOID *GetFrameThreadForAI(AX_VOID *pThreadParam)
         }
         ret = AX_IVPS_ReleaseChnFrame(IvpsGrp, IvpsChn, &tVideoFrame);
     }
-
-    for (int i = 0; i < chn_num; i++)
-    {
-        if(i != ALGO_CHN){
-            ret = AX_IVPS_RGN_DetachFromFilter(rgn_handles[i], IvpsGrp, ((i + 1) << 4) + 1);
-            if (ret != 0)
-            {
-                ALOGE("AX_IVPS_RGN_DetachFromFilter failed, ret=0x%x.\n", ret);
-            }
-            ret = AX_IVPS_RGN_Destroy(rgn_handles[i]);
-            if (ret != 0)
-            {
-                ALOGE("AX_IVPS_RGN_Destroy chn:%d failed, ret=0x%x.\n", i, ret);
-            }
-        }
-    }
-
-    free(rgn_handles);
-    rgn_handles = NULL;
-    free(aspect_w);
-    free(aspect_h);
 
     return (AX_VOID *)0;
 }
@@ -1193,11 +1222,9 @@ static AX_S32 SAMPLE_VIN_IVPS_VENC_RTSP(SAMPLE_VIN_PARAM_T *pVinParam)
     SAMPLE_IVPS_RegionUpdateStart(pVinParam->nOutChnNum);
 
     /* step 12. ax_skel init and start*/
-    s32Ret = SampleSkelInit();
-    if (s32Ret) {
-        ALOGE("SampleRtspInit fail, ret:0x%x", s32Ret);
-        goto EXIT_FAIL8;
-    }
+    IVPS_RGN_HANDLE* rgn_handles = SampleRgnInit();
+    SampleSkelInit(rgn_handles);
+
     SKEL_ThreadStart();
 
     if (pVinParam->pFrameInfo) {
@@ -1214,8 +1241,8 @@ static AX_S32 SAMPLE_VIN_IVPS_VENC_RTSP(SAMPLE_VIN_PARAM_T *pVinParam)
     SAMPLE_IVPS_RegionStop();
     SampleRtspDeInit();
 
-EXIT_FAIL8:
     SampleSkelDeInit();
+    SampleRgnDeInit(rgn_handles);
 EXIT_FAIL7:
     COMMON_NT_DeInit();
 EXIT_FAIL6:
@@ -1261,7 +1288,7 @@ AX_VOID PrintHelp()
     printf("\t\t0: Disable(default)\n");
     printf("\t\t1: Enable\n");
 
-    printf("\nExample:\n\t/opt/bin/sample_vin_ivps_venc_rtsp -c 1 -m 1 -e 1 -r 1\n");
+    printf("\nExample:\n\t/opt/bin/sample_vin_ivps_skel_venc_rtsp -c 1 -m 1 -e 1 -r 1\n");
 }
 
 static AX_VOID SigInt(AX_S32 signo)

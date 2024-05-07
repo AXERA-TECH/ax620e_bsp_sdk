@@ -1,0 +1,10 @@
+@dir: msp/out/$(MSP_OUT_DIR)
+#etc/models/aiisp/SC231AI_HDR_1920x1080*.axmodel
+etc/models/aiisp/SC231AI_SDR_1920x1080_10b_LCG_ISP1_A116X_I1-32X_0000_MULTI4_00000655144_240229_AX620E.axmodel
+etc/sc231ai_hdr_2lane.ini
+etc/sc231ai_sdr_2lane.ini
+etc/sc231ai_single_hdr_2lane_entry.ini
+etc/sc231ai_single_sdr_2lane_entry.ini
+etc/sc231ai_hdr_2x_ratio_1to1.bin
+etc/sc231ai_hdr_2x_ratio_default.bin
+

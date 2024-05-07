@@ -1,14 +1,18 @@
 # app
 app/demo/OPALDemo
 app/demo/QSDemo
+app/opal
 
 # third-party
 third-party/
 
 # msp out
-msp/out/arm_glibc/data/
-msp/out/arm_glibc/bin/
-msp/out/arm_glibc/etc/
+msp/out/arm_uclibc/data/
+msp/out/arm_uclibc/bin/
+msp/out/arm_uclibc/etc/
+msp/out/arm64_glibc/data/
+msp/out/arm64_glibc/bin/
+msp/out/arm64_glibc/etc/
 
 # build out
 build/out/

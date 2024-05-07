@@ -1,12 +1,12 @@
-/**********************************************************************************
+/**************************************************************************************************
  *
- * Copyright (c) 2019-2020 Beijing AXera Technology Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Beijing AXera Technology Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Beijing AXera Technology Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
- **********************************************************************************/
+ **************************************************************************************************/
 
 #include <stdio.h>
 #include <getopt.h>
@@ -15,6 +15,7 @@
 #include <string.h>
 
 #include "ax_sys_log.h"
+#include "isp_sensor_types.h"
 #include "sensor_user_debug.h"
 
 #define SENSOR_LOG_TAG "SENSOR"
@@ -25,10 +26,10 @@ AX_S32 ax_sensor_set_log_level(AX_LOG_LEVEL_E level)
 {
     if (level >= SYS_LOG_MAX || level <= SYS_LOG_MIN) {
         SNS_ERR("sensor log level is invalid[%d]\n", level);
-        return -1;
+        return AX_SNS_ERR_ILLEGAL_PARAM;
     }
     sensor_print_level = level;
-    return 0;
+    return AX_SNS_SUCCESS;
 }
 
 AX_LOG_LEVEL_E ax_sensor_get_log_level(void)
@@ -40,10 +41,10 @@ AX_S32 ax_sensor_set_log_target(AX_LOG_TARGET_E target)
 {
     if (target >= SYS_LOG_TARGET_MAX || target <= SYS_LOG_TARGET_MIN) {
         SNS_ERR("log target is invalid[%d]\n", target);
-        return -1;
+        return AX_SNS_ERR_ILLEGAL_PARAM;
     }
     sensor_print_target = target;
-    return 0;
+    return AX_SNS_SUCCESS;
 }
 
 AX_S32 ax_sensor_set_user_debug_log(AX_VOID)
@@ -65,5 +66,5 @@ AX_S32 ax_sensor_set_user_debug_log(AX_VOID)
         ax_sensor_set_log_target(target);
     }
 
-    return 0;
+    return AX_SNS_SUCCESS;
 }

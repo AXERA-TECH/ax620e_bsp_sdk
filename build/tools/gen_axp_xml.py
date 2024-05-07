@@ -6,17 +6,22 @@ import subprocess
 import random
 
 try:
-    import lxml.etree as ET
+    from lxml import etree
 except ModuleNotFoundError as e:
     os.system("python3 -m pip install --upgrade pip")
     os.system("pip3 install lxml")
-    import lxml.etree as ET
+    from lxml import etree
 
 append_target='''
 .PHONY: {target}
 {target}:
 	@$(ECHO) -e $(GREEN) "uboot $@..." $(DONE)
 '''
+
+img_node_configs={
+    "param":{"select":0,},
+    "rawdata":{"flag":0, "select":0, "type":"ERASEFLASH"},
+}
 
 def get_project_cfg(prj_name, prj_mak):
     prj_mak = os.path.abspath(prj_mak)
@@ -45,8 +50,24 @@ def get_project_cfg(prj_name, prj_mak):
 
     return lines
 
-def get_partition_sizes(prj_name, filename):
+def overlay_img_node_configs(prj_name, filename, node_configs=img_node_configs):
+    lines = get_project_cfg(prj_name, filename)
+    match = re.search(r"'XML_IMG_OPTION *:= *(.*?)'", str(lines))
+    if match:
+        match = match.group(1).replace("'","").replace('"','').replace(" ","").split(',')
+        for pair in match:
+            key, value = pair.split(':')
+            node_key, node_value = value.split('=')
+            tmp_node_dict = {node_key : node_value}
+            if not node_configs.get(key):
+                node_configs[key] = tmp_node_dict
+            else:
+                node_configs[key].update(tmp_node_dict)
+    return node_configs
+
+def get_partitions_info(prj_name, filename):
     partition_sizes = {}
+    flash_partitions = None
     lines = get_project_cfg(prj_name, filename)
 
     auto_fit_partition_name = None
@@ -63,11 +84,32 @@ def get_partition_sizes(prj_name, filename):
             match = re.search(r'AUTO_FIT_PARTITION\s+:=\s+(\w+)', line)
             if match:
                 auto_fit_partition_name = match.group(1).lower()
+            else:
+                match = re.search(r'FLASH_PARTITIONS\s+[:,+]=\s+(.+)', line)
+                if match:
+                    flash_partitions=match.group(1)
 
     if auto_fit_partition_name in partition_sizes.keys():
         partition_sizes[auto_fit_partition_name] = "0xffffffff"
 
-    return partition_sizes
+    if flash_partitions is None:
+        raise Exception(f"critical: no FLASH_PARTITIONS found in {filename}")
+    fpts = flash_partitions.split(",")
+    partition_list = []
+    partition_map={}
+    for fpt in fpts:
+        matched = re.search(r'(\w+)\((\w+)\)', fpt)
+        if not matched:
+            raise Exception(f"invalid partition: {fpt}")
+        sz,name=matched.groups()
+        if name in partition_map.keys():
+            raise Exception(f"multiple partion found: {name}")
+        if name == auto_fit_partition_name:
+            sz = "0xffffffff"
+        partition_map[name] = sz
+        partition_list.append([name,sz])
+
+    return partition_list
 
 def convert_to_MB(size):
     if size.endswith('K'):
@@ -112,9 +154,7 @@ def convert_to_Byte(size):
 def convert_to_sector(size):
     raise ValueError(f"Unsupported sector unit!")
 
-def gen_new_xml(src_xml, dst_xml, partitions_info):
-    tree = ET.parse(src_xml)
-    root = tree.getroot()
+def gen_partitions_node(partitions_info, parent_node):
     #Unit: 0, 1M Byte; 1, 512K Byte; 2, 1K Byte; 3, 1 Byte; 4, 1Sector
     convert_size = {
         0 : convert_to_MB,
@@ -123,17 +163,75 @@ def gen_new_xml(src_xml, dst_xml, partitions_info):
         3 : convert_to_Byte,
         4 : convert_to_sector
     }
-    for partitions in root.iter('Partitions'):
-        for partName, partSize in partitions_info.items():
-            matched = False
-            unit = int(partitions.attrib.get('unit'))
-            for partition in partitions:
-                if partition.attrib.get('id') == partName:
-                    partition.set('size', convert_size[unit](partSize))
-                    matched = True
-                    print(f"matched partition: {partName}, set size to: {partSize}")
-            if not matched:
-                raise AttributeError(f"{src_xml} 文件没有 '{partName}'分区!")
+    unit = int(parent_node.attrib.get('unit'))
+    print(f"[DEBUG] unit:{unit}")
+    for info in partitions_info:
+        name, size = info
+        new_partition_node = etree.Element("Partition", gap="0", id=f"{name}", size=f"{convert_size[unit](size)}")
+        parent_node.append(new_partition_node)
+
+def new_img_node(name,size, parent_node):
+    attr_type = None
+    if name in img_node_configs.keys():
+        attr_select = img_node_configs[name].get("select", 1)
+        attr_flag = img_node_configs[name].get("flag", 1)
+        attr_type = img_node_configs[name].get("type", "CODE")
+        img_node = etree.SubElement(parent_node, "Img", flag=f"{attr_flag}", name=f"{name.upper()}", select=f"{attr_select}")
+    else:
+        img_node = etree.SubElement(parent_node, "Img", flag="1", name=f"{name.upper()}", select="1")
+    id_node = etree.SubElement(img_node, "ID")
+    id_node.text = f"{name.upper()}"
+    img_node.append(id_node)
+    type_node = etree.SubElement(img_node, "Type")
+    if attr_type is not None:
+         type_node.text = attr_type
+    else:
+        type_node.text = "CODE"
+    img_node.append(type_node)
+    block_node = etree.SubElement(img_node, "Block", id=f"{name}")
+    img_node.append(block_node)
+    base_node = etree.SubElement(block_node, "Base")
+    base_node.text = "0x0"
+    size_node = etree.SubElement(block_node, "Size")
+    size_node.text = "0x0"
+    block_node.append(base_node)
+    block_node.append(size_node)
+    file_node = etree.SubElement(img_node, "File")
+    auth_node = etree.SubElement(img_node, "Auth", algo="0")
+    description_node = etree.SubElement(img_node, "Description")
+    description_node.text = f"Download {name} image file"
+    img_node.append(file_node)
+    img_node.append(auth_node)
+    img_node.append(description_node)
+    return img_node
+
+def gen_ImgList_node(partitions_info, imglist_node):
+    spl_info = None
+    for info in partitions_info:
+        name,size=info
+        if name == "spl":
+            spl_info = info
+            continue
+        if name == "env":
+            continue
+        new_img_node(name, size, imglist_node)
+
+    if spl_info is None:
+        raise Exception("no SPL img found!!!")
+
+    name,size=spl_info
+    new_img_node(name, size, imglist_node)
+
+    return imglist_node
+
+def gen_new_xml(src_xml, dst_xml, partitions_info):
+    parser = etree.XMLParser(remove_blank_text=True)
+    tree = etree.parse(src_xml, parser)
+    root = tree.getroot()
+    partitions_node = tree.xpath("//Partitions")[0]
+    imglist_node    = tree.xpath("//ImgList")[0]
+    gen_partitions_node(partitions_info, partitions_node)
+    gen_ImgList_node(partitions_info, imglist_node)
     tree.write(dst_xml, encoding="utf-8", xml_declaration=True, method="xml", pretty_print=True)
 
 if __name__ == "__main__":
@@ -147,7 +245,8 @@ if __name__ == "__main__":
     project_mak = sys.argv[3]
     dst_xml     = sys.argv[4]
 
-    partition_sizes = get_partition_sizes(prj_name, project_mak)
-    gen_new_xml(src_xml, dst_xml, partition_sizes)
+    overlay_img_node_configs(prj_name, project_mak, img_node_configs)
+    partitions_info = get_partitions_info(prj_name, project_mak)
+    gen_new_xml(src_xml, dst_xml, partitions_info)
     print("gen axp xml done!!!")
 

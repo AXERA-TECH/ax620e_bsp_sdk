@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Shanghai) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Shanghai) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Shanghai) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -57,7 +57,7 @@ static AX_S32 sensor_ctx_init(ISP_PIPE_ID nPipeId)
         sns_obj = (SNS_STATE_OBJ *)calloc(1, sizeof(SNS_STATE_OBJ));
         if (AX_NULL == sns_obj) {
             SNS_ERR("malloc g_szsc450aiCtx failed\r\n");
-            return SNS_ERR_CODE_NOT_MEM;
+            return AX_SNS_ERR_NOMEM;
         }
     }
 
@@ -65,7 +65,7 @@ static AX_S32 sensor_ctx_init(ISP_PIPE_ID nPipeId)
 
     SENSOR_SET_CTX(nPipeId, sns_obj);
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 static AX_VOID sensor_ctx_exit(ISP_PIPE_ID nPipeId)
@@ -93,18 +93,17 @@ static AX_S32 sc450ai_get_chipid(ISP_PIPE_ID nPipeId, AX_S32 *pSnsId)
 
     if (sensor_id != SC450AI_SENSOR_CHIP_ID) {
         SNS_ERR("%s: Failed to read sensor sc450ai id 0x%x\n", __func__, sensor_id);
-        return SNS_ERR_CODE_ILLEGAL_PARAMS;
+        return AX_SNS_ERR_UNKNOWN;
     }
 
     *pSnsId = sensor_id;
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 static void sc450ai_init(ISP_PIPE_ID nPipeId)
 {
     AX_S32 nRet = 0;
-    AX_S32 nImagemode = 0;
     AX_S32 nSnsId = 0;
     SNS_STATE_OBJ *sns_obj = AX_NULL;
 
@@ -129,23 +128,22 @@ static void sc450ai_init(ISP_PIPE_ID nPipeId)
     sc450ai_sensor_i2c_init(nPipeId);
 
     nRet = sc450ai_get_chipid(nPipeId, &nSnsId);
-    if (nRet != SNS_SUCCESS) {
+    if (nRet != AX_SNS_SUCCESS) {
         SNS_ERR("can't find sc450ai sensor id.\r\n");
     } else {
         SNS_DBG("sc450ai check chip id success.\r\n");
     }
 
     /* 3. config settings  */
-    nImagemode = sns_obj->eImgMode;
-    sc450ai_write_settings(nPipeId, nImagemode);
+    sc450ai_write_settings(nPipeId);
 
     /* 4. refresh ae param */
     sc450ai_cfg_aec_param(nPipeId);
 
     /* 5. refresh ae regs table */
     sc450ai_sns_refresh_all_regs_from_tbl(nPipeId);
+
     sns_obj->bSyncInit = AX_FALSE;
-    sns_obj->sns_mode_obj.nVts = sc450ai_get_vts(nPipeId);
 
     return;
 }
@@ -176,18 +174,18 @@ static AX_S32 sc450ai_sensor_streaming_ctrl(ISP_PIPE_ID nPipeId, AX_U32 on)
         usleep(50 * 1000);
         SNS_DBG("sensor stream off!\n");
     }
-    if (0 != result) {
-        return -1;
+    if (result) {
+        return result;
     }
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 static AX_S32 sc450ai_sensor_set_mode(ISP_PIPE_ID nPipeId, AX_SNS_ATTR_T *sns_mode)
 {
     AX_S32 nRet = 0;
     AX_S32 sns_setting_index = 0;
-    AX_F32 setting_fps = 30;
+    AX_F32 setting_fps = 30.0f;
     SNS_STATE_OBJ *sns_obj = AX_NULL;
 
     SNS_CHECK_PTR_VALID(sns_mode);
@@ -199,7 +197,7 @@ static AX_S32 sc450ai_sensor_set_mode(ISP_PIPE_ID nPipeId, AX_SNS_ATTR_T *sns_mo
         nRet = sensor_ctx_init(nPipeId);
         if (0 != nRet) {
             SNS_ERR("sensor_ctx_init failed!\n");
-            return SNS_ERR_CODE_INIT_FAILD;
+            return AX_SNS_ERR_NOT_INIT;
         } else {
             SENSOR_GET_CTX(nPipeId, sns_obj);
         }
@@ -222,9 +220,9 @@ static AX_S32 sc450ai_sensor_set_mode(ISP_PIPE_ID nPipeId, AX_SNS_ATTR_T *sns_mo
         setting_fps = 30;
 
     } else {
-        SNS_ERR("it's not supported. pipe=%d, mode=%d_%d_%d_%d\n",
+        SNS_ERR("it's not supported. pipe=%u, mode=%u_%u_%u_%f\n",
             nPipeId, sns_mode->eSnsMode, sns_mode->nWidth, sns_mode->nHeight, sns_mode->fFrameRate);
-        return SNS_ERR_CODE_ILLEGAL_PARAMS;
+        return AX_SNS_ERR_NOT_SUPPORT;
     }
 
     /* optional, Not Recommended. if nSettingIndex > 0 will take effect */
@@ -233,7 +231,7 @@ static AX_S32 sc450ai_sensor_set_mode(ISP_PIPE_ID nPipeId, AX_SNS_ATTR_T *sns_mo
         setting_fps = sns_mode->fFrameRate;
     }
 
-    SNS_DBG("pipe=%d, sns_setting_index=%d\n", nPipeId, sns_setting_index);
+    SNS_DBG("pipe=%u, sns_setting_index=%d\n", nPipeId, sns_setting_index);
     sns_obj->eImgMode = sns_setting_index;
     sns_obj->sns_mode_obj.eHDRMode = sns_mode->eSnsMode;
     sns_obj->sns_mode_obj.nWidth = sns_mode->nWidth;
@@ -241,7 +239,7 @@ static AX_S32 sc450ai_sensor_set_mode(ISP_PIPE_ID nPipeId, AX_SNS_ATTR_T *sns_mo
     sns_obj->sns_mode_obj.fFrameRate = setting_fps;
     memcpy(&sns_obj->sns_attr_param, sns_mode, sizeof(AX_SNS_ATTR_T));
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 static AX_S32 sc450ai_sensor_get_mode(ISP_PIPE_ID nPipeId, AX_SNS_ATTR_T *pSnsMode)
 {
@@ -257,7 +255,7 @@ static AX_S32 sc450ai_sensor_get_mode(ISP_PIPE_ID nPipeId, AX_SNS_ATTR_T *pSnsMo
         nRet = sensor_ctx_init(nPipeId);
         if (0 != nRet) {
             SNS_ERR("sensor_ctx_init failed!\n");
-            return -1;
+            return AX_SNS_ERR_NOT_INIT;
         } else {
             SENSOR_GET_CTX(nPipeId, sns_obj);
         }
@@ -265,7 +263,7 @@ static AX_S32 sc450ai_sensor_get_mode(ISP_PIPE_ID nPipeId, AX_SNS_ATTR_T *pSnsMo
 
     memcpy(pSnsMode, &sns_obj->sns_attr_param, sizeof(AX_SNS_ATTR_T));
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 static AX_S32 sc450ai_testpattern_ctrl(ISP_PIPE_ID nPipeId, AX_U32 on)
@@ -281,7 +279,7 @@ static AX_S32 sc450ai_testpattern_ctrl(ISP_PIPE_ID nPipeId, AX_U32 on)
         sc450ai_write_register(nPipeId, 0x4501, 0xb4);
     }
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 static AX_S32 sc450ai_mirror_flip(ISP_PIPE_ID nPipeId, AX_SNS_MIRRORFLIP_TYPE_E eSnsMirrorFlip)
@@ -309,7 +307,7 @@ static AX_S32 sc450ai_mirror_flip(ISP_PIPE_ID nPipeId, AX_SNS_MIRRORFLIP_TYPE_E 
             break;
     }
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 /****************************************************************************
@@ -331,7 +329,7 @@ static AX_S32 sc450ai_get_isp_default_params(ISP_PIPE_ID nPipeId, AX_SENSOR_DEFA
         nRet = sensor_ctx_init(nPipeId);
         if (0 != nRet) {
             SNS_ERR("sensor_ctx_init failed!\n");
-            return SNS_ERR_CODE_INIT_FAILD;
+            return AX_SNS_ERR_NOT_INIT;
         } else {
             SENSOR_GET_CTX(nPipeId, sns_obj);
         }
@@ -366,7 +364,7 @@ static AX_S32 sc450ai_get_isp_default_params(ISP_PIPE_ID nPipeId, AX_SENSOR_DEFA
         break;
     }
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 static AX_S32 sc450ai_get_black_level(ISP_PIPE_ID nPipeId, AX_SNS_BLACK_LEVEL_T *ptBlackLevel)
@@ -392,7 +390,7 @@ static AX_S32 sc450ai_get_black_level(ISP_PIPE_ID nPipeId, AX_SNS_BLACK_LEVEL_T 
         ptBlackLevel->nBlackLevel[3] = 1040;
     }
 
-    return SNS_SUCCESS;
+    return AX_SNS_SUCCESS;
 }
 
 

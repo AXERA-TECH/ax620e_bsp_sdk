@@ -1,4 +1,4 @@
-@dir: msp/out/arm_glibc
+@dir: msp/out/$(MSP_OUT_DIR)
 etc/models/aiisp/IMX678_SDR_3840x2160*.axmodel
 etc/models/aiisp/IMX678_HDR_3840x2160*.axmodel
 etc/imx678_hdr_online_620q.ini
@@ -9,3 +9,5 @@ etc/imx678_single_hdr_online_entry_620q.ini
 etc/imx678_single_hdr_online_entry.ini
 etc/imx678_single_sdr_online_entry_620q.ini
 etc/imx678_single_sdr_online_entry.ini
+etc/imx678_hdr_2x_ratio_1to1.bin
+etc/imx678_hdr_2x_ratio_default.bin

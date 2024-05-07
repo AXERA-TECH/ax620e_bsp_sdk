@@ -1,4 +1,4 @@
-@dir: msp/out/arm_glibc
+@dir: msp/out/$(MSP_OUT_DIR)
 lib/libsns_sc500ai.so
 lib/liblens_ms41908.so
 lib/liblens_ms41939.so

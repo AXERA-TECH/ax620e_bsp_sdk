@@ -1,6 +1,6 @@
-@dir: msp/out/arm_glibc
-etc/models/aiisp/SC450AI_HDR_2688x1520_*.axmodel
-etc/models/aiisp/SC450AI_SDR_2688x1520_*.axmodel
+@dir: msp/out/$(MSP_OUT_DIR)
+etc/models/aiisp/SC450AI_HDR_2688x1520_10b_LCG_ISP1_A8-32X_0000_00000696078_240308_AX620E.axmodel
+etc/models/aiisp/SC450AI_SDR_2688x1520_10b_LCG_ISP1_A32-60X_I1-16X_0000_MULTI4_00000696121_240308_AX620E.axmodel
 etc/sc450ai_sdr_temperature_normal.bin
 etc/sc450ai_sdr_hot_noise_balance.bin
 etc/sc450ai_hdr_temperature_normal.bin
@@ -25,3 +25,5 @@ etc/sc450ai_single_sdr_2lane_entry_620q.ini
 etc/sc450ai_double_sdr_online_entry_620q.ini
 etc/sc450ai_double_hdr_online_entry_620q.ini
 etc/sc450ai_sdr_mode3_switch_mode7.bin
+etc/sc450ai_hdr_2x_ratio_1to1.bin
+etc/sc450ai_hdr_2x_ratio_default.bin

@@ -1,0 +1,14881 @@
+#ifndef __SC200AI_SDR_H__
+#define __SC200AI_SDR_H__
+
+/********************************************************************
+* Store the default parameters of the sdr mode
+* warn: user need to add 'static' when defining global variables.
+        Limit the scope of the variable to this sensor
+*********************************************************************/
+
+#include "ax_isp_iq_api.h"
+#include "ax_isp_api.h"
+
+
+const static AX_ISP_VERSION_T ax_isp_version_param_sdr = {
+
+    /* nIspMajor */
+    4,
+    /* nIspMinor1 */
+    0,
+    /* nIspMinor2 */
+    31,
+    /* szBuildTime */
+    "",
+    /* szIspVersion */
+    "AX620E_ISP_V4.0.31",
+};
+
+const static AX_ISP_IQ_SCENE_PARAM_T scene_param_sdr = {
+    /* nAutoMode */
+    1,
+    /* tManualParam */
+    {
+        /* eAiWorkMode 0: AX_AI_DISABLE 1: AX_AI_ENABLE */
+        1,
+    },
+    /* tAutoParam */
+    {
+        /* nSceneNum */
+        3,
+        /* nDelta */
+        2048,
+        /* nRefValStart[4] */
+        {1024, 8192, 28672, /*0 - 2*/},
+        /* nRefValEnd[4] */
+        {8192, 28672, 884736, /*0 - 2*/},
+        /* nAiWorkMode[4] */
+        {1, 1, 1, /*0 - 2*/},
+    },
+};
+
+const static AX_ISP_IQ_AE_PARAM_T ae_param_sdr = {
+    /* nEnable */
+    1,
+    /* tExpManual */
+    {
+        /* nIspGain */
+        1024,
+        /* nAGain */
+        1024,
+        /* nDgain */
+        1024,
+        /* nHcgLcg */
+        2,
+        /* nSnsTotalAGain */
+        1024,
+        /* nSysTotalGain */
+        1024,
+        /* nShutter */
+        10000,
+        /* nIrisPwmDuty */
+        0,
+        /* nPos */
+        512,
+        /* nHdrRealRatioLtoS */
+        1024,
+        /* nHdrRealRatioStoVS */
+        1024,
+        /* nLumaHdrRealRatioLtoS */
+        1024,
+        /* nSetPoint */
+        25600,
+        /* nShortAgain */
+        0,
+        /* nShortDgain */
+        0,
+        /* nShortShutter */
+        0,
+        /* nVsAgain */
+        0,
+        /* nVsDgain */
+        0,
+        /* nVsShutter */
+        0,
+        /* nHdrRatio */
+        1024,
+        /* nHdrMaxShutterHwLimit */
+        970755,
+        /* nRealMaxShutter */
+        39880,
+    },
+    /* tAeAlgAuto */
+    {
+        /* nSetPoint */
+        25600,
+        /* nFaceTarget */
+        15360,
+        /* nTolerance */
+        10485760,
+        /* nAgainLcg2HcgTh */
+        15872,
+        /* nAgainHcg2LcgTh */
+        1228,
+        /* nAgainLcg2HcgRatio */
+        1024,
+        /* nAgainHcg2LcgRatio */
+        1024,
+        /* nLuxk */
+        104266,
+        /* nCompensationMode */
+        1,
+        /* nMaxIspGain */
+        16384,
+        /* nMinIspGain */
+        1024,
+        /* nMaxUserDgain */
+        1024,
+        /* nMinUserDgain */
+        1024,
+        /* nMaxUserTotalAgain */
+        55271,
+        /* nMinUserTotalAgain */
+        1024,
+        /* nMaxUserSysGain */
+        884336,
+        /* nMinUserSysGain */
+        1024,
+        /* nMaxShutter */
+        166000,
+        /* nMinShutter */
+        30,
+        /* nPositionWeightMode */
+        1,
+        /* nRoiStartX */
+        0,
+        /* nRoiStartY */
+        0,
+        /* nRoiWidth */
+        0,
+        /* nRoiHeight */
+        0,
+        /* nWeightRoi */
+        1024,
+        /* nWeightBackgnd */
+        1024,
+        /* nGridWeightRow */
+        15,
+        /* nGridWeightColumn */
+        17,
+        /* nGridWeightTable[54][72] */
+        {
+            {139, 175, 215, 255, 293, 327, 354, 371, 377, 371, 354, 327, 293, 255, 215, 175, 139, /*0 - 16*/},
+            {181, 228, 280, 332, 383, 427, 461, 484, 491, 484, 461, 427, 383, 332, 280, 228, 181, /*0 - 16*/},
+            {226, 286, 350, 416, 479, 534, 578, 605, 615, 605, 578, 534, 479, 416, 350, 286, 226, /*0 - 16*/},
+            {272, 344, 421, 500, 575, 642, 694, 727, 739, 727, 694, 642, 575, 500, 421, 344, 272, /*0 - 16*/},
+            {313, 396, 486, 577, 664, 740, 801, 839, 852, 839, 801, 740, 664, 577, 486, 396, 313, /*0 - 16*/},
+            {347, 439, 538, 639, 735, 820, 887, 929, 944, 929, 887, 820, 735, 639, 538, 439, 347, /*0 - 16*/},
+            {369, 467, 572, 679, 781, 872, 943, 988, 1003, 988, 943, 872, 781, 679, 572, 467, 369, /*0 - 16*/},
+            {377, 476, 583, 693, 797, 890, 962, 1008, 1024, 1008, 962, 890, 797, 693, 583, 476, 377, /*0 - 16*/},
+            {369, 467, 572, 679, 781, 872, 943, 988, 1003, 988, 943, 872, 781, 679, 572, 467, 369, /*0 - 16*/},
+            {347, 439, 538, 639, 735, 820, 887, 929, 944, 929, 887, 820, 735, 639, 538, 439, 347, /*0 - 16*/},
+            {313, 396, 486, 577, 664, 740, 801, 839, 852, 839, 801, 740, 664, 577, 486, 396, 313, /*0 - 16*/},
+            {272, 344, 421, 500, 575, 642, 694, 727, 739, 727, 694, 642, 575, 500, 421, 344, 272, /*0 - 16*/},
+            {226, 286, 350, 416, 479, 534, 578, 605, 615, 605, 578, 534, 479, 416, 350, 286, 226, /*0 - 16*/},
+            {181, 228, 280, 332, 383, 427, 461, 484, 491, 484, 461, 427, 383, 332, 280, 228, 181, /*0 - 16*/},
+            {139, 175, 215, 255, 293, 327, 354, 371, 377, 371, 354, 327, 293, 255, 215, 175, 139, /*0 - 16*/},
+        },
+        /* tAntiFlickerParam */
+        {
+            /* nEnable */
+            1,
+            /* nFlickerPeriod */
+            0,
+            /* nAntiFlickerTolerance */
+            150,
+            /* nOverExpMode */
+            1,
+            /* nUnderExpMode */
+            1,
+        },
+        /* nSetPointMode */
+        2,
+        /* nFaceTargetMode */
+        0,
+        /* nStrategyMode */
+        2,
+        /* tAeRouteParam */
+        {
+            /* nTableNum */
+            2,
+            /* nUsedTableId */
+            0,
+            /* tRouteTable[8] */
+            {
+                /* 0 */
+                {
+                    /* sTableName[32] */
+                    "DefaultAeRoute",
+                    /* nRouteCurveNum */
+                    7,
+                    /* tRouteCurveList[16] */
+                    {
+                        /* 0 */
+                        {
+                            /* nIntergrationTime */
+                            30,
+                            /* nGain */
+                            1024,
+                            /* nAperture */
+                            0,
+                            /* nIncrementPriority */
+                            0,
+                        },
+                        /* 1 */
+                        {
+                            /* nIntergrationTime */
+                            39880,
+                            /* nGain */
+                            8192,
+                            /* nAperture */
+                            0,
+                            /* nIncrementPriority */
+                            0,
+                        },
+                        /* 2 */
+                        {
+                            /* nIntergrationTime */
+                            49850,
+                            /* nGain */
+                            24576,
+                            /* nAperture */
+                            0,
+                            /* nIncrementPriority */
+                            0,
+                        },
+                        /* 3 */
+                        {
+                            /* nIntergrationTime */
+                            66000,
+                            /* nGain */
+                            40960,
+                            /* nAperture */
+                            0,
+                            /* nIncrementPriority */
+                            0,
+                        },
+                        /* 4 */
+                        {
+                            /* nIntergrationTime */
+                            80000,
+                            /* nGain */
+                            81920,
+                            /* nAperture */
+                            0,
+                            /* nIncrementPriority */
+                            0,
+                        },
+                        /* 5 */
+                        {
+                            /* nIntergrationTime */
+                            110000,
+                            /* nGain */
+                            184320,
+                            /* nAperture */
+                            0,
+                            /* nIncrementPriority */
+                            0,
+                        },
+                        /* 6 */
+                        {
+                            /* nIntergrationTime */
+                            166000,
+                            /* nGain */
+                            884336,
+                            /* nAperture */
+                            0,
+                            /* nIncrementPriority */
+                            0,
+                        },
+                    },
+                },
+                /* 1 */
+                {
+                    /* sTableName[32] */
+                    "PirisAeRoute",
+                    /* nRouteCurveNum */
+                    5,
+                    /* tRouteCurveList[16] */
+                    {
+                        /* 0 */
+                        {
+                            /* nIntergrationTime */
+                            30,
+                            /* nGain */
+                            1024,
+                            /* nAperture */
+                            5,
+                            /* nIncrementPriority */
+                            0,
+                        },
+                        /* 1 */
+                        {
+                            /* nIntergrationTime */
+                            30,
+                            /* nGain */
+                            1024,
+                            /* nAperture */
+                            296,
+                            /* nIncrementPriority */
+                            0,
+                        },
+                        /* 2 */
+                        {
+                            /* nIntergrationTime */
+                            166000,
+                            /* nGain */
+                            1024,
+                            /* nAperture */
+                            296,
+                            /* nIncrementPriority */
+                            0,
+                        },
+                        /* 3 */
+                        {
+                            /* nIntergrationTime */
+                            166000,
+                            /* nGain */
+                            1024,
+                            /* nAperture */
+                            512,
+                            /* nIncrementPriority */
+                            0,
+                        },
+                        /* 4 */
+                        {
+                            /* nIntergrationTime */
+                            166000,
+                            /* nGain */
+                            884336,
+                            /* nAperture */
+                            512,
+                            /* nIncrementPriority */
+                            0,
+                        },
+                    },
+                },
+            },
+        },
+        /* tAeSetPointCurve */
+        {
+            /* nSize */
+            7,
+            /* nRefList[10] */
+            {102, 1024, 3072, 10240, 81920, 409600, 2048000, /*0 - 6*/},
+            /* nSetPointList[10] */
+            {13312, 16384, 19456, 22528, 26624, 28672, 30720, /*0 - 6*/},
+        },
+        /* tFaceUIParam */
+        {
+            /* nEnable */
+            0,
+            /* tFaceTargetCurve */
+            {
+                /* nSize */
+                6,
+                /* nRefList[10] */
+                {102, 1536, 10240, 51200, 307200, 2048000, /*0 - 5*/},
+                /* nFaceTargetList[10] */
+                {18432, 18432, 18432, 22528, 25600, 25600, /*0 - 5*/},
+            },
+            /* nFaceScoreList[6] */
+            {0, 205, 410, 614, 819, 1024, /*0 - 5*/},
+            /* nFaceScoreWeightList[6] */
+            {0, 205, 410, 614, 819, 1024, /*0 - 5*/},
+            /* nFaceDistanceList[6] */
+            {0, 205, 410, 614, 819, 1024, /*0 - 5*/},
+            /* nFaceDistanceWeightList[6] */
+            {1024, 922, 768, 563, 307, 0, /*0 - 5*/},
+            /* nFaceTargetWeight */
+            512,
+            /* nNoFaceFrameTh */
+            20,
+            /* nToNormalFrameTh */
+            8,
+            /* nWithFaceFrameTh */
+            3,
+            /* nToFaceAeFrameTh */
+            8,
+            /* tFaceWeightList */
+            {
+                /* nSize */
+                5,
+                /* nFaceLumaDiff[5] */
+                {2048, 5120, 10240, 15360, 20480, /*0 - 4*/},
+                /* nFaceWeight[5] */
+                {0, 102, 154, 154, 205, /*0 - 4*/},
+            },
+            /* nFaceWeightDampRatio */
+            870,
+            /* nToleranceAdjustRatio */
+            2048,
+            /* nNoFaceDampRatio */
+            512,
+        },
+        /* tAeHdrRatio */
+        {
+            /* nHdrMode */
+            0,
+            /* tRatioStrategyParam */
+            {
+                /* nShortNonSatAreaPercent */
+                104438168,
+                /* nTolerance */
+                8388608,
+                /* nConvergeCntFrameNum */
+                3,
+                /* nDampRatio */
+                922,
+                /* tHdrRatioParamCurve */
+                {
+                    /* nListSize */
+                    6,
+                    /* nRefList[10] */
+                    {102, 10240, 30720, 102400, 204800, 1024000, 0, 0, 0, 0, /*0 - 9*/},
+                    /* nSatLumaList[10] */
+                    {153600, 122880, 61440, 40960, 20480, 10240, 0, 0, 0, 0, /*0 - 9*/},
+                    /* nMinRatioList[10] */
+                    {1024, 1024, 1024, 1024, 1024, 1024, 0, 0, 0, 0, /*0 - 9*/},
+                    /* nMaxRatioList[10] */
+                    {32768, 32768, 32768, 32768, 32768, 32768, 0, 0, 0, 0, /*0 - 9*/},
+                },
+            },
+            /* nFixedHdrRatio */
+            1024,
+        },
+        /* nMultiCamSyncMode */
+        0,
+        /* nMultiCamSyncRatio */
+        1048576,
+        /* tSlowShutterParam */
+        {
+            /* nFrameRateMode */
+            1,
+            /* nFpsIncreaseDelayFrame */
+            0,
+        },
+        /* tIrisParam */
+        {
+            /* nIrisType */
+            0,
+            /* tDcIrisParam */
+            {
+                /* nBigStepFactor */
+                104858,
+                /* nSmallStepFactor */
+                10486,
+                /* nLumaDiffOverThresh */
+                35840,
+                /* nLumaDiffUnderThresh */
+                35840,
+                /* nLumaSpeedThresh */
+                205,
+                /* nSpeedDownFactor */
+                209715,
+                /* nMinUserPwmDuty */
+                30720,
+                /* nMaxUserPwmDuty */
+                66560,
+                /* nOpenPwmDuty */
+                61440,
+                /* nConvergeLumaDiffTolerance */
+                52429,
+                /* nConvergeFrameCntThresh */
+                10,
+            },
+        },
+        /* tLumaWeightParam */
+        {
+            /* nEnable */
+            0,
+            /* nLumaWeightNum */
+            16,
+            /* nLumaSplitList[64] */
+            {0, 16384, 32768, 49152, 65535, 81920, 98304, 114688, 131072, 147456, 163840, 180224, 196608, 212992, 229376, 245760, /*0 - 15*/},
+            /* nWeightList[64] */
+            {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, /*0 - 15*/},
+        },
+        /* tTimeSmoothParam */
+        {
+            /* tStateMachineParam */
+            {
+                /* nToFastLumaThOver */
+                1536,
+                /* nToFastLumaThUnder */
+                819,
+                /* nToSlowFrameTh */
+                8,
+                /* nToConvergedFrameTh */
+                2,
+            },
+            /* tConvergeSpeedParam */
+            {
+                /* nFastOverKneeCnt */
+                14,
+                /* nFastOverLumaDiffList[16] */
+                {5120, 10240, 15360, 20480, 25600, 30720, 40960, 51200, 71680, 92160, 112640, 153600, 209920, 262144, /*0 - 13*/},
+                /* nFastOverStepFactorList[16] */
+                {61, 82, 102, 123, 154, 154, 205, 205, 256, 307, 358, 410, 512, 614, /*0 - 13*/},
+                /* nFastOverSpeedDownFactorList[16] */
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 31, 102, 154, 307, /*0 - 13*/},
+                /* nFastOverSkipList[16] */
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 13*/},
+                /* nFastUnderKneeCnt */
+                11,
+                /* nFastUnderLumaDiffList[16] */
+                {5120, 10240, 15360, 20480, 25600, 30720, 35840, 40960, 51200, 153600, 262144, /*0 - 10*/},
+                /* nFastUnderStepFactorList[16] */
+                {51, 72, 92, 102, 123, 154, 154, 154, 184, 205, 256, /*0 - 10*/},
+                /* nFastUnderSpeedDownFactorList[16] */
+                {0, 0, 0, 0, 0, 0, 0, 0, 20, 51, 102, /*0 - 10*/},
+                /* nFastUnderSkipList[16] */
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 10*/},
+                /* nSlowOverKneeCnt */
+                14,
+                /* nSlowOverLumaDiffList[16] */
+                {5120, 10240, 15360, 20480, 25600, 30720, 40960, 51200, 81920, 92160, 112640, 153600, 209920, 262144, /*0 - 13*/},
+                /* nSlowOverStepFactorList[16] */
+                {41, 61, 82, 102, 102, 123, 123, 154, 184, 184, 184, 184, 205, 256, /*0 - 13*/},
+                /* nSlowOverSpeedDownFactorList[16] */
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 41, 82, /*0 - 13*/},
+                /* nSlowOverSkipList[16] */
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 13*/},
+                /* nSlowUnderKneeCnt */
+                11,
+                /* nSlowUnderLumaDiffList[16] */
+                {5120, 10240, 15360, 20480, 25600, 30720, 35840, 40960, 51200, 153600, 262144, /*0 - 10*/},
+                /* nSlowUnderStepFactorList[16] */
+                {31, 51, 72, 92, 102, 123, 154, 154, 184, 205, 256, /*0 - 10*/},
+                /* nSlowUnderSpeedDownFactorList[16] */
+                {0, 0, 0, 0, 0, 0, 0, 0, 10, 31, 51, /*0 - 10*/},
+                /* nSlowUnderSkipList[16] */
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 10*/},
+            },
+        },
+        /* tSleepWakeUpParam */
+        {
+            /* nEnableSleepSetting */
+            0,
+            /* nNoiseLevel */
+            41,
+            /* nLinearLumaTh */
+            51,
+            /* nAeStatsDelayFrame */
+            4,
+            /* tSleepSetting */
+            {
+                /* nAGain */
+                1024,
+                /* nDGain */
+                1024,
+                /* nIspGain */
+                1024,
+                /* nHcgLcg */
+                1,
+                /* nShutter */
+                1000,
+            },
+            /* nOverExpCompLumaTh */
+            102400,
+            /* tOverExpCompLut */
+            {
+                /* nLutNum */
+                5,
+                /* nLumaSplitList[8] */
+                {179200, 220160, 225280, 240640, 244736, /*0 - 4*/},
+                /* nCompFactorList[8] */
+                {1024, 1208, 1352, 2324, 2560, /*0 - 4*/},
+            },
+        },
+        /* tHistPointCtrlParam */
+        {
+            /* nEnable */
+            0,
+            /* nHistPointLutNum */
+            1,
+            /* tHistPointCtrlLut[10] */
+            {
+                /* 0 */
+                {
+                    /* nLuxStart */
+                    102400,
+                    /* nLuxEnd */
+                    204800,
+                    /* tHistPointTh */
+                    {
+                        /* nLumaThList[2] */
+                        {0, 0, /*0 - 1*/},
+                        /* nPercentThList[2] */
+                        {102400, 102400, /*0 - 1*/},
+                    },
+                },
+            },
+        },
+    },
+    /* nLogLevel */
+    4,
+    /* nLogTarget */
+    2,
+};
+
+const static AX_ISP_IQ_AWB_PARAM_T awb_param_sdr = {
+    /* nEnable */
+    1,
+    /* tManualParam */
+    {
+        /* nManualMode */
+        0,
+        /* tGain */
+        {
+            /* nGainR */
+            531,
+            /* nGainGr */
+            256,
+            /* nGainGb */
+            256,
+            /* nGainB */
+            469,
+        },
+        /* tManualLightSource */
+        {
+            /* nLightSourceIndex */
+            0,
+            /* tLightSource[15] */
+            {
+                /* 0 */
+                {
+                    /* szName[32] */
+                    "Shade",
+                    /* nColorTemperature */
+                    7500,
+                    /* nGreenShift */
+                    0,
+                },
+                /* 1 */
+                {
+                    /* szName[32] */
+                    "Day",
+                    /* nColorTemperature */
+                    6500,
+                    /* nGreenShift */
+                    0,
+                },
+                /* 2 */
+                {
+                    /* szName[32] */
+                    "Cloudy",
+                    /* nColorTemperature */
+                    5000,
+                    /* nGreenShift */
+                    0,
+                },
+                /* 3 */
+                {
+                    /* szName[32] */
+                    "Flourescent",
+                    /* nColorTemperature */
+                    5000,
+                    /* nGreenShift */
+                    0,
+                },
+                /* 4 */
+                {
+                    /* szName[32] */
+                    "Sunset",
+                    /* nColorTemperature */
+                    3500,
+                    /* nGreenShift */
+                    0,
+                },
+                /* 5 */
+                {
+                    /* szName[32] */
+                    "Incandescent",
+                    /* nColorTemperature */
+                    2800,
+                    /* nGreenShift */
+                    0,
+                },
+                /* 6 */
+                {
+                    /* szName[32] */
+                    "Candle",
+                    /* nColorTemperature */
+                    2000,
+                    /* nGreenShift */
+                    0,
+                },
+                /* 7 */
+                {
+                    /* szName[32] */
+                    "Flash",
+                    /* nColorTemperature */
+                    3500,
+                    /* nGreenShift */
+                    0,
+                },
+                /* 8 */
+                {
+                    /* szName[32] */
+                    "UserDefined-1",
+                    /* nColorTemperature */
+                    2800,
+                    /* nGreenShift */
+                    0,
+                },
+                /* 9 */
+                {
+                    /* szName[32] */
+                    "UserDefined-2",
+                    /* nColorTemperature */
+                    2000,
+                    /* nGreenShift */
+                    0,
+                },
+                /* 10 */
+                {
+                    /* szName[32] */
+                    "UserDefined-3",
+                    /* nColorTemperature */
+                    5000,
+                    /* nGreenShift */
+                    0,
+                },
+                /* 11 */
+                {
+                    /* szName[32] */
+                    "UserDefined-4",
+                    /* nColorTemperature */
+                    5000,
+                    /* nGreenShift */
+                    0,
+                },
+                /* 12 */
+                {
+                    /* szName[32] */
+                    "UserDefined-5",
+                    /* nColorTemperature */
+                    5000,
+                    /* nGreenShift */
+                    0,
+                },
+                /* 13 */
+                {
+                    /* szName[32] */
+                    "UserDefined-6",
+                    /* nColorTemperature */
+                    5000,
+                    /* nGreenShift */
+                    0,
+                },
+                /* 14 */
+                {
+                    /* szName[32] */
+                    "UserDefined-7",
+                    /* nColorTemperature */
+                    5000,
+                    /* nGreenShift */
+                    0,
+                },
+            },
+        },
+    },
+    /* tAutoParam */
+    {
+        /* tCenterPnt */
+        {
+            /* nRg */
+            1441807,
+            /* nBg */
+            1441800,
+        },
+        /* nCenterPntRadius */
+        1255329,
+        /* nLowCut */
+        0,
+        /* nHighCut */
+        0,
+        /* nCctMax */
+        12000,
+        /* nCctMin */
+        1100,
+        /* nPartCtrlPntNum */
+        8,
+        /* nCtrlPntNum */
+        57,
+        /* nCtrlSegKbNum */
+        56,
+        /* nCctList[512] */
+        {
+            1100, 1250, 1400, 1550, 1700, 1850, 2000, 2150, 2300, 2369, 2438, 2507, 2577, 2646, 2715, 2784, 2854, 2984, 3115, 3246, 3377, 3507, 3638, 3769, 3900, 4037, 4175, 4312, 4450, 4587, 4725, 4862,  /* 0 - 31*/
+            5000, 5187, 5375, 5562, 5750, 5937, 6125, 6312, 6500, 6687, 6875, 7062, 7250, 7437, 7625, 7812, 8000, 8500, 9000, 9500, 10000, 10500, 11000, 11500, 12000, /*32 - 56*/
+        },
+        /* tChordKB */
+        {
+            /* nK */
+            -534,
+            /* nB */
+            1083,
+        },
+        /* tChordPntList[512] */
+        {
+            /* 0 */
+            {
+                /* nRg */
+                1709483,
+                /* nBg */
+                215346,
+            },
+            /* 1 */
+            {
+                /* nRg */
+                1632381,
+                /* nBg */
+                255664,
+            },
+            /* 2 */
+            {
+                /* nRg */
+                1561424,
+                /* nBg */
+                292762,
+            },
+            /* 3 */
+            {
+                /* nRg */
+                1495511,
+                /* nBg */
+                327229,
+            },
+            /* 4 */
+            {
+                /* nRg */
+                1433770,
+                /* nBg */
+                359515,
+            },
+            /* 5 */
+            {
+                /* nRg */
+                1375449,
+                /* nBg */
+                390007,
+            },
+            /* 6 */
+            {
+                /* nRg */
+                1319947,
+                /* nBg */
+                419032,
+            },
+            /* 7 */
+            {
+                /* nRg */
+                1266753,
+                /* nBg */
+                446851,
+            },
+            /* 8 */
+            {
+                /* nRg */
+                1215404,
+                /* nBg */
+                473705,
+            },
+            /* 9 */
+            {
+                /* nRg */
+                1192199,
+                /* nBg */
+                485826,
+            },
+            /* 10 */
+            {
+                /* nRg */
+                1169278,
+                /* nBg */
+                497822,
+            },
+            /* 11 */
+            {
+                /* nRg */
+                1146597,
+                /* nBg */
+                509681,
+            },
+            /* 12 */
+            {
+                /* nRg */
+                1124115,
+                /* nBg */
+                521436,
+            },
+            /* 13 */
+            {
+                /* nRg */
+                1101812,
+                /* nBg */
+                533096,
+            },
+            /* 14 */
+            {
+                /* nRg */
+                1079645,
+                /* nBg */
+                544683,
+            },
+            /* 15 */
+            {
+                /* nRg */
+                1057594,
+                /* nBg */
+                556217,
+            },
+            /* 16 */
+            {
+                /* nRg */
+                1035626,
+                /* nBg */
+                567710,
+            },
+            /* 17 */
+            {
+                /* nRg */
+                1011572,
+                /* nBg */
+                580282,
+            },
+            /* 18 */
+            {
+                /* nRg */
+                987538,
+                /* nBg */
+                592854,
+            },
+            /* 19 */
+            {
+                /* nRg */
+                963495,
+                /* nBg */
+                605416,
+            },
+            /* 20 */
+            {
+                /* nRg */
+                939409,
+                /* nBg */
+                618020,
+            },
+            /* 21 */
+            {
+                /* nRg */
+                915229,
+                /* nBg */
+                630666,
+            },
+            /* 22 */
+            {
+                /* nRg */
+                890912,
+                /* nBg */
+                643375,
+            },
+            /* 23 */
+            {
+                /* nRg */
+                866438,
+                /* nBg */
+                656178,
+            },
+            /* 24 */
+            {
+                /* nRg */
+                841744,
+                /* nBg */
+                669086,
+            },
+            /* 25 */
+            {
+                /* nRg */
+                828711,
+                /* nBg */
+                675902,
+            },
+            /* 26 */
+            {
+                /* nRg */
+                815593,
+                /* nBg */
+                682759,
+            },
+            /* 27 */
+            {
+                /* nRg */
+                802391,
+                /* nBg */
+                689669,
+            },
+            /* 28 */
+            {
+                /* nRg */
+                789106,
+                /* nBg */
+                696611,
+            },
+            /* 29 */
+            {
+                /* nRg */
+                775726,
+                /* nBg */
+                703615,
+            },
+            /* 30 */
+            {
+                /* nRg */
+                762241,
+                /* nBg */
+                710662,
+            },
+            /* 31 */
+            {
+                /* nRg */
+                748641,
+                /* nBg */
+                717771,
+            },
+            /* 32 */
+            {
+                /* nRg */
+                734936,
+                /* nBg */
+                724944,
+            },
+            /* 33 */
+            {
+                /* nRg */
+                723769,
+                /* nBg */
+                730774,
+            },
+            /* 34 */
+            {
+                /* nRg */
+                712518,
+                /* nBg */
+                736656,
+            },
+            /* 35 */
+            {
+                /* nRg */
+                701183,
+                /* nBg */
+                742591,
+            },
+            /* 36 */
+            {
+                /* nRg */
+                689753,
+                /* nBg */
+                748568,
+            },
+            /* 37 */
+            {
+                /* nRg */
+                678219,
+                /* nBg */
+                754597,
+            },
+            /* 38 */
+            {
+                /* nRg */
+                666590,
+                /* nBg */
+                760679,
+            },
+            /* 39 */
+            {
+                /* nRg */
+                654846,
+                /* nBg */
+                766813,
+            },
+            /* 40 */
+            {
+                /* nRg */
+                642997,
+                /* nBg */
+                773010,
+            },
+            /* 41 */
+            {
+                /* nRg */
+                632574,
+                /* nBg */
+                778463,
+            },
+            /* 42 */
+            {
+                /* nRg */
+                622057,
+                /* nBg */
+                783957,
+            },
+            /* 43 */
+            {
+                /* nRg */
+                611446,
+                /* nBg */
+                789515,
+            },
+            /* 44 */
+            {
+                /* nRg */
+                600740,
+                /* nBg */
+                795114,
+            },
+            /* 45 */
+            {
+                /* nRg */
+                589918,
+                /* nBg */
+                800766,
+            },
+            /* 46 */
+            {
+                /* nRg */
+                579003,
+                /* nBg */
+                806481,
+            },
+            /* 47 */
+            {
+                /* nRg */
+                567961,
+                /* nBg */
+                812248,
+            },
+            /* 48 */
+            {
+                /* nRg */
+                556815,
+                /* nBg */
+                818078,
+            },
+            /* 49 */
+            {
+                /* nRg */
+                526490,
+                /* nBg */
+                833932,
+            },
+            /* 50 */
+            {
+                /* nRg */
+                495221,
+                /* nBg */
+                850290,
+            },
+            /* 51 */
+            {
+                /* nRg */
+                462925,
+                /* nBg */
+                867172,
+            },
+            /* 52 */
+            {
+                /* nRg */
+                429486,
+                /* nBg */
+                884663,
+            },
+            /* 53 */
+            {
+                /* nRg */
+                394789,
+                /* nBg */
+                902803,
+            },
+            /* 54 */
+            {
+                /* nRg */
+                358718,
+                /* nBg */
+                921667,
+            },
+            /* 55 */
+            {
+                /* nRg */
+                321126,
+                /* nBg */
+                941317,
+            },
+            /* 56 */
+            {
+                /* nRg */
+                281847,
+                /* nBg */
+                961859,
+            },
+        },
+        /* tArcPointList[512] */
+        {
+            /* 0 */
+            {
+                /* nRg */
+                1691594,
+                /* nBg */
+                297303,
+            },
+            /* 1 */
+            {
+                /* nRg */
+                1628470,
+                /* nBg */
+                280012,
+            },
+            /* 2 */
+            {
+                /* nRg */
+                1564182,
+                /* nBg */
+                266223,
+            },
+            /* 3 */
+            {
+                /* nRg */
+                1498950,
+                /* nBg */
+                255999,
+            },
+            /* 4 */
+            {
+                /* nRg */
+                1432953,
+                /* nBg */
+                249414,
+            },
+            /* 5 */
+            {
+                /* nRg */
+                1366399,
+                /* nBg */
+                246520,
+            },
+            /* 6 */
+            {
+                /* nRg */
+                1299500,
+                /* nBg */
+                247349,
+            },
+            /* 7 */
+            {
+                /* nRg */
+                1232454,
+                /* nBg */
+                251931,
+            },
+            /* 8 */
+            {
+                /* nRg */
+                1165492,
+                /* nBg */
+                260299,
+            },
+            /* 9 */
+            {
+                /* nRg */
+                1133941,
+                /* nBg */
+                262700,
+            },
+            /* 10 */
+            {
+                /* nRg */
+                1102336,
+                /* nBg */
+                265950,
+            },
+            /* 11 */
+            {
+                /* nRg */
+                1070701,
+                /* nBg */
+                270050,
+            },
+            /* 12 */
+            {
+                /* nRg */
+                1039055,
+                /* nBg */
+                275000,
+            },
+            /* 13 */
+            {
+                /* nRg */
+                1007409,
+                /* nBg */
+                280809,
+            },
+            /* 14 */
+            {
+                /* nRg */
+                975805,
+                /* nBg */
+                287467,
+            },
+            /* 15 */
+            {
+                /* nRg */
+                944264,
+                /* nBg */
+                294996,
+            },
+            /* 16 */
+            {
+                /* nRg */
+                912796,
+                /* nBg */
+                303384,
+            },
+            /* 17 */
+            {
+                /* nRg */
+                880951,
+                /* nBg */
+                318725,
+            },
+            /* 18 */
+            {
+                /* nRg */
+                849546,
+                /* nBg */
+                334968,
+            },
+            /* 19 */
+            {
+                /* nRg */
+                818623,
+                /* nBg */
+                352080,
+            },
+            /* 20 */
+            {
+                /* nRg */
+                788183,
+                /* nBg */
+                370063,
+            },
+            /* 21 */
+            {
+                /* nRg */
+                758267,
+                /* nBg */
+                388885,
+            },
+            /* 22 */
+            {
+                /* nRg */
+                728897,
+                /* nBg */
+                408546,
+            },
+            /* 23 */
+            {
+                /* nRg */
+                700082,
+                /* nBg */
+                429035,
+            },
+            /* 24 */
+            {
+                /* nRg */
+                671865,
+                /* nBg */
+                450321,
+            },
+            /* 25 */
+            {
+                /* nRg */
+                657310,
+                /* nBg */
+                461793,
+            },
+            /* 26 */
+            {
+                /* nRg */
+                642924,
+                /* nBg */
+                473484,
+            },
+            /* 27 */
+            {
+                /* nRg */
+                628716,
+                /* nBg */
+                485375,
+            },
+            /* 28 */
+            {
+                /* nRg */
+                614686,
+                /* nBg */
+                497486,
+            },
+            /* 29 */
+            {
+                /* nRg */
+                600845,
+                /* nBg */
+                509797,
+            },
+            /* 30 */
+            {
+                /* nRg */
+                587171,
+                /* nBg */
+                522317,
+            },
+            /* 31 */
+            {
+                /* nRg */
+                573697,
+                /* nBg */
+                535025,
+            },
+            /* 32 */
+            {
+                /* nRg */
+                560401,
+                /* nBg */
+                547944,
+            },
+            /* 33 */
+            {
+                /* nRg */
+                549810,
+                /* nBg */
+                558514,
+            },
+            /* 34 */
+            {
+                /* nRg */
+                539346,
+                /* nBg */
+                569209,
+            },
+            /* 35 */
+            {
+                /* nRg */
+                529007,
+                /* nBg */
+                580030,
+            },
+            /* 36 */
+            {
+                /* nRg */
+                518793,
+                /* nBg */
+                590977,
+            },
+            /* 37 */
+            {
+                /* nRg */
+                508717,
+                /* nBg */
+                602040,
+            },
+            /* 38 */
+            {
+                /* nRg */
+                498766,
+                /* nBg */
+                613228,
+            },
+            /* 39 */
+            {
+                /* nRg */
+                488961,
+                /* nBg */
+                624532,
+            },
+            /* 40 */
+            {
+                /* nRg */
+                479283,
+                /* nBg */
+                635951,
+            },
+            /* 41 */
+            {
+                /* nRg */
+                470968,
+                /* nBg */
+                645986,
+            },
+            /* 42 */
+            {
+                /* nRg */
+                462747,
+                /* nBg */
+                656115,
+            },
+            /* 43 */
+            {
+                /* nRg */
+                454642,
+                /* nBg */
+                666328,
+            },
+            /* 44 */
+            {
+                /* nRg */
+                446641,
+                /* nBg */
+                676625,
+            },
+            /* 45 */
+            {
+                /* nRg */
+                438745,
+                /* nBg */
+                687006,
+            },
+            /* 46 */
+            {
+                /* nRg */
+                430954,
+                /* nBg */
+                697471,
+            },
+            /* 47 */
+            {
+                /* nRg */
+                423279,
+                /* nBg */
+                708009,
+            },
+            /* 48 */
+            {
+                /* nRg */
+                415708,
+                /* nBg */
+                718631,
+            },
+            /* 49 */
+            {
+                /* nRg */
+                396068,
+                /* nBg */
+                747331,
+            },
+            /* 50 */
+            {
+                /* nRg */
+                377236,
+                /* nBg */
+                776554,
+            },
+            /* 51 */
+            {
+                /* nRg */
+                359221,
+                /* nBg */
+                806303,
+            },
+            /* 52 */
+            {
+                /* nRg */
+                342035,
+                /* nBg */
+                836533,
+            },
+            /* 53 */
+            {
+                /* nRg */
+                325688,
+                /* nBg */
+                867225,
+            },
+            /* 54 */
+            {
+                /* nRg */
+                310200,
+                /* nBg */
+                898367,
+            },
+            /* 55 */
+            {
+                /* nRg */
+                295583,
+                /* nBg */
+                929919,
+            },
+            /* 56 */
+            {
+                /* nRg */
+                281847,
+                /* nBg */
+                961859,
+            },
+        },
+        /* tRadiusLineList[512] */
+        {
+            /* 0 */
+            {
+                /* nK */
+                -4691,
+                /* nB */
+                7859,
+            },
+            /* 1 */
+            {
+                /* nK */
+                -6372,
+                /* nB */
+                10172,
+            },
+            /* 2 */
+            {
+                /* nK */
+                -9836,
+                /* nB */
+                14933,
+            },
+            /* 3 */
+            {
+                /* nK */
+                -21249,
+                /* nB */
+                30627,
+            },
+            /* 4 */
+            {
+                /* nK */
+                137869,
+                /* nB */
+                -188163,
+            },
+            /* 5 */
+            {
+                /* nK */
+                16231,
+                /* nB */
+                -20909,
+            },
+            /* 6 */
+            {
+                /* nK */
+                8595,
+                /* nB */
+                -10409,
+            },
+            /* 7 */
+            {
+                /* nK */
+                5820,
+                /* nB */
+                -6594,
+            },
+            /* 8 */
+            {
+                /* nK */
+                4379,
+                /* nB */
+                -4612,
+            },
+            /* 9 */
+            {
+                /* nK */
+                3922,
+                /* nB */
+                -3984,
+            },
+            /* 10 */
+            {
+                /* nK */
+                3547,
+                /* nB */
+                -3468,
+            },
+            /* 11 */
+            {
+                /* nK */
+                3233,
+                /* nB */
+                -3037,
+            },
+            /* 12 */
+            {
+                /* nK */
+                2967,
+                /* nB */
+                -2670,
+            },
+            /* 13 */
+            {
+                /* nK */
+                2737,
+                /* nB */
+                -2354,
+            },
+            /* 14 */
+            {
+                /* nK */
+                2537,
+                /* nB */
+                -2079,
+            },
+            /* 15 */
+            {
+                /* nK */
+                2360,
+                /* nB */
+                -1836,
+            },
+            /* 16 */
+            {
+                /* nK */
+                2204,
+                /* nB */
+                -1621,
+            },
+            /* 17 */
+            {
+                /* nK */
+                2050,
+                /* nB */
+                -1410,
+            },
+            /* 18 */
+            {
+                /* nK */
+                1914,
+                /* nB */
+                -1222,
+            },
+            /* 19 */
+            {
+                /* nK */
+                1791,
+                /* nB */
+                -1053,
+            },
+            /* 20 */
+            {
+                /* nK */
+                1679,
+                /* nB */
+                -900,
+            },
+            /* 21 */
+            {
+                /* nK */
+                1577,
+                /* nB */
+                -760,
+            },
+            /* 22 */
+            {
+                /* nK */
+                1484,
+                /* nB */
+                -632,
+            },
+            /* 23 */
+            {
+                /* nK */
+                1398,
+                /* nB */
+                -514,
+            },
+            /* 24 */
+            {
+                /* nK */
+                1319,
+                /* nB */
+                -404,
+            },
+            /* 25 */
+            {
+                /* nK */
+                1279,
+                /* nB */
+                -350,
+            },
+            /* 26 */
+            {
+                /* nK */
+                1241,
+                /* nB */
+                -298,
+            },
+            /* 27 */
+            {
+                /* nK */
+                1205,
+                /* nB */
+                -247,
+            },
+            /* 28 */
+            {
+                /* nK */
+                1169,
+                /* nB */
+                -199,
+            },
+            /* 29 */
+            {
+                /* nK */
+                1135,
+                /* nB */
+                -151,
+            },
+            /* 30 */
+            {
+                /* nK */
+                1102,
+                /* nB */
+                -106,
+            },
+            /* 31 */
+            {
+                /* nK */
+                1070,
+                /* nB */
+                -62,
+            },
+            /* 32 */
+            {
+                /* nK */
+                1038,
+                /* nB */
+                -19,
+            },
+            /* 33 */
+            {
+                /* nK */
+                1014,
+                /* nB */
+                14,
+            },
+            /* 34 */
+            {
+                /* nK */
+                990,
+                /* nB */
+                47,
+            },
+            /* 35 */
+            {
+                /* nK */
+                967,
+                /* nB */
+                79,
+            },
+            /* 36 */
+            {
+                /* nK */
+                944,
+                /* nB */
+                110,
+            },
+            /* 37 */
+            {
+                /* nK */
+                922,
+                /* nB */
+                141,
+            },
+            /* 38 */
+            {
+                /* nK */
+                900,
+                /* nB */
+                171,
+            },
+            /* 39 */
+            {
+                /* nK */
+                878,
+                /* nB */
+                200,
+            },
+            /* 40 */
+            {
+                /* nK */
+                857,
+                /* nB */
+                229,
+            },
+            /* 41 */
+            {
+                /* nK */
+                839,
+                /* nB */
+                254,
+            },
+            /* 42 */
+            {
+                /* nK */
+                822,
+                /* nB */
+                278,
+            },
+            /* 43 */
+            {
+                /* nK */
+                804,
+                /* nB */
+                302,
+            },
+            /* 44 */
+            {
+                /* nK */
+                787,
+                /* nB */
+                325,
+            },
+            /* 45 */
+            {
+                /* nK */
+                771,
+                /* nB */
+                348,
+            },
+            /* 46 */
+            {
+                /* nK */
+                754,
+                /* nB */
+                371,
+            },
+            /* 47 */
+            {
+                /* nK */
+                738,
+                /* nB */
+                394,
+            },
+            /* 48 */
+            {
+                /* nK */
+                722,
+                /* nB */
+                416,
+            },
+            /* 49 */
+            {
+                /* nK */
+                680,
+                /* nB */
+                473,
+            },
+            /* 50 */
+            {
+                /* nK */
+                640,
+                /* nB */
+                528,
+            },
+            /* 51 */
+            {
+                /* nK */
+                601,
+                /* nB */
+                581,
+            },
+            /* 52 */
+            {
+                /* nK */
+                564,
+                /* nB */
+                633,
+            },
+            /* 53 */
+            {
+                /* nK */
+                527,
+                /* nB */
+                683,
+            },
+            /* 54 */
+            {
+                /* nK */
+                492,
+                /* nB */
+                732,
+            },
+            /* 55 */
+            {
+                /* nK */
+                457,
+                /* nB */
+                779,
+            },
+            /* 56 */
+            {
+                /* nK */
+                424,
+                /* nB */
+                825,
+            },
+        },
+        /* tInLeftBorderPntList[512] */
+        {
+            /* 0 */
+            {
+                /* nRg */
+                1711716,
+                /* nBg */
+                205101,
+            },
+            /* 1 */
+            {
+                /* nRg */
+                1643444,
+                /* nBg */
+                186835,
+            },
+            /* 2 */
+            {
+                /* nRg */
+                1573955,
+                /* nBg */
+                172354,
+            },
+            /* 3 */
+            {
+                /* nRg */
+                1503490,
+                /* nBg */
+                161743,
+            },
+            /* 4 */
+            {
+                /* nRg */
+                1432250,
+                /* nBg */
+                155053,
+            },
+            /* 5 */
+            {
+                /* nRg */
+                1360454,
+                /* nBg */
+                152337,
+            },
+            /* 6 */
+            {
+                /* nRg */
+                1288333,
+                /* nBg */
+                153637,
+            },
+            /* 7 */
+            {
+                /* nRg */
+                1216107,
+                /* nBg */
+                158985,
+            },
+            /* 8 */
+            {
+                /* nRg */
+                1143996,
+                /* nBg */
+                168401,
+            },
+            /* 9 */
+            {
+                /* nRg */
+                1110106,
+                /* nBg */
+                171390,
+            },
+            /* 10 */
+            {
+                /* nRg */
+                1076164,
+                /* nBg */
+                175280,
+            },
+            /* 11 */
+            {
+                /* nRg */
+                1042211,
+                /* nBg */
+                180082,
+            },
+            /* 12 */
+            {
+                /* nRg */
+                1008258,
+                /* nBg */
+                185787,
+            },
+            /* 13 */
+            {
+                /* nRg */
+                974347,
+                /* nBg */
+                192414,
+            },
+            /* 14 */
+            {
+                /* nRg */
+                940478,
+                /* nBg */
+                199963,
+            },
+            /* 15 */
+            {
+                /* nRg */
+                906693,
+                /* nBg */
+                208415,
+            },
+            /* 16 */
+            {
+                /* nRg */
+                873023,
+                /* nBg */
+                217800,
+            },
+            /* 17 */
+            {
+                /* nRg */
+                838787,
+                /* nBg */
+                234304,
+            },
+            /* 18 */
+            {
+                /* nRg */
+                805023,
+                /* nBg */
+                251753,
+            },
+            /* 19 */
+            {
+                /* nRg */
+                771773,
+                /* nBg */
+                270155,
+            },
+            /* 20 */
+            {
+                /* nRg */
+                739047,
+                /* nBg */
+                289491,
+            },
+            /* 21 */
+            {
+                /* nRg */
+                706877,
+                /* nBg */
+                309728,
+            },
+            /* 22 */
+            {
+                /* nRg */
+                675293,
+                /* nBg */
+                330878,
+            },
+            /* 23 */
+            {
+                /* nRg */
+                644318,
+                /* nBg */
+                352898,
+            },
+            /* 24 */
+            {
+                /* nRg */
+                613983,
+                /* nBg */
+                375778,
+            },
+            /* 25 */
+            {
+                /* nRg */
+                598328,
+                /* nBg */
+                388120,
+            },
+            /* 26 */
+            {
+                /* nRg */
+                582872,
+                /* nBg */
+                400682,
+            },
+            /* 27 */
+            {
+                /* nRg */
+                567594,
+                /* nBg */
+                413474,
+            },
+            /* 28 */
+            {
+                /* nRg */
+                552505,
+                /* nBg */
+                426498,
+            },
+            /* 29 */
+            {
+                /* nRg */
+                537615,
+                /* nBg */
+                439731,
+            },
+            /* 30 */
+            {
+                /* nRg */
+                522925,
+                /* nBg */
+                453195,
+            },
+            /* 31 */
+            {
+                /* nRg */
+                508434,
+                /* nBg */
+                466857,
+            },
+            /* 32 */
+            {
+                /* nRg */
+                494141,
+                /* nBg */
+                480751,
+            },
+            /* 33 */
+            {
+                /* nRg */
+                482754,
+                /* nBg */
+                492118,
+            },
+            /* 34 */
+            {
+                /* nRg */
+                471492,
+                /* nBg */
+                503610,
+            },
+            /* 35 */
+            {
+                /* nRg */
+                460377,
+                /* nBg */
+                515249,
+            },
+            /* 36 */
+            {
+                /* nRg */
+                449409,
+                /* nBg */
+                527014,
+            },
+            /* 37 */
+            {
+                /* nRg */
+                438567,
+                /* nBg */
+                538916,
+            },
+            /* 38 */
+            {
+                /* nRg */
+                427871,
+                /* nBg */
+                550932,
+            },
+            /* 39 */
+            {
+                /* nRg */
+                417323,
+                /* nBg */
+                563085,
+            },
+            /* 40 */
+            {
+                /* nRg */
+                406921,
+                /* nBg */
+                575364,
+            },
+            /* 41 */
+            {
+                /* nRg */
+                397977,
+                /* nBg */
+                586164,
+            },
+            /* 42 */
+            {
+                /* nRg */
+                389148,
+                /* nBg */
+                597049,
+            },
+            /* 43 */
+            {
+                /* nRg */
+                380423,
+                /* nBg */
+                608027,
+            },
+            /* 44 */
+            {
+                /* nRg */
+                371825,
+                /* nBg */
+                619100,
+            },
+            /* 45 */
+            {
+                /* nRg */
+                363332,
+                /* nBg */
+                630268,
+            },
+            /* 46 */
+            {
+                /* nRg */
+                354964,
+                /* nBg */
+                641508,
+            },
+            /* 47 */
+            {
+                /* nRg */
+                346712,
+                /* nBg */
+                652843,
+            },
+            /* 48 */
+            {
+                /* nRg */
+                338575,
+                /* nBg */
+                664262,
+            },
+            /* 49 */
+            {
+                /* nRg */
+                317456,
+                /* nBg */
+                695122,
+            },
+            /* 50 */
+            {
+                /* nRg */
+                297208,
+                /* nBg */
+                726548,
+            },
+            /* 51 */
+            {
+                /* nRg */
+                277831,
+                /* nBg */
+                758529,
+            },
+            /* 52 */
+            {
+                /* nRg */
+                259355,
+                /* nBg */
+                791035,
+            },
+            /* 53 */
+            {
+                /* nRg */
+                241781,
+                /* nBg */
+                824034,
+            },
+            /* 54 */
+            {
+                /* nRg */
+                225129,
+                /* nBg */
+                857504,
+            },
+            /* 55 */
+            {
+                /* nRg */
+                209411,
+                /* nBg */
+                891436,
+            },
+            /* 56 */
+            {
+                /* nRg */
+                194647,
+                /* nBg */
+                925777,
+            },
+        },
+        /* tInRightBorderPntList[512] */
+        {
+            /* 0 */
+            {
+                /* nRg */
+                1673706,
+                /* nBg */
+                379259,
+            },
+            /* 1 */
+            {
+                /* nRg */
+                1615164,
+                /* nBg */
+                362839,
+            },
+            /* 2 */
+            {
+                /* nRg */
+                1555500,
+                /* nBg */
+                349658,
+            },
+            /* 3 */
+            {
+                /* nRg */
+                1494913,
+                /* nBg */
+                339791,
+            },
+            /* 4 */
+            {
+                /* nRg */
+                1433571,
+                /* nBg */
+                333300,
+            },
+            /* 5 */
+            {
+                /* nRg */
+                1371684,
+                /* nBg */
+                330239,
+            },
+            /* 6 */
+            {
+                /* nRg */
+                1309420,
+                /* nBg */
+                330647,
+            },
+            /* 7 */
+            {
+                /* nRg */
+                1246998,
+                /* nBg */
+                334548,
+            },
+            /* 8 */
+            {
+                /* nRg */
+                1184597,
+                /* nBg */
+                341972,
+            },
+            /* 9 */
+            {
+                /* nRg */
+                1155132,
+                /* nBg */
+                343860,
+            },
+            /* 10 */
+            {
+                /* nRg */
+                1125604,
+                /* nBg */
+                346544,
+            },
+            /* 11 */
+            {
+                /* nRg */
+                1096035,
+                /* nBg */
+                350015,
+            },
+            /* 12 */
+            {
+                /* nRg */
+                1066423,
+                /* nBg */
+                354293,
+            },
+            /* 13 */
+            {
+                /* nRg */
+                1036811,
+                /* nBg */
+                359368,
+            },
+            /* 14 */
+            {
+                /* nRg */
+                1007210,
+                /* nBg */
+                365250,
+            },
+            /* 15 */
+            {
+                /* nRg */
+                977650,
+                /* nBg */
+                371951,
+            },
+            /* 16 */
+            {
+                /* nRg */
+                948143,
+                /* nBg */
+                379459,
+            },
+            /* 17 */
+            {
+                /* nRg */
+                918427,
+                /* nBg */
+                393772,
+            },
+            /* 18 */
+            {
+                /* nRg */
+                889130,
+                /* nBg */
+                408924,
+            },
+            /* 19 */
+            {
+                /* nRg */
+                860262,
+                /* nBg */
+                424904,
+            },
+            /* 20 */
+            {
+                /* nRg */
+                831856,
+                /* nBg */
+                441681,
+            },
+            /* 21 */
+            {
+                /* nRg */
+                803943,
+                /* nBg */
+                459245,
+            },
+            /* 22 */
+            {
+                /* nRg */
+                776533,
+                /* nBg */
+                477595,
+            },
+            /* 23 */
+            {
+                /* nRg */
+                749648,
+                /* nBg */
+                496710,
+            },
+            /* 24 */
+            {
+                /* nRg */
+                723308,
+                /* nBg */
+                516570,
+            },
+            /* 25 */
+            {
+                /* nRg */
+                709729,
+                /* nBg */
+                527276,
+            },
+            /* 26 */
+            {
+                /* nRg */
+                696307,
+                /* nBg */
+                538192,
+            },
+            /* 27 */
+            {
+                /* nRg */
+                683053,
+                /* nBg */
+                549286,
+            },
+            /* 28 */
+            {
+                /* nRg */
+                669956,
+                /* nBg */
+                560590,
+            },
+            /* 29 */
+            {
+                /* nRg */
+                657038,
+                /* nBg */
+                572082,
+            },
+            /* 30 */
+            {
+                /* nRg */
+                644287,
+                /* nBg */
+                583753,
+            },
+            /* 31 */
+            {
+                /* nRg */
+                631704,
+                /* nBg */
+                595623,
+            },
+            /* 32 */
+            {
+                /* nRg */
+                619299,
+                /* nBg */
+                607671,
+            },
+            /* 33 */
+            {
+                /* nRg */
+                609411,
+                /* nBg */
+                617538,
+            },
+            /* 34 */
+            {
+                /* nRg */
+                599649,
+                /* nBg */
+                627520,
+            },
+            /* 35 */
+            {
+                /* nRg */
+                590002,
+                /* nBg */
+                637618,
+            },
+            /* 36 */
+            {
+                /* nRg */
+                580471,
+                /* nBg */
+                647831,
+            },
+            /* 37 */
+            {
+                /* nRg */
+                571065,
+                /* nBg */
+                658160,
+            },
+            /* 38 */
+            {
+                /* nRg */
+                561785,
+                /* nBg */
+                668593,
+            },
+            /* 39 */
+            {
+                /* nRg */
+                552631,
+                /* nBg */
+                679142,
+            },
+            /* 40 */
+            {
+                /* nRg */
+                543603,
+                /* nBg */
+                689795,
+            },
+            /* 41 */
+            {
+                /* nRg */
+                535843,
+                /* nBg */
+                699170,
+            },
+            /* 42 */
+            {
+                /* nRg */
+                528178,
+                /* nBg */
+                708617,
+            },
+            /* 43 */
+            {
+                /* nRg */
+                520607,
+                /* nBg */
+                718149,
+            },
+            /* 44 */
+            {
+                /* nRg */
+                513142,
+                /* nBg */
+                727754,
+            },
+            /* 45 */
+            {
+                /* nRg */
+                505770,
+                /* nBg */
+                737443,
+            },
+            /* 46 */
+            {
+                /* nRg */
+                498504,
+                /* nBg */
+                747205,
+            },
+            /* 47 */
+            {
+                /* nRg */
+                491342,
+                /* nBg */
+                757040,
+            },
+            /* 48 */
+            {
+                /* nRg */
+                484274,
+                /* nBg */
+                766949,
+            },
+            /* 49 */
+            {
+                /* nRg */
+                465956,
+                /* nBg */
+                793730,
+            },
+            /* 50 */
+            {
+                /* nRg */
+                448371,
+                /* nBg */
+                821014,
+            },
+            /* 51 */
+            {
+                /* nRg */
+                431562,
+                /* nBg */
+                848770,
+            },
+            /* 52 */
+            {
+                /* nRg */
+                415519,
+                /* nBg */
+                876977,
+            },
+            /* 53 */
+            {
+                /* nRg */
+                400273,
+                /* nBg */
+                905624,
+            },
+            /* 54 */
+            {
+                /* nRg */
+                385824,
+                /* nBg */
+                934680,
+            },
+            /* 55 */
+            {
+                /* nRg */
+                372182,
+                /* nBg */
+                964124,
+            },
+            /* 56 */
+            {
+                /* nRg */
+                359357,
+                /* nBg */
+                993935,
+            },
+        },
+        /* tOutLeftBorderPntList[512] */
+        {
+            /* 0 */
+            {
+                /* nRg */
+                1725138,
+                /* nBg */
+                143634,
+            },
+            /* 1 */
+            {
+                /* nRg */
+                1653416,
+                /* nBg */
+                124718,
+            },
+            /* 2 */
+            {
+                /* nRg */
+                1580477,
+                /* nBg */
+                109786,
+            },
+            /* 3 */
+            {
+                /* nRg */
+                1506521,
+                /* nBg */
+                98902,
+            },
+            /* 4 */
+            {
+                /* nRg */
+                1431778,
+                /* nBg */
+                92138,
+            },
+            /* 5 */
+            {
+                /* nRg */
+                1356490,
+                /* nBg */
+                89548,
+            },
+            /* 6 */
+            {
+                /* nRg */
+                1280888,
+                /* nBg */
+                91163,
+            },
+            /* 7 */
+            {
+                /* nRg */
+                1205202,
+                /* nBg */
+                97025,
+            },
+            /* 8 */
+            {
+                /* nRg */
+                1129673,
+                /* nBg */
+                107143,
+            },
+            /* 9 */
+            {
+                /* nRg */
+                1094210,
+                /* nBg */
+                110520,
+            },
+            /* 10 */
+            {
+                /* nRg */
+                1058716,
+                /* nBg */
+                114830,
+            },
+            /* 11 */
+            {
+                /* nRg */
+                1023211,
+                /* nBg */
+                120104,
+            },
+            /* 12 */
+            {
+                /* nRg */
+                987727,
+                /* nBg */
+                126322,
+            },
+            /* 13 */
+            {
+                /* nRg */
+                952296,
+                /* nBg */
+                133494,
+            },
+            /* 14 */
+            {
+                /* nRg */
+                916927,
+                /* nBg */
+                141621,
+            },
+            /* 15 */
+            {
+                /* nRg */
+                881653,
+                /* nBg */
+                150701,
+            },
+            /* 16 */
+            {
+                /* nRg */
+                846505,
+                /* nBg */
+                160747,
+            },
+            /* 17 */
+            {
+                /* nRg */
+                810675,
+                /* nBg */
+                178017,
+            },
+            /* 18 */
+            {
+                /* nRg */
+                775338,
+                /* nBg */
+                196283,
+            },
+            /* 19 */
+            {
+                /* nRg */
+                740536,
+                /* nBg */
+                215545,
+            },
+            /* 20 */
+            {
+                /* nRg */
+                706289,
+                /* nBg */
+                235772,
+            },
+            /* 21 */
+            {
+                /* nRg */
+                672620,
+                /* nBg */
+                256964,
+            },
+            /* 22 */
+            {
+                /* nRg */
+                639568,
+                /* nBg */
+                279089,
+            },
+            /* 23 */
+            {
+                /* nRg */
+                607146,
+                /* nBg */
+                302137,
+            },
+            /* 24 */
+            {
+                /* nRg */
+                575396,
+                /* nBg */
+                326086,
+            },
+            /* 25 */
+            {
+                /* nRg */
+                559017,
+                /* nBg */
+                339005,
+            },
+            /* 26 */
+            {
+                /* nRg */
+                542827,
+                /* nBg */
+                352154,
+            },
+            /* 27 */
+            {
+                /* nRg */
+                526847,
+                /* nBg */
+                365544,
+            },
+            /* 28 */
+            {
+                /* nRg */
+                511055,
+                /* nBg */
+                379165,
+            },
+            /* 29 */
+            {
+                /* nRg */
+                495473,
+                /* nBg */
+                393027,
+            },
+            /* 30 */
+            {
+                /* nRg */
+                480091,
+                /* nBg */
+                407110,
+            },
+            /* 31 */
+            {
+                /* nRg */
+                464928,
+                /* nBg */
+                421412,
+            },
+            /* 32 */
+            {
+                /* nRg */
+                449965,
+                /* nBg */
+                435945,
+            },
+            /* 33 */
+            {
+                /* nRg */
+                438043,
+                /* nBg */
+                447847,
+            },
+            /* 34 */
+            {
+                /* nRg */
+                426267,
+                /* nBg */
+                459884,
+            },
+            /* 35 */
+            {
+                /* nRg */
+                414628,
+                /* nBg */
+                472058,
+            },
+            /* 36 */
+            {
+                /* nRg */
+                403146,
+                /* nBg */
+                484379,
+            },
+            /* 37 */
+            {
+                /* nRg */
+                391800,
+                /* nBg */
+                496826,
+            },
+            /* 38 */
+            {
+                /* nRg */
+                380612,
+                /* nBg */
+                509409,
+            },
+            /* 39 */
+            {
+                /* nRg */
+                369571,
+                /* nBg */
+                522128,
+            },
+            /* 40 */
+            {
+                /* nRg */
+                358686,
+                /* nBg */
+                534973,
+            },
+            /* 41 */
+            {
+                /* nRg */
+                349323,
+                /* nBg */
+                546277,
+            },
+            /* 42 */
+            {
+                /* nRg */
+                340074,
+                /* nBg */
+                557675,
+            },
+            /* 43 */
+            {
+                /* nRg */
+                330952,
+                /* nBg */
+                569167,
+            },
+            /* 44 */
+            {
+                /* nRg */
+                321944,
+                /* nBg */
+                580754,
+            },
+            /* 45 */
+            {
+                /* nRg */
+                313063,
+                /* nBg */
+                592435,
+            },
+            /* 46 */
+            {
+                /* nRg */
+                304297,
+                /* nBg */
+                604210,
+            },
+            /* 47 */
+            {
+                /* nRg */
+                295656,
+                /* nBg */
+                616070,
+            },
+            /* 48 */
+            {
+                /* nRg */
+                287142,
+                /* nBg */
+                628013,
+            },
+            /* 49 */
+            {
+                /* nRg */
+                265049,
+                /* nBg */
+                660309,
+            },
+            /* 50 */
+            {
+                /* nRg */
+                243857,
+                /* nBg */
+                693214,
+            },
+            /* 51 */
+            {
+                /* nRg */
+                223577,
+                /* nBg */
+                726674,
+            },
+            /* 52 */
+            {
+                /* nRg */
+                204231,
+                /* nBg */
+                760700,
+            },
+            /* 53 */
+            {
+                /* nRg */
+                185850,
+                /* nBg */
+                795240,
+            },
+            /* 54 */
+            {
+                /* nRg */
+                168422,
+                /* nBg */
+                830273,
+            },
+            /* 55 */
+            {
+                /* nRg */
+                151970,
+                /* nBg */
+                865778,
+            },
+            /* 56 */
+            {
+                /* nRg */
+                136504,
+                /* nBg */
+                901723,
+            },
+        },
+        /* tOutRightBorderPntList[512] */
+        {
+            /* 0 */
+            {
+                /* nRg */
+                1660294,
+                /* nBg */
+                440727,
+            },
+            /* 1 */
+            {
+                /* nRg */
+                1605181,
+                /* nBg */
+                424956,
+            },
+            /* 2 */
+            {
+                /* nRg */
+                1548988,
+                /* nBg */
+                412237,
+            },
+            /* 3 */
+            {
+                /* nRg */
+                1491882,
+                /* nBg */
+                402632,
+            },
+            /* 4 */
+            {
+                /* nRg */
+                1434043,
+                /* nBg */
+                396215,
+            },
+            /* 5 */
+            {
+                /* nRg */
+                1375637,
+                /* nBg */
+                393027,
+            },
+            /* 6 */
+            {
+                /* nRg */
+                1316865,
+                /* nBg */
+                393122,
+            },
+            /* 7 */
+            {
+                /* nRg */
+                1257893,
+                /* nBg */
+                396509,
+            },
+            /* 8 */
+            {
+                /* nRg */
+                1198921,
+                /* nBg */
+                403240,
+            },
+            /* 9 */
+            {
+                /* nRg */
+                1171029,
+                /* nBg */
+                404740,
+            },
+            /* 10 */
+            {
+                /* nRg */
+                1143063,
+                /* nBg */
+                406994,
+            },
+            /* 11 */
+            {
+                /* nRg */
+                1115024,
+                /* nBg */
+                409993,
+            },
+            /* 12 */
+            {
+                /* nRg */
+                1086954,
+                /* nBg */
+                413768,
+            },
+            /* 13 */
+            {
+                /* nRg */
+                1058852,
+                /* nBg */
+                418298,
+            },
+            /* 14 */
+            {
+                /* nRg */
+                1030761,
+                /* nBg */
+                423593,
+            },
+            /* 15 */
+            {
+                /* nRg */
+                1002690,
+                /* nBg */
+                429665,
+            },
+            /* 16 */
+            {
+                /* nRg */
+                974651,
+                /* nBg */
+                436512,
+            },
+            /* 17 */
+            {
+                /* nRg */
+                946539,
+                /* nBg */
+                450059,
+            },
+            /* 18 */
+            {
+                /* nRg */
+                918804,
+                /* nBg */
+                464404,
+            },
+            /* 19 */
+            {
+                /* nRg */
+                891499,
+                /* nBg */
+                479514,
+            },
+            /* 20 */
+            {
+                /* nRg */
+                864624,
+                /* nBg */
+                495389,
+            },
+            /* 21 */
+            {
+                /* nRg */
+                838200,
+                /* nBg */
+                512020,
+            },
+            /* 22 */
+            {
+                /* nRg */
+                812258,
+                /* nBg */
+                529384,
+            },
+            /* 23 */
+            {
+                /* nRg */
+                786820,
+                /* nBg */
+                547472,
+            },
+            /* 24 */
+            {
+                /* nRg */
+                761895,
+                /* nBg */
+                566262,
+            },
+            /* 25 */
+            {
+                /* nRg */
+                749050,
+                /* nBg */
+                576392,
+            },
+            /* 26 */
+            {
+                /* nRg */
+                736352,
+                /* nBg */
+                586720,
+            },
+            /* 27 */
+            {
+                /* nRg */
+                723801,
+                /* nBg */
+                597227,
+            },
+            /* 28 */
+            {
+                /* nRg */
+                711417,
+                /* nBg */
+                607912,
+            },
+            /* 29 */
+            {
+                /* nRg */
+                699180,
+                /* nBg */
+                618786,
+            },
+            /* 30 */
+            {
+                /* nRg */
+                687111,
+                /* nBg */
+                629838,
+            },
+            /* 31 */
+            {
+                /* nRg */
+                675210,
+                /* nBg */
+                641068,
+            },
+            /* 32 */
+            {
+                /* nRg */
+                663476,
+                /* nBg */
+                652476,
+            },
+            /* 33 */
+            {
+                /* nRg */
+                654123,
+                /* nBg */
+                661809,
+            },
+            /* 34 */
+            {
+                /* nRg */
+                644874,
+                /* nBg */
+                671256,
+            },
+            /* 35 */
+            {
+                /* nRg */
+                635752,
+                /* nBg */
+                680809,
+            },
+            /* 36 */
+            {
+                /* nRg */
+                626734,
+                /* nBg */
+                690477,
+            },
+            /* 37 */
+            {
+                /* nRg */
+                617831,
+                /* nBg */
+                700250,
+            },
+            /* 38 */
+            {
+                /* nRg */
+                609055,
+                /* nBg */
+                710117,
+            },
+            /* 39 */
+            {
+                /* nRg */
+                600383,
+                /* nBg */
+                720099,
+            },
+            /* 40 */
+            {
+                /* nRg */
+                591848,
+                /* nBg */
+                730186,
+            },
+            /* 41 */
+            {
+                /* nRg */
+                584497,
+                /* nBg */
+                739047,
+            },
+            /* 42 */
+            {
+                /* nRg */
+                577241,
+                /* nBg */
+                747991,
+            },
+            /* 43 */
+            {
+                /* nRg */
+                570079,
+                /* nBg */
+                757019,
+            },
+            /* 44 */
+            {
+                /* nRg */
+                563012,
+                /* nBg */
+                766111,
+            },
+            /* 45 */
+            {
+                /* nRg */
+                556039,
+                /* nBg */
+                775275,
+            },
+            /* 46 */
+            {
+                /* nRg */
+                549171,
+                /* nBg */
+                784513,
+            },
+            /* 47 */
+            {
+                /* nRg */
+                542386,
+                /* nBg */
+                793814,
+            },
+            /* 48 */
+            {
+                /* nRg */
+                535707,
+                /* nBg */
+                803199,
+            },
+            /* 49 */
+            {
+                /* nRg */
+                518364,
+                /* nBg */
+                828543,
+            },
+            /* 50 */
+            {
+                /* nRg */
+                501733,
+                /* nBg */
+                854359,
+            },
+            /* 51 */
+            {
+                /* nRg */
+                485816,
+                /* nBg */
+                880615,
+            },
+            /* 52 */
+            {
+                /* nRg */
+                470643,
+                /* nBg */
+                907312,
+            },
+            /* 53 */
+            {
+                /* nRg */
+                456214,
+                /* nBg */
+                934418,
+            },
+            /* 54 */
+            {
+                /* nRg */
+                442531,
+                /* nBg */
+                961911,
+            },
+            /* 55 */
+            {
+                /* nRg */
+                429623,
+                /* nBg */
+                989772,
+            },
+            /* 56 */
+            {
+                /* nRg */
+                417491,
+                /* nBg */
+                1017989,
+            },
+        },
+        /* nIllumNum */
+        6,
+        /* tIllumList[16] */
+        {
+            /* 0 */
+            {
+                /* szName[32] */
+                "H",
+                /* nCct */
+                2300,
+                /* nRadius */
+                0,
+                /* tCoord */
+                {
+                    /* nRg */
+                    1160774,
+                    /* nBg */
+                    240124,
+                },
+            },
+            /* 1 */
+            {
+                /* szName[32] */
+                "A",
+                /* nCct */
+                2854,
+                /* nRadius */
+                0,
+                /* tCoord */
+                {
+                    /* nRg */
+                    917504,
+                    /* nBg */
+                    313524,
+                },
+            },
+            /* 2 */
+            {
+                /* szName[32] */
+                "TL84",
+                /* nCct */
+                3900,
+                /* nRadius */
+                0,
+                /* tCoord */
+                {
+                    /* nRg */
+                    629146,
+                    /* nBg */
+                    395313,
+                },
+            },
+            /* 3 */
+            {
+                /* szName[32] */
+                "D50",
+                /* nCct */
+                5000,
+                /* nRadius */
+                0,
+                /* tCoord */
+                {
+                    /* nRg */
+                    551551,
+                    /* nBg */
+                    538968,
+                },
+            },
+            /* 4 */
+            {
+                /* szName[32] */
+                "D65",
+                /* nCct */
+                6500,
+                /* nRadius */
+                0,
+                /* tCoord */
+                {
+                    /* nRg */
+                    501219,
+                    /* nBg */
+                    654311,
+                },
+            },
+            /* 5 */
+            {
+                /* szName[32] */
+                "D75",
+                /* nCct */
+                8000,
+                /* nRadius */
+                0,
+                /* tCoord */
+                {
+                    /* nRg */
+                    433062,
+                    /* nBg */
+                    730857,
+                },
+            },
+        },
+        /* nExtIllumNum */
+        1,
+        /* tExtIllumList[32] */
+        {
+            /* 0 */
+            {
+                /* szName[32] */
+                "CWF",
+                /* nCct */
+                4000,
+                /* nRadius */
+                31457,
+                /* tCoord */
+                {
+                    /* nRg */
+                    586154,
+                    /* nBg */
+                    413139,
+                },
+            },
+        },
+        /* nMLCNum */
+        0,
+        /* tMLCZoneList[15] */
+        {
+            /* 0 */
+            {
+                /* nEnable */
+                0,
+                /* szDescription[32] */
+                "",
+                /* nZoneType */
+                0,
+                /* tPoly */
+                {
+                    /* nPntCnt */
+                    0,
+                    /* tPntArray[15] */
+                    {
+                        /* 0 */
+                        {
+                            /* nRg */
+                            0,
+                            /* nBg */
+                            0,
+                        },
+                    },
+                },
+                /* nDetectionZoneGroupNum */
+                0,
+                /* tGroupDetectionZoneList[10] */
+                {
+                    /* 0 */
+                    {
+                        /* nDetectionZoneNum */
+                        0,
+                        /* tDetectionZoneList[5] */
+                        {
+                            /* 0 */
+                            {
+                                /* szDescription[32] */
+                                "",
+                                /* nZoneType */
+                                0,
+                                /* tPoly */
+                                {
+                                    /* nPntCnt */
+                                    0,
+                                    /* tPntArray[15] */
+                                    {
+                                        /* 0 */
+                                        {
+                                            /* nRg */
+                                            0,
+                                            /* nBg */
+                                            0,
+                                        },
+                                    },
+                                },
+                                /* nLux[2] */
+                                {0, 0, /*0 - 1*/},
+                            },
+                        },
+                    },
+                },
+                /* nTrigerType1st */
+                0,
+                /* nTrigerType2nd */
+                0,
+                /* nTrigerType3rd */
+                0,
+                /* nTrigerValue1st[2] */
+                {0, 0, /*0 - 1*/},
+                /* nTrigerValue2nd[2] */
+                {0, 0, /*0 - 1*/},
+                /* nTrigerValue3rd */
+                0,
+            },
+        },
+        /* tInitParam */
+        {
+            /* tGains */
+            {
+                /* nGainR */
+                427,
+                /* nGainGr */
+                256,
+                /* nGainGb */
+                256,
+                /* nGainB */
+                679,
+            },
+            /* nDampRatio */
+            100000,
+        },
+        /* nMode */
+        0,
+        /* nIndex */
+        0,
+        /* nDampRatio */
+        943718,
+        /* nToleranceRg */
+        3145,
+        /* nToleranceBg */
+        3145,
+        /* nLuxVeryDarkStart */
+        0,
+        /* nLuxVeryDarkEnd */
+        102,
+        /* nLuxDarkStart */
+        205,
+        /* nLuxDarkEnd */
+        10240,
+        /* nLuxIndoorStart */
+        30720,
+        /* nLuxIndoorEnd */
+        409600,
+        /* nLuxTransInStart */
+        460800,
+        /* nLuxTransInEnd */
+        972800,
+        /* nLuxTransOutStart */
+        1024000,
+        /* nLuxTransOutEnd */
+        1894400,
+        /* nLuxOutdoorStart */
+        1945600,
+        /* nLuxOutdoorEnd */
+        4044800,
+        /* nLuxBrightStart */
+        4096000,
+        /* nLuxBrightEnd */
+        10137600,
+        /* nLuxVeryBrightStart */
+        10240000,
+        /* nCctMinInner */
+        1800,
+        /* nCctMaxInner */
+        8500,
+        /* nCctMinOuter */
+        1500,
+        /* nCctMaxOuter */
+        12000,
+        /* nCctSplitHtoA */
+        2700,
+        /* nCctSplitAtoF */
+        3300,
+        /* nCctSplitFtoD5 */
+        4600,
+        /* nCctSplitD5toD6 */
+        5400,
+        /* nCctSplitD6toS */
+        6800,
+        /* nGridWeightEnable */
+        0,
+        /* nGridWeightRow */
+        9,
+        /* nGridWeightColumn */
+        9,
+        /* nGridWeightTable[54][72] */
+        {
+            {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, /*0 - 8*/},
+            {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, /*0 - 8*/},
+            {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, /*0 - 8*/},
+            {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, /*0 - 8*/},
+            {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, /*0 - 8*/},
+            {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, /*0 - 8*/},
+            {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, /*0 - 8*/},
+            {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, /*0 - 8*/},
+            {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, /*0 - 8*/},
+        },
+        /* nGrayZoneLuxWeight[24][8] */
+        {
+            {200, 200, 100, 50, 20, 10, 10, 10, /*0 - 7*/},
+            {600, 500, 400, 400, 200, 100, 100, 100, /*0 - 7*/},
+            {600, 500, 400, 400, 200, 100, 100, 100, /*0 - 7*/},
+            {300, 200, 100, 50, 20, 10, 10, 10, /*0 - 7*/},
+            {500, 300, 150, 150, 80, 30, 30, 30, /*0 - 7*/},
+            {700, 700, 500, 400, 200, 100, 100, 100, /*0 - 7*/},
+            {700, 700, 500, 400, 200, 100, 100, 100, /*0 - 7*/},
+            {400, 200, 150, 150, 80, 30, 30, 30, /*0 - 7*/},
+            {200, 200, 200, 100, 100, 50, 50, 100, /*0 - 7*/},
+            {700, 700, 700, 700, 600, 500, 500, 300, /*0 - 7*/},
+            {800, 800, 800, 800, 700, 600, 600, 400, /*0 - 7*/},
+            {300, 250, 200, 100, 50, 50, 50, 50, /*0 - 7*/},
+            {400, 400, 200, 200, 100, 100, 100, 100, /*0 - 7*/},
+            {800, 800, 800, 800, 800, 700, 700, 600, /*0 - 7*/},
+            {800, 800, 800, 900, 900, 900, 700, 500, /*0 - 7*/},
+            {500, 300, 300, 100, 50, 50, 50, 50, /*0 - 7*/},
+            {500, 500, 400, 400, 300, 200, 200, 200, /*0 - 7*/},
+            {800, 800, 800, 900, 900, 900, 900, 900, /*0 - 7*/},
+            {900, 1000, 1000, 1000, 900, 900, 900, 900, /*0 - 7*/},
+            {300, 200, 100, 80, 50, 50, 50, 50, /*0 - 7*/},
+            {200, 200, 200, 200, 200, 100, 100, 100, /*0 - 7*/},
+            {400, 500, 700, 500, 500, 500, 500, 500, /*0 - 7*/},
+            {400, 800, 1000, 800, 800, 800, 700, 700, /*0 - 7*/},
+            {200, 300, 300, 300, 400, 400, 100, 50, /*0 - 7*/},
+        },
+        /* nExtIlllumLuxWeight[32][8] */
+        {
+            {1000, 1000, 900, 500, 100, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+        },
+        /* nLumaWeightNum */
+        8,
+        /* nLumaSplitList[32] */
+        {51, 819, 3072, 8192, 20480, 40960, 92160, 215040, /*0 - 7*/},
+        /* nLumaWeightList[8][32] */
+        {
+            {256, 512, 512, 1024, 1024, 1024, 1024, 820, /*0 - 7*/},
+            {0, 102, 205, 819, 1024, 1024, 1024, 820, /*0 - 7*/},
+            {0, 0, 102, 819, 1024, 1024, 1024, 820, /*0 - 7*/},
+            {0, 0, 0, 512, 1024, 1024, 1024, 820, /*0 - 7*/},
+            {0, 0, 0, 512, 1024, 1024, 1024, 820, /*0 - 7*/},
+            {0, 0, 0, 512, 1024, 1024, 1024, 820, /*0 - 7*/},
+            {0, 0, 0, 512, 1024, 1024, 1024, 820, /*0 - 7*/},
+            {0, 0, 0, 512, 1024, 1024, 1024, 820, /*0 - 7*/},
+        },
+        /* bMixLightEn */
+        1,
+        /* nMixLightProba_0_CctStd[8] */
+        {400, 400, 400, 450, 600, 9998, 9998, 9998, /*0 - 7*/},
+        /* nMixLightProba_100_CctStd[8] */
+        {600, 700, 800, 800, 1000, 9999, 9999, 9999, /*0 - 7*/},
+        /* nMixLightProba_100_SatDiscnt[8] */
+        {100, 100, 100, 100, 100, 100, 100, 100, /*0 - 7*/},
+        /* nMixLightKneeNum */
+        8,
+        /* nMixLightKneeCctList[32] */
+        {2300, 2800, 3500, 4600, 5500, 6500, 7500, 8500, /*0 - 7*/},
+        /* nMixLightKneeWtList[8][32] */
+        {
+            {820, 820, 820, 1024, 1024, 820, 410, 358, /*0 - 7*/},
+            {614, 614, 614, 1024, 1024, 820, 410, 358, /*0 - 7*/},
+            {205, 205, 307, 820, 1024, 820, 410, 358, /*0 - 7*/},
+            {205, 205, 410, 922, 1024, 820, 410, 358, /*0 - 7*/},
+            {307, 307, 512, 1024, 1024, 820, 410, 358, /*0 - 7*/},
+            {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, /*0 - 7*/},
+            {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, /*0 - 7*/},
+            {1024, 1024, 1024, 1024, 1024, 1024, 1024, 1024, /*0 - 7*/},
+        },
+        /* tDomParamList[4] */
+        {
+            /* 0 */
+            {
+                /* nDominantEnable */
+                0,
+                /* nDomMinCctThresh */
+                2000,
+                /* nDomMaxCctThresh */
+                2500,
+                /* nDom2AllRatioThresh */
+                1024,
+                /* nDom2MinorRatioThresh */
+                4096,
+                /* nMinorWeight */
+                0,
+                /* nSmoothPercent */
+                204,
+            },
+            /* 1 */
+            {
+                /* nDominantEnable */
+                0,
+                /* nDomMinCctThresh */
+                2700,
+                /* nDomMaxCctThresh */
+                3300,
+                /* nDom2AllRatioThresh */
+                1024,
+                /* nDom2MinorRatioThresh */
+                4096,
+                /* nMinorWeight */
+                0,
+                /* nSmoothPercent */
+                204,
+            },
+            /* 2 */
+            {
+                /* nDominantEnable */
+                0,
+                /* nDomMinCctThresh */
+                3600,
+                /* nDomMaxCctThresh */
+                4400,
+                /* nDom2AllRatioThresh */
+                1024,
+                /* nDom2MinorRatioThresh */
+                4096,
+                /* nMinorWeight */
+                0,
+                /* nSmoothPercent */
+                204,
+            },
+            /* 3 */
+            {
+                /* nDominantEnable */
+                0,
+                /* nDomMinCctThresh */
+                4600,
+                /* nDomMaxCctThresh */
+                7500,
+                /* nDom2AllRatioThresh */
+                409,
+                /* nDom2MinorRatioThresh */
+                4096,
+                /* nMinorWeight */
+                0,
+                /* nSmoothPercent */
+                204,
+            },
+        },
+        /* nTmpoStabTriggerAvgBlkWt */
+        10,
+        /* nPlanckianLocusProjEn */
+        0,
+        /* nPlanckianLocusNotProjLux */
+        4096000,
+        /* nPlanckianLocusFullProjLux */
+        10240000,
+        /* nSpatialSegmetNum */
+        2,
+        /* nSpatialStartLux[32] */
+        {4096000, 11264000, /*0 - 1*/},
+        /* nSpatialEndLux[32] */
+        {10240000, 1024000000, /*0 - 1*/},
+        /* nSpatialRg[32] */
+        {488636, 622854, /*0 - 1*/},
+        /* nSpatialBg[32] */
+        {636485, 615514, /*0 - 1*/},
+        /* nFusionGrayZoneConfid_0_AvgBlkWeight */
+        20,
+        /* nFusionGrayZoneConfid_100_AvgBlkWeight */
+        500,
+        /* nFusionSpatialConfid_0_Lux */
+        5120000,
+        /* nFusionSpatialConfid_100_Lux */
+        15360000,
+        /* nFusionWeightGrayZone */
+        1024,
+        /* nFusionWeightSpatial */
+        0,
+        /* nPreferCctNum */
+        10,
+        /* nPreferSrcCctList[32] */
+        {1800, 2300, 2800, 3800, 4100, 5000, 6500, 7500, 10000, 12000, /*0 - 9*/},
+        /* nPreferDstCct[8][32] */
+        {
+            {1800, 2300, 2800, 3800, 4100, 5015, 6520, 7500, 10000, 12000, /*0 - 9*/},
+            {1800, 2300, 2800, 3800, 4100, 5000, 6500, 7500, 10000, 12000, /*0 - 9*/},
+            {1800, 2300, 2800, 3800, 4100, 5000, 6500, 7500, 10000, 12000, /*0 - 9*/},
+            {1800, 2300, 2800, 3800, 4100, 5000, 6500, 7500, 10000, 12000, /*0 - 9*/},
+            {1800, 2300, 2800, 3800, 4100, 5000, 6500, 7500, 10000, 12000, /*0 - 9*/},
+            {1800, 2300, 2800, 3800, 4100, 5000, 6500, 7500, 10000, 12000, /*0 - 9*/},
+            {1800, 2300, 2800, 3800, 4100, 5000, 6500, 7500, 10000, 12000, /*0 - 9*/},
+            {1800, 2300, 2800, 3800, 4100, 5000, 6500, 7500, 10000, 12000, /*0 - 9*/},
+        },
+        /* nPreferGrShift[8][32] */
+        {
+            {0, 0, 0, -5242, -10485, -10485, -5242, 0, 0, 0, /*0 - 9*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 9*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 9*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 9*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 9*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 9*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 9*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 9*/},
+        },
+        /* nGreenCutEn */
+        1,
+        /* nGreenCutConfid_0_Lx */
+        512000,
+        /* nGreenCutConfid_100_Lx */
+        102400,
+        /* nGreenCutWeight */
+        512,
+        /* nGreenCutBreakAngle */
+        104858,
+        /* nGreenCutOffsetRg */
+        -31456,
+        /* nGreenCutOffsetBg */
+        -52428,
+        /* nMultiCamSyncMode */
+        0,
+    },
+    /* tLogParam */
+    {
+        /* nLogLevel */
+        4,
+        /* nLogTarget */
+        2,
+        /* nAlgoPrintInterval */
+        0,
+        /* nStatisticsPrintInterval */
+        0,
+    },
+};
+
+const static AX_ISP_IQ_CAF_PARAM_T caf_param_sdr = {
+    /* nScanType */
+    211,
+    /* nGlobalScanStep */
+    146,
+    /* nSearchDownFrameTh */
+    2814991762,
+    /* nSearchDownSerialSlopeTh */
+    460,
+    /* nSearchDownSingleSlopeTh */
+    0,
+    /* nSearchUpFrameTh */
+    2315184567,
+    /* nSearchUpSerialSlopeTh */
+    0,
+    /* nSearchUpSingleSlopeTh */
+    0,
+    /* nSearchBigStepUpSlopeTh */
+    4294967295,
+    /* nSearchBigStep */
+    2307558338,
+    /* nSearchSmallStep */
+    2814983570,
+    /* nSearchProbeStep */
+    1097235250,
+    /* nSearchProbeFrameTh */
+    3156050809,
+    /* bContinuousAfEn */
+    183,
+    /* nSceneChangeLumaTh */
+    0,
+    /* nSceneSettledLumaTh */
+    0,
+    /* nSceneSlowChangeLumaTh */
+    4294967295,
+    /* nSceneFvChangeLumaTh */
+    4294967295,
+    /* nSceneFvChangeRatioTh */
+    4294967295,
+    /* nSpotlightZoomRatioTh */
+    0,
+    /* tWeight */
+    {
+        /* nMuX */
+        0,
+        /* nMuY */
+        0,
+        /* nSigmaX */
+        0,
+        /* nSigmaY */
+        0,
+        /* nCoeffV1 */
+        0,
+        /* nCoeffV2 */
+        0,
+        /* nCoeffH1 */
+        0,
+        /* nCoeffH2 */
+        0,
+    },
+    /* zoom tracking */
+    {
+        /*nDefaultDistance*/
+        0,
+        /*nStepFactor*/
+        1,
+        /*nProbStepCoff*/
+        0,
+        /*nMaxProbeStep*/
+        0,
+        /*nMinProbeStep*/
+        0,
+        /*nFvDiffOverThresh*/
+        0,
+        /*nFvDiffMiddleThresh*/
+        0,
+        /*nFvDiffUnderThresh*/
+        0,
+        /*nHeightDistanceCoff*/
+        0,
+        /*nMiddleDistanceCoff*/
+        0,
+        /*nUnderDistanceCoff*/
+        0,
+        /*nProportionalCoff*/
+        0,
+        /*nIntegralCoff*/
+        0,
+        /*nDifferentialCoff*/
+        0,
+    },
+};
+
+const static AX_ISP_IQ_DPC_PARAM_T dpc_param_sdr = {
+    /* nDpcEnable */
+    1,
+    /* nStaticDpcEnable */
+    0,
+    /* nDynamicDpcEnable */
+    1,
+    /* nColorLimitEnable */
+    1,
+    /* nAutoMode */
+    1,
+    /* nRefMode */
+    1,
+    /* tDpcParam */
+    {
+        /* tHcgTable */
+        {
+            /* nShotNoiseCoeffsA[4] */
+            {154451139, 152870846, 153255590, 154699876, /*0 - 3*/},
+            /* nShotNoiseCoeffsB[4] */
+            {13840120, 20632215, 20876088, 12133979, /*0 - 3*/},
+            /* nReadNoiseCoeffsA[4] */
+            {6529576, 6532419, 6449761, 6498451, /*0 - 3*/},
+            /* nReadNoiseCoeffsB[4] */
+            {27818796, 27824017, 28471222, 28156829, /*0 - 3*/},
+            /* nReadNoiseCoeffsC[4] */
+            {29481682, 27445089, 27620499, 28535918, /*0 - 3*/},
+        },
+        /* tLcgTable */
+        {
+            /* nShotNoiseCoeffsA[4] */
+            {36863371, 36889750, 36887419, 36784136, /*0 - 3*/},
+            /* nShotNoiseCoeffsB[4] */
+            {5747087, 6168625, 6705084, 5549101, /*0 - 3*/},
+            /* nReadNoiseCoeffsA[4] */
+            {1526043, 1569756, 1552586, 1544424, /*0 - 3*/},
+            /* nReadNoiseCoeffsB[4] */
+            {25445201, 24908808, 24845929, 25340783, /*0 - 3*/},
+            /* nReadNoiseCoeffsC[4] */
+            {15015910, 13550075, 15978964, 13922947, /*0 - 3*/},
+        },
+    },
+    /* tManualParam */
+    {
+        /* nNoiseRatio */
+        1024,
+        /* nDpType */
+        1,
+        /* nNonChwiseEn */
+        0,
+        /* nChwiseStr */
+        20,
+        /* nDetCoarseStr */
+        120,
+        /* nDetFineStr */
+        48,
+        /* nDynamicDpcStr */
+        128,
+        /* nEdgeStr */
+        102,
+        /* nHotColdTypeStr */
+        32,
+        /* nSupWinkStr */
+        16,
+        /* nDynamicDpClrLimOffset */
+        {
+            /* nUpperLimit */
+            65535,
+            /* nLowerLimit */
+            1024,
+        },
+        /* nStaticDpClrLimOffset */
+        {
+            /* nUpperLimit */
+            65535,
+            /* nLowerLimit */
+            1024,
+        },
+        /* nNormalPixDpClrLimOffset */
+        {
+            /* nUpperLimit */
+            65535,
+            /* nLowerLimit */
+            1024,
+        },
+        /* nDynamicDpClrLimStr */
+        128,
+        /* nStaticDpClrLimStr */
+        128,
+        /* nNormalPixDpClrLimStr */
+        128,
+        /* nPreDetLevelSlope */
+        4,
+        /* nPreDetLevelOffset */
+        0,
+        /* nPreDetLevelMax */
+        256,
+    },
+    /* tAutoParam */
+    {
+        /* nParamGrpNum */
+        9,
+        /* nRefVal[16] */
+        {1024, 4096, 8192, 16384, 32768, 68096, 136192, 260096, 543744, /*0 - 8*/},
+        /* nNoiseRatio[16] */
+        {512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 8*/},
+        /* nDpType[16] */
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, /*0 - 8*/},
+        /* nNonChwiseEn[16] */
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 8*/},
+        /* nChwiseStr[16] */
+        {20, 20, 20, 20, 20, 20, 20, 20, 20, /*0 - 8*/},
+        /* nDetCoarseStr[16] */
+        {80, 100, 120, 120, 140, 150, 170, 180, 190, /*0 - 8*/},
+        /* nDetFineStr[16] */
+        {48, 48, 48, 48, 48, 48, 48, 48, 48, /*0 - 8*/},
+        /* nDynamicDpcStr[16] */
+        {128, 256, 512, 512, 1024, 1024, 1532, 2048, 2048, /*0 - 8*/},
+        /* nEdgeStr[16] */
+        {255, 255, 255, 224, 192, 160, 128, 128, 128, /*0 - 8*/},
+        /* nHotColdTypeStr[16] */
+        {32, 32, 32, 32, 32, 32, 48, 56, 64, /*0 - 8*/},
+        /* nSupWinkStr[16] */
+        {16, 16, 16, 16, 16, 16, 16, 16, 16, /*0 - 8*/},
+        /* nDynamicDpClrLimOffset[16] */
+        {
+            /* 0 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                1024,
+            },
+            /* 1 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                1024,
+            },
+            /* 2 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                1024,
+            },
+            /* 3 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                1024,
+            },
+            /* 4 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                1024,
+            },
+            /* 5 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                1024,
+            },
+            /* 6 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                256,
+            },
+            /* 7 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                256,
+            },
+            /* 8 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                256,
+            },
+        },
+        /* nStaticDpClrLimOffset[16] */
+        {
+            /* 0 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                1024,
+            },
+            /* 1 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                1024,
+            },
+            /* 2 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                1024,
+            },
+            /* 3 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                1024,
+            },
+            /* 4 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                1024,
+            },
+            /* 5 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                1024,
+            },
+            /* 6 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                256,
+            },
+            /* 7 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                256,
+            },
+            /* 8 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                256,
+            },
+        },
+        /* nNormalPixDpClrLimOffset[16] */
+        {
+            /* 0 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                1024,
+            },
+            /* 1 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                1024,
+            },
+            /* 2 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                1024,
+            },
+            /* 3 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                1024,
+            },
+            /* 4 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                1024,
+            },
+            /* 5 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                1024,
+            },
+            /* 6 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                256,
+            },
+            /* 7 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                256,
+            },
+            /* 8 */
+            {
+                /* nUpperLimit */
+                65535,
+                /* nLowerLimit */
+                256,
+            },
+        },
+        /* nDynamicDpClrLimStr[16] */
+        {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+        /* nStaticDpClrLimStr[16] */
+        {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+        /* nNormalPixDpClrLimStr[16] */
+        {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+        /* nPreDetLevelSlope[16] */
+        {4, 4, 4, 4, 4, 4, 4, 4, 4, /*0 - 8*/},
+        /* nPreDetLevelOffset[16] */
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 8*/},
+        /* nPreDetLevelMax[16] */
+        {256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 8*/},
+    },
+};
+
+const static AX_ISP_IQ_BLC_PARAM_T blc_param_sdr = {
+    /* nBlcEnable */
+    1,
+    /* nSblEnable */
+    1,
+    /* nAutoMode */
+    1,
+    /* tManualParam[4] */
+    {
+        /* 0 */
+        {
+            /* nSblRValue */
+            4096,
+            /* nSblGrValue */
+            4096,
+            /* nSblGbValue */
+            4096,
+            /* nSblBValue */
+            4096,
+        },
+        /* 1 */
+        {
+            /* nSblRValue */
+            0,
+            /* nSblGrValue */
+            0,
+            /* nSblGbValue */
+            0,
+            /* nSblBValue */
+            0,
+        },
+        /* 2 */
+        {
+            /* nSblRValue */
+            0,
+            /* nSblGrValue */
+            0,
+            /* nSblGbValue */
+            0,
+            /* nSblBValue */
+            0,
+        },
+        /* 3 */
+        {
+            /* nSblRValue */
+            0,
+            /* nSblGrValue */
+            0,
+            /* nSblGbValue */
+            0,
+            /* nSblBValue */
+            0,
+        },
+    },
+    /* tAutoParam */
+    {
+        /* tHcgAutoTable */
+        {
+            /* nGainGrpNum */
+            12,
+            /* nExposeTimeGrpNum */
+            2,
+            /* nGain[16] */
+            {1024, 2048, 4096, 8192, 16384, 24576, 32768, 55296, 131072, 262144, 524288, 1048576, /*0 - 11*/},
+            /* nExposeTime[10] */
+            {1000, 5000, /*0 - 1*/},
+            /* nAutoSblRValue[16][10] */
+            {
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+            },
+            /* nAutoSblGrValue[16][10] */
+            {
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+            },
+            /* nAutoSblGbValue[16][10] */
+            {
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+            },
+            /* nAutoSblBValue[16][10] */
+            {
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+                {4096, 4096, /*0 - 1*/},
+            },
+        },
+        /* tLcgAutoTable */
+        {
+            /* nGainGrpNum */
+            12,
+            /* nExposeTimeGrpNum */
+            2,
+            /* nGain[16] */
+            {1024, 2048, 4096, 8192, 16384, 24576, 32768, 55296, 131072, 262144, 524288, 1048576, /*0 - 11*/},
+            /* nExposeTime[10] */
+            {1000, 5000, /*0 - 1*/},
+            /* nAutoSblRValue[16][10] */
+            {
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4112, 4112, /*0 - 1*/},
+                {4105, 4105, /*0 - 1*/},
+                {4105, 4105, /*0 - 1*/},
+                {4105, 4105, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4115, 4115, /*0 - 1*/},
+            },
+            /* nAutoSblGrValue[16][10] */
+            {
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4112, 4112, /*0 - 1*/},
+                {4105, 4105, /*0 - 1*/},
+                {4105, 4105, /*0 - 1*/},
+                {4105, 4105, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4115, 4115, /*0 - 1*/},
+            },
+            /* nAutoSblGbValue[16][10] */
+            {
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4112, 4112, /*0 - 1*/},
+                {4105, 4105, /*0 - 1*/},
+                {4105, 4105, /*0 - 1*/},
+                {4105, 4105, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4115, 4115, /*0 - 1*/},
+            },
+            /* nAutoSblBValue[16][10] */
+            {
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4112, 4112, /*0 - 1*/},
+                {4105, 4105, /*0 - 1*/},
+                {4105, 4105, /*0 - 1*/},
+                {4105, 4105, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4128, 4128, /*0 - 1*/},
+                {4115, 4115, /*0 - 1*/},
+            },
+        },
+    },
+};
+
+const static AX_ISP_IQ_HDR_PARAM_T hdr_param_sdr = {
+    /* nEnable */
+    0,
+    /* nAutoMode */
+    0,
+    /* nRefMode */
+    0,
+    /* nDebugMode */
+    0,
+    /* tMotDetParam */
+    {
+        /* nCoarseMotMaskRatio[2] */
+        {0, 0, /*0 - 1*/},
+        /* nMotIirRatio[2] */
+        {0, 0, /*0 - 1*/},
+    },
+    /* tExpMaskParam */
+    {
+        /* nCoarseExpMaskRatio[2][2] */
+        {
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+        },
+        /* nExpIirRatio[2][2] */
+        {
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+        },
+        /* nExpYRatio[2] */
+        {0, 0, /*0 - 1*/},
+        /* nExpWeightLut[2][257] */
+        {
+            {
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 0 - 31*/
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 32 - 63*/
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 64 - 95*/
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 96 - 127*/
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 128 - 159*/
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 160 - 191*/
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 192 - 223*/
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 224 - 255*/
+                0, /*256 - 256*/
+            },
+            {
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 0 - 31*/
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 32 - 63*/
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 64 - 95*/
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 96 - 127*/
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 128 - 159*/
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 160 - 191*/
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 192 - 223*/
+                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 224 - 255*/
+                0, /*256 - 256*/
+            },
+        },
+        /* nExpWeightGain[2] */
+        {0, 0, /*0 - 1*/},
+    },
+    /* tDgstParam */
+    {
+        /* nDeghostEnable */
+        0,
+        /* nDgstStrenThre[2] */
+        {0, 0, /*0 - 1*/},
+        /* nDgstStrenLimit[2] */
+        {0, 0, /*0 - 1*/},
+        /* nDgstBaseFid */
+        0,
+    },
+    /* tFusionParam */
+    {
+        /* nFusionProtectThreshold[2][2] */
+        {
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+        },
+    },
+    /* tHdrManualParam */
+    {
+        /* nNoiseLutScale */
+        0,
+        /* nCoarseMotMaskNoiseLvl */
+        0,
+        /* nCoarseMotMaskSen */
+        0,
+        /* nCoarseExpMaskSen[2] */
+        {0, 0, /*0 - 1*/},
+    },
+    /* tHdrAutoParam */
+    {
+        /* nParamGrpNum */
+        0,
+        /* nRefVal[16] */
+        {0, /*0 - 0*/},
+        /* nNoiseLutScale[16] */
+        {0, /*0 - 0*/},
+        /* nCoarseMotMaskNoiseLvl[16] */
+        {0, /*0 - 0*/},
+        /* nCoarseMotMaskSen[16] */
+        {0, /*0 - 0*/},
+        /* nCoarseExpMaskSen[16][2] */
+        {
+            {0, 0, /*0 - 1*/},
+        },
+    },
+};
+
+const static AX_ISP_IQ_AINR_PARAM_T ainr_param_sdr = {
+    /* nEnable */
+    1,
+    /* nAutoMode */
+    1,
+    /* bUpdateTable */
+    1,
+    /* nRefMode */
+    1,
+    /* nHdrMode */
+    1,
+    /* tManualParam */
+    {
+        /* tMeta */
+        {
+            /* szModelPath[256] */
+            "/opt/etc/models/aiisp/SC200AI_SDR_1920x1080_10b_LCG_ISP1_A1-64X_I1-16X_0300_MULTI4_00000727474_240328_AX620E.axmodel",
+            /* szModelName[256] */
+            "SC200AI_SDR_1920x1080_10b_LCG_ISP1_A1-64X_I1-16X_0300_MULTI4_00000727474_240328_AX620E.axmodel",
+            /* szTemporalBaseNrName[256] */
+            "3d_nr_ispgain_lv0",
+            /* szSpatialBaseNrName[256] */
+            "2d_nr_ispgain_lv0",
+            /* nHcgMode */
+            0,
+            /* nIsoThresholdMin */
+            0,
+            /* nIsoThresholdMax */
+            0,
+            /* nBiasIn2D[4] */
+            {4096, 4096, 4096, 4096, /*0 - 3*/},
+            /* nBiasIn3D[4] */
+            {4096, 4096, 4096, 4096, /*0 - 3*/},
+        },
+        /* tParams */
+        {
+            /* tBias */
+            {
+                /* nBiasIn[4] */
+                {0, 0, 0, 0, /*0 - 3*/},
+                /* nBiasOut[4] */
+                {0, 0, 0, 0, /*0 - 3*/},
+            },
+            /* tNonSens */
+            {
+                /* nTemporalFilterStrLut[17][2] */
+                {
+                    {0, 0, /*0 - 1*/},
+                    {16, 256, /*0 - 1*/},
+                    {32, 512, /*0 - 1*/},
+                    {48, 768, /*0 - 1*/},
+                    {64, 1024, /*0 - 1*/},
+                    {80, 1280, /*0 - 1*/},
+                    {96, 1536, /*0 - 1*/},
+                    {112, 1792, /*0 - 1*/},
+                    {128, 2048, /*0 - 1*/},
+                    {144, 2304, /*0 - 1*/},
+                    {160, 2560, /*0 - 1*/},
+                    {176, 2816, /*0 - 1*/},
+                    {192, 3072, /*0 - 1*/},
+                    {208, 3328, /*0 - 1*/},
+                    {224, 3584, /*0 - 1*/},
+                    {240, 3840, /*0 - 1*/},
+                    {255, 4096, /*0 - 1*/},
+                },
+                /* nVstTemporalFilterStrLut[17][2] */
+                {
+                    {0, 0, /*0 - 1*/},
+                    {16, 256, /*0 - 1*/},
+                    {32, 512, /*0 - 1*/},
+                    {48, 768, /*0 - 1*/},
+                    {64, 1024, /*0 - 1*/},
+                    {80, 1280, /*0 - 1*/},
+                    {96, 1536, /*0 - 1*/},
+                    {112, 1792, /*0 - 1*/},
+                    {128, 2048, /*0 - 1*/},
+                    {144, 2304, /*0 - 1*/},
+                    {160, 2560, /*0 - 1*/},
+                    {176, 2816, /*0 - 1*/},
+                    {192, 3072, /*0 - 1*/},
+                    {208, 3328, /*0 - 1*/},
+                    {224, 3584, /*0 - 1*/},
+                    {240, 3840, /*0 - 1*/},
+                    {255, 4096, /*0 - 1*/},
+                },
+            },
+            /* tSens */
+            {
+                /* nSpatialNrStrLut[17][2] */
+                {
+                    {0, 900, /*0 - 1*/},
+                    {16, 1000, /*0 - 1*/},
+                    {32, 1100, /*0 - 1*/},
+                    {48, 1200, /*0 - 1*/},
+                    {64, 1400, /*0 - 1*/},
+                    {80, 1400, /*0 - 1*/},
+                    {96, 1400, /*0 - 1*/},
+                    {112, 1400, /*0 - 1*/},
+                    {128, 1500, /*0 - 1*/},
+                    {144, 1600, /*0 - 1*/},
+                    {160, 1700, /*0 - 1*/},
+                    {176, 1800, /*0 - 1*/},
+                    {192, 1900, /*0 - 1*/},
+                    {208, 2000, /*0 - 1*/},
+                    {224, 2000, /*0 - 1*/},
+                    {240, 2000, /*0 - 1*/},
+                    {255, 2000, /*0 - 1*/},
+                },
+            },
+        },
+    },
+    /* tAutoParam */
+    {
+        /* nAutoModelNum */
+        5,
+        /* tAutoModelTable[12] */
+        {
+            /* 0 */
+            {
+                /* tMata */
+                {
+                    /* szModelPath[256] */
+                    "/opt/etc/models/aiisp/SC200AI_SDR_1920x1080_10b_LCG_ISP1_A1-64X_I1-16X_0300_MULTI4_00000727474_240328_AX620E.axmodel",
+                    /* szModelName[256] */
+                    "SC200AI_SDR_1920x1080_10b_LCG_ISP1_A1-64X_I1-16X_0300_MULTI4_00000727474_240328_AX620E.axmodel",
+                    /* szTemporalBaseNrName[256] */
+                    "3d_sr_again_lv0",
+                    /* szSpatialBaseNrName[256] */
+                    "2d_sr_again_lv0",
+                    /* nHcgMode */
+                    0,
+                    /* nIsoThresholdMin */
+                    100,
+                    /* nIsoThresholdMax */
+                    400,
+                    /* nBiasIn2D[4] */
+                    {4096, 0, 0, 0, /*0 - 3*/},
+                    /* nBiasIn3D[4] */
+                    {4096, 0, 0, 0, /*0 - 3*/},
+                },
+                /* tParams */
+                {
+                    /* tBias */
+                    {
+                        /* nRefGrpNum */
+                        4,
+                        /* nRefValStart[4] */
+                        {1024, 2048, 3072, 4096, /*0 - 3*/},
+                        /* nRefValEnd[4] */
+                        {2048, 3072, 4096, 5120, /*0 - 3*/},
+                        /* nBiasIn[4][4] */
+                        {
+                            /*  nBiasIn 0 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasIn 1 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasIn 2 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasIn 3 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                        },
+                        /* nBiasOut[4][4] */
+                        {
+                            /*  nBiasOut 0 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasOut 1 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasOut 2 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasOut 3 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                        },
+                    },
+                    /* tNonSens */
+                    {
+                        /* nRefGrpNum */
+                        4,
+                        /* nRefValStart[4] */
+                        {1024, 2048, 3072, 4096, /*0 - 3*/},
+                        /* nRefValEnd[4] */
+                        {2048, 3072, 4096, 5120, /*0 - 3*/},
+                        /* nTemporalFilterStrLut[4][17][2] */
+                        {
+                            /* nTemporalFilterStrLut 0 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nTemporalFilterStrLut 1 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nTemporalFilterStrLut 2 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nTemporalFilterStrLut 3 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                        },
+                        /* nVstTemporalFilterStrLut[4][17][2] */
+                        {
+                            /* nVstTemporalFilterStrLut 0 */
+                            {
+                                {0, 1136, /*0 - 1*/},
+                                {16, 1136, /*0 - 1*/},
+                                {32, 1136, /*0 - 1*/},
+                                {48, 1236, /*0 - 1*/},
+                                {64, 1236, /*0 - 1*/},
+                                {80, 1536, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nVstTemporalFilterStrLut 1 */
+                            {
+                                {0, 1136, /*0 - 1*/},
+                                {16, 1136, /*0 - 1*/},
+                                {32, 1136, /*0 - 1*/},
+                                {48, 1236, /*0 - 1*/},
+                                {64, 1236, /*0 - 1*/},
+                                {80, 1536, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nVstTemporalFilterStrLut 2 */
+                            {
+                                {0, 1136, /*0 - 1*/},
+                                {16, 1136, /*0 - 1*/},
+                                {32, 1136, /*0 - 1*/},
+                                {48, 1236, /*0 - 1*/},
+                                {64, 1236, /*0 - 1*/},
+                                {80, 1536, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nVstTemporalFilterStrLut 3 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                        },
+                    },
+                    /* tSens */
+                    {
+                        /* nRefGrpNum */
+                        4,
+                        /* nRefValStart[4] */
+                        {1024, 2048, 3072, 4096, /*0 - 3*/},
+                        /* nRefValEnd[4] */
+                        {2048, 3072, 4096, 5120, /*0 - 3*/},
+                        /* nSpatialNrStrLut[4][17][2] */
+                        {
+                            /* nSpatialNrStrLut 0 */
+                            {
+                                {0, 2048, /*0 - 1*/},
+                                {16, 2048, /*0 - 1*/},
+                                {32, 2048, /*0 - 1*/},
+                                {48, 2048, /*0 - 1*/},
+                                {64, 2048, /*0 - 1*/},
+                                {80, 2048, /*0 - 1*/},
+                                {96, 2048, /*0 - 1*/},
+                                {112, 2048, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2048, /*0 - 1*/},
+                                {160, 2048, /*0 - 1*/},
+                                {176, 2048, /*0 - 1*/},
+                                {192, 2048, /*0 - 1*/},
+                                {208, 2048, /*0 - 1*/},
+                                {224, 2048, /*0 - 1*/},
+                                {240, 2048, /*0 - 1*/},
+                                {255, 2048, /*0 - 1*/},
+                            },
+                            /* nSpatialNrStrLut 1 */
+                            {
+                                {0, 2048, /*0 - 1*/},
+                                {16, 2048, /*0 - 1*/},
+                                {32, 2048, /*0 - 1*/},
+                                {48, 2048, /*0 - 1*/},
+                                {64, 2048, /*0 - 1*/},
+                                {80, 2048, /*0 - 1*/},
+                                {96, 2048, /*0 - 1*/},
+                                {112, 2048, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 1536, /*0 - 1*/},
+                                {160, 1024, /*0 - 1*/},
+                                {176, 512, /*0 - 1*/},
+                                {192, 512, /*0 - 1*/},
+                                {208, 512, /*0 - 1*/},
+                                {224, 512, /*0 - 1*/},
+                                {240, 512, /*0 - 1*/},
+                                {255, 512, /*0 - 1*/},
+                            },
+                            /* nSpatialNrStrLut 2 */
+                            {
+                                {0, 2048, /*0 - 1*/},
+                                {16, 2048, /*0 - 1*/},
+                                {32, 2048, /*0 - 1*/},
+                                {48, 2048, /*0 - 1*/},
+                                {64, 2048, /*0 - 1*/},
+                                {80, 2048, /*0 - 1*/},
+                                {96, 2048, /*0 - 1*/},
+                                {112, 2048, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2048, /*0 - 1*/},
+                                {160, 2048, /*0 - 1*/},
+                                {176, 2048, /*0 - 1*/},
+                                {192, 2048, /*0 - 1*/},
+                                {208, 2048, /*0 - 1*/},
+                                {224, 2048, /*0 - 1*/},
+                                {240, 2048, /*0 - 1*/},
+                                {255, 2048, /*0 - 1*/},
+                            },
+                            /* nSpatialNrStrLut 3 */
+                            {
+                                {0, 2048, /*0 - 1*/},
+                                {16, 2048, /*0 - 1*/},
+                                {32, 2048, /*0 - 1*/},
+                                {48, 2048, /*0 - 1*/},
+                                {64, 2048, /*0 - 1*/},
+                                {80, 2048, /*0 - 1*/},
+                                {96, 2048, /*0 - 1*/},
+                                {112, 2048, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2048, /*0 - 1*/},
+                                {160, 2048, /*0 - 1*/},
+                                {176, 2048, /*0 - 1*/},
+                                {192, 2048, /*0 - 1*/},
+                                {208, 2048, /*0 - 1*/},
+                                {224, 2048, /*0 - 1*/},
+                                {240, 2048, /*0 - 1*/},
+                                {255, 2048, /*0 - 1*/},
+                            },
+                        },
+                    },
+                },
+            },
+            /* 1 */
+            {
+                /* tMata */
+                {
+                    /* szModelPath[256] */
+                    "/opt/etc/models/aiisp/SC200AI_SDR_1920x1080_10b_LCG_ISP1_A1-64X_I1-16X_0300_MULTI4_00000727474_240328_AX620E.axmodel",
+                    /* szModelName[256] */
+                    "SC200AI_SDR_1920x1080_10b_LCG_ISP1_A1-64X_I1-16X_0300_MULTI4_00000727474_240328_AX620E.axmodel",
+                    /* szTemporalBaseNrName[256] */
+                    "3d_sr_again_lv1",
+                    /* szSpatialBaseNrName[256] */
+                    "2d_sr_again_lv0",
+                    /* nHcgMode */
+                    0,
+                    /* nIsoThresholdMin */
+                    400,
+                    /* nIsoThresholdMax */
+                    800,
+                    /* nBiasIn2D[4] */
+                    {4096, 0, 0, 0, /*0 - 3*/},
+                    /* nBiasIn3D[4] */
+                    {4096, 0, 0, 0, /*0 - 3*/},
+                },
+                /* tParams */
+                {
+                    /* tBias */
+                    {
+                        /* nRefGrpNum */
+                        4,
+                        /* nRefValStart[4] */
+                        {4096, 5120, 6144, 7168, /*0 - 3*/},
+                        /* nRefValEnd[4] */
+                        {5120, 6144, 7168, 8192, /*0 - 3*/},
+                        /* nBiasIn[4][4] */
+                        {
+                            /*  nBiasIn 0 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasIn 1 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasIn 2 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasIn 3 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                        },
+                        /* nBiasOut[4][4] */
+                        {
+                            /*  nBiasOut 0 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasOut 1 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasOut 2 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasOut 3 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                        },
+                    },
+                    /* tNonSens */
+                    {
+                        /* nRefGrpNum */
+                        4,
+                        /* nRefValStart[4] */
+                        {4096, 5120, 6144, 7168, /*0 - 3*/},
+                        /* nRefValEnd[4] */
+                        {5120, 6144, 7168, 8192, /*0 - 3*/},
+                        /* nTemporalFilterStrLut[4][17][2] */
+                        {
+                            /* nTemporalFilterStrLut 0 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nTemporalFilterStrLut 1 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nTemporalFilterStrLut 2 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nTemporalFilterStrLut 3 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                        },
+                        /* nVstTemporalFilterStrLut[4][17][2] */
+                        {
+                            /* nVstTemporalFilterStrLut 0 */
+                            {
+                                {0, 1136, /*0 - 1*/},
+                                {16, 1136, /*0 - 1*/},
+                                {32, 1136, /*0 - 1*/},
+                                {48, 1236, /*0 - 1*/},
+                                {64, 1236, /*0 - 1*/},
+                                {80, 1536, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nVstTemporalFilterStrLut 1 */
+                            {
+                                {0, 1136, /*0 - 1*/},
+                                {16, 1136, /*0 - 1*/},
+                                {32, 1136, /*0 - 1*/},
+                                {48, 1236, /*0 - 1*/},
+                                {64, 1236, /*0 - 1*/},
+                                {80, 1536, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nVstTemporalFilterStrLut 2 */
+                            {
+                                {0, 1136, /*0 - 1*/},
+                                {16, 1136, /*0 - 1*/},
+                                {32, 1136, /*0 - 1*/},
+                                {48, 1236, /*0 - 1*/},
+                                {64, 1236, /*0 - 1*/},
+                                {80, 1536, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nVstTemporalFilterStrLut 3 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                        },
+                    },
+                    /* tSens */
+                    {
+                        /* nRefGrpNum */
+                        4,
+                        /* nRefValStart[4] */
+                        {4096, 5120, 6144, 7168, /*0 - 3*/},
+                        /* nRefValEnd[4] */
+                        {5120, 6144, 7168, 8192, /*0 - 3*/},
+                        /* nSpatialNrStrLut[4][17][2] */
+                        {
+                            /* nSpatialNrStrLut 0 */
+                            {
+                                {0, 2048, /*0 - 1*/},
+                                {16, 2048, /*0 - 1*/},
+                                {32, 2048, /*0 - 1*/},
+                                {48, 2048, /*0 - 1*/},
+                                {64, 2048, /*0 - 1*/},
+                                {80, 2048, /*0 - 1*/},
+                                {96, 2048, /*0 - 1*/},
+                                {112, 2048, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2048, /*0 - 1*/},
+                                {160, 2048, /*0 - 1*/},
+                                {176, 2048, /*0 - 1*/},
+                                {192, 2048, /*0 - 1*/},
+                                {208, 2048, /*0 - 1*/},
+                                {224, 2048, /*0 - 1*/},
+                                {240, 2048, /*0 - 1*/},
+                                {255, 2048, /*0 - 1*/},
+                            },
+                            /* nSpatialNrStrLut 1 */
+                            {
+                                {0, 2048, /*0 - 1*/},
+                                {16, 2048, /*0 - 1*/},
+                                {32, 2048, /*0 - 1*/},
+                                {48, 2048, /*0 - 1*/},
+                                {64, 2048, /*0 - 1*/},
+                                {80, 2048, /*0 - 1*/},
+                                {96, 2048, /*0 - 1*/},
+                                {112, 2048, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 1536, /*0 - 1*/},
+                                {160, 1024, /*0 - 1*/},
+                                {176, 512, /*0 - 1*/},
+                                {192, 512, /*0 - 1*/},
+                                {208, 512, /*0 - 1*/},
+                                {224, 512, /*0 - 1*/},
+                                {240, 512, /*0 - 1*/},
+                                {255, 512, /*0 - 1*/},
+                            },
+                            /* nSpatialNrStrLut 2 */
+                            {
+                                {0, 2048, /*0 - 1*/},
+                                {16, 2048, /*0 - 1*/},
+                                {32, 2048, /*0 - 1*/},
+                                {48, 2048, /*0 - 1*/},
+                                {64, 2048, /*0 - 1*/},
+                                {80, 2048, /*0 - 1*/},
+                                {96, 2048, /*0 - 1*/},
+                                {112, 2048, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2048, /*0 - 1*/},
+                                {160, 2048, /*0 - 1*/},
+                                {176, 2048, /*0 - 1*/},
+                                {192, 2048, /*0 - 1*/},
+                                {208, 2048, /*0 - 1*/},
+                                {224, 2048, /*0 - 1*/},
+                                {240, 2048, /*0 - 1*/},
+                                {255, 2048, /*0 - 1*/},
+                            },
+                            /* nSpatialNrStrLut 3 */
+                            {
+                                {0, 2048, /*0 - 1*/},
+                                {16, 2048, /*0 - 1*/},
+                                {32, 2048, /*0 - 1*/},
+                                {48, 2048, /*0 - 1*/},
+                                {64, 2048, /*0 - 1*/},
+                                {80, 2048, /*0 - 1*/},
+                                {96, 2048, /*0 - 1*/},
+                                {112, 2048, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2048, /*0 - 1*/},
+                                {160, 2048, /*0 - 1*/},
+                                {176, 2048, /*0 - 1*/},
+                                {192, 2048, /*0 - 1*/},
+                                {208, 2048, /*0 - 1*/},
+                                {224, 2048, /*0 - 1*/},
+                                {240, 2048, /*0 - 1*/},
+                                {255, 2048, /*0 - 1*/},
+                            },
+                        },
+                    },
+                },
+            },
+            /* 2 */
+            {
+                /* tMata */
+                {
+                    /* szModelPath[256] */
+                    "/opt/etc/models/aiisp/SC200AI_SDR_1920x1080_10b_LCG_ISP1_A1-64X_I1-16X_0300_MULTI4_00000727474_240328_AX620E.axmodel",
+                    /* szModelName[256] */
+                    "SC200AI_SDR_1920x1080_10b_LCG_ISP1_A1-64X_I1-16X_0300_MULTI4_00000727474_240328_AX620E.axmodel",
+                    /* szTemporalBaseNrName[256] */
+                    "3d_nr_ispgain_lv0",
+                    /* szSpatialBaseNrName[256] */
+                    "2d_nr_ispgain_lv0",
+                    /* nHcgMode */
+                    0,
+                    /* nIsoThresholdMin */
+                    800,
+                    /* nIsoThresholdMax */
+                    5400,
+                    /* nBiasIn2D[4] */
+                    {4096, 4096, 4096, 4096, /*0 - 3*/},
+                    /* nBiasIn3D[4] */
+                    {4096, 4096, 4096, 4096, /*0 - 3*/},
+                },
+                /* tParams */
+                {
+                    /* tBias */
+                    {
+                        /* nRefGrpNum */
+                        4,
+                        /* nRefValStart[4] */
+                        {8192, 32768, 40960, 49152, /*0 - 3*/},
+                        /* nRefValEnd[4] */
+                        {32768, 40960, 49152, 55296, /*0 - 3*/},
+                        /* nBiasIn[4][4] */
+                        {
+                            /*  nBiasIn 0 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasIn 1 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasIn 2 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasIn 3 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                        },
+                        /* nBiasOut[4][4] */
+                        {
+                            /*  nBiasOut 0 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasOut 1 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasOut 2 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasOut 3 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                        },
+                    },
+                    /* tNonSens */
+                    {
+                        /* nRefGrpNum */
+                        4,
+                        /* nRefValStart[4] */
+                        {8192, 32768, 40960, 49152, /*0 - 3*/},
+                        /* nRefValEnd[4] */
+                        {32768, 40960, 49152, 55296, /*0 - 3*/},
+                        /* nTemporalFilterStrLut[4][17][2] */
+                        {
+                            /* nTemporalFilterStrLut 0 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nTemporalFilterStrLut 1 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nTemporalFilterStrLut 2 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nTemporalFilterStrLut 3 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                        },
+                        /* nVstTemporalFilterStrLut[4][17][2] */
+                        {
+                            /* nVstTemporalFilterStrLut 0 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nVstTemporalFilterStrLut 1 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nVstTemporalFilterStrLut 2 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nVstTemporalFilterStrLut 3 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                        },
+                    },
+                    /* tSens */
+                    {
+                        /* nRefGrpNum */
+                        4,
+                        /* nRefValStart[4] */
+                        {8192, 32768, 40960, 49152, /*0 - 3*/},
+                        /* nRefValEnd[4] */
+                        {32768, 40960, 49152, 55296, /*0 - 3*/},
+                        /* nSpatialNrStrLut[4][17][2] */
+                        {
+                            /* nSpatialNrStrLut 0 */
+                            {
+                                {0, 400, /*0 - 1*/},
+                                {16, 600, /*0 - 1*/},
+                                {32, 800, /*0 - 1*/},
+                                {48, 1000, /*0 - 1*/},
+                                {64, 1200, /*0 - 1*/},
+                                {80, 1400, /*0 - 1*/},
+                                {96, 1400, /*0 - 1*/},
+                                {112, 1400, /*0 - 1*/},
+                                {128, 1500, /*0 - 1*/},
+                                {144, 1600, /*0 - 1*/},
+                                {160, 1700, /*0 - 1*/},
+                                {176, 1800, /*0 - 1*/},
+                                {192, 1900, /*0 - 1*/},
+                                {208, 2000, /*0 - 1*/},
+                                {224, 2000, /*0 - 1*/},
+                                {240, 2000, /*0 - 1*/},
+                                {255, 2000, /*0 - 1*/},
+                            },
+                            /* nSpatialNrStrLut 1 */
+                            {
+                                {0, 900, /*0 - 1*/},
+                                {16, 1000, /*0 - 1*/},
+                                {32, 1100, /*0 - 1*/},
+                                {48, 1200, /*0 - 1*/},
+                                {64, 1400, /*0 - 1*/},
+                                {80, 1400, /*0 - 1*/},
+                                {96, 1400, /*0 - 1*/},
+                                {112, 1400, /*0 - 1*/},
+                                {128, 1500, /*0 - 1*/},
+                                {144, 1600, /*0 - 1*/},
+                                {160, 1700, /*0 - 1*/},
+                                {176, 1800, /*0 - 1*/},
+                                {192, 1900, /*0 - 1*/},
+                                {208, 2000, /*0 - 1*/},
+                                {224, 2000, /*0 - 1*/},
+                                {240, 2000, /*0 - 1*/},
+                                {255, 2000, /*0 - 1*/},
+                            },
+                            /* nSpatialNrStrLut 2 */
+                            {
+                                {0, 1100, /*0 - 1*/},
+                                {16, 1200, /*0 - 1*/},
+                                {32, 1300, /*0 - 1*/},
+                                {48, 1400, /*0 - 1*/},
+                                {64, 1500, /*0 - 1*/},
+                                {80, 1500, /*0 - 1*/},
+                                {96, 1500, /*0 - 1*/},
+                                {112, 1500, /*0 - 1*/},
+                                {128, 1600, /*0 - 1*/},
+                                {144, 1700, /*0 - 1*/},
+                                {160, 1800, /*0 - 1*/},
+                                {176, 1900, /*0 - 1*/},
+                                {192, 2000, /*0 - 1*/},
+                                {208, 2200, /*0 - 1*/},
+                                {224, 2200, /*0 - 1*/},
+                                {240, 2200, /*0 - 1*/},
+                                {255, 2200, /*0 - 1*/},
+                            },
+                            /* nSpatialNrStrLut 3 */
+                            {
+                                {0, 1300, /*0 - 1*/},
+                                {16, 1400, /*0 - 1*/},
+                                {32, 1500, /*0 - 1*/},
+                                {48, 1600, /*0 - 1*/},
+                                {64, 1700, /*0 - 1*/},
+                                {80, 1700, /*0 - 1*/},
+                                {96, 1700, /*0 - 1*/},
+                                {112, 1800, /*0 - 1*/},
+                                {128, 1900, /*0 - 1*/},
+                                {144, 2000, /*0 - 1*/},
+                                {160, 2200, /*0 - 1*/},
+                                {176, 2300, /*0 - 1*/},
+                                {192, 2400, /*0 - 1*/},
+                                {208, 2400, /*0 - 1*/},
+                                {224, 2400, /*0 - 1*/},
+                                {240, 2400, /*0 - 1*/},
+                                {255, 2400, /*0 - 1*/},
+                            },
+                        },
+                    },
+                },
+            },
+            /* 3 */
+            {
+                /* tMata */
+                {
+                    /* szModelPath[256] */
+                    "/opt/etc/models/aiisp/SC200AI_SDR_1920x1080_10b_LCG_ISP1_A1-64X_I1-16X_0300_MULTI4_00000727474_240328_AX620E.axmodel",
+                    /* szModelName[256] */
+                    "SC200AI_SDR_1920x1080_10b_LCG_ISP1_A1-64X_I1-16X_0300_MULTI4_00000727474_240328_AX620E.axmodel",
+                    /* szTemporalBaseNrName[256] */
+                    "3d_nr_ispgain_lv1",
+                    /* szSpatialBaseNrName[256] */
+                    "2d_nr_ispgain_lv1",
+                    /* nHcgMode */
+                    0,
+                    /* nIsoThresholdMin */
+                    5400,
+                    /* nIsoThresholdMax */
+                    54000,
+                    /* nBiasIn2D[4] */
+                    {4096, 4096, 4096, 4096, /*0 - 3*/},
+                    /* nBiasIn3D[4] */
+                    {4096, 4096, 4096, 4096, /*0 - 3*/},
+                },
+                /* tParams */
+                {
+                    /* tBias */
+                    {
+                        /* nRefGrpNum */
+                        4,
+                        /* nRefValStart[4] */
+                        {55296, 110592, 221184, 368640, /*0 - 3*/},
+                        /* nRefValEnd[4] */
+                        {82944, 165888, 307200, 442368, /*0 - 3*/},
+                        /* nBiasIn[4][4] */
+                        {
+                            /*  nBiasIn 0 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasIn 1 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasIn 2 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasIn 3 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                        },
+                        /* nBiasOut[4][4] */
+                        {
+                            /*  nBiasOut 0 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasOut 1 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasOut 2 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasOut 3 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                        },
+                    },
+                    /* tNonSens */
+                    {
+                        /* nRefGrpNum */
+                        4,
+                        /* nRefValStart[4] */
+                        {55296, 110592, 221184, 409600, /*0 - 3*/},
+                        /* nRefValEnd[4] */
+                        {82944, 165888, 307200, 552960, /*0 - 3*/},
+                        /* nTemporalFilterStrLut[4][17][2] */
+                        {
+                            /* nTemporalFilterStrLut 0 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nTemporalFilterStrLut 1 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nTemporalFilterStrLut 2 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nTemporalFilterStrLut 3 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                        },
+                        /* nVstTemporalFilterStrLut[4][17][2] */
+                        {
+                            /* nVstTemporalFilterStrLut 0 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nVstTemporalFilterStrLut 1 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nVstTemporalFilterStrLut 2 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nVstTemporalFilterStrLut 3 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                        },
+                    },
+                    /* tSens */
+                    {
+                        /* nRefGrpNum */
+                        4,
+                        /* nRefValStart[4] */
+                        {55296, 110592, 221184, 409600, /*0 - 3*/},
+                        /* nRefValEnd[4] */
+                        {82944, 165888, 307200, 552960, /*0 - 3*/},
+                        /* nSpatialNrStrLut[4][17][2] */
+                        {
+                            /* nSpatialNrStrLut 0 */
+                            {
+                                {0, 1800, /*0 - 1*/},
+                                {16, 2000, /*0 - 1*/},
+                                {32, 2200, /*0 - 1*/},
+                                {48, 2400, /*0 - 1*/},
+                                {64, 2600, /*0 - 1*/},
+                                {80, 2800, /*0 - 1*/},
+                                {96, 3000, /*0 - 1*/},
+                                {112, 3000, /*0 - 1*/},
+                                {128, 3000, /*0 - 1*/},
+                                {144, 3000, /*0 - 1*/},
+                                {160, 3000, /*0 - 1*/},
+                                {176, 3000, /*0 - 1*/},
+                                {192, 3000, /*0 - 1*/},
+                                {208, 3000, /*0 - 1*/},
+                                {224, 3000, /*0 - 1*/},
+                                {240, 3000, /*0 - 1*/},
+                                {255, 3000, /*0 - 1*/},
+                            },
+                            /* nSpatialNrStrLut 1 */
+                            {
+                                {0, 2200, /*0 - 1*/},
+                                {16, 2400, /*0 - 1*/},
+                                {32, 2600, /*0 - 1*/},
+                                {48, 2800, /*0 - 1*/},
+                                {64, 3000, /*0 - 1*/},
+                                {80, 3300, /*0 - 1*/},
+                                {96, 3600, /*0 - 1*/},
+                                {112, 3600, /*0 - 1*/},
+                                {128, 3600, /*0 - 1*/},
+                                {144, 3600, /*0 - 1*/},
+                                {160, 3600, /*0 - 1*/},
+                                {176, 3600, /*0 - 1*/},
+                                {192, 3500, /*0 - 1*/},
+                                {208, 3400, /*0 - 1*/},
+                                {224, 3300, /*0 - 1*/},
+                                {240, 3200, /*0 - 1*/},
+                                {255, 3100, /*0 - 1*/},
+                            },
+                            /* nSpatialNrStrLut 2 */
+                            {
+                                {0, 2400, /*0 - 1*/},
+                                {16, 2600, /*0 - 1*/},
+                                {32, 2800, /*0 - 1*/},
+                                {48, 3000, /*0 - 1*/},
+                                {64, 3200, /*0 - 1*/},
+                                {80, 3500, /*0 - 1*/},
+                                {96, 3800, /*0 - 1*/},
+                                {112, 3800, /*0 - 1*/},
+                                {128, 3800, /*0 - 1*/},
+                                {144, 3800, /*0 - 1*/},
+                                {160, 3800, /*0 - 1*/},
+                                {176, 3800, /*0 - 1*/},
+                                {192, 3700, /*0 - 1*/},
+                                {208, 3600, /*0 - 1*/},
+                                {224, 3500, /*0 - 1*/},
+                                {240, 3400, /*0 - 1*/},
+                                {255, 3300, /*0 - 1*/},
+                            },
+                            /* nSpatialNrStrLut 3 */
+                            {
+                                {0, 2600, /*0 - 1*/},
+                                {16, 2800, /*0 - 1*/},
+                                {32, 3000, /*0 - 1*/},
+                                {48, 3200, /*0 - 1*/},
+                                {64, 3400, /*0 - 1*/},
+                                {80, 3600, /*0 - 1*/},
+                                {96, 3800, /*0 - 1*/},
+                                {112, 3800, /*0 - 1*/},
+                                {128, 3800, /*0 - 1*/},
+                                {144, 3800, /*0 - 1*/},
+                                {160, 3800, /*0 - 1*/},
+                                {176, 3800, /*0 - 1*/},
+                                {192, 3700, /*0 - 1*/},
+                                {208, 3600, /*0 - 1*/},
+                                {224, 3500, /*0 - 1*/},
+                                {240, 3400, /*0 - 1*/},
+                                {255, 3300, /*0 - 1*/},
+                            },
+                        },
+                    },
+                },
+            },
+            /* 4 */
+            {
+                /* tMata */
+                {
+                    /* szModelPath[256] */
+                    "/opt/etc/models/aiisp/SC200AI_SDR_1920x1080_10b_LCG_ISP1_A1-64X_I1-16X_0300_MULTI4_00000727474_240328_AX620E.axmodel",
+                    /* szModelName[256] */
+                    "SC200AI_SDR_1920x1080_10b_LCG_ISP1_A1-64X_I1-16X_0300_MULTI4_00000727474_240328_AX620E.axmodel",
+                    /* szTemporalBaseNrName[256] */
+                    "3d_nr_ispgain_lv1",
+                    /* szSpatialBaseNrName[256] */
+                    "2d_nr_ispgain_lv1",
+                    /* nHcgMode */
+                    0,
+                    /* nIsoThresholdMin */
+                    54000,
+                    /* nIsoThresholdMax */
+                    86400,
+                    /* nBiasIn2D[4] */
+                    {4096, 4096, 4096, 4096, /*0 - 3*/},
+                    /* nBiasIn3D[4] */
+                    {4096, 4096, 4096, 4096, /*0 - 3*/},
+                },
+                /* tParams */
+                {
+                    /* tBias */
+                    {
+                        /* nRefGrpNum */
+                        2,
+                        /* nRefValStart[4] */
+                        {552960, 663552, /*0 - 1*/},
+                        /* nRefValEnd[4] */
+                        {663552, 884336, /*0 - 1*/},
+                        /* nBiasIn[4][4] */
+                        {
+                            /*  nBiasIn 0 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasOut 1 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                        },
+                        /* nBiasOut[4][4] */
+                        {
+                            /*  nBiasOut 0 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+                            /*  nBiasOut 1 */
+                            {0, 0, 0, 0, /*0 - 3*/},
+
+                        },
+                    },
+                    /* tNonSens */
+                    {
+                        /* nRefGrpNum */
+                        2,
+                        /* nRefValStart[4] */
+                        {552960, 663552, /*0 - 1*/},
+                        /* nRefValEnd[4] */
+                        {663552, 884336, /*0 - 1*/},
+                        /* nTemporalFilterStrLut[4][17][2] */
+                        {
+                            /* nTemporalFilterStrLut 0 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nTemporalFilterStrLut 1 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                        },
+                        /* nVstTemporalFilterStrLut[4][17][2] */
+                        {
+                            /* nVstTemporalFilterStrLut 0 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                            /* nVstTemporalFilterStrLut 1 */
+                            {
+                                {0, 0, /*0 - 1*/},
+                                {16, 256, /*0 - 1*/},
+                                {32, 512, /*0 - 1*/},
+                                {48, 768, /*0 - 1*/},
+                                {64, 1024, /*0 - 1*/},
+                                {80, 1280, /*0 - 1*/},
+                                {96, 1536, /*0 - 1*/},
+                                {112, 1792, /*0 - 1*/},
+                                {128, 2048, /*0 - 1*/},
+                                {144, 2304, /*0 - 1*/},
+                                {160, 2560, /*0 - 1*/},
+                                {176, 2816, /*0 - 1*/},
+                                {192, 3072, /*0 - 1*/},
+                                {208, 3328, /*0 - 1*/},
+                                {224, 3584, /*0 - 1*/},
+                                {240, 3840, /*0 - 1*/},
+                                {255, 4096, /*0 - 1*/},
+                            },
+                        },
+                    },
+                    /* tSens */
+                    {
+                        /* nRefGrpNum */
+                        2,
+                        /* nRefValStart[4] */
+                        {552960, 663552, /*0 - 1*/},
+                        /* nRefValEnd[4] */
+                        {663552, 884336, /*0 - 1*/},
+                        /* nSpatialNrStrLut[4][17][2] */
+                        {
+                            /* nSpatialNrStrLut 0 */
+                            {
+                                {0, 2600, /*0 - 1*/},
+                                {16, 2800, /*0 - 1*/},
+                                {32, 3000, /*0 - 1*/},
+                                {48, 3200, /*0 - 1*/},
+                                {64, 3400, /*0 - 1*/},
+                                {80, 3600, /*0 - 1*/},
+                                {96, 3800, /*0 - 1*/},
+                                {112, 3800, /*0 - 1*/},
+                                {128, 3800, /*0 - 1*/},
+                                {144, 3800, /*0 - 1*/},
+                                {160, 3800, /*0 - 1*/},
+                                {176, 3800, /*0 - 1*/},
+                                {192, 3800, /*0 - 1*/},
+                                {208, 3700, /*0 - 1*/},
+                                {224, 3600, /*0 - 1*/},
+                                {240, 3500, /*0 - 1*/},
+                                {255, 3400, /*0 - 1*/},
+                            },
+                            /* nSpatialNrStrLut 1 */
+                            {
+                                {0, 2700, /*0 - 1*/},
+                                {16, 2900, /*0 - 1*/},
+                                {32, 3100, /*0 - 1*/},
+                                {48, 3300, /*0 - 1*/},
+                                {64, 3500, /*0 - 1*/},
+                                {80, 3700, /*0 - 1*/},
+                                {96, 3800, /*0 - 1*/},
+                                {112, 3800, /*0 - 1*/},
+                                {128, 3800, /*0 - 1*/},
+                                {144, 3800, /*0 - 1*/},
+                                {160, 3800, /*0 - 1*/},
+                                {176, 3800, /*0 - 1*/},
+                                {192, 3800, /*0 - 1*/},
+                                {208, 3700, /*0 - 1*/},
+                                {224, 3600, /*0 - 1*/},
+                                {240, 3500, /*0 - 1*/},
+                                {255, 3400, /*0 - 1*/},
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    },
+};
+
+const static AX_ISP_IQ_RAW2DNR_PARAM_T raw2dnr_param_sdr = {
+    /* nRaw2dnrEn */
+    1,
+    /* nAutoMode */
+    1,
+    /* nRefMode */
+    1,
+    /* tGlb */
+    {
+        /* nMfEnable */
+        1,
+        /* nHfEnable */
+        1,
+        /* nLutType */
+        0,
+        /* nMaskThreshold */
+        16,
+        /* nMaskLimit[2] */
+        {0, 255, /*0 - 1*/},
+    },
+    /* tManual */
+    {
+        /* nEdgePreserveRatio */
+        128,
+        /* nNoiseProfileFactor */
+        128,
+        /* nHighFreqNrFactor[2][17] */
+        {
+            {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+            {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+        },
+        /* nLowFreqNrFactor[2][17] */
+        {
+            {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+            {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+        },
+        /* nInterChannelStrength */
+        255,
+        /* nHfNrStrength[2] */
+        {128, 128, /*0 - 1*/},
+        /* nMfNrStrength[2] */
+        {64, 160, /*0 - 1*/},
+    },
+    /* tAuto */
+    {
+        /* nParamGrpNum */
+        12,
+        /* nRefVal[12] */
+        {1024, 2048, 4096, 8192, 16384, 24576, 32768, 55296, 131072, 262144, 524288, 1048576, /*0 - 11*/},
+        /* nEdgePreserveRatio[12] */
+        {128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 11*/},
+        /* nNoiseProfileFactor[12] */
+        {128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 11*/},
+        /* nHighFreqNrFactor[12][2][17] */
+        {
+            /* nHighFreqNrFactor 0 */
+            {
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+            },
+            /* nHighFreqNrFactor 1 */
+            {
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+            },
+            /* nHighFreqNrFactor 2 */
+            {
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+            },
+            /* nHighFreqNrFactor 3 */
+            {
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+            },
+            /* nHighFreqNrFactor 4 */
+            {
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+            },
+            /* nHighFreqNrFactor 5 */
+            {
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+            },
+            /* nHighFreqNrFactor 6 */
+            {
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+            },
+            /* nHighFreqNrFactor 7 */
+            {
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+            },
+            /* nHighFreqNrFactor 8 */
+            {
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+            },
+            /* nHighFreqNrFactor 9 */
+            {
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+            },
+            /* nHighFreqNrFactor 10 */
+            {
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+            },
+            /* nHighFreqNrFactor 11 */
+            {
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+                {1024, 768, 512, 384, 256, 192, 160, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 16*/},
+            },
+        },
+        /* nLowFreqNrFactor[12][2][17] */
+        {
+            /* nLowFreqNrFactor 0 */
+            {
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+            },
+            /* nLowFreqNrFactor 1 */
+            {
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+            },
+            /* nLowFreqNrFactor 2 */
+            {
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+            },
+            /* nLowFreqNrFactor 3 */
+            {
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+            },
+            /* nLowFreqNrFactor 4 */
+            {
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+            },
+            /* nLowFreqNrFactor 5 */
+            {
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+            },
+            /* nLowFreqNrFactor 6 */
+            {
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+            },
+            /* nLowFreqNrFactor 7 */
+            {
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+            },
+            /* nLowFreqNrFactor 8 */
+            {
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+            },
+            /* nLowFreqNrFactor 9 */
+            {
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+            },
+            /* nLowFreqNrFactor 10 */
+            {
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+            },
+            /* nLowFreqNrFactor 11 */
+            {
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+                {64, 56, 48, 40, 36, 32, 28, 24, 20, 16, 16, 12, 12, 8, 8, 8, 8, /*0 - 16*/},
+            },
+        },
+        /* nInterChannelStrength[12] */
+        {255, 255, 255, 255, 255, 255, 128, 128, 128, 128, 128, 128, /*0 - 11*/},
+        /* nHfNrStrength[12][2] */
+        {
+            {48, 128, /*0 - 1*/},
+            {48, 128, /*0 - 1*/},
+            {48, 128, /*0 - 1*/},
+            {48, 48, /*0 - 1*/},
+            {64, 64, /*0 - 1*/},
+            {80, 80, /*0 - 1*/},
+            {64, 64, /*0 - 1*/},
+            {48, 48, /*0 - 1*/},
+            {48, 48, /*0 - 1*/},
+            {40, 40, /*0 - 1*/},
+            {32, 32, /*0 - 1*/},
+            {24, 24, /*0 - 1*/},
+        },
+        /* nMfNrStrength[12][2] */
+        {
+            {64, 160, /*0 - 1*/},
+            {64, 160, /*0 - 1*/},
+            {64, 160, /*0 - 1*/},
+            {80, 80, /*0 - 1*/},
+            {96, 96, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {96, 96, /*0 - 1*/},
+            {64, 64, /*0 - 1*/},
+            {64, 64, /*0 - 1*/},
+            {48, 48, /*0 - 1*/},
+            {40, 40, /*0 - 1*/},
+            {32, 32, /*0 - 1*/},
+        },
+    },
+};
+
+const static AX_ISP_IQ_LSC_PARAM_T lsc_param_sdr = {
+    /* nLscEn */
+    0,
+    /* nRefMode */
+    1,
+    /* nMeshMode */
+    1,
+    /* nAutoMode */
+    0,
+    /* nAlgMode */
+    0,
+    /* tManualParam */
+    {
+        /* nLumaRatio */
+        100,
+        /* nColorRatio */
+        100,
+        /* nLumaMeshLut[15][19] */
+        {
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+        },
+        /* nRRMeshLut[15][19] */
+        {
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+        },
+        /* nGRMeshLut[15][19] */
+        {
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+        },
+        /* nGBMeshLut[15][19] */
+        {
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+        },
+        /* nBBMeshLut[15][19] */
+        {
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+        },
+    },
+    /* tAutoParam */
+    {
+        /* nDampRatio */
+        0,
+        /* nToleranceRatio */
+        0,
+        /* tLumaParam */
+        {
+            /* nParamGrpNum */
+            0,
+            /* nRefValStart[12] */
+            {0, /*0 - 0*/},
+            /* nRefValEnd[12] */
+            {0, /*0 - 0*/},
+            /* nLumaRatio[12] */
+            {0, /*0 - 0*/},
+            /* nLumaMeshLut[15][19] */
+            {
+                {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+            },
+        },
+        /* tColTempParam */
+        {
+            /* nColTempNum */
+            1,
+            /* nRefColorTempStart[10] */
+            {0, 0, 0, 0, 0, 0, 0, 0,/*0 - 9*/},
+            /* nRefColorTempEnd[10] */
+            {0, 0, 0, 0, 0, 0, 0, 0,/*0 - 9*/},
+            /* nColorTemp[10] */
+            {0, 0, 0, 0, 0, 0, 0, 0,/*0 - 9*/},
+            /* nColorRatio[10] */
+            {0, 0, 0, 0, 0, 0, 0, 0,/*0 - 9*/},
+            /* nRRMeshLut[10][15][19] */
+            {
+                /* 0 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 1 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 2 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 3 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 4 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 5 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 6 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 7 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+            },
+            /* nGRMeshLut[10][15][19] */
+            {
+                /* 0 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 1 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 2 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 3 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 4 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 5 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 6 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 7 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+            },
+            /* nGBMeshLut[10][15][19] */
+            {
+                /* 0 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 1 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 2 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 3 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 4 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 5 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 6 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 7 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+            },
+            /* nBBMeshLut[10][15][19] */
+            {
+                /* 0 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 1 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 2 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 3 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 4 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 5 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 6 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+                /* 7 */
+                {
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                    {16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, 16384, /*0 - 18*/},
+                },
+            },
+        },
+    },
+};
+
+const static AX_ISP_IQ_RLTM_PARAM_T rltm_param_sdr = {
+    /* nRltmEn */
+    1,
+    /* nMultiCamSyncMode */
+    0,
+    /* nAutoMode */
+    1,
+    /* nRefMode */
+    1,
+    /* nAlgMode */
+    0,
+    /* tCommonGlb */
+    {
+        /* nGtmSwEn */
+        0,
+        /* nGtmSwDgain */
+        256,
+        /* nWinSize */
+        512,
+    },
+    /* tTempoFilter */
+    {
+        /* nAlpha */
+        32768,
+        /* nReset */
+        0,
+        /* nStopUpdating */
+        0,
+    },
+    /* tLumaWt */
+    {
+        /* nLumaWeight[5] */
+        {37, 38, 38, 15, 0, /*0 - 4*/},
+    },
+    /* tMultiHistWt */
+    {
+        /* nMode */
+        0,
+        /* nRegionNum */
+        0,
+        /* nHistWtNum */
+        1,
+        /* tRoi */
+        {
+            /* nTop */
+            0,
+            /* nBottom */
+            1520,
+            /* nLeft */
+            0,
+            /* nRight */
+            2688,
+        },
+        /* tHistWt */
+        {
+            /* nHistogramWeight[63] */
+            {
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+            },
+        },
+        /* nFlagHistId[16][16] */
+        {
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+        },
+    },
+    /* tLfEnhGlb */
+    {
+        /* nDownSampleRatio */
+        1,
+        /* nCoeffWinRad */
+        2,
+        /* nCoeffEps */
+        200,
+    },
+    /* tManualParam */
+    {
+        /* nLocalFactor */
+        100,
+        /* nHighlightSup */
+        40,
+        /* nKMax */
+        65535,
+        /* nPreGamma */
+        45,
+        /* nPostGamma */
+        32,
+        /* nExtraDgain */
+        16,
+        /* nRltmStrength */
+        48,
+        /* nLog10Offset */
+        48,
+        /* nContrastStrength */
+        42,
+        /* nBaseGain */
+        64,
+        /* nDitherMode */
+        0,
+        /* nDitherScale */
+        4,
+        /* nHistWtBrightLow[4] */
+        {0, 0, 0, 0, /*0 - 3*/},
+        /* nHistWtBrightHigh[4] */
+        {0, 0, 0, 0, /*0 - 3*/},
+        /* nHistWtThreshold[4] */
+        {129, 129, 129, 129, /*0 - 3*/},
+        /* nSCurveList[1025] */
+        {
+            0, 175, 289, 386, 475, 558, 636, 710, 782, 851, 917, 982, 1046, 1108, 1168, 1228, 1286, 1343, 1399, 1455, 1509, 1563, 1616, 1668, 1720, 1771, 1822, 1872, 1921, 1970, 2019, 2067,  /* 0 - 31*/
+            2115, 2162, 2209, 2255, 2301, 2347, 2392, 2437, 2482, 2527, 2571, 2614, 2658, 2701, 2744, 2787, 2829, 2871, 2913, 2955, 2997, 3038, 3079, 3120, 3160, 3201, 3241, 3281, 3321, 3360, 3400, 3439,  /* 32 - 63*/
+            3478, 3517, 3556, 3594, 3633, 3671, 3709, 3747, 3785, 3823, 3860, 3898, 3935, 3972, 4009, 4046, 4082, 4119, 4155, 4192, 4228, 4264, 4300, 4336, 4371, 4407, 4442, 4478, 4513, 4548, 4583, 4618,  /* 64 - 95*/
+            4653, 4688, 4722, 4757, 4791, 4826, 4860, 4894, 4928, 4962, 4996, 5030, 5064, 5097, 5131, 5164, 5197, 5231, 5264, 5297, 5330, 5363, 5396, 5429, 5461, 5494, 5526, 5559, 5591, 5624, 5656, 5688,  /* 96 - 127*/
+            5720, 5752, 5784, 5816, 5848, 5880, 5911, 5943, 5975, 6006, 6038, 6069, 6100, 6131, 6163, 6194, 6225, 6256, 6287, 6318, 6348, 6379, 6410, 6441, 6471, 6502, 6532, 6563, 6593, 6623, 6653, 6684,  /* 128 - 159*/
+            6714, 6744, 6774, 6804, 6834, 6864, 6894, 6923, 6953, 6983, 7012, 7042, 7072, 7101, 7130, 7160, 7189, 7218, 7248, 7277, 7306, 7335, 7364, 7393, 7422, 7451, 7480, 7509, 7538, 7566, 7595, 7624,  /* 160 - 191*/
+            7652, 7681, 7710, 7738, 7767, 7795, 7823, 7852, 7880, 7908, 7936, 7965, 7993, 8021, 8049, 8077, 8105, 8133, 8161, 8189, 8217, 8244, 8272, 8300, 8328, 8355, 8383, 8410, 8438, 8465, 8493, 8520,  /* 192 - 223*/
+            8548, 8575, 8602, 8630, 8657, 8684, 8711, 8739, 8766, 8793, 8820, 8847, 8874, 8901, 8928, 8955, 8982, 9009, 9035, 9062, 9089, 9116, 9142, 9169, 9196, 9222, 9249, 9275, 9302, 9328, 9355, 9381,  /* 224 - 255*/
+            9408, 9434, 9460, 9487, 9513, 9539, 9566, 9592, 9619, 9645, 9671, 9698, 9724, 9750, 9777, 9803, 9830, 9856, 9882, 9909, 9935, 9961, 9988, 10014, 10041, 10067, 10093, 10120, 10146, 10172, 10199, 10225,  /* 256 - 287*/
+            10252, 10278, 10304, 10331, 10357, 10383, 10410, 10436, 10463, 10489, 10515, 10542, 10568, 10594, 10621, 10647, 10674, 10700, 10726, 10753, 10779, 10805, 10832, 10858, 10885, 10911, 10937, 10964, 10990, 11016, 11043, 11069,  /* 288 - 319*/
+            11096, 11122, 11148, 11175, 11201, 11227, 11254, 11280, 11307, 11333, 11359, 11386, 11412, 11438, 11465, 11491, 11518, 11544, 11570, 11597, 11623, 11649, 11676, 11702, 11729, 11755, 11781, 11808, 11834, 11860, 11887, 11913,  /* 320 - 351*/
+            11940, 11966, 11992, 12019, 12045, 12071, 12098, 12124, 12151, 12177, 12203, 12230, 12256, 12282, 12309, 12335, 12362, 12388, 12414, 12441, 12467, 12493, 12520, 12546, 12573, 12599, 12625, 12652, 12678, 12704, 12731, 12757,  /* 352 - 383*/
+            12784, 12810, 12836, 12863, 12889, 12915, 12942, 12968, 12995, 13021, 13047, 13074, 13100, 13126, 13153, 13179, 13206, 13232, 13258, 13285, 13311, 13337, 13364, 13390, 13417, 13443, 13469, 13496, 13522, 13548, 13575, 13601,  /* 384 - 415*/
+            13628, 13654, 13680, 13707, 13733, 13759, 13786, 13812, 13839, 13865, 13891, 13918, 13944, 13970, 13997, 14023, 14050, 14076, 14102, 14129, 14155, 14181, 14208, 14234, 14261, 14287, 14313, 14340, 14366, 14392, 14419, 14445,  /* 416 - 447*/
+            14472, 14498, 14524, 14551, 14577, 14603, 14630, 14656, 14683, 14709, 14735, 14762, 14788, 14814, 14841, 14867, 14894, 14920, 14946, 14973, 14999, 15025, 15052, 15078, 15105, 15131, 15157, 15184, 15210, 15236, 15263, 15289,  /* 448 - 479*/
+            15316, 15342, 15368, 15395, 15421, 15447, 15474, 15500, 15527, 15553, 15579, 15606, 15632, 15658, 15685, 15711, 15738, 15764, 15790, 15817, 15843, 15869, 15896, 15922, 15949, 15975, 16001, 16028, 16054, 16080, 16107, 16133,  /* 480 - 511*/
+            16160, 16186, 16212, 16239, 16265, 16291, 16318, 16344, 16371, 16397, 16423, 16450, 16476, 16502, 16529, 16555, 16582, 16608, 16634, 16661, 16687, 16713, 16740, 16766, 16793, 16819, 16845, 16872, 16898, 16924, 16951, 16977,  /* 512 - 543*/
+            17004, 17030, 17056, 17083, 17109, 17135, 17162, 17188, 17215, 17241, 17267, 17294, 17320, 17346, 17373, 17399, 17426, 17452, 17478, 17505, 17531, 17557, 17584, 17610, 17637, 17663, 17689, 17716, 17742, 17768, 17795, 17821,  /* 544 - 575*/
+            17848, 17874, 17900, 17927, 17953, 17979, 18006, 18032, 18059, 18085, 18111, 18138, 18164, 18190, 18217, 18243, 18270, 18296, 18322, 18349, 18375, 18401, 18428, 18454, 18481, 18507, 18533, 18560, 18586, 18612, 18639, 18665,  /* 576 - 607*/
+            18692, 18718, 18744, 18771, 18797, 18823, 18850, 18876, 18903, 18929, 18955, 18982, 19008, 19034, 19061, 19087, 19114, 19140, 19166, 19193, 19219, 19245, 19272, 19298, 19325, 19351, 19377, 19404, 19430, 19456, 19483, 19509,  /* 608 - 639*/
+            19536, 19562, 19588, 19615, 19641, 19667, 19694, 19720, 19747, 19773, 19799, 19826, 19852, 19878, 19905, 19931, 19958, 19984, 20010, 20037, 20063, 20089, 20116, 20142, 20169, 20195, 20221, 20248, 20274, 20300, 20327, 20353,  /* 640 - 671*/
+            20380, 20406, 20432, 20459, 20485, 20511, 20538, 20564, 20591, 20617, 20643, 20670, 20696, 20722, 20749, 20775, 20802, 20828, 20854, 20881, 20907, 20933, 20960, 20986, 21013, 21039, 21065, 21092, 21118, 21144, 21171, 21197,  /* 672 - 703*/
+            21224, 21250, 21276, 21303, 21329, 21355, 21382, 21408, 21435, 21461, 21487, 21514, 21540, 21566, 21593, 21619, 21646, 21672, 21698, 21725, 21751, 21777, 21804, 21830, 21857, 21883, 21909, 21936, 21962, 21988, 22015, 22041,  /* 704 - 735*/
+            22068, 22094, 22120, 22147, 22173, 22199, 22226, 22252, 22279, 22305, 22331, 22358, 22384, 22410, 22437, 22463, 22490, 22516, 22542, 22569, 22595, 22621, 22648, 22674, 22701, 22727, 22753, 22780, 22806, 22832, 22859, 22885,  /* 736 - 767*/
+            22912, 22938, 22964, 22991, 23017, 23044, 23070, 23097, 23124, 23150, 23177, 23204, 23230, 23257, 23284, 23311, 23338, 23365, 23392, 23419, 23446, 23473, 23500, 23527, 23554, 23581, 23609, 23636, 23663, 23691, 23718, 23746,  /* 768 - 799*/
+            23773, 23801, 23828, 23856, 23883, 23911, 23939, 23967, 23994, 24022, 24050, 24078, 24106, 24134, 24162, 24190, 24218, 24247, 24275, 24303, 24331, 24360, 24388, 24416, 24445, 24474, 24502, 24531, 24559, 24588, 24617, 24646,  /* 800 - 831*/
+            24675, 24703, 24732, 24761, 24790, 24819, 24849, 24878, 24907, 24936, 24966, 24995, 25025, 25054, 25084, 25113, 25143, 25173, 25202, 25232, 25262, 25292, 25322, 25352, 25382, 25412, 25442, 25473, 25503, 25533, 25564, 25594,  /* 832 - 863*/
+            25625, 25655, 25686, 25717, 25748, 25778, 25809, 25840, 25871, 25902, 25934, 25965, 25996, 26028, 26059, 26091, 26122, 26154, 26186, 26217, 26249, 26281, 26313, 26345, 26377, 26410, 26442, 26474, 26507, 26539, 26572, 26605,  /* 864 - 895*/
+            26637, 26670, 26703, 26736, 26769, 26802, 26836, 26869, 26902, 26936, 26970, 27003, 27037, 27071, 27105, 27139, 27173, 27207, 27242, 27276, 27311, 27345, 27380, 27415, 27450, 27485, 27520, 27556, 27591, 27627, 27662, 27698,  /* 896 - 927*/
+            27734, 27770, 27806, 27842, 27878, 27915, 27952, 27988, 28025, 28062, 28099, 28136, 28174, 28211, 28249, 28287, 28325, 28363, 28401, 28440, 28478, 28517, 28556, 28595, 28634, 28674, 28713, 28753, 28793, 28833, 28873, 28914,  /* 928 - 959*/
+            28955, 28996, 29037, 29078, 29120, 29161, 29203, 29246, 29288, 29331, 29374, 29417, 29460, 29504, 29548, 29592, 29637, 29682, 29727, 29772, 29818, 29864, 29910, 29957, 30004, 30052, 30100, 30148, 30197, 30246, 30295, 30345,  /* 960 - 991*/
+            30396, 30447, 30499, 30551, 30603, 30657, 30710, 30765, 30820, 30876, 30933, 30990, 31049, 31108, 31169, 31230, 31292, 31356, 31421, 31488, 31556, 31626, 31699, 31773, 31850, 31930, 32014, 32103, 32197, 32299, 32413, 32547,  /* 992 - 1023*/
+            32768, /*1024 - 1024*/
+        },
+        /* tHistWt[16] */
+        {
+            /* 0 */
+            {
+                /* nHistogramWeight[63] */
+                {
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                },
+            },
+            /* 1 */
+            {
+                /* nHistogramWeight[63] */
+                {
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                },
+            },
+            /* 2 */
+            {
+                /* nHistogramWeight[63] */
+                {
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                },
+            },
+            /* 3 */
+            {
+                /* nHistogramWeight[63] */
+                {
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                },
+            },
+            /* 4 */
+            {
+                /* nHistogramWeight[63] */
+                {
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                },
+            },
+            /* 5 */
+            {
+                /* nHistogramWeight[63] */
+                {
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                },
+            },
+            /* 6 */
+            {
+                /* nHistogramWeight[63] */
+                {
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                },
+            },
+            /* 7 */
+            {
+                /* nHistogramWeight[63] */
+                {
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                },
+            },
+            /* 8 */
+            {
+                /* nHistogramWeight[63] */
+                {
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                },
+            },
+            /* 9 */
+            {
+                /* nHistogramWeight[63] */
+                {
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                },
+            },
+            /* 10 */
+            {
+                /* nHistogramWeight[63] */
+                {
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                },
+            },
+            /* 11 */
+            {
+                /* nHistogramWeight[63] */
+                {
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                },
+            },
+            /* 12 */
+            {
+                /* nHistogramWeight[63] */
+                {
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                },
+            },
+            /* 13 */
+            {
+                /* nHistogramWeight[63] */
+                {
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                },
+            },
+            /* 14 */
+            {
+                /* nHistogramWeight[63] */
+                {
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                },
+            },
+            /* 15 */
+            {
+                /* nHistogramWeight[63] */
+                {
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                },
+            },
+        },
+        /* tHighFreqEnh */
+        {
+            /* nDetailSigmaDis */
+            8000,
+            /* nDetailSigmaVal */
+            800,
+            /* nDetailCoringPos */
+            0,
+            /* nDetailCoringNeg */
+            0,
+            /* nDetailGainPos */
+            16,
+            /* nDetailGainNeg */
+            32,
+            /* nDetailExtraStrPos */
+            12,
+            /* nDetailExtraStrNeg */
+            32,
+            /* nDetailGainLimitPos */
+            65535,
+            /* nDetailGainLimitNeg */
+            65535,
+            /* nSlopeStrengthLut[33] */
+            {
+                8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,  /* 0 - 31*/
+                8192, /*32 - 32*/
+            },
+            /* nSlopeCoeff */
+            16384,
+        },
+        /* tLowFreqEnh */
+        {
+            /* nRltmDetailLowEn */
+            0,
+            /* nSigmaDisBlur */
+            9000,
+            /* nDetailGainPosLow */
+            64,
+            /* nDetailGainNegLow */
+            64,
+            /* nDetailLimitPosLow */
+            65535,
+            /* nDetailLimitNegLow */
+            65535,
+            /* nSigmaDisPst */
+            9000,
+            /* nSigmaValPst */
+            1000,
+        },
+    },
+    /* tAutoParam */
+    {
+        /* nParamGrpNum */
+        12,
+        /* nRefVal[12] */
+        {1024, 2048, 4096, 8192, 16384, 24576, 32768, 55296, 131072, 262144, 524288, 1048576, /*0 - 11*/},
+        /* nLocalFactor[12] */
+        {115, 115, 115, 115, 115, 115, 115, 115, 110, 100, 95, 90, /*0 - 11*/},
+        /* nHighlightSup[12] */
+        {10, 10, 10, 10, 10, 10, 10, 10, 10, 11, 12, 14, /*0 - 11*/},
+        /* nKMax[12] */
+        {65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, 65535, /*0 - 11*/},
+        /* nPreGamma[12] */
+        {32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, 32, /*0 - 11*/},
+        /* nPostGamma[12] */
+        {38, 38, 42, 42, 42, 42, 42, 42, 42, 43, 44, 45, /*0 - 11*/},
+        /* nExtraDgain[12] */
+        {16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, /*0 - 11*/},
+        /* nRltmStrength[12] */
+        {68, 70, 72, 80, 80, 80, 80, 80, 72, 64, 64, 64, /*0 - 11*/},
+        /* nLog10Offset[12] */
+        {80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, /*0 - 11*/},
+        /* nContrastStrength[12] */
+        {42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, /*0 - 11*/},
+        /* nBaseGain[12] */
+        {64, 64, 64, 64, 64, 64, 64, 64, 56, 48, 40, 32, /*0 - 11*/},
+        /* nDitherMode[12] */
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 11*/},
+        /* nDitherScale[12] */
+        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, /*0 - 11*/},
+        /* nHistWtBrightLow[12][4] */
+        {
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+        },
+        /* nHistWtBrightHigh[12][4] */
+        {
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+            {0, 0, 0, 0, /*0 - 3*/},
+        },
+        /* nHistWtThreshold[12][4] */
+        {
+            {129, 129, 129, 129, /*0 - 3*/},
+            {129, 129, 129, 129, /*0 - 3*/},
+            {129, 129, 129, 129, /*0 - 3*/},
+            {129, 129, 129, 129, /*0 - 3*/},
+            {129, 129, 129, 129, /*0 - 3*/},
+            {129, 129, 129, 129, /*0 - 3*/},
+            {129, 129, 129, 129, /*0 - 3*/},
+            {129, 129, 129, 129, /*0 - 3*/},
+            {129, 129, 129, 129, /*0 - 3*/},
+            {129, 129, 129, 129, /*0 - 3*/},
+            {129, 129, 129, 129, /*0 - 3*/},
+            {129, 129, 129, 129, /*0 - 3*/},
+        },
+        /* nSCurveList[12][1025] */
+        {
+            {
+                0, 97, 170, 235, 297, 356, 412, 467, 520, 572, 622, 672, 721, 769, 816, 863, 909, 955, 1000, 1044, 1089, 1132, 1176, 1218, 1261, 1303, 1345, 1387, 1428, 1469, 1510, 1550,  /* 0 - 31*/
+                1590, 1630, 1670, 1709, 1749, 1788, 1827, 1865, 1904, 1942, 1980, 2018, 2056, 2093, 2131, 2168, 2205, 2242, 2279, 2316, 2352, 2389, 2425, 2461, 2497, 2533, 2569, 2604, 2640, 2675, 2711, 2746,  /* 32 - 63*/
+                2781, 2816, 2851, 2886, 2920, 2955, 2989, 3024, 3058, 3092, 3126, 3160, 3194, 3228, 3262, 3296, 3329, 3363, 3396, 3429, 3463, 3496, 3529, 3562, 3595, 3628, 3661, 3693, 3726, 3759, 3791, 3824,  /* 64 - 95*/
+                3856, 3889, 3921, 3953, 3985, 4017, 4049, 4081, 4113, 4145, 4177, 4209, 4240, 4272, 4304, 4335, 4367, 4398, 4429, 4461, 4492, 4523, 4554, 4585, 4616, 4647, 4678, 4709, 4740, 4771, 4802, 4832,  /* 96 - 127*/
+                4863, 4893, 4924, 4955, 4985, 5015, 5046, 5076, 5106, 5137, 5167, 5197, 5227, 5257, 5287, 5317, 5347, 5377, 5407, 5437, 5467, 5496, 5526, 5556, 5586, 5615, 5645, 5674, 5704, 5734, 5763, 5793,  /* 128 - 159*/
+                5823, 5852, 5882, 5911, 5941, 5971, 6000, 6030, 6060, 6089, 6119, 6148, 6178, 6208, 6237, 6267, 6297, 6326, 6356, 6385, 6415, 6445, 6474, 6504, 6534, 6563, 6593, 6622, 6652, 6682, 6711, 6741,  /* 160 - 191*/
+                6771, 6800, 6830, 6859, 6889, 6919, 6948, 6978, 7008, 7037, 7067, 7096, 7126, 7156, 7185, 7215, 7245, 7274, 7304, 7333, 7363, 7393, 7422, 7452, 7482, 7511, 7541, 7570, 7600, 7630, 7659, 7689,  /* 192 - 223*/
+                7719, 7748, 7778, 7807, 7837, 7867, 7896, 7926, 7956, 7985, 8015, 8044, 8074, 8104, 8133, 8163, 8193, 8222, 8252, 8281, 8311, 8341, 8370, 8400, 8430, 8459, 8489, 8518, 8548, 8578, 8607, 8637,  /* 224 - 255*/
+                8667, 8696, 8726, 8755, 8785, 8815, 8844, 8874, 8904, 8933, 8963, 8992, 9022, 9052, 9081, 9111, 9141, 9170, 9200, 9229, 9259, 9289, 9318, 9348, 9378, 9407, 9437, 9466, 9496, 9526, 9555, 9585,  /* 256 - 287*/
+                9615, 9644, 9674, 9703, 9733, 9763, 9792, 9822, 9852, 9881, 9911, 9940, 9970, 10000, 10029, 10059, 10089, 10118, 10148, 10177, 10207, 10237, 10266, 10296, 10326, 10355, 10385, 10414, 10444, 10474, 10503, 10533,  /* 288 - 319*/
+                10563, 10592, 10622, 10651, 10681, 10711, 10740, 10770, 10800, 10829, 10859, 10888, 10918, 10948, 10977, 11007, 11037, 11066, 11096, 11125, 11155, 11185, 11214, 11244, 11274, 11303, 11333, 11362, 11392, 11422, 11451, 11481,  /* 320 - 351*/
+                11511, 11540, 11570, 11599, 11629, 11659, 11688, 11718, 11748, 11777, 11807, 11836, 11866, 11896, 11925, 11955, 11985, 12014, 12044, 12073, 12103, 12133, 12162, 12192, 12222, 12251, 12281, 12310, 12340, 12370, 12399, 12429,  /* 352 - 383*/
+                12459, 12488, 12518, 12547, 12577, 12607, 12636, 12666, 12696, 12725, 12755, 12784, 12814, 12844, 12873, 12903, 12933, 12962, 12992, 13021, 13051, 13081, 13110, 13140, 13170, 13199, 13229, 13258, 13288, 13318, 13347, 13377,  /* 384 - 415*/
+                13407, 13436, 13466, 13495, 13525, 13555, 13584, 13614, 13644, 13673, 13703, 13732, 13762, 13792, 13821, 13851, 13881, 13910, 13940, 13969, 13999, 14029, 14058, 14088, 14118, 14147, 14177, 14206, 14236, 14266, 14295, 14325,  /* 416 - 447*/
+                14355, 14384, 14414, 14443, 14473, 14503, 14532, 14562, 14592, 14621, 14651, 14680, 14710, 14740, 14769, 14799, 14829, 14858, 14888, 14917, 14947, 14977, 15006, 15036, 15066, 15095, 15125, 15154, 15184, 15214, 15243, 15273,  /* 448 - 479*/
+                15303, 15332, 15362, 15391, 15421, 15451, 15480, 15510, 15540, 15569, 15599, 15628, 15658, 15688, 15717, 15747, 15777, 15806, 15836, 15865, 15895, 15925, 15954, 15984, 16014, 16043, 16073, 16102, 16132, 16162, 16191, 16221,  /* 480 - 511*/
+                16251, 16280, 16310, 16339, 16369, 16399, 16428, 16458, 16488, 16517, 16547, 16576, 16606, 16636, 16665, 16695, 16725, 16754, 16784, 16813, 16843, 16873, 16902, 16932, 16962, 16991, 17021, 17050, 17080, 17110, 17139, 17169,  /* 512 - 543*/
+                17199, 17228, 17258, 17287, 17317, 17347, 17376, 17406, 17436, 17465, 17495, 17524, 17554, 17584, 17613, 17643, 17673, 17702, 17732, 17761, 17791, 17821, 17850, 17880, 17910, 17939, 17969, 17998, 18028, 18058, 18087, 18117,  /* 544 - 575*/
+                18147, 18176, 18206, 18235, 18265, 18295, 18324, 18354, 18384, 18413, 18443, 18472, 18502, 18532, 18561, 18591, 18621, 18650, 18680, 18709, 18739, 18769, 18798, 18828, 18858, 18887, 18917, 18946, 18976, 19006, 19035, 19065,  /* 576 - 607*/
+                19095, 19124, 19154, 19183, 19213, 19243, 19272, 19302, 19332, 19361, 19391, 19420, 19450, 19480, 19509, 19539, 19569, 19598, 19628, 19657, 19687, 19717, 19746, 19776, 19806, 19835, 19865, 19894, 19924, 19954, 19983, 20013,  /* 608 - 639*/
+                20043, 20072, 20102, 20131, 20161, 20191, 20220, 20250, 20280, 20309, 20339, 20368, 20398, 20428, 20457, 20487, 20517, 20546, 20576, 20605, 20635, 20665, 20694, 20724, 20754, 20783, 20813, 20842, 20872, 20902, 20931, 20961,  /* 640 - 671*/
+                20991, 21020, 21050, 21079, 21109, 21139, 21168, 21198, 21228, 21257, 21287, 21316, 21346, 21376, 21405, 21435, 21465, 21494, 21524, 21553, 21583, 21613, 21642, 21672, 21702, 21731, 21761, 21790, 21820, 21850, 21879, 21909,  /* 672 - 703*/
+                21939, 21968, 21998, 22027, 22057, 22087, 22116, 22146, 22176, 22205, 22235, 22264, 22294, 22324, 22353, 22383, 22413, 22442, 22472, 22501, 22531, 22561, 22590, 22620, 22650, 22679, 22709, 22738, 22768, 22798, 22827, 22857,  /* 704 - 735*/
+                22887, 22916, 22946, 22975, 23005, 23035, 23064, 23094, 23124, 23153, 23183, 23212, 23242, 23272, 23301, 23331, 23361, 23390, 23420, 23449, 23479, 23509, 23538, 23568, 23598, 23627, 23657, 23686, 23716, 23746, 23775, 23805,  /* 736 - 767*/
+                23835, 23864, 23894, 23923, 23953, 23983, 24012, 24042, 24072, 24101, 24131, 24160, 24190, 24220, 24249, 24279, 24309, 24338, 24368, 24397, 24427, 24457, 24486, 24516, 24546, 24575, 24605, 24634, 24664, 24694, 24723, 24753,  /* 768 - 799*/
+                24783, 24812, 24842, 24871, 24901, 24931, 24960, 24990, 25020, 25049, 25079, 25108, 25138, 25168, 25197, 25227, 25257, 25286, 25316, 25345, 25375, 25405, 25434, 25464, 25494, 25523, 25553, 25582, 25612, 25642, 25671, 25701,  /* 800 - 831*/
+                25731, 25760, 25790, 25819, 25849, 25879, 25908, 25938, 25968, 25997, 26027, 26056, 26086, 26116, 26145, 26175, 26205, 26234, 26264, 26293, 26323, 26353, 26382, 26412, 26442, 26471, 26501, 26530, 26560, 26590, 26619, 26649,  /* 832 - 863*/
+                26679, 26708, 26738, 26767, 26797, 26827, 26856, 26886, 26916, 26945, 26975, 27005, 27034, 27064, 27094, 27124, 27154, 27184, 27214, 27244, 27274, 27305, 27335, 27365, 27396, 27426, 27456, 27487, 27518, 27548, 27579, 27610,  /* 864 - 895*/
+                27640, 27671, 27702, 27733, 27764, 27795, 27826, 27858, 27889, 27920, 27951, 27983, 28014, 28046, 28078, 28109, 28141, 28173, 28205, 28237, 28269, 28301, 28333, 28365, 28397, 28430, 28462, 28495, 28527, 28560, 28593, 28626,  /* 896 - 927*/
+                28658, 28691, 28725, 28758, 28791, 28824, 28858, 28891, 28925, 28958, 28992, 29026, 29060, 29094, 29128, 29162, 29196, 29231, 29265, 29300, 29335, 29369, 29404, 29439, 29474, 29510, 29545, 29581, 29616, 29652, 29688, 29724,  /* 928 - 959*/
+                29760, 29796, 29832, 29869, 29905, 29942, 29979, 30016, 30053, 30091, 30128, 30166, 30204, 30242, 30280, 30318, 30357, 30396, 30435, 30474, 30513, 30553, 30592, 30632, 30673, 30713, 30754, 30795, 30836, 30877, 30919, 30961,  /* 960 - 991*/
+                31003, 31046, 31089, 31132, 31175, 31219, 31264, 31308, 31353, 31399, 31445, 31492, 31539, 31586, 31634, 31683, 31732, 31783, 31834, 31885, 31938, 31992, 32047, 32103, 32160, 32220, 32281, 32345, 32411, 32482, 32559, 32645,  /* 992 - 1023*/
+                32768, /*1024 - 1024*/
+            },
+            {
+                0, 97, 170, 235, 297, 356, 412, 467, 520, 572, 622, 672, 721, 769, 816, 863, 909, 955, 1000, 1044, 1089, 1132, 1176, 1218, 1261, 1303, 1345, 1387, 1428, 1469, 1510, 1550,  /* 0 - 31*/
+                1590, 1630, 1670, 1709, 1749, 1788, 1827, 1865, 1904, 1942, 1980, 2018, 2056, 2093, 2131, 2168, 2205, 2242, 2279, 2316, 2352, 2389, 2425, 2461, 2497, 2533, 2569, 2604, 2640, 2675, 2711, 2746,  /* 32 - 63*/
+                2781, 2816, 2851, 2886, 2920, 2955, 2989, 3024, 3058, 3092, 3126, 3160, 3194, 3228, 3262, 3296, 3329, 3363, 3396, 3429, 3463, 3496, 3529, 3562, 3595, 3628, 3661, 3693, 3726, 3759, 3791, 3824,  /* 64 - 95*/
+                3856, 3889, 3921, 3953, 3985, 4017, 4049, 4081, 4113, 4145, 4177, 4209, 4240, 4272, 4304, 4335, 4367, 4398, 4429, 4461, 4492, 4523, 4554, 4585, 4616, 4647, 4678, 4709, 4740, 4771, 4802, 4832,  /* 96 - 127*/
+                4863, 4893, 4924, 4955, 4985, 5015, 5046, 5076, 5106, 5137, 5167, 5197, 5227, 5257, 5287, 5317, 5347, 5377, 5407, 5437, 5467, 5496, 5526, 5556, 5586, 5615, 5645, 5674, 5704, 5734, 5763, 5793,  /* 128 - 159*/
+                5823, 5852, 5882, 5911, 5941, 5971, 6000, 6030, 6060, 6089, 6119, 6148, 6178, 6208, 6237, 6267, 6297, 6326, 6356, 6385, 6415, 6445, 6474, 6504, 6534, 6563, 6593, 6622, 6652, 6682, 6711, 6741,  /* 160 - 191*/
+                6771, 6800, 6830, 6859, 6889, 6919, 6948, 6978, 7008, 7037, 7067, 7096, 7126, 7156, 7185, 7215, 7245, 7274, 7304, 7333, 7363, 7393, 7422, 7452, 7482, 7511, 7541, 7570, 7600, 7630, 7659, 7689,  /* 192 - 223*/
+                7719, 7748, 7778, 7807, 7837, 7867, 7896, 7926, 7956, 7985, 8015, 8044, 8074, 8104, 8133, 8163, 8193, 8222, 8252, 8281, 8311, 8341, 8370, 8400, 8430, 8459, 8489, 8518, 8548, 8578, 8607, 8637,  /* 224 - 255*/
+                8667, 8696, 8726, 8755, 8785, 8815, 8844, 8874, 8904, 8933, 8963, 8992, 9022, 9052, 9081, 9111, 9141, 9170, 9200, 9229, 9259, 9289, 9318, 9348, 9378, 9407, 9437, 9466, 9496, 9526, 9555, 9585,  /* 256 - 287*/
+                9615, 9644, 9674, 9703, 9733, 9763, 9792, 9822, 9852, 9881, 9911, 9940, 9970, 10000, 10029, 10059, 10089, 10118, 10148, 10177, 10207, 10237, 10266, 10296, 10326, 10355, 10385, 10414, 10444, 10474, 10503, 10533,  /* 288 - 319*/
+                10563, 10592, 10622, 10651, 10681, 10711, 10740, 10770, 10800, 10829, 10859, 10888, 10918, 10948, 10977, 11007, 11037, 11066, 11096, 11125, 11155, 11185, 11214, 11244, 11274, 11303, 11333, 11362, 11392, 11422, 11451, 11481,  /* 320 - 351*/
+                11511, 11540, 11570, 11599, 11629, 11659, 11688, 11718, 11748, 11777, 11807, 11836, 11866, 11896, 11925, 11955, 11985, 12014, 12044, 12073, 12103, 12133, 12162, 12192, 12222, 12251, 12281, 12310, 12340, 12370, 12399, 12429,  /* 352 - 383*/
+                12459, 12488, 12518, 12547, 12577, 12607, 12636, 12666, 12696, 12725, 12755, 12784, 12814, 12844, 12873, 12903, 12933, 12962, 12992, 13021, 13051, 13081, 13110, 13140, 13170, 13199, 13229, 13258, 13288, 13318, 13347, 13377,  /* 384 - 415*/
+                13407, 13436, 13466, 13495, 13525, 13555, 13584, 13614, 13644, 13673, 13703, 13732, 13762, 13792, 13821, 13851, 13881, 13910, 13940, 13969, 13999, 14029, 14058, 14088, 14118, 14147, 14177, 14206, 14236, 14266, 14295, 14325,  /* 416 - 447*/
+                14355, 14384, 14414, 14443, 14473, 14503, 14532, 14562, 14592, 14621, 14651, 14680, 14710, 14740, 14769, 14799, 14829, 14858, 14888, 14917, 14947, 14977, 15006, 15036, 15066, 15095, 15125, 15154, 15184, 15214, 15243, 15273,  /* 448 - 479*/
+                15303, 15332, 15362, 15391, 15421, 15451, 15480, 15510, 15540, 15569, 15599, 15628, 15658, 15688, 15717, 15747, 15777, 15806, 15836, 15865, 15895, 15925, 15954, 15984, 16014, 16043, 16073, 16102, 16132, 16162, 16191, 16221,  /* 480 - 511*/
+                16251, 16280, 16310, 16339, 16369, 16399, 16428, 16458, 16488, 16517, 16547, 16576, 16606, 16636, 16665, 16695, 16725, 16754, 16784, 16813, 16843, 16873, 16902, 16932, 16962, 16991, 17021, 17050, 17080, 17110, 17139, 17169,  /* 512 - 543*/
+                17199, 17228, 17258, 17287, 17317, 17347, 17376, 17406, 17436, 17465, 17495, 17524, 17554, 17584, 17613, 17643, 17673, 17702, 17732, 17761, 17791, 17821, 17850, 17880, 17910, 17939, 17969, 17998, 18028, 18058, 18087, 18117,  /* 544 - 575*/
+                18147, 18176, 18206, 18235, 18265, 18295, 18324, 18354, 18384, 18413, 18443, 18472, 18502, 18532, 18561, 18591, 18621, 18650, 18680, 18709, 18739, 18769, 18798, 18828, 18858, 18887, 18917, 18946, 18976, 19006, 19035, 19065,  /* 576 - 607*/
+                19095, 19124, 19154, 19183, 19213, 19243, 19272, 19302, 19332, 19361, 19391, 19420, 19450, 19480, 19509, 19539, 19569, 19598, 19628, 19657, 19687, 19717, 19746, 19776, 19806, 19835, 19865, 19894, 19924, 19954, 19983, 20013,  /* 608 - 639*/
+                20043, 20072, 20102, 20131, 20161, 20191, 20220, 20250, 20280, 20309, 20339, 20368, 20398, 20428, 20457, 20487, 20517, 20546, 20576, 20605, 20635, 20665, 20694, 20724, 20754, 20783, 20813, 20842, 20872, 20902, 20931, 20961,  /* 640 - 671*/
+                20991, 21020, 21050, 21079, 21109, 21139, 21168, 21198, 21228, 21257, 21287, 21316, 21346, 21376, 21405, 21435, 21465, 21494, 21524, 21553, 21583, 21613, 21642, 21672, 21702, 21731, 21761, 21790, 21820, 21850, 21879, 21909,  /* 672 - 703*/
+                21939, 21968, 21998, 22027, 22057, 22087, 22116, 22146, 22176, 22205, 22235, 22264, 22294, 22324, 22353, 22383, 22413, 22442, 22472, 22501, 22531, 22561, 22590, 22620, 22650, 22679, 22709, 22738, 22768, 22798, 22827, 22857,  /* 704 - 735*/
+                22887, 22916, 22946, 22975, 23005, 23035, 23064, 23094, 23124, 23153, 23183, 23212, 23242, 23272, 23301, 23331, 23361, 23390, 23420, 23449, 23479, 23509, 23538, 23568, 23598, 23627, 23657, 23686, 23716, 23746, 23775, 23805,  /* 736 - 767*/
+                23835, 23864, 23894, 23923, 23953, 23983, 24012, 24042, 24072, 24101, 24131, 24160, 24190, 24220, 24249, 24279, 24309, 24338, 24368, 24397, 24427, 24457, 24486, 24516, 24546, 24575, 24605, 24634, 24664, 24694, 24723, 24753,  /* 768 - 799*/
+                24783, 24812, 24842, 24871, 24901, 24931, 24960, 24990, 25020, 25049, 25079, 25108, 25138, 25168, 25197, 25227, 25257, 25286, 25316, 25345, 25375, 25405, 25434, 25464, 25494, 25523, 25553, 25582, 25612, 25642, 25671, 25701,  /* 800 - 831*/
+                25731, 25760, 25790, 25819, 25849, 25879, 25908, 25938, 25968, 25997, 26027, 26056, 26086, 26116, 26145, 26175, 26205, 26234, 26264, 26293, 26323, 26353, 26382, 26412, 26442, 26471, 26501, 26530, 26560, 26590, 26619, 26649,  /* 832 - 863*/
+                26679, 26708, 26738, 26767, 26797, 26827, 26856, 26886, 26916, 26945, 26975, 27005, 27034, 27064, 27094, 27124, 27154, 27184, 27214, 27244, 27274, 27305, 27335, 27365, 27396, 27426, 27456, 27487, 27518, 27548, 27579, 27610,  /* 864 - 895*/
+                27640, 27671, 27702, 27733, 27764, 27795, 27826, 27858, 27889, 27920, 27951, 27983, 28014, 28046, 28078, 28109, 28141, 28173, 28205, 28237, 28269, 28301, 28333, 28365, 28397, 28430, 28462, 28495, 28527, 28560, 28593, 28626,  /* 896 - 927*/
+                28658, 28691, 28725, 28758, 28791, 28824, 28858, 28891, 28925, 28958, 28992, 29026, 29060, 29094, 29128, 29162, 29196, 29231, 29265, 29300, 29335, 29369, 29404, 29439, 29474, 29510, 29545, 29581, 29616, 29652, 29688, 29724,  /* 928 - 959*/
+                29760, 29796, 29832, 29869, 29905, 29942, 29979, 30016, 30053, 30091, 30128, 30166, 30204, 30242, 30280, 30318, 30357, 30396, 30435, 30474, 30513, 30553, 30592, 30632, 30673, 30713, 30754, 30795, 30836, 30877, 30919, 30961,  /* 960 - 991*/
+                31003, 31046, 31089, 31132, 31175, 31219, 31264, 31308, 31353, 31399, 31445, 31492, 31539, 31586, 31634, 31683, 31732, 31783, 31834, 31885, 31938, 31992, 32047, 32103, 32160, 32220, 32281, 32345, 32411, 32482, 32559, 32645,  /* 992 - 1023*/
+                32768, /*1024 - 1024*/
+            },
+            {
+                0, 139, 235, 320, 398, 472, 542, 609, 674, 738, 799, 859, 918, 976, 1032, 1088, 1143, 1197, 1250, 1302, 1354, 1405, 1456, 1506, 1556, 1605, 1653, 1701, 1749, 1796, 1843, 1890,  /* 0 - 31*/
+                1936, 1982, 2028, 2073, 2118, 2162, 2207, 2251, 2295, 2338, 2381, 2424, 2467, 2510, 2552, 2594, 2636, 2678, 2719, 2760, 2801, 2842, 2883, 2924, 2964, 3004, 3044, 3084, 3124, 3163, 3203, 3242,  /* 32 - 63*/
+                3281, 3320, 3359, 3397, 3436, 3474, 3512, 3551, 3589, 3626, 3664, 3702, 3739, 3777, 3814, 3851, 3888, 3925, 3962, 3999, 4035, 4072, 4108, 4144, 4181, 4217, 4253, 4289, 4324, 4360, 4396, 4431,  /* 64 - 95*/
+                4467, 4502, 4537, 4572, 4608, 4643, 4678, 4712, 4747, 4782, 4816, 4851, 4885, 4920, 4954, 4988, 5022, 5057, 5091, 5125, 5158, 5192, 5226, 5260, 5293, 5327, 5360, 5394, 5427, 5460, 5493, 5527,  /* 96 - 127*/
+                5560, 5593, 5626, 5658, 5691, 5724, 5757, 5789, 5822, 5855, 5887, 5920, 5952, 5984, 6016, 6049, 6081, 6113, 6145, 6177, 6209, 6241, 6273, 6304, 6336, 6368, 6400, 6431, 6463, 6494, 6526, 6557,  /* 128 - 159*/
+                6588, 6620, 6651, 6682, 6713, 6744, 6776, 6807, 6838, 6869, 6899, 6930, 6961, 6992, 7023, 7053, 7084, 7115, 7145, 7176, 7206, 7237, 7267, 7297, 7328, 7358, 7388, 7418, 7448, 7479, 7509, 7539,  /* 160 - 191*/
+                7569, 7599, 7629, 7659, 7688, 7718, 7748, 7778, 7808, 7837, 7867, 7897, 7926, 7956, 7985, 8015, 8044, 8073, 8103, 8132, 8161, 8191, 8220, 8249, 8278, 8308, 8337, 8366, 8395, 8424, 8453, 8482,  /* 192 - 223*/
+                8511, 8540, 8568, 8597, 8626, 8655, 8684, 8712, 8741, 8770, 8798, 8827, 8855, 8884, 8912, 8941, 8969, 8998, 9026, 9055, 9083, 9111, 9139, 9168, 9196, 9224, 9252, 9280, 9309, 9337, 9365, 9393,  /* 224 - 255*/
+                9421, 9449, 9477, 9505, 9533, 9561, 9589, 9617, 9645, 9673, 9701, 9729, 9757, 9785, 9813, 9841, 9869, 9897, 9925, 9953, 9981, 10009, 10037, 10065, 10093, 10121, 10149, 10177, 10205, 10233, 10261, 10289,  /* 256 - 287*/
+                10317, 10345, 10373, 10401, 10429, 10457, 10485, 10513, 10541, 10569, 10597, 10625, 10653, 10681, 10709, 10737, 10765, 10793, 10821, 10849, 10877, 10905, 10933, 10961, 10989, 11017, 11045, 11073, 11101, 11129, 11157, 11185,  /* 288 - 319*/
+                11213, 11241, 11269, 11297, 11325, 11353, 11381, 11409, 11437, 11465, 11493, 11521, 11549, 11577, 11605, 11633, 11661, 11689, 11717, 11745, 11773, 11801, 11829, 11857, 11885, 11913, 11941, 11969, 11997, 12025, 12053, 12081,  /* 320 - 351*/
+                12109, 12137, 12165, 12193, 12221, 12249, 12277, 12305, 12333, 12361, 12389, 12417, 12445, 12473, 12501, 12529, 12557, 12585, 12613, 12641, 12669, 12697, 12725, 12753, 12781, 12809, 12837, 12865, 12893, 12921, 12949, 12977,  /* 352 - 383*/
+                13005, 13033, 13061, 13089, 13117, 13145, 13173, 13201, 13229, 13257, 13285, 13313, 13341, 13369, 13397, 13425, 13453, 13481, 13509, 13537, 13565, 13593, 13621, 13649, 13677, 13705, 13733, 13761, 13789, 13817, 13845, 13873,  /* 384 - 415*/
+                13901, 13929, 13957, 13985, 14013, 14041, 14069, 14097, 14125, 14153, 14181, 14209, 14237, 14265, 14293, 14321, 14349, 14377, 14405, 14433, 14461, 14489, 14517, 14545, 14573, 14601, 14629, 14657, 14685, 14713, 14741, 14769,  /* 416 - 447*/
+                14797, 14825, 14853, 14881, 14909, 14937, 14965, 14993, 15021, 15049, 15077, 15105, 15133, 15161, 15189, 15217, 15245, 15273, 15301, 15329, 15357, 15385, 15413, 15441, 15469, 15497, 15525, 15553, 15581, 15609, 15637, 15665,  /* 448 - 479*/
+                15693, 15721, 15749, 15777, 15805, 15833, 15861, 15889, 15917, 15945, 15973, 16001, 16029, 16057, 16085, 16113, 16141, 16169, 16197, 16225, 16253, 16281, 16309, 16337, 16365, 16393, 16421, 16449, 16477, 16505, 16533, 16561,  /* 480 - 511*/
+                16589, 16617, 16645, 16673, 16701, 16729, 16757, 16785, 16813, 16841, 16869, 16897, 16925, 16953, 16981, 17009, 17037, 17065, 17093, 17121, 17149, 17177, 17205, 17233, 17261, 17289, 17317, 17345, 17373, 17401, 17429, 17457,  /* 512 - 543*/
+                17485, 17513, 17541, 17569, 17597, 17625, 17653, 17681, 17709, 17737, 17765, 17793, 17821, 17849, 17877, 17905, 17933, 17961, 17989, 18017, 18045, 18073, 18101, 18129, 18157, 18185, 18213, 18241, 18269, 18297, 18325, 18353,  /* 544 - 575*/
+                18381, 18409, 18437, 18465, 18493, 18521, 18549, 18577, 18605, 18633, 18661, 18689, 18717, 18745, 18773, 18801, 18829, 18857, 18885, 18913, 18941, 18969, 18997, 19025, 19053, 19081, 19109, 19137, 19165, 19193, 19221, 19249,  /* 576 - 607*/
+                19277, 19305, 19333, 19361, 19389, 19417, 19445, 19473, 19501, 19529, 19557, 19585, 19613, 19641, 19669, 19697, 19725, 19753, 19781, 19809, 19837, 19865, 19893, 19921, 19949, 19977, 20005, 20033, 20061, 20089, 20117, 20145,  /* 608 - 639*/
+                20173, 20201, 20229, 20257, 20285, 20313, 20341, 20369, 20397, 20425, 20453, 20481, 20509, 20537, 20565, 20593, 20621, 20649, 20677, 20705, 20733, 20761, 20789, 20817, 20845, 20873, 20901, 20929, 20957, 20985, 21013, 21041,  /* 640 - 671*/
+                21069, 21097, 21125, 21153, 21181, 21209, 21237, 21265, 21293, 21321, 21349, 21377, 21405, 21433, 21461, 21489, 21517, 21545, 21573, 21601, 21629, 21657, 21685, 21713, 21741, 21769, 21797, 21825, 21853, 21881, 21909, 21937,  /* 672 - 703*/
+                21965, 21993, 22021, 22049, 22077, 22105, 22133, 22161, 22189, 22217, 22245, 22273, 22301, 22329, 22357, 22385, 22413, 22441, 22469, 22497, 22525, 22553, 22581, 22609, 22637, 22665, 22693, 22721, 22749, 22777, 22805, 22833,  /* 704 - 735*/
+                22861, 22889, 22917, 22945, 22973, 23001, 23029, 23057, 23085, 23113, 23141, 23169, 23197, 23225, 23253, 23281, 23309, 23337, 23365, 23393, 23421, 23449, 23477, 23505, 23533, 23561, 23589, 23617, 23645, 23673, 23701, 23729,  /* 736 - 767*/
+                23757, 23785, 23813, 23841, 23869, 23897, 23925, 23953, 23982, 24010, 24038, 24066, 24094, 24123, 24151, 24179, 24208, 24236, 24265, 24293, 24321, 24350, 24378, 24407, 24435, 24464, 24493, 24521, 24550, 24579, 24607, 24636,  /* 768 - 799*/
+                24665, 24694, 24722, 24751, 24780, 24809, 24838, 24867, 24896, 24925, 24954, 24983, 25012, 25041, 25070, 25100, 25129, 25158, 25187, 25217, 25246, 25275, 25305, 25334, 25363, 25393, 25422, 25452, 25481, 25511, 25541, 25570,  /* 800 - 831*/
+                25600, 25630, 25659, 25689, 25719, 25749, 25779, 25809, 25839, 25869, 25899, 25929, 25959, 25989, 26019, 26049, 26079, 26110, 26140, 26170, 26201, 26231, 26261, 26292, 26322, 26353, 26383, 26414, 26445, 26475, 26506, 26537,  /* 832 - 863*/
+                26568, 26599, 26629, 26660, 26691, 26722, 26753, 26784, 26816, 26847, 26878, 26909, 26941, 26972, 27003, 27035, 27066, 27098, 27129, 27161, 27192, 27224, 27256, 27288, 27320, 27351, 27383, 27415, 27447, 27480, 27512, 27544,  /* 864 - 895*/
+                27576, 27608, 27641, 27673, 27706, 27738, 27771, 27803, 27836, 27869, 27901, 27934, 27967, 28000, 28033, 28066, 28099, 28132, 28166, 28199, 28232, 28266, 28299, 28333, 28367, 28400, 28434, 28468, 28502, 28536, 28570, 28604,  /* 896 - 927*/
+                28638, 28672, 28707, 28741, 28776, 28810, 28845, 28879, 28914, 28949, 28984, 29019, 29054, 29089, 29125, 29160, 29196, 29231, 29267, 29303, 29338, 29374, 29410, 29447, 29483, 29519, 29556, 29592, 29629, 29666, 29702, 29740,  /* 928 - 959*/
+                29777, 29814, 29851, 29889, 29926, 29964, 30002, 30040, 30078, 30116, 30155, 30193, 30232, 30271, 30310, 30349, 30388, 30428, 30468, 30508, 30548, 30588, 30628, 30669, 30710, 30751, 30792, 30833, 30875, 30917, 30959, 31002,  /* 960 - 991*/
+                31044, 31087, 31131, 31174, 31218, 31262, 31307, 31352, 31397, 31443, 31489, 31535, 31582, 31630, 31677, 31726, 31775, 31825, 31875, 31926, 31978, 32031, 32085, 32140, 32196, 32254, 32313, 32374, 32438, 32506, 32578, 32659,  /* 992 - 1023*/
+                32768, /*1024 - 1024*/
+            },
+            {
+                0, 139, 235, 320, 398, 472, 542, 609, 674, 738, 799, 859, 918, 976, 1032, 1088, 1143, 1197, 1250, 1302, 1354, 1405, 1456, 1506, 1556, 1605, 1653, 1701, 1749, 1796, 1843, 1890,  /* 0 - 31*/
+                1936, 1982, 2028, 2073, 2118, 2162, 2207, 2251, 2295, 2338, 2381, 2424, 2467, 2510, 2552, 2594, 2636, 2678, 2719, 2760, 2801, 2842, 2883, 2924, 2964, 3004, 3044, 3084, 3124, 3163, 3203, 3242,  /* 32 - 63*/
+                3281, 3320, 3359, 3397, 3436, 3474, 3512, 3551, 3589, 3626, 3664, 3702, 3739, 3777, 3814, 3851, 3888, 3925, 3962, 3999, 4035, 4072, 4108, 4144, 4181, 4217, 4253, 4289, 4324, 4360, 4396, 4431,  /* 64 - 95*/
+                4467, 4502, 4537, 4572, 4608, 4643, 4678, 4712, 4747, 4782, 4816, 4851, 4885, 4920, 4954, 4988, 5022, 5057, 5091, 5125, 5158, 5192, 5226, 5260, 5293, 5327, 5360, 5394, 5427, 5460, 5493, 5527,  /* 96 - 127*/
+                5560, 5593, 5626, 5658, 5691, 5724, 5757, 5789, 5822, 5855, 5887, 5920, 5952, 5984, 6016, 6049, 6081, 6113, 6145, 6177, 6209, 6241, 6273, 6304, 6336, 6368, 6400, 6431, 6463, 6494, 6526, 6557,  /* 128 - 159*/
+                6588, 6620, 6651, 6682, 6713, 6744, 6776, 6807, 6838, 6869, 6899, 6930, 6961, 6992, 7023, 7053, 7084, 7115, 7145, 7176, 7206, 7237, 7267, 7297, 7328, 7358, 7388, 7418, 7448, 7479, 7509, 7539,  /* 160 - 191*/
+                7569, 7599, 7629, 7659, 7688, 7718, 7748, 7778, 7808, 7837, 7867, 7897, 7926, 7956, 7985, 8015, 8044, 8073, 8103, 8132, 8161, 8191, 8220, 8249, 8278, 8308, 8337, 8366, 8395, 8424, 8453, 8482,  /* 192 - 223*/
+                8511, 8540, 8568, 8597, 8626, 8655, 8684, 8712, 8741, 8770, 8798, 8827, 8855, 8884, 8912, 8941, 8969, 8998, 9026, 9055, 9083, 9111, 9139, 9168, 9196, 9224, 9252, 9280, 9309, 9337, 9365, 9393,  /* 224 - 255*/
+                9421, 9449, 9477, 9505, 9533, 9561, 9589, 9617, 9645, 9673, 9701, 9729, 9757, 9785, 9813, 9841, 9869, 9897, 9925, 9953, 9981, 10009, 10037, 10065, 10093, 10121, 10149, 10177, 10205, 10233, 10261, 10289,  /* 256 - 287*/
+                10317, 10345, 10373, 10401, 10429, 10457, 10485, 10513, 10541, 10569, 10597, 10625, 10653, 10681, 10709, 10737, 10765, 10793, 10821, 10849, 10877, 10905, 10933, 10961, 10989, 11017, 11045, 11073, 11101, 11129, 11157, 11185,  /* 288 - 319*/
+                11213, 11241, 11269, 11297, 11325, 11353, 11381, 11409, 11437, 11465, 11493, 11521, 11549, 11577, 11605, 11633, 11661, 11689, 11717, 11745, 11773, 11801, 11829, 11857, 11885, 11913, 11941, 11969, 11997, 12025, 12053, 12081,  /* 320 - 351*/
+                12109, 12137, 12165, 12193, 12221, 12249, 12277, 12305, 12333, 12361, 12389, 12417, 12445, 12473, 12501, 12529, 12557, 12585, 12613, 12641, 12669, 12697, 12725, 12753, 12781, 12809, 12837, 12865, 12893, 12921, 12949, 12977,  /* 352 - 383*/
+                13005, 13033, 13061, 13089, 13117, 13145, 13173, 13201, 13229, 13257, 13285, 13313, 13341, 13369, 13397, 13425, 13453, 13481, 13509, 13537, 13565, 13593, 13621, 13649, 13677, 13705, 13733, 13761, 13789, 13817, 13845, 13873,  /* 384 - 415*/
+                13901, 13929, 13957, 13985, 14013, 14041, 14069, 14097, 14125, 14153, 14181, 14209, 14237, 14265, 14293, 14321, 14349, 14377, 14405, 14433, 14461, 14489, 14517, 14545, 14573, 14601, 14629, 14657, 14685, 14713, 14741, 14769,  /* 416 - 447*/
+                14797, 14825, 14853, 14881, 14909, 14937, 14965, 14993, 15021, 15049, 15077, 15105, 15133, 15161, 15189, 15217, 15245, 15273, 15301, 15329, 15357, 15385, 15413, 15441, 15469, 15497, 15525, 15553, 15581, 15609, 15637, 15665,  /* 448 - 479*/
+                15693, 15721, 15749, 15777, 15805, 15833, 15861, 15889, 15917, 15945, 15973, 16001, 16029, 16057, 16085, 16113, 16141, 16169, 16197, 16225, 16253, 16281, 16309, 16337, 16365, 16393, 16421, 16449, 16477, 16505, 16533, 16561,  /* 480 - 511*/
+                16589, 16617, 16645, 16673, 16701, 16729, 16757, 16785, 16813, 16841, 16869, 16897, 16925, 16953, 16981, 17009, 17037, 17065, 17093, 17121, 17149, 17177, 17205, 17233, 17261, 17289, 17317, 17345, 17373, 17401, 17429, 17457,  /* 512 - 543*/
+                17485, 17513, 17541, 17569, 17597, 17625, 17653, 17681, 17709, 17737, 17765, 17793, 17821, 17849, 17877, 17905, 17933, 17961, 17989, 18017, 18045, 18073, 18101, 18129, 18157, 18185, 18213, 18241, 18269, 18297, 18325, 18353,  /* 544 - 575*/
+                18381, 18409, 18437, 18465, 18493, 18521, 18549, 18577, 18605, 18633, 18661, 18689, 18717, 18745, 18773, 18801, 18829, 18857, 18885, 18913, 18941, 18969, 18997, 19025, 19053, 19081, 19109, 19137, 19165, 19193, 19221, 19249,  /* 576 - 607*/
+                19277, 19305, 19333, 19361, 19389, 19417, 19445, 19473, 19501, 19529, 19557, 19585, 19613, 19641, 19669, 19697, 19725, 19753, 19781, 19809, 19837, 19865, 19893, 19921, 19949, 19977, 20005, 20033, 20061, 20089, 20117, 20145,  /* 608 - 639*/
+                20173, 20201, 20229, 20257, 20285, 20313, 20341, 20369, 20397, 20425, 20453, 20481, 20509, 20537, 20565, 20593, 20621, 20649, 20677, 20705, 20733, 20761, 20789, 20817, 20845, 20873, 20901, 20929, 20957, 20985, 21013, 21041,  /* 640 - 671*/
+                21069, 21097, 21125, 21153, 21181, 21209, 21237, 21265, 21293, 21321, 21349, 21377, 21405, 21433, 21461, 21489, 21517, 21545, 21573, 21601, 21629, 21657, 21685, 21713, 21741, 21769, 21797, 21825, 21853, 21881, 21909, 21937,  /* 672 - 703*/
+                21965, 21993, 22021, 22049, 22077, 22105, 22133, 22161, 22189, 22217, 22245, 22273, 22301, 22329, 22357, 22385, 22413, 22441, 22469, 22497, 22525, 22553, 22581, 22609, 22637, 22665, 22693, 22721, 22749, 22777, 22805, 22833,  /* 704 - 735*/
+                22861, 22889, 22917, 22945, 22973, 23001, 23029, 23057, 23085, 23113, 23141, 23169, 23197, 23225, 23253, 23281, 23309, 23337, 23365, 23393, 23421, 23449, 23477, 23505, 23533, 23561, 23589, 23617, 23645, 23673, 23701, 23729,  /* 736 - 767*/
+                23757, 23785, 23813, 23841, 23869, 23897, 23925, 23953, 23982, 24010, 24038, 24066, 24094, 24123, 24151, 24179, 24208, 24236, 24265, 24293, 24321, 24350, 24378, 24407, 24435, 24464, 24493, 24521, 24550, 24579, 24607, 24636,  /* 768 - 799*/
+                24665, 24694, 24722, 24751, 24780, 24809, 24838, 24867, 24896, 24925, 24954, 24983, 25012, 25041, 25070, 25100, 25129, 25158, 25187, 25217, 25246, 25275, 25305, 25334, 25363, 25393, 25422, 25452, 25481, 25511, 25541, 25570,  /* 800 - 831*/
+                25600, 25630, 25659, 25689, 25719, 25749, 25779, 25809, 25839, 25869, 25899, 25929, 25959, 25989, 26019, 26049, 26079, 26110, 26140, 26170, 26201, 26231, 26261, 26292, 26322, 26353, 26383, 26414, 26445, 26475, 26506, 26537,  /* 832 - 863*/
+                26568, 26599, 26629, 26660, 26691, 26722, 26753, 26784, 26816, 26847, 26878, 26909, 26941, 26972, 27003, 27035, 27066, 27098, 27129, 27161, 27192, 27224, 27256, 27288, 27320, 27351, 27383, 27415, 27447, 27480, 27512, 27544,  /* 864 - 895*/
+                27576, 27608, 27641, 27673, 27706, 27738, 27771, 27803, 27836, 27869, 27901, 27934, 27967, 28000, 28033, 28066, 28099, 28132, 28166, 28199, 28232, 28266, 28299, 28333, 28367, 28400, 28434, 28468, 28502, 28536, 28570, 28604,  /* 896 - 927*/
+                28638, 28672, 28707, 28741, 28776, 28810, 28845, 28879, 28914, 28949, 28984, 29019, 29054, 29089, 29125, 29160, 29196, 29231, 29267, 29303, 29338, 29374, 29410, 29447, 29483, 29519, 29556, 29592, 29629, 29666, 29702, 29740,  /* 928 - 959*/
+                29777, 29814, 29851, 29889, 29926, 29964, 30002, 30040, 30078, 30116, 30155, 30193, 30232, 30271, 30310, 30349, 30388, 30428, 30468, 30508, 30548, 30588, 30628, 30669, 30710, 30751, 30792, 30833, 30875, 30917, 30959, 31002,  /* 960 - 991*/
+                31044, 31087, 31131, 31174, 31218, 31262, 31307, 31352, 31397, 31443, 31489, 31535, 31582, 31630, 31677, 31726, 31775, 31825, 31875, 31926, 31978, 32031, 32085, 32140, 32196, 32254, 32313, 32374, 32438, 32506, 32578, 32659,  /* 992 - 1023*/
+                32768, /*1024 - 1024*/
+            },
+            {
+                0, 156, 261, 352, 436, 514, 588, 659, 727, 793, 857, 920, 981, 1041, 1100, 1157, 1214, 1269, 1324, 1378, 1431, 1484, 1536, 1587, 1638, 1688, 1738, 1787, 1835, 1884, 1931, 1979,  /* 0 - 31*/
+                2026, 2072, 2119, 2164, 2210, 2255, 2300, 2345, 2389, 2433, 2477, 2520, 2563, 2606, 2649, 2691, 2734, 2776, 2817, 2859, 2900, 2941, 2982, 3023, 3064, 3104, 3144, 3184, 3224, 3263, 3303, 3342,  /* 32 - 63*/
+                3381, 3420, 3459, 3498, 3536, 3575, 3613, 3651, 3689, 3727, 3764, 3802, 3839, 3877, 3914, 3951, 3988, 4024, 4061, 4098, 4134, 4170, 4207, 4243, 4279, 4315, 4350, 4386, 4422, 4457, 4492, 4528,  /* 64 - 95*/
+                4563, 4598, 4633, 4668, 4703, 4737, 4772, 4807, 4841, 4875, 4910, 4944, 4978, 5012, 5046, 5080, 5114, 5147, 5181, 5214, 5248, 5281, 5315, 5348, 5381, 5414, 5447, 5480, 5513, 5546, 5579, 5611,  /* 96 - 127*/
+                5644, 5677, 5709, 5741, 5774, 5806, 5838, 5871, 5903, 5935, 5967, 5999, 6030, 6062, 6094, 6126, 6157, 6189, 6220, 6252, 6283, 6315, 6346, 6377, 6408, 6440, 6471, 6502, 6533, 6564, 6594, 6625,  /* 128 - 159*/
+                6656, 6687, 6717, 6748, 6779, 6809, 6840, 6870, 6900, 6931, 6961, 6991, 7022, 7052, 7082, 7112, 7142, 7172, 7202, 7232, 7261, 7291, 7321, 7351, 7380, 7410, 7440, 7469, 7499, 7528, 7558, 7587,  /* 160 - 191*/
+                7616, 7646, 7675, 7704, 7733, 7762, 7791, 7821, 7850, 7879, 7908, 7936, 7965, 7994, 8023, 8052, 8080, 8109, 8138, 8166, 8195, 8224, 8252, 8281, 8309, 8337, 8366, 8394, 8422, 8451, 8479, 8507,  /* 192 - 223*/
+                8535, 8564, 8592, 8620, 8648, 8676, 8704, 8732, 8760, 8788, 8815, 8843, 8871, 8899, 8927, 8954, 8982, 9010, 9037, 9065, 9092, 9120, 9147, 9175, 9202, 9230, 9257, 9284, 9312, 9339, 9366, 9394,  /* 224 - 255*/
+                9421, 9448, 9475, 9502, 9530, 9557, 9584, 9611, 9638, 9666, 9693, 9720, 9747, 9774, 9802, 9829, 9856, 9883, 9910, 9938, 9965, 9992, 10019, 10046, 10074, 10101, 10128, 10155, 10182, 10210, 10237, 10264,  /* 256 - 287*/
+                10291, 10318, 10346, 10373, 10400, 10427, 10454, 10482, 10509, 10536, 10563, 10590, 10618, 10645, 10672, 10699, 10726, 10754, 10781, 10808, 10835, 10862, 10890, 10917, 10944, 10971, 10998, 11026, 11053, 11080, 11107, 11134,  /* 288 - 319*/
+                11162, 11189, 11216, 11243, 11270, 11298, 11325, 11352, 11379, 11406, 11434, 11461, 11488, 11515, 11542, 11570, 11597, 11624, 11651, 11678, 11706, 11733, 11760, 11787, 11814, 11842, 11869, 11896, 11923, 11950, 11978, 12005,  /* 320 - 351*/
+                12032, 12059, 12086, 12114, 12141, 12168, 12195, 12222, 12250, 12277, 12304, 12331, 12358, 12386, 12413, 12440, 12467, 12494, 12522, 12549, 12576, 12603, 12630, 12658, 12685, 12712, 12739, 12766, 12794, 12821, 12848, 12875,  /* 352 - 383*/
+                12902, 12930, 12957, 12984, 13011, 13038, 13066, 13093, 13120, 13147, 13174, 13202, 13229, 13256, 13283, 13310, 13338, 13365, 13392, 13419, 13446, 13474, 13501, 13528, 13555, 13582, 13610, 13637, 13664, 13691, 13718, 13746,  /* 384 - 415*/
+                13773, 13800, 13827, 13854, 13882, 13909, 13936, 13963, 13990, 14018, 14045, 14072, 14099, 14126, 14154, 14181, 14208, 14235, 14262, 14290, 14317, 14344, 14371, 14398, 14426, 14453, 14480, 14507, 14534, 14562, 14589, 14616,  /* 416 - 447*/
+                14643, 14670, 14698, 14725, 14752, 14779, 14806, 14834, 14861, 14888, 14915, 14942, 14970, 14997, 15024, 15051, 15078, 15106, 15133, 15160, 15187, 15214, 15242, 15269, 15296, 15323, 15350, 15378, 15405, 15432, 15459, 15486,  /* 448 - 479*/
+                15514, 15541, 15568, 15595, 15622, 15650, 15677, 15704, 15731, 15758, 15786, 15813, 15840, 15867, 15894, 15922, 15949, 15976, 16003, 16030, 16058, 16085, 16112, 16139, 16166, 16194, 16221, 16248, 16275, 16302, 16330, 16357,  /* 480 - 511*/
+                16384, 16411, 16438, 16466, 16493, 16520, 16547, 16574, 16602, 16629, 16656, 16683, 16710, 16738, 16765, 16792, 16819, 16846, 16874, 16901, 16928, 16955, 16982, 17010, 17037, 17064, 17091, 17118, 17146, 17173, 17200, 17227,  /* 512 - 543*/
+                17254, 17282, 17309, 17336, 17363, 17390, 17418, 17445, 17472, 17499, 17526, 17554, 17581, 17608, 17635, 17662, 17690, 17717, 17744, 17771, 17798, 17826, 17853, 17880, 17907, 17934, 17962, 17989, 18016, 18043, 18070, 18098,  /* 544 - 575*/
+                18125, 18152, 18179, 18206, 18234, 18261, 18288, 18315, 18342, 18370, 18397, 18424, 18451, 18478, 18506, 18533, 18560, 18587, 18614, 18642, 18669, 18696, 18723, 18750, 18778, 18805, 18832, 18859, 18886, 18914, 18941, 18968,  /* 576 - 607*/
+                18995, 19022, 19050, 19077, 19104, 19131, 19158, 19186, 19213, 19240, 19267, 19294, 19322, 19349, 19376, 19403, 19430, 19458, 19485, 19512, 19539, 19566, 19594, 19621, 19648, 19675, 19702, 19730, 19757, 19784, 19811, 19838,  /* 608 - 639*/
+                19866, 19893, 19920, 19947, 19974, 20002, 20029, 20056, 20083, 20110, 20138, 20165, 20192, 20219, 20246, 20274, 20301, 20328, 20355, 20382, 20410, 20437, 20464, 20491, 20518, 20546, 20573, 20600, 20627, 20654, 20682, 20709,  /* 640 - 671*/
+                20736, 20763, 20790, 20818, 20845, 20872, 20899, 20926, 20954, 20981, 21008, 21035, 21062, 21090, 21117, 21144, 21171, 21198, 21226, 21253, 21280, 21307, 21334, 21362, 21389, 21416, 21443, 21470, 21498, 21525, 21552, 21579,  /* 672 - 703*/
+                21606, 21634, 21661, 21688, 21715, 21742, 21770, 21797, 21824, 21851, 21878, 21906, 21933, 21960, 21987, 22014, 22042, 22069, 22096, 22123, 22150, 22178, 22205, 22232, 22259, 22286, 22314, 22341, 22368, 22395, 22422, 22450,  /* 704 - 735*/
+                22477, 22504, 22531, 22558, 22586, 22613, 22640, 22667, 22694, 22722, 22749, 22776, 22803, 22830, 22858, 22885, 22912, 22939, 22966, 22994, 23021, 23048, 23075, 23102, 23130, 23157, 23184, 23211, 23238, 23266, 23293, 23320,  /* 736 - 767*/
+                23347, 23374, 23402, 23429, 23456, 23484, 23511, 23538, 23566, 23593, 23621, 23648, 23676, 23703, 23731, 23758, 23786, 23814, 23841, 23869, 23897, 23925, 23953, 23980, 24008, 24036, 24064, 24092, 24120, 24148, 24176, 24204,  /* 768 - 799*/
+                24233, 24261, 24289, 24317, 24346, 24374, 24402, 24431, 24459, 24487, 24516, 24544, 24573, 24602, 24630, 24659, 24688, 24716, 24745, 24774, 24803, 24832, 24860, 24889, 24918, 24947, 24977, 25006, 25035, 25064, 25093, 25122,  /* 800 - 831*/
+                25152, 25181, 25210, 25240, 25269, 25299, 25328, 25358, 25388, 25417, 25447, 25477, 25507, 25536, 25566, 25596, 25626, 25656, 25686, 25716, 25746, 25777, 25807, 25837, 25868, 25898, 25928, 25959, 25989, 26020, 26051, 26081,  /* 832 - 863*/
+                26112, 26143, 26174, 26204, 26235, 26266, 26297, 26328, 26360, 26391, 26422, 26453, 26485, 26516, 26548, 26579, 26611, 26642, 26674, 26706, 26738, 26769, 26801, 26833, 26865, 26897, 26930, 26962, 26994, 27027, 27059, 27091,  /* 864 - 895*/
+                27124, 27157, 27189, 27222, 27255, 27288, 27321, 27354, 27387, 27420, 27453, 27487, 27520, 27554, 27587, 27621, 27654, 27688, 27722, 27756, 27790, 27824, 27858, 27893, 27927, 27961, 27996, 28031, 28065, 28100, 28135, 28170,  /* 896 - 927*/
+                28205, 28240, 28276, 28311, 28346, 28382, 28418, 28453, 28489, 28525, 28561, 28598, 28634, 28670, 28707, 28744, 28780, 28817, 28854, 28891, 28929, 28966, 29004, 29041, 29079, 29117, 29155, 29193, 29232, 29270, 29309, 29348,  /* 928 - 959*/
+                29387, 29426, 29465, 29505, 29544, 29584, 29624, 29664, 29704, 29745, 29786, 29827, 29868, 29909, 29951, 29992, 30034, 30077, 30119, 30162, 30205, 30248, 30291, 30335, 30379, 30423, 30468, 30513, 30558, 30604, 30649, 30696,  /* 960 - 991*/
+                30742, 30789, 30837, 30884, 30933, 30981, 31030, 31080, 31130, 31181, 31232, 31284, 31337, 31390, 31444, 31499, 31554, 31611, 31668, 31727, 31787, 31848, 31911, 31975, 32041, 32109, 32180, 32254, 32332, 32416, 32507, 32612,  /* 992 - 1023*/
+                32768, /*1024 - 1024*/
+            },
+            {
+                0, 156, 261, 352, 436, 514, 588, 659, 727, 793, 857, 920, 981, 1041, 1100, 1157, 1214, 1269, 1324, 1378, 1431, 1484, 1536, 1587, 1638, 1688, 1738, 1787, 1835, 1884, 1931, 1979,  /* 0 - 31*/
+                2026, 2072, 2119, 2164, 2210, 2255, 2300, 2345, 2389, 2433, 2477, 2520, 2563, 2606, 2649, 2691, 2734, 2776, 2817, 2859, 2900, 2941, 2982, 3023, 3064, 3104, 3144, 3184, 3224, 3263, 3303, 3342,  /* 32 - 63*/
+                3381, 3420, 3459, 3498, 3536, 3575, 3613, 3651, 3689, 3727, 3764, 3802, 3839, 3877, 3914, 3951, 3988, 4024, 4061, 4098, 4134, 4170, 4207, 4243, 4279, 4315, 4350, 4386, 4422, 4457, 4492, 4528,  /* 64 - 95*/
+                4563, 4598, 4633, 4668, 4703, 4737, 4772, 4807, 4841, 4875, 4910, 4944, 4978, 5012, 5046, 5080, 5114, 5147, 5181, 5214, 5248, 5281, 5315, 5348, 5381, 5414, 5447, 5480, 5513, 5546, 5579, 5611,  /* 96 - 127*/
+                5644, 5677, 5709, 5741, 5774, 5806, 5838, 5871, 5903, 5935, 5967, 5999, 6030, 6062, 6094, 6126, 6157, 6189, 6220, 6252, 6283, 6315, 6346, 6377, 6408, 6440, 6471, 6502, 6533, 6564, 6594, 6625,  /* 128 - 159*/
+                6656, 6687, 6717, 6748, 6779, 6809, 6840, 6870, 6900, 6931, 6961, 6991, 7022, 7052, 7082, 7112, 7142, 7172, 7202, 7232, 7261, 7291, 7321, 7351, 7380, 7410, 7440, 7469, 7499, 7528, 7558, 7587,  /* 160 - 191*/
+                7616, 7646, 7675, 7704, 7733, 7762, 7791, 7821, 7850, 7879, 7908, 7936, 7965, 7994, 8023, 8052, 8080, 8109, 8138, 8166, 8195, 8224, 8252, 8281, 8309, 8337, 8366, 8394, 8422, 8451, 8479, 8507,  /* 192 - 223*/
+                8535, 8564, 8592, 8620, 8648, 8676, 8704, 8732, 8760, 8788, 8815, 8843, 8871, 8899, 8927, 8954, 8982, 9010, 9037, 9065, 9092, 9120, 9147, 9175, 9202, 9230, 9257, 9284, 9312, 9339, 9366, 9394,  /* 224 - 255*/
+                9421, 9448, 9475, 9502, 9530, 9557, 9584, 9611, 9638, 9666, 9693, 9720, 9747, 9774, 9802, 9829, 9856, 9883, 9910, 9938, 9965, 9992, 10019, 10046, 10074, 10101, 10128, 10155, 10182, 10210, 10237, 10264,  /* 256 - 287*/
+                10291, 10318, 10346, 10373, 10400, 10427, 10454, 10482, 10509, 10536, 10563, 10590, 10618, 10645, 10672, 10699, 10726, 10754, 10781, 10808, 10835, 10862, 10890, 10917, 10944, 10971, 10998, 11026, 11053, 11080, 11107, 11134,  /* 288 - 319*/
+                11162, 11189, 11216, 11243, 11270, 11298, 11325, 11352, 11379, 11406, 11434, 11461, 11488, 11515, 11542, 11570, 11597, 11624, 11651, 11678, 11706, 11733, 11760, 11787, 11814, 11842, 11869, 11896, 11923, 11950, 11978, 12005,  /* 320 - 351*/
+                12032, 12059, 12086, 12114, 12141, 12168, 12195, 12222, 12250, 12277, 12304, 12331, 12358, 12386, 12413, 12440, 12467, 12494, 12522, 12549, 12576, 12603, 12630, 12658, 12685, 12712, 12739, 12766, 12794, 12821, 12848, 12875,  /* 352 - 383*/
+                12902, 12930, 12957, 12984, 13011, 13038, 13066, 13093, 13120, 13147, 13174, 13202, 13229, 13256, 13283, 13310, 13338, 13365, 13392, 13419, 13446, 13474, 13501, 13528, 13555, 13582, 13610, 13637, 13664, 13691, 13718, 13746,  /* 384 - 415*/
+                13773, 13800, 13827, 13854, 13882, 13909, 13936, 13963, 13990, 14018, 14045, 14072, 14099, 14126, 14154, 14181, 14208, 14235, 14262, 14290, 14317, 14344, 14371, 14398, 14426, 14453, 14480, 14507, 14534, 14562, 14589, 14616,  /* 416 - 447*/
+                14643, 14670, 14698, 14725, 14752, 14779, 14806, 14834, 14861, 14888, 14915, 14942, 14970, 14997, 15024, 15051, 15078, 15106, 15133, 15160, 15187, 15214, 15242, 15269, 15296, 15323, 15350, 15378, 15405, 15432, 15459, 15486,  /* 448 - 479*/
+                15514, 15541, 15568, 15595, 15622, 15650, 15677, 15704, 15731, 15758, 15786, 15813, 15840, 15867, 15894, 15922, 15949, 15976, 16003, 16030, 16058, 16085, 16112, 16139, 16166, 16194, 16221, 16248, 16275, 16302, 16330, 16357,  /* 480 - 511*/
+                16384, 16411, 16438, 16466, 16493, 16520, 16547, 16574, 16602, 16629, 16656, 16683, 16710, 16738, 16765, 16792, 16819, 16846, 16874, 16901, 16928, 16955, 16982, 17010, 17037, 17064, 17091, 17118, 17146, 17173, 17200, 17227,  /* 512 - 543*/
+                17254, 17282, 17309, 17336, 17363, 17390, 17418, 17445, 17472, 17499, 17526, 17554, 17581, 17608, 17635, 17662, 17690, 17717, 17744, 17771, 17798, 17826, 17853, 17880, 17907, 17934, 17962, 17989, 18016, 18043, 18070, 18098,  /* 544 - 575*/
+                18125, 18152, 18179, 18206, 18234, 18261, 18288, 18315, 18342, 18370, 18397, 18424, 18451, 18478, 18506, 18533, 18560, 18587, 18614, 18642, 18669, 18696, 18723, 18750, 18778, 18805, 18832, 18859, 18886, 18914, 18941, 18968,  /* 576 - 607*/
+                18995, 19022, 19050, 19077, 19104, 19131, 19158, 19186, 19213, 19240, 19267, 19294, 19322, 19349, 19376, 19403, 19430, 19458, 19485, 19512, 19539, 19566, 19594, 19621, 19648, 19675, 19702, 19730, 19757, 19784, 19811, 19838,  /* 608 - 639*/
+                19866, 19893, 19920, 19947, 19974, 20002, 20029, 20056, 20083, 20110, 20138, 20165, 20192, 20219, 20246, 20274, 20301, 20328, 20355, 20382, 20410, 20437, 20464, 20491, 20518, 20546, 20573, 20600, 20627, 20654, 20682, 20709,  /* 640 - 671*/
+                20736, 20763, 20790, 20818, 20845, 20872, 20899, 20926, 20954, 20981, 21008, 21035, 21062, 21090, 21117, 21144, 21171, 21198, 21226, 21253, 21280, 21307, 21334, 21362, 21389, 21416, 21443, 21470, 21498, 21525, 21552, 21579,  /* 672 - 703*/
+                21606, 21634, 21661, 21688, 21715, 21742, 21770, 21797, 21824, 21851, 21878, 21906, 21933, 21960, 21987, 22014, 22042, 22069, 22096, 22123, 22150, 22178, 22205, 22232, 22259, 22286, 22314, 22341, 22368, 22395, 22422, 22450,  /* 704 - 735*/
+                22477, 22504, 22531, 22558, 22586, 22613, 22640, 22667, 22694, 22722, 22749, 22776, 22803, 22830, 22858, 22885, 22912, 22939, 22966, 22994, 23021, 23048, 23075, 23102, 23130, 23157, 23184, 23211, 23238, 23266, 23293, 23320,  /* 736 - 767*/
+                23347, 23374, 23402, 23429, 23456, 23484, 23511, 23538, 23566, 23593, 23621, 23648, 23676, 23703, 23731, 23758, 23786, 23814, 23841, 23869, 23897, 23925, 23953, 23980, 24008, 24036, 24064, 24092, 24120, 24148, 24176, 24204,  /* 768 - 799*/
+                24233, 24261, 24289, 24317, 24346, 24374, 24402, 24431, 24459, 24487, 24516, 24544, 24573, 24602, 24630, 24659, 24688, 24716, 24745, 24774, 24803, 24832, 24860, 24889, 24918, 24947, 24977, 25006, 25035, 25064, 25093, 25122,  /* 800 - 831*/
+                25152, 25181, 25210, 25240, 25269, 25299, 25328, 25358, 25388, 25417, 25447, 25477, 25507, 25536, 25566, 25596, 25626, 25656, 25686, 25716, 25746, 25777, 25807, 25837, 25868, 25898, 25928, 25959, 25989, 26020, 26051, 26081,  /* 832 - 863*/
+                26112, 26143, 26174, 26204, 26235, 26266, 26297, 26328, 26360, 26391, 26422, 26453, 26485, 26516, 26548, 26579, 26611, 26642, 26674, 26706, 26738, 26769, 26801, 26833, 26865, 26897, 26930, 26962, 26994, 27027, 27059, 27091,  /* 864 - 895*/
+                27124, 27157, 27189, 27222, 27255, 27288, 27321, 27354, 27387, 27420, 27453, 27487, 27520, 27554, 27587, 27621, 27654, 27688, 27722, 27756, 27790, 27824, 27858, 27893, 27927, 27961, 27996, 28031, 28065, 28100, 28135, 28170,  /* 896 - 927*/
+                28205, 28240, 28276, 28311, 28346, 28382, 28418, 28453, 28489, 28525, 28561, 28598, 28634, 28670, 28707, 28744, 28780, 28817, 28854, 28891, 28929, 28966, 29004, 29041, 29079, 29117, 29155, 29193, 29232, 29270, 29309, 29348,  /* 928 - 959*/
+                29387, 29426, 29465, 29505, 29544, 29584, 29624, 29664, 29704, 29745, 29786, 29827, 29868, 29909, 29951, 29992, 30034, 30077, 30119, 30162, 30205, 30248, 30291, 30335, 30379, 30423, 30468, 30513, 30558, 30604, 30649, 30696,  /* 960 - 991*/
+                30742, 30789, 30837, 30884, 30933, 30981, 31030, 31080, 31130, 31181, 31232, 31284, 31337, 31390, 31444, 31499, 31554, 31611, 31668, 31727, 31787, 31848, 31911, 31975, 32041, 32109, 32180, 32254, 32332, 32416, 32507, 32612,  /* 992 - 1023*/
+                32768, /*1024 - 1024*/
+            },
+            {
+                0, 217, 350, 462, 563, 657, 745, 828, 907, 984, 1058, 1129, 1199, 1267, 1333, 1398, 1461, 1523, 1585, 1645, 1704, 1762, 1819, 1875, 1931, 1986, 2040, 2094, 2147, 2199, 2251, 2303,  /* 0 - 31*/
+                2353, 2404, 2454, 2503, 2552, 2600, 2649, 2696, 2744, 2791, 2837, 2883, 2929, 2975, 3020, 3065, 3110, 3154, 3199, 3242, 3286, 3329, 3372, 3415, 3458, 3500, 3542, 3584, 3626, 3667, 3708, 3749,  /* 32 - 63*/
+                3790, 3831, 3871, 3911, 3951, 3991, 4031, 4070, 4110, 4149, 4188, 4227, 4265, 4304, 4342, 4381, 4419, 4456, 4494, 4532, 4569, 4607, 4644, 4681, 4718, 4755, 4791, 4828, 4864, 4900, 4937, 4973,  /* 64 - 95*/
+                5009, 5044, 5080, 5116, 5151, 5187, 5222, 5257, 5292, 5327, 5362, 5396, 5431, 5466, 5500, 5534, 5569, 5603, 5637, 5671, 5705, 5738, 5772, 5806, 5839, 5872, 5906, 5939, 5972, 6005, 6038, 6071,  /* 96 - 127*/
+                6104, 6137, 6169, 6202, 6234, 6267, 6299, 6332, 6364, 6396, 6428, 6460, 6492, 6524, 6555, 6587, 6619, 6650, 6682, 6713, 6745, 6776, 6807, 6838, 6869, 6901, 6931, 6962, 6993, 7024, 7055, 7085,  /* 128 - 159*/
+                7116, 7147, 7177, 7208, 7238, 7268, 7298, 7329, 7359, 7389, 7419, 7449, 7479, 7509, 7538, 7568, 7598, 7628, 7657, 7687, 7716, 7746, 7775, 7804, 7834, 7863, 7892, 7921, 7950, 7979, 8008, 8037,  /* 160 - 191*/
+                8066, 8095, 8124, 8153, 8181, 8210, 8239, 8267, 8296, 8324, 8353, 8381, 8410, 8438, 8466, 8494, 8523, 8551, 8579, 8607, 8635, 8663, 8691, 8719, 8747, 8774, 8802, 8830, 8858, 8885, 8913, 8941,  /* 192 - 223*/
+                8968, 8996, 9023, 9051, 9078, 9105, 9133, 9160, 9187, 9214, 9241, 9269, 9296, 9323, 9350, 9377, 9404, 9431, 9458, 9484, 9511, 9538, 9565, 9591, 9618, 9645, 9671, 9698, 9725, 9751, 9778, 9804,  /* 224 - 255*/
+                9830, 9857, 9883, 9910, 9936, 9962, 9989, 10015, 10042, 10068, 10094, 10121, 10147, 10174, 10200, 10226, 10253, 10279, 10306, 10332, 10358, 10385, 10411, 10438, 10464, 10490, 10517, 10543, 10570, 10596, 10622, 10649,  /* 256 - 287*/
+                10675, 10702, 10728, 10754, 10781, 10807, 10834, 10860, 10886, 10913, 10939, 10966, 10992, 11018, 11045, 11071, 11098, 11124, 11150, 11177, 11203, 11230, 11256, 11282, 11309, 11335, 11362, 11388, 11414, 11441, 11467, 11494,  /* 288 - 319*/
+                11520, 11546, 11573, 11599, 11626, 11652, 11678, 11705, 11731, 11758, 11784, 11810, 11837, 11863, 11890, 11916, 11942, 11969, 11995, 12022, 12048, 12074, 12101, 12127, 12154, 12180, 12206, 12233, 12259, 12286, 12312, 12338,  /* 320 - 351*/
+                12365, 12391, 12418, 12444, 12470, 12497, 12523, 12550, 12576, 12602, 12629, 12655, 12682, 12708, 12734, 12761, 12787, 12814, 12840, 12866, 12893, 12919, 12946, 12972, 12998, 13025, 13051, 13078, 13104, 13130, 13157, 13183,  /* 352 - 383*/
+                13210, 13236, 13262, 13289, 13315, 13342, 13368, 13394, 13421, 13447, 13474, 13500, 13526, 13553, 13579, 13606, 13632, 13658, 13685, 13711, 13738, 13764, 13790, 13817, 13843, 13870, 13896, 13922, 13949, 13975, 14002, 14028,  /* 384 - 415*/
+                14054, 14081, 14107, 14134, 14160, 14186, 14213, 14239, 14266, 14292, 14318, 14345, 14371, 14398, 14424, 14450, 14477, 14503, 14530, 14556, 14582, 14609, 14635, 14662, 14688, 14714, 14741, 14767, 14794, 14820, 14846, 14873,  /* 416 - 447*/
+                14899, 14926, 14952, 14978, 15005, 15031, 15058, 15084, 15110, 15137, 15163, 15190, 15216, 15242, 15269, 15295, 15322, 15348, 15374, 15401, 15427, 15454, 15480, 15506, 15533, 15559, 15586, 15612, 15638, 15665, 15691, 15718,  /* 448 - 479*/
+                15744, 15770, 15797, 15823, 15850, 15876, 15902, 15929, 15955, 15982, 16008, 16034, 16061, 16087, 16114, 16140, 16166, 16193, 16219, 16246, 16272, 16298, 16325, 16351, 16378, 16404, 16430, 16457, 16483, 16510, 16536, 16562,  /* 480 - 511*/
+                16589, 16615, 16642, 16668, 16694, 16721, 16747, 16774, 16800, 16826, 16853, 16879, 16906, 16932, 16958, 16985, 17011, 17038, 17064, 17090, 17117, 17143, 17170, 17196, 17222, 17249, 17275, 17302, 17328, 17354, 17381, 17407,  /* 512 - 543*/
+                17434, 17460, 17486, 17513, 17539, 17566, 17592, 17618, 17645, 17671, 17698, 17724, 17750, 17777, 17803, 17830, 17856, 17882, 17909, 17935, 17962, 17988, 18014, 18041, 18067, 18094, 18120, 18146, 18173, 18199, 18226, 18252,  /* 544 - 575*/
+                18278, 18305, 18331, 18358, 18384, 18410, 18437, 18463, 18490, 18516, 18542, 18569, 18595, 18622, 18648, 18674, 18701, 18727, 18754, 18780, 18806, 18833, 18859, 18886, 18912, 18938, 18965, 18991, 19018, 19044, 19070, 19097,  /* 576 - 607*/
+                19123, 19150, 19176, 19202, 19229, 19255, 19282, 19308, 19334, 19361, 19387, 19414, 19440, 19466, 19493, 19519, 19546, 19572, 19598, 19625, 19651, 19678, 19704, 19730, 19757, 19783, 19810, 19836, 19862, 19889, 19915, 19942,  /* 608 - 639*/
+                19968, 19994, 20021, 20047, 20074, 20100, 20126, 20153, 20179, 20206, 20232, 20258, 20285, 20311, 20338, 20364, 20390, 20417, 20443, 20470, 20496, 20522, 20549, 20575, 20602, 20628, 20654, 20681, 20707, 20734, 20760, 20786,  /* 640 - 671*/
+                20813, 20839, 20866, 20892, 20918, 20945, 20971, 20998, 21024, 21050, 21077, 21103, 21130, 21156, 21182, 21209, 21235, 21262, 21288, 21314, 21341, 21367, 21394, 21420, 21446, 21473, 21499, 21526, 21552, 21578, 21605, 21631,  /* 672 - 703*/
+                21658, 21684, 21710, 21737, 21763, 21790, 21816, 21842, 21869, 21895, 21922, 21948, 21974, 22001, 22027, 22054, 22080, 22106, 22133, 22159, 22186, 22212, 22238, 22265, 22291, 22318, 22344, 22370, 22397, 22423, 22450, 22476,  /* 704 - 735*/
+                22502, 22529, 22555, 22582, 22608, 22634, 22661, 22687, 22714, 22740, 22766, 22793, 22819, 22846, 22872, 22898, 22925, 22951, 22978, 23004, 23030, 23057, 23083, 23110, 23136, 23162, 23189, 23215, 23242, 23268, 23294, 23321,  /* 736 - 767*/
+                23347, 23374, 23400, 23427, 23453, 23480, 23506, 23533, 23559, 23586, 23613, 23639, 23666, 23693, 23720, 23747, 23773, 23800, 23827, 23854, 23881, 23908, 23935, 23962, 23990, 24017, 24044, 24071, 24098, 24126, 24153, 24180,  /* 768 - 799*/
+                24208, 24235, 24263, 24290, 24318, 24345, 24373, 24401, 24428, 24456, 24484, 24511, 24539, 24567, 24595, 24623, 24651, 24679, 24707, 24735, 24763, 24791, 24820, 24848, 24876, 24905, 24933, 24961, 24990, 25018, 25047, 25075,  /* 800 - 831*/
+                25104, 25133, 25161, 25190, 25219, 25248, 25277, 25305, 25334, 25363, 25392, 25422, 25451, 25480, 25509, 25538, 25568, 25597, 25627, 25656, 25686, 25715, 25745, 25774, 25804, 25834, 25864, 25894, 25923, 25953, 25983, 26013,  /* 832 - 863*/
+                26044, 26074, 26104, 26134, 26165, 26195, 26225, 26256, 26287, 26317, 26348, 26379, 26409, 26440, 26471, 26502, 26533, 26564, 26595, 26627, 26658, 26689, 26721, 26752, 26784, 26815, 26847, 26879, 26910, 26942, 26974, 27006,  /* 864 - 895*/
+                27038, 27070, 27103, 27135, 27167, 27200, 27232, 27265, 27298, 27330, 27363, 27396, 27429, 27462, 27495, 27528, 27562, 27595, 27629, 27662, 27696, 27730, 27763, 27797, 27831, 27865, 27900, 27934, 27968, 28003, 28037, 28072,  /* 896 - 927*/
+                28107, 28142, 28177, 28212, 28247, 28282, 28318, 28353, 28389, 28425, 28460, 28496, 28533, 28569, 28605, 28642, 28678, 28715, 28752, 28789, 28826, 28863, 28901, 28938, 28976, 29014, 29052, 29090, 29128, 29167, 29205, 29244,  /* 928 - 959*/
+                29283, 29322, 29362, 29401, 29441, 29481, 29521, 29561, 29602, 29642, 29683, 29724, 29765, 29807, 29849, 29891, 29933, 29976, 30018, 30061, 30105, 30148, 30192, 30236, 30281, 30325, 30370, 30416, 30462, 30508, 30554, 30601,  /* 960 - 991*/
+                30649, 30696, 30744, 30793, 30842, 30892, 30942, 30993, 31044, 31096, 31148, 31201, 31255, 31310, 31365, 31422, 31479, 31537, 31597, 31657, 31719, 31783, 31848, 31915, 31984, 32056, 32130, 32208, 32291, 32380, 32478, 32592,  /* 992 - 1023*/
+                32768, /*1024 - 1024*/
+            },
+            {
+                0, 217, 350, 462, 563, 657, 745, 828, 907, 984, 1058, 1129, 1199, 1267, 1333, 1398, 1461, 1523, 1585, 1645, 1704, 1762, 1819, 1875, 1931, 1986, 2040, 2094, 2147, 2199, 2251, 2303,  /* 0 - 31*/
+                2353, 2404, 2454, 2503, 2552, 2600, 2649, 2696, 2744, 2791, 2837, 2883, 2929, 2975, 3020, 3065, 3110, 3154, 3199, 3242, 3286, 3329, 3372, 3415, 3458, 3500, 3542, 3584, 3626, 3667, 3708, 3749,  /* 32 - 63*/
+                3790, 3831, 3871, 3911, 3951, 3991, 4031, 4070, 4110, 4149, 4188, 4227, 4265, 4304, 4342, 4381, 4419, 4456, 4494, 4532, 4569, 4607, 4644, 4681, 4718, 4755, 4791, 4828, 4864, 4900, 4937, 4973,  /* 64 - 95*/
+                5009, 5044, 5080, 5116, 5151, 5187, 5222, 5257, 5292, 5327, 5362, 5396, 5431, 5466, 5500, 5534, 5569, 5603, 5637, 5671, 5705, 5738, 5772, 5806, 5839, 5872, 5906, 5939, 5972, 6005, 6038, 6071,  /* 96 - 127*/
+                6104, 6137, 6169, 6202, 6234, 6267, 6299, 6332, 6364, 6396, 6428, 6460, 6492, 6524, 6555, 6587, 6619, 6650, 6682, 6713, 6745, 6776, 6807, 6838, 6869, 6901, 6931, 6962, 6993, 7024, 7055, 7085,  /* 128 - 159*/
+                7116, 7147, 7177, 7208, 7238, 7268, 7298, 7329, 7359, 7389, 7419, 7449, 7479, 7509, 7538, 7568, 7598, 7628, 7657, 7687, 7716, 7746, 7775, 7804, 7834, 7863, 7892, 7921, 7950, 7979, 8008, 8037,  /* 160 - 191*/
+                8066, 8095, 8124, 8153, 8181, 8210, 8239, 8267, 8296, 8324, 8353, 8381, 8410, 8438, 8466, 8494, 8523, 8551, 8579, 8607, 8635, 8663, 8691, 8719, 8747, 8774, 8802, 8830, 8858, 8885, 8913, 8941,  /* 192 - 223*/
+                8968, 8996, 9023, 9051, 9078, 9105, 9133, 9160, 9187, 9214, 9241, 9269, 9296, 9323, 9350, 9377, 9404, 9431, 9458, 9484, 9511, 9538, 9565, 9591, 9618, 9645, 9671, 9698, 9725, 9751, 9778, 9804,  /* 224 - 255*/
+                9830, 9857, 9883, 9910, 9936, 9962, 9989, 10015, 10042, 10068, 10094, 10121, 10147, 10174, 10200, 10226, 10253, 10279, 10306, 10332, 10358, 10385, 10411, 10438, 10464, 10490, 10517, 10543, 10570, 10596, 10622, 10649,  /* 256 - 287*/
+                10675, 10702, 10728, 10754, 10781, 10807, 10834, 10860, 10886, 10913, 10939, 10966, 10992, 11018, 11045, 11071, 11098, 11124, 11150, 11177, 11203, 11230, 11256, 11282, 11309, 11335, 11362, 11388, 11414, 11441, 11467, 11494,  /* 288 - 319*/
+                11520, 11546, 11573, 11599, 11626, 11652, 11678, 11705, 11731, 11758, 11784, 11810, 11837, 11863, 11890, 11916, 11942, 11969, 11995, 12022, 12048, 12074, 12101, 12127, 12154, 12180, 12206, 12233, 12259, 12286, 12312, 12338,  /* 320 - 351*/
+                12365, 12391, 12418, 12444, 12470, 12497, 12523, 12550, 12576, 12602, 12629, 12655, 12682, 12708, 12734, 12761, 12787, 12814, 12840, 12866, 12893, 12919, 12946, 12972, 12998, 13025, 13051, 13078, 13104, 13130, 13157, 13183,  /* 352 - 383*/
+                13210, 13236, 13262, 13289, 13315, 13342, 13368, 13394, 13421, 13447, 13474, 13500, 13526, 13553, 13579, 13606, 13632, 13658, 13685, 13711, 13738, 13764, 13790, 13817, 13843, 13870, 13896, 13922, 13949, 13975, 14002, 14028,  /* 384 - 415*/
+                14054, 14081, 14107, 14134, 14160, 14186, 14213, 14239, 14266, 14292, 14318, 14345, 14371, 14398, 14424, 14450, 14477, 14503, 14530, 14556, 14582, 14609, 14635, 14662, 14688, 14714, 14741, 14767, 14794, 14820, 14846, 14873,  /* 416 - 447*/
+                14899, 14926, 14952, 14978, 15005, 15031, 15058, 15084, 15110, 15137, 15163, 15190, 15216, 15242, 15269, 15295, 15322, 15348, 15374, 15401, 15427, 15454, 15480, 15506, 15533, 15559, 15586, 15612, 15638, 15665, 15691, 15718,  /* 448 - 479*/
+                15744, 15770, 15797, 15823, 15850, 15876, 15902, 15929, 15955, 15982, 16008, 16034, 16061, 16087, 16114, 16140, 16166, 16193, 16219, 16246, 16272, 16298, 16325, 16351, 16378, 16404, 16430, 16457, 16483, 16510, 16536, 16562,  /* 480 - 511*/
+                16589, 16615, 16642, 16668, 16694, 16721, 16747, 16774, 16800, 16826, 16853, 16879, 16906, 16932, 16958, 16985, 17011, 17038, 17064, 17090, 17117, 17143, 17170, 17196, 17222, 17249, 17275, 17302, 17328, 17354, 17381, 17407,  /* 512 - 543*/
+                17434, 17460, 17486, 17513, 17539, 17566, 17592, 17618, 17645, 17671, 17698, 17724, 17750, 17777, 17803, 17830, 17856, 17882, 17909, 17935, 17962, 17988, 18014, 18041, 18067, 18094, 18120, 18146, 18173, 18199, 18226, 18252,  /* 544 - 575*/
+                18278, 18305, 18331, 18358, 18384, 18410, 18437, 18463, 18490, 18516, 18542, 18569, 18595, 18622, 18648, 18674, 18701, 18727, 18754, 18780, 18806, 18833, 18859, 18886, 18912, 18938, 18965, 18991, 19018, 19044, 19070, 19097,  /* 576 - 607*/
+                19123, 19150, 19176, 19202, 19229, 19255, 19282, 19308, 19334, 19361, 19387, 19414, 19440, 19466, 19493, 19519, 19546, 19572, 19598, 19625, 19651, 19678, 19704, 19730, 19757, 19783, 19810, 19836, 19862, 19889, 19915, 19942,  /* 608 - 639*/
+                19968, 19994, 20021, 20047, 20074, 20100, 20126, 20153, 20179, 20206, 20232, 20258, 20285, 20311, 20338, 20364, 20390, 20417, 20443, 20470, 20496, 20522, 20549, 20575, 20602, 20628, 20654, 20681, 20707, 20734, 20760, 20786,  /* 640 - 671*/
+                20813, 20839, 20866, 20892, 20918, 20945, 20971, 20998, 21024, 21050, 21077, 21103, 21130, 21156, 21182, 21209, 21235, 21262, 21288, 21314, 21341, 21367, 21394, 21420, 21446, 21473, 21499, 21526, 21552, 21578, 21605, 21631,  /* 672 - 703*/
+                21658, 21684, 21710, 21737, 21763, 21790, 21816, 21842, 21869, 21895, 21922, 21948, 21974, 22001, 22027, 22054, 22080, 22106, 22133, 22159, 22186, 22212, 22238, 22265, 22291, 22318, 22344, 22370, 22397, 22423, 22450, 22476,  /* 704 - 735*/
+                22502, 22529, 22555, 22582, 22608, 22634, 22661, 22687, 22714, 22740, 22766, 22793, 22819, 22846, 22872, 22898, 22925, 22951, 22978, 23004, 23030, 23057, 23083, 23110, 23136, 23162, 23189, 23215, 23242, 23268, 23294, 23321,  /* 736 - 767*/
+                23347, 23374, 23400, 23427, 23453, 23480, 23506, 23533, 23559, 23586, 23613, 23639, 23666, 23693, 23720, 23747, 23773, 23800, 23827, 23854, 23881, 23908, 23935, 23962, 23990, 24017, 24044, 24071, 24098, 24126, 24153, 24180,  /* 768 - 799*/
+                24208, 24235, 24263, 24290, 24318, 24345, 24373, 24401, 24428, 24456, 24484, 24511, 24539, 24567, 24595, 24623, 24651, 24679, 24707, 24735, 24763, 24791, 24820, 24848, 24876, 24905, 24933, 24961, 24990, 25018, 25047, 25075,  /* 800 - 831*/
+                25104, 25133, 25161, 25190, 25219, 25248, 25277, 25305, 25334, 25363, 25392, 25422, 25451, 25480, 25509, 25538, 25568, 25597, 25627, 25656, 25686, 25715, 25745, 25774, 25804, 25834, 25864, 25894, 25923, 25953, 25983, 26013,  /* 832 - 863*/
+                26044, 26074, 26104, 26134, 26165, 26195, 26225, 26256, 26287, 26317, 26348, 26379, 26409, 26440, 26471, 26502, 26533, 26564, 26595, 26627, 26658, 26689, 26721, 26752, 26784, 26815, 26847, 26879, 26910, 26942, 26974, 27006,  /* 864 - 895*/
+                27038, 27070, 27103, 27135, 27167, 27200, 27232, 27265, 27298, 27330, 27363, 27396, 27429, 27462, 27495, 27528, 27562, 27595, 27629, 27662, 27696, 27730, 27763, 27797, 27831, 27865, 27900, 27934, 27968, 28003, 28037, 28072,  /* 896 - 927*/
+                28107, 28142, 28177, 28212, 28247, 28282, 28318, 28353, 28389, 28425, 28460, 28496, 28533, 28569, 28605, 28642, 28678, 28715, 28752, 28789, 28826, 28863, 28901, 28938, 28976, 29014, 29052, 29090, 29128, 29167, 29205, 29244,  /* 928 - 959*/
+                29283, 29322, 29362, 29401, 29441, 29481, 29521, 29561, 29602, 29642, 29683, 29724, 29765, 29807, 29849, 29891, 29933, 29976, 30018, 30061, 30105, 30148, 30192, 30236, 30281, 30325, 30370, 30416, 30462, 30508, 30554, 30601,  /* 960 - 991*/
+                30649, 30696, 30744, 30793, 30842, 30892, 30942, 30993, 31044, 31096, 31148, 31201, 31255, 31310, 31365, 31422, 31479, 31537, 31597, 31657, 31719, 31783, 31848, 31915, 31984, 32056, 32130, 32208, 32291, 32380, 32478, 32592,  /* 992 - 1023*/
+                32768, /*1024 - 1024*/
+            },
+            {
+                0, 217, 350, 462, 563, 657, 745, 828, 907, 984, 1058, 1129, 1199, 1267, 1333, 1398, 1461, 1523, 1585, 1645, 1704, 1762, 1819, 1875, 1931, 1986, 2040, 2094, 2147, 2199, 2251, 2303,  /* 0 - 31*/
+                2353, 2404, 2454, 2503, 2552, 2600, 2649, 2696, 2744, 2791, 2837, 2883, 2929, 2975, 3020, 3065, 3110, 3154, 3199, 3242, 3286, 3329, 3372, 3415, 3458, 3500, 3542, 3584, 3626, 3667, 3708, 3749,  /* 32 - 63*/
+                3790, 3831, 3871, 3911, 3951, 3991, 4031, 4070, 4110, 4149, 4188, 4227, 4265, 4304, 4342, 4381, 4419, 4456, 4494, 4532, 4569, 4607, 4644, 4681, 4718, 4755, 4791, 4828, 4864, 4900, 4937, 4973,  /* 64 - 95*/
+                5009, 5044, 5080, 5116, 5151, 5187, 5222, 5257, 5292, 5327, 5362, 5396, 5431, 5466, 5500, 5534, 5569, 5603, 5637, 5671, 5705, 5738, 5772, 5806, 5839, 5872, 5906, 5939, 5972, 6005, 6038, 6071,  /* 96 - 127*/
+                6104, 6137, 6169, 6202, 6234, 6267, 6299, 6332, 6364, 6396, 6428, 6460, 6492, 6524, 6555, 6587, 6619, 6650, 6682, 6713, 6745, 6776, 6807, 6838, 6869, 6901, 6931, 6962, 6993, 7024, 7055, 7085,  /* 128 - 159*/
+                7116, 7147, 7177, 7208, 7238, 7268, 7298, 7329, 7359, 7389, 7419, 7449, 7479, 7509, 7538, 7568, 7598, 7628, 7657, 7687, 7716, 7746, 7775, 7804, 7834, 7863, 7892, 7921, 7950, 7979, 8008, 8037,  /* 160 - 191*/
+                8066, 8095, 8124, 8153, 8181, 8210, 8239, 8267, 8296, 8324, 8353, 8381, 8410, 8438, 8466, 8494, 8523, 8551, 8579, 8607, 8635, 8663, 8691, 8719, 8747, 8774, 8802, 8830, 8858, 8885, 8913, 8941,  /* 192 - 223*/
+                8968, 8996, 9023, 9051, 9078, 9105, 9133, 9160, 9187, 9214, 9241, 9269, 9296, 9323, 9350, 9377, 9404, 9431, 9458, 9484, 9511, 9538, 9565, 9591, 9618, 9645, 9671, 9698, 9725, 9751, 9778, 9804,  /* 224 - 255*/
+                9830, 9857, 9883, 9910, 9936, 9962, 9989, 10015, 10042, 10068, 10094, 10121, 10147, 10174, 10200, 10226, 10253, 10279, 10306, 10332, 10358, 10385, 10411, 10438, 10464, 10490, 10517, 10543, 10570, 10596, 10622, 10649,  /* 256 - 287*/
+                10675, 10702, 10728, 10754, 10781, 10807, 10834, 10860, 10886, 10913, 10939, 10966, 10992, 11018, 11045, 11071, 11098, 11124, 11150, 11177, 11203, 11230, 11256, 11282, 11309, 11335, 11362, 11388, 11414, 11441, 11467, 11494,  /* 288 - 319*/
+                11520, 11546, 11573, 11599, 11626, 11652, 11678, 11705, 11731, 11758, 11784, 11810, 11837, 11863, 11890, 11916, 11942, 11969, 11995, 12022, 12048, 12074, 12101, 12127, 12154, 12180, 12206, 12233, 12259, 12286, 12312, 12338,  /* 320 - 351*/
+                12365, 12391, 12418, 12444, 12470, 12497, 12523, 12550, 12576, 12602, 12629, 12655, 12682, 12708, 12734, 12761, 12787, 12814, 12840, 12866, 12893, 12919, 12946, 12972, 12998, 13025, 13051, 13078, 13104, 13130, 13157, 13183,  /* 352 - 383*/
+                13210, 13236, 13262, 13289, 13315, 13342, 13368, 13394, 13421, 13447, 13474, 13500, 13526, 13553, 13579, 13606, 13632, 13658, 13685, 13711, 13738, 13764, 13790, 13817, 13843, 13870, 13896, 13922, 13949, 13975, 14002, 14028,  /* 384 - 415*/
+                14054, 14081, 14107, 14134, 14160, 14186, 14213, 14239, 14266, 14292, 14318, 14345, 14371, 14398, 14424, 14450, 14477, 14503, 14530, 14556, 14582, 14609, 14635, 14662, 14688, 14714, 14741, 14767, 14794, 14820, 14846, 14873,  /* 416 - 447*/
+                14899, 14926, 14952, 14978, 15005, 15031, 15058, 15084, 15110, 15137, 15163, 15190, 15216, 15242, 15269, 15295, 15322, 15348, 15374, 15401, 15427, 15454, 15480, 15506, 15533, 15559, 15586, 15612, 15638, 15665, 15691, 15718,  /* 448 - 479*/
+                15744, 15770, 15797, 15823, 15850, 15876, 15902, 15929, 15955, 15982, 16008, 16034, 16061, 16087, 16114, 16140, 16166, 16193, 16219, 16246, 16272, 16298, 16325, 16351, 16378, 16404, 16430, 16457, 16483, 16510, 16536, 16562,  /* 480 - 511*/
+                16589, 16615, 16642, 16668, 16694, 16721, 16747, 16774, 16800, 16826, 16853, 16879, 16906, 16932, 16958, 16985, 17011, 17038, 17064, 17090, 17117, 17143, 17170, 17196, 17222, 17249, 17275, 17302, 17328, 17354, 17381, 17407,  /* 512 - 543*/
+                17434, 17460, 17486, 17513, 17539, 17566, 17592, 17618, 17645, 17671, 17698, 17724, 17750, 17777, 17803, 17830, 17856, 17882, 17909, 17935, 17962, 17988, 18014, 18041, 18067, 18094, 18120, 18146, 18173, 18199, 18226, 18252,  /* 544 - 575*/
+                18278, 18305, 18331, 18358, 18384, 18410, 18437, 18463, 18490, 18516, 18542, 18569, 18595, 18622, 18648, 18674, 18701, 18727, 18754, 18780, 18806, 18833, 18859, 18886, 18912, 18938, 18965, 18991, 19018, 19044, 19070, 19097,  /* 576 - 607*/
+                19123, 19150, 19176, 19202, 19229, 19255, 19282, 19308, 19334, 19361, 19387, 19414, 19440, 19466, 19493, 19519, 19546, 19572, 19598, 19625, 19651, 19678, 19704, 19730, 19757, 19783, 19810, 19836, 19862, 19889, 19915, 19942,  /* 608 - 639*/
+                19968, 19994, 20021, 20047, 20074, 20100, 20126, 20153, 20179, 20206, 20232, 20258, 20285, 20311, 20338, 20364, 20390, 20417, 20443, 20470, 20496, 20522, 20549, 20575, 20602, 20628, 20654, 20681, 20707, 20734, 20760, 20786,  /* 640 - 671*/
+                20813, 20839, 20866, 20892, 20918, 20945, 20971, 20998, 21024, 21050, 21077, 21103, 21130, 21156, 21182, 21209, 21235, 21262, 21288, 21314, 21341, 21367, 21394, 21420, 21446, 21473, 21499, 21526, 21552, 21578, 21605, 21631,  /* 672 - 703*/
+                21658, 21684, 21710, 21737, 21763, 21790, 21816, 21842, 21869, 21895, 21922, 21948, 21974, 22001, 22027, 22054, 22080, 22106, 22133, 22159, 22186, 22212, 22238, 22265, 22291, 22318, 22344, 22370, 22397, 22423, 22450, 22476,  /* 704 - 735*/
+                22502, 22529, 22555, 22582, 22608, 22634, 22661, 22687, 22714, 22740, 22766, 22793, 22819, 22846, 22872, 22898, 22925, 22951, 22978, 23004, 23030, 23057, 23083, 23110, 23136, 23162, 23189, 23215, 23242, 23268, 23294, 23321,  /* 736 - 767*/
+                23347, 23374, 23400, 23427, 23453, 23480, 23506, 23533, 23559, 23586, 23613, 23639, 23666, 23693, 23720, 23747, 23773, 23800, 23827, 23854, 23881, 23908, 23935, 23962, 23990, 24017, 24044, 24071, 24098, 24126, 24153, 24180,  /* 768 - 799*/
+                24208, 24235, 24263, 24290, 24318, 24345, 24373, 24401, 24428, 24456, 24484, 24511, 24539, 24567, 24595, 24623, 24651, 24679, 24707, 24735, 24763, 24791, 24820, 24848, 24876, 24905, 24933, 24961, 24990, 25018, 25047, 25075,  /* 800 - 831*/
+                25104, 25133, 25161, 25190, 25219, 25248, 25277, 25305, 25334, 25363, 25392, 25422, 25451, 25480, 25509, 25538, 25568, 25597, 25627, 25656, 25686, 25715, 25745, 25774, 25804, 25834, 25864, 25894, 25923, 25953, 25983, 26013,  /* 832 - 863*/
+                26044, 26074, 26104, 26134, 26165, 26195, 26225, 26256, 26287, 26317, 26348, 26379, 26409, 26440, 26471, 26502, 26533, 26564, 26595, 26627, 26658, 26689, 26721, 26752, 26784, 26815, 26847, 26879, 26910, 26942, 26974, 27006,  /* 864 - 895*/
+                27038, 27070, 27103, 27135, 27167, 27200, 27232, 27265, 27298, 27330, 27363, 27396, 27429, 27462, 27495, 27528, 27562, 27595, 27629, 27662, 27696, 27730, 27763, 27797, 27831, 27865, 27900, 27934, 27968, 28003, 28037, 28072,  /* 896 - 927*/
+                28107, 28142, 28177, 28212, 28247, 28282, 28318, 28353, 28389, 28425, 28460, 28496, 28533, 28569, 28605, 28642, 28678, 28715, 28752, 28789, 28826, 28863, 28901, 28938, 28976, 29014, 29052, 29090, 29128, 29167, 29205, 29244,  /* 928 - 959*/
+                29283, 29322, 29362, 29401, 29441, 29481, 29521, 29561, 29602, 29642, 29683, 29724, 29765, 29807, 29849, 29891, 29933, 29976, 30018, 30061, 30105, 30148, 30192, 30236, 30281, 30325, 30370, 30416, 30462, 30508, 30554, 30601,  /* 960 - 991*/
+                30649, 30696, 30744, 30793, 30842, 30892, 30942, 30993, 31044, 31096, 31148, 31201, 31255, 31310, 31365, 31422, 31479, 31537, 31597, 31657, 31719, 31783, 31848, 31915, 31984, 32056, 32130, 32208, 32291, 32380, 32478, 32592,  /* 992 - 1023*/
+                32768, /*1024 - 1024*/
+            },
+            {
+                0, 217, 350, 462, 563, 657, 745, 828, 907, 984, 1058, 1129, 1199, 1267, 1333, 1398, 1461, 1523, 1585, 1645, 1704, 1762, 1819, 1875, 1931, 1986, 2040, 2094, 2147, 2199, 2251, 2303,  /* 0 - 31*/
+                2353, 2404, 2454, 2503, 2552, 2600, 2649, 2696, 2744, 2791, 2837, 2883, 2929, 2975, 3020, 3065, 3110, 3154, 3199, 3242, 3286, 3329, 3372, 3415, 3458, 3500, 3542, 3584, 3626, 3667, 3708, 3749,  /* 32 - 63*/
+                3790, 3831, 3871, 3911, 3951, 3991, 4031, 4070, 4110, 4149, 4188, 4227, 4265, 4304, 4342, 4381, 4419, 4456, 4494, 4532, 4569, 4607, 4644, 4681, 4718, 4755, 4791, 4828, 4864, 4900, 4937, 4973,  /* 64 - 95*/
+                5009, 5044, 5080, 5116, 5151, 5187, 5222, 5257, 5292, 5327, 5362, 5396, 5431, 5466, 5500, 5534, 5569, 5603, 5637, 5671, 5705, 5738, 5772, 5806, 5839, 5872, 5906, 5939, 5972, 6005, 6038, 6071,  /* 96 - 127*/
+                6104, 6137, 6169, 6202, 6234, 6267, 6299, 6332, 6364, 6396, 6428, 6460, 6492, 6524, 6555, 6587, 6619, 6650, 6682, 6713, 6745, 6776, 6807, 6838, 6869, 6901, 6931, 6962, 6993, 7024, 7055, 7085,  /* 128 - 159*/
+                7116, 7147, 7177, 7208, 7238, 7268, 7298, 7329, 7359, 7389, 7419, 7449, 7479, 7509, 7538, 7568, 7598, 7628, 7657, 7687, 7716, 7746, 7775, 7804, 7834, 7863, 7892, 7921, 7950, 7979, 8008, 8037,  /* 160 - 191*/
+                8066, 8095, 8124, 8153, 8181, 8210, 8239, 8267, 8296, 8324, 8353, 8381, 8410, 8438, 8466, 8494, 8523, 8551, 8579, 8607, 8635, 8663, 8691, 8719, 8747, 8774, 8802, 8830, 8858, 8885, 8913, 8941,  /* 192 - 223*/
+                8968, 8996, 9023, 9051, 9078, 9105, 9133, 9160, 9187, 9214, 9241, 9269, 9296, 9323, 9350, 9377, 9404, 9431, 9458, 9484, 9511, 9538, 9565, 9591, 9618, 9645, 9671, 9698, 9725, 9751, 9778, 9804,  /* 224 - 255*/
+                9830, 9857, 9883, 9910, 9936, 9962, 9989, 10015, 10042, 10068, 10094, 10121, 10147, 10174, 10200, 10226, 10253, 10279, 10306, 10332, 10358, 10385, 10411, 10438, 10464, 10490, 10517, 10543, 10570, 10596, 10622, 10649,  /* 256 - 287*/
+                10675, 10702, 10728, 10754, 10781, 10807, 10834, 10860, 10886, 10913, 10939, 10966, 10992, 11018, 11045, 11071, 11098, 11124, 11150, 11177, 11203, 11230, 11256, 11282, 11309, 11335, 11362, 11388, 11414, 11441, 11467, 11494,  /* 288 - 319*/
+                11520, 11546, 11573, 11599, 11626, 11652, 11678, 11705, 11731, 11758, 11784, 11810, 11837, 11863, 11890, 11916, 11942, 11969, 11995, 12022, 12048, 12074, 12101, 12127, 12154, 12180, 12206, 12233, 12259, 12286, 12312, 12338,  /* 320 - 351*/
+                12365, 12391, 12418, 12444, 12470, 12497, 12523, 12550, 12576, 12602, 12629, 12655, 12682, 12708, 12734, 12761, 12787, 12814, 12840, 12866, 12893, 12919, 12946, 12972, 12998, 13025, 13051, 13078, 13104, 13130, 13157, 13183,  /* 352 - 383*/
+                13210, 13236, 13262, 13289, 13315, 13342, 13368, 13394, 13421, 13447, 13474, 13500, 13526, 13553, 13579, 13606, 13632, 13658, 13685, 13711, 13738, 13764, 13790, 13817, 13843, 13870, 13896, 13922, 13949, 13975, 14002, 14028,  /* 384 - 415*/
+                14054, 14081, 14107, 14134, 14160, 14186, 14213, 14239, 14266, 14292, 14318, 14345, 14371, 14398, 14424, 14450, 14477, 14503, 14530, 14556, 14582, 14609, 14635, 14662, 14688, 14714, 14741, 14767, 14794, 14820, 14846, 14873,  /* 416 - 447*/
+                14899, 14926, 14952, 14978, 15005, 15031, 15058, 15084, 15110, 15137, 15163, 15190, 15216, 15242, 15269, 15295, 15322, 15348, 15374, 15401, 15427, 15454, 15480, 15506, 15533, 15559, 15586, 15612, 15638, 15665, 15691, 15718,  /* 448 - 479*/
+                15744, 15770, 15797, 15823, 15850, 15876, 15902, 15929, 15955, 15982, 16008, 16034, 16061, 16087, 16114, 16140, 16166, 16193, 16219, 16246, 16272, 16298, 16325, 16351, 16378, 16404, 16430, 16457, 16483, 16510, 16536, 16562,  /* 480 - 511*/
+                16589, 16615, 16642, 16668, 16694, 16721, 16747, 16774, 16800, 16826, 16853, 16879, 16906, 16932, 16958, 16985, 17011, 17038, 17064, 17090, 17117, 17143, 17170, 17196, 17222, 17249, 17275, 17302, 17328, 17354, 17381, 17407,  /* 512 - 543*/
+                17434, 17460, 17486, 17513, 17539, 17566, 17592, 17618, 17645, 17671, 17698, 17724, 17750, 17777, 17803, 17830, 17856, 17882, 17909, 17935, 17962, 17988, 18014, 18041, 18067, 18094, 18120, 18146, 18173, 18199, 18226, 18252,  /* 544 - 575*/
+                18278, 18305, 18331, 18358, 18384, 18410, 18437, 18463, 18490, 18516, 18542, 18569, 18595, 18622, 18648, 18674, 18701, 18727, 18754, 18780, 18806, 18833, 18859, 18886, 18912, 18938, 18965, 18991, 19018, 19044, 19070, 19097,  /* 576 - 607*/
+                19123, 19150, 19176, 19202, 19229, 19255, 19282, 19308, 19334, 19361, 19387, 19414, 19440, 19466, 19493, 19519, 19546, 19572, 19598, 19625, 19651, 19678, 19704, 19730, 19757, 19783, 19810, 19836, 19862, 19889, 19915, 19942,  /* 608 - 639*/
+                19968, 19994, 20021, 20047, 20074, 20100, 20126, 20153, 20179, 20206, 20232, 20258, 20285, 20311, 20338, 20364, 20390, 20417, 20443, 20470, 20496, 20522, 20549, 20575, 20602, 20628, 20654, 20681, 20707, 20734, 20760, 20786,  /* 640 - 671*/
+                20813, 20839, 20866, 20892, 20918, 20945, 20971, 20998, 21024, 21050, 21077, 21103, 21130, 21156, 21182, 21209, 21235, 21262, 21288, 21314, 21341, 21367, 21394, 21420, 21446, 21473, 21499, 21526, 21552, 21578, 21605, 21631,  /* 672 - 703*/
+                21658, 21684, 21710, 21737, 21763, 21790, 21816, 21842, 21869, 21895, 21922, 21948, 21974, 22001, 22027, 22054, 22080, 22106, 22133, 22159, 22186, 22212, 22238, 22265, 22291, 22318, 22344, 22370, 22397, 22423, 22450, 22476,  /* 704 - 735*/
+                22502, 22529, 22555, 22582, 22608, 22634, 22661, 22687, 22714, 22740, 22766, 22793, 22819, 22846, 22872, 22898, 22925, 22951, 22978, 23004, 23030, 23057, 23083, 23110, 23136, 23162, 23189, 23215, 23242, 23268, 23294, 23321,  /* 736 - 767*/
+                23347, 23374, 23400, 23427, 23453, 23480, 23506, 23533, 23559, 23586, 23613, 23639, 23666, 23693, 23720, 23747, 23773, 23800, 23827, 23854, 23881, 23908, 23935, 23962, 23990, 24017, 24044, 24071, 24098, 24126, 24153, 24180,  /* 768 - 799*/
+                24208, 24235, 24263, 24290, 24318, 24345, 24373, 24401, 24428, 24456, 24484, 24511, 24539, 24567, 24595, 24623, 24651, 24679, 24707, 24735, 24763, 24791, 24820, 24848, 24876, 24905, 24933, 24961, 24990, 25018, 25047, 25075,  /* 800 - 831*/
+                25104, 25133, 25161, 25190, 25219, 25248, 25277, 25305, 25334, 25363, 25392, 25422, 25451, 25480, 25509, 25538, 25568, 25597, 25627, 25656, 25686, 25715, 25745, 25774, 25804, 25834, 25864, 25894, 25923, 25953, 25983, 26013,  /* 832 - 863*/
+                26044, 26074, 26104, 26134, 26165, 26195, 26225, 26256, 26287, 26317, 26348, 26379, 26409, 26440, 26471, 26502, 26533, 26564, 26595, 26627, 26658, 26689, 26721, 26752, 26784, 26815, 26847, 26879, 26910, 26942, 26974, 27006,  /* 864 - 895*/
+                27038, 27070, 27103, 27135, 27167, 27200, 27232, 27265, 27298, 27330, 27363, 27396, 27429, 27462, 27495, 27528, 27562, 27595, 27629, 27662, 27696, 27730, 27763, 27797, 27831, 27865, 27900, 27934, 27968, 28003, 28037, 28072,  /* 896 - 927*/
+                28107, 28142, 28177, 28212, 28247, 28282, 28318, 28353, 28389, 28425, 28460, 28496, 28533, 28569, 28605, 28642, 28678, 28715, 28752, 28789, 28826, 28863, 28901, 28938, 28976, 29014, 29052, 29090, 29128, 29167, 29205, 29244,  /* 928 - 959*/
+                29283, 29322, 29362, 29401, 29441, 29481, 29521, 29561, 29602, 29642, 29683, 29724, 29765, 29807, 29849, 29891, 29933, 29976, 30018, 30061, 30105, 30148, 30192, 30236, 30281, 30325, 30370, 30416, 30462, 30508, 30554, 30601,  /* 960 - 991*/
+                30649, 30696, 30744, 30793, 30842, 30892, 30942, 30993, 31044, 31096, 31148, 31201, 31255, 31310, 31365, 31422, 31479, 31537, 31597, 31657, 31719, 31783, 31848, 31915, 31984, 32056, 32130, 32208, 32291, 32380, 32478, 32592,  /* 992 - 1023*/
+                32768, /*1024 - 1024*/
+            },
+            {
+                0, 156, 261, 352, 436, 514, 588, 659, 727, 793, 857, 920, 981, 1041, 1100, 1157, 1214, 1269, 1324, 1378, 1431, 1484, 1536, 1587, 1638, 1688, 1738, 1787, 1835, 1884, 1931, 1979,  /* 0 - 31*/
+                2026, 2072, 2119, 2164, 2210, 2255, 2300, 2345, 2389, 2433, 2477, 2520, 2563, 2606, 2649, 2691, 2734, 2776, 2817, 2859, 2900, 2941, 2982, 3023, 3064, 3104, 3144, 3184, 3224, 3263, 3303, 3342,  /* 32 - 63*/
+                3381, 3420, 3459, 3498, 3536, 3575, 3613, 3651, 3689, 3727, 3764, 3802, 3839, 3877, 3914, 3951, 3988, 4024, 4061, 4098, 4134, 4170, 4207, 4243, 4279, 4315, 4350, 4386, 4422, 4457, 4492, 4528,  /* 64 - 95*/
+                4563, 4598, 4633, 4668, 4703, 4737, 4772, 4807, 4841, 4875, 4910, 4944, 4978, 5012, 5046, 5080, 5114, 5147, 5181, 5214, 5248, 5281, 5315, 5348, 5381, 5414, 5447, 5480, 5513, 5546, 5579, 5611,  /* 96 - 127*/
+                5644, 5677, 5709, 5741, 5774, 5806, 5838, 5871, 5903, 5935, 5967, 5999, 6030, 6062, 6094, 6126, 6157, 6189, 6220, 6252, 6283, 6315, 6346, 6377, 6408, 6440, 6471, 6502, 6533, 6564, 6594, 6625,  /* 128 - 159*/
+                6656, 6687, 6717, 6748, 6779, 6809, 6840, 6870, 6900, 6931, 6961, 6991, 7022, 7052, 7082, 7112, 7142, 7172, 7202, 7232, 7261, 7291, 7321, 7351, 7380, 7410, 7440, 7469, 7499, 7528, 7558, 7587,  /* 160 - 191*/
+                7616, 7646, 7675, 7704, 7733, 7762, 7791, 7821, 7850, 7879, 7908, 7936, 7965, 7994, 8023, 8052, 8080, 8109, 8138, 8166, 8195, 8224, 8252, 8281, 8309, 8337, 8366, 8394, 8422, 8451, 8479, 8507,  /* 192 - 223*/
+                8535, 8564, 8592, 8620, 8648, 8676, 8704, 8732, 8760, 8788, 8815, 8843, 8871, 8899, 8927, 8954, 8982, 9010, 9037, 9065, 9092, 9120, 9147, 9175, 9202, 9230, 9257, 9284, 9312, 9339, 9366, 9394,  /* 224 - 255*/
+                9421, 9448, 9475, 9502, 9530, 9557, 9584, 9611, 9638, 9666, 9693, 9720, 9747, 9774, 9802, 9829, 9856, 9883, 9910, 9938, 9965, 9992, 10019, 10046, 10074, 10101, 10128, 10155, 10182, 10210, 10237, 10264,  /* 256 - 287*/
+                10291, 10318, 10346, 10373, 10400, 10427, 10454, 10482, 10509, 10536, 10563, 10590, 10618, 10645, 10672, 10699, 10726, 10754, 10781, 10808, 10835, 10862, 10890, 10917, 10944, 10971, 10998, 11026, 11053, 11080, 11107, 11134,  /* 288 - 319*/
+                11162, 11189, 11216, 11243, 11270, 11298, 11325, 11352, 11379, 11406, 11434, 11461, 11488, 11515, 11542, 11570, 11597, 11624, 11651, 11678, 11706, 11733, 11760, 11787, 11814, 11842, 11869, 11896, 11923, 11950, 11978, 12005,  /* 320 - 351*/
+                12032, 12059, 12086, 12114, 12141, 12168, 12195, 12222, 12250, 12277, 12304, 12331, 12358, 12386, 12413, 12440, 12467, 12494, 12522, 12549, 12576, 12603, 12630, 12658, 12685, 12712, 12739, 12766, 12794, 12821, 12848, 12875,  /* 352 - 383*/
+                12902, 12930, 12957, 12984, 13011, 13038, 13066, 13093, 13120, 13147, 13174, 13202, 13229, 13256, 13283, 13310, 13338, 13365, 13392, 13419, 13446, 13474, 13501, 13528, 13555, 13582, 13610, 13637, 13664, 13691, 13718, 13746,  /* 384 - 415*/
+                13773, 13800, 13827, 13854, 13882, 13909, 13936, 13963, 13990, 14018, 14045, 14072, 14099, 14126, 14154, 14181, 14208, 14235, 14262, 14290, 14317, 14344, 14371, 14398, 14426, 14453, 14480, 14507, 14534, 14562, 14589, 14616,  /* 416 - 447*/
+                14643, 14670, 14698, 14725, 14752, 14779, 14806, 14834, 14861, 14888, 14915, 14942, 14970, 14997, 15024, 15051, 15078, 15106, 15133, 15160, 15187, 15214, 15242, 15269, 15296, 15323, 15350, 15378, 15405, 15432, 15459, 15486,  /* 448 - 479*/
+                15514, 15541, 15568, 15595, 15622, 15650, 15677, 15704, 15731, 15758, 15786, 15813, 15840, 15867, 15894, 15922, 15949, 15976, 16003, 16030, 16058, 16085, 16112, 16139, 16166, 16194, 16221, 16248, 16275, 16302, 16330, 16357,  /* 480 - 511*/
+                16384, 16411, 16438, 16466, 16493, 16520, 16547, 16574, 16602, 16629, 16656, 16683, 16710, 16738, 16765, 16792, 16819, 16846, 16874, 16901, 16928, 16955, 16982, 17010, 17037, 17064, 17091, 17118, 17146, 17173, 17200, 17227,  /* 512 - 543*/
+                17254, 17282, 17309, 17336, 17363, 17390, 17418, 17445, 17472, 17499, 17526, 17554, 17581, 17608, 17635, 17662, 17690, 17717, 17744, 17771, 17798, 17826, 17853, 17880, 17907, 17934, 17962, 17989, 18016, 18043, 18070, 18098,  /* 544 - 575*/
+                18125, 18152, 18179, 18206, 18234, 18261, 18288, 18315, 18342, 18370, 18397, 18424, 18451, 18478, 18506, 18533, 18560, 18587, 18614, 18642, 18669, 18696, 18723, 18750, 18778, 18805, 18832, 18859, 18886, 18914, 18941, 18968,  /* 576 - 607*/
+                18995, 19022, 19050, 19077, 19104, 19131, 19158, 19186, 19213, 19240, 19267, 19294, 19322, 19349, 19376, 19403, 19430, 19458, 19485, 19512, 19539, 19566, 19594, 19621, 19648, 19675, 19702, 19730, 19757, 19784, 19811, 19838,  /* 608 - 639*/
+                19866, 19893, 19920, 19947, 19974, 20002, 20029, 20056, 20083, 20110, 20138, 20165, 20192, 20219, 20246, 20274, 20301, 20328, 20355, 20382, 20410, 20437, 20464, 20491, 20518, 20546, 20573, 20600, 20627, 20654, 20682, 20709,  /* 640 - 671*/
+                20736, 20763, 20790, 20818, 20845, 20872, 20899, 20926, 20954, 20981, 21008, 21035, 21062, 21090, 21117, 21144, 21171, 21198, 21226, 21253, 21280, 21307, 21334, 21362, 21389, 21416, 21443, 21470, 21498, 21525, 21552, 21579,  /* 672 - 703*/
+                21606, 21634, 21661, 21688, 21715, 21742, 21770, 21797, 21824, 21851, 21878, 21906, 21933, 21960, 21987, 22014, 22042, 22069, 22096, 22123, 22150, 22178, 22205, 22232, 22259, 22286, 22314, 22341, 22368, 22395, 22422, 22450,  /* 704 - 735*/
+                22477, 22504, 22531, 22558, 22586, 22613, 22640, 22667, 22694, 22722, 22749, 22776, 22803, 22830, 22858, 22885, 22912, 22939, 22966, 22994, 23021, 23048, 23075, 23102, 23130, 23157, 23184, 23211, 23238, 23266, 23293, 23320,  /* 736 - 767*/
+                23347, 23374, 23402, 23429, 23456, 23484, 23511, 23538, 23566, 23593, 23621, 23648, 23676, 23703, 23731, 23758, 23786, 23814, 23841, 23869, 23897, 23925, 23953, 23980, 24008, 24036, 24064, 24092, 24120, 24148, 24176, 24204,  /* 768 - 799*/
+                24233, 24261, 24289, 24317, 24346, 24374, 24402, 24431, 24459, 24487, 24516, 24544, 24573, 24602, 24630, 24659, 24688, 24716, 24745, 24774, 24803, 24832, 24860, 24889, 24918, 24947, 24977, 25006, 25035, 25064, 25093, 25122,  /* 800 - 831*/
+                25152, 25181, 25210, 25240, 25269, 25299, 25328, 25358, 25388, 25417, 25447, 25477, 25507, 25536, 25566, 25596, 25626, 25656, 25686, 25716, 25746, 25777, 25807, 25837, 25868, 25898, 25928, 25959, 25989, 26020, 26051, 26081,  /* 832 - 863*/
+                26112, 26143, 26174, 26204, 26235, 26266, 26297, 26328, 26360, 26391, 26422, 26453, 26485, 26516, 26548, 26579, 26611, 26642, 26674, 26706, 26738, 26769, 26801, 26833, 26865, 26897, 26930, 26962, 26994, 27027, 27059, 27091,  /* 864 - 895*/
+                27124, 27157, 27189, 27222, 27255, 27288, 27321, 27354, 27387, 27420, 27453, 27487, 27520, 27554, 27587, 27621, 27654, 27688, 27722, 27756, 27790, 27824, 27858, 27893, 27927, 27961, 27996, 28031, 28065, 28100, 28135, 28170,  /* 896 - 927*/
+                28205, 28240, 28276, 28311, 28346, 28382, 28418, 28453, 28489, 28525, 28561, 28598, 28634, 28670, 28707, 28744, 28780, 28817, 28854, 28891, 28929, 28966, 29004, 29041, 29079, 29117, 29155, 29193, 29232, 29270, 29309, 29348,  /* 928 - 959*/
+                29387, 29426, 29465, 29505, 29544, 29584, 29624, 29664, 29704, 29745, 29786, 29827, 29868, 29909, 29951, 29992, 30034, 30077, 30119, 30162, 30205, 30248, 30291, 30335, 30379, 30423, 30468, 30513, 30558, 30604, 30649, 30696,  /* 960 - 991*/
+                30742, 30789, 30837, 30884, 30933, 30981, 31030, 31080, 31130, 31181, 31232, 31284, 31337, 31390, 31444, 31499, 31554, 31611, 31668, 31727, 31787, 31848, 31911, 31975, 32041, 32109, 32180, 32254, 32332, 32416, 32507, 32612,  /* 992 - 1023*/
+                32768, /*1024 - 1024*/
+            },
+            {
+                0, 96, 170, 237, 300, 360, 418, 474, 529, 582, 635, 686, 737, 787, 836, 884, 932, 980, 1027, 1073, 1119, 1165, 1210, 1255, 1299, 1343, 1387, 1431, 1474, 1517, 1559, 1602,  /* 0 - 31*/
+                1644, 1686, 1728, 1769, 1810, 1851, 1892, 1933, 1973, 2014, 2054, 2094, 2133, 2173, 2212, 2252, 2291, 2330, 2368, 2407, 2446, 2484, 2522, 2561, 2599, 2637, 2674, 2712, 2750, 2787, 2824, 2861,  /* 32 - 63*/
+                2899, 2936, 2973, 3009, 3046, 3083, 3119, 3156, 3192, 3228, 3264, 3300, 3336, 3372, 3408, 3444, 3479, 3515, 3550, 3586, 3621, 3656, 3691, 3726, 3761, 3796, 3831, 3866, 3901, 3935, 3970, 4004,  /* 64 - 95*/
+                4039, 4073, 4108, 4142, 4176, 4210, 4244, 4278, 4312, 4346, 4380, 4414, 4447, 4481, 4515, 4548, 4582, 4615, 4649, 4682, 4715, 4749, 4782, 4815, 4848, 4881, 4914, 4947, 4980, 5013, 5045, 5078,  /* 96 - 127*/
+                5111, 5143, 5176, 5209, 5241, 5274, 5306, 5338, 5371, 5403, 5435, 5467, 5500, 5532, 5564, 5596, 5628, 5660, 5692, 5724, 5755, 5787, 5819, 5851, 5882, 5914, 5946, 5977, 6009, 6040, 6072, 6103,  /* 128 - 159*/
+                6134, 6166, 6197, 6228, 6260, 6291, 6322, 6353, 6384, 6415, 6446, 6477, 6508, 6539, 6570, 6601, 6632, 6663, 6694, 6724, 6755, 6786, 6816, 6847, 6878, 6908, 6939, 6969, 7000, 7030, 7061, 7091,  /* 160 - 191*/
+                7121, 7152, 7182, 7212, 7242, 7273, 7303, 7333, 7363, 7393, 7423, 7453, 7483, 7513, 7543, 7573, 7603, 7633, 7663, 7693, 7723, 7753, 7782, 7812, 7842, 7871, 7901, 7931, 7960, 7990, 8020, 8049,  /* 192 - 223*/
+                8079, 8108, 8138, 8167, 8196, 8226, 8255, 8285, 8314, 8343, 8372, 8402, 8431, 8460, 8489, 8519, 8548, 8577, 8606, 8635, 8664, 8693, 8722, 8751, 8780, 8809, 8838, 8867, 8896, 8925, 8954, 8982,  /* 224 - 255*/
+                9011, 9040, 9069, 9098, 9126, 9155, 9184, 9213, 9242, 9270, 9299, 9328, 9357, 9386, 9414, 9443, 9472, 9501, 9530, 9558, 9587, 9616, 9645, 9674, 9702, 9731, 9760, 9789, 9818, 9846, 9875, 9904,  /* 256 - 287*/
+                9933, 9962, 9990, 10019, 10048, 10077, 10106, 10134, 10163, 10192, 10221, 10250, 10278, 10307, 10336, 10365, 10394, 10422, 10451, 10480, 10509, 10538, 10566, 10595, 10624, 10653, 10682, 10710, 10739, 10768, 10797, 10826,  /* 288 - 319*/
+                10854, 10883, 10912, 10941, 10970, 10998, 11027, 11056, 11085, 11114, 11142, 11171, 11200, 11229, 11258, 11286, 11315, 11344, 11373, 11402, 11430, 11459, 11488, 11517, 11546, 11574, 11603, 11632, 11661, 11690, 11718, 11747,  /* 320 - 351*/
+                11776, 11805, 11834, 11862, 11891, 11920, 11949, 11978, 12006, 12035, 12064, 12093, 12122, 12150, 12179, 12208, 12237, 12266, 12294, 12323, 12352, 12381, 12410, 12438, 12467, 12496, 12525, 12554, 12582, 12611, 12640, 12669,  /* 352 - 383*/
+                12698, 12726, 12755, 12784, 12813, 12842, 12870, 12899, 12928, 12957, 12986, 13014, 13043, 13072, 13101, 13130, 13158, 13187, 13216, 13245, 13274, 13302, 13331, 13360, 13389, 13418, 13446, 13475, 13504, 13533, 13562, 13590,  /* 384 - 415*/
+                13619, 13648, 13677, 13706, 13734, 13763, 13792, 13821, 13850, 13878, 13907, 13936, 13965, 13994, 14022, 14051, 14080, 14109, 14138, 14166, 14195, 14224, 14253, 14282, 14310, 14339, 14368, 14397, 14426, 14454, 14483, 14512,  /* 416 - 447*/
+                14541, 14570, 14598, 14627, 14656, 14685, 14714, 14742, 14771, 14800, 14829, 14858, 14886, 14915, 14944, 14973, 15002, 15030, 15059, 15088, 15117, 15146, 15174, 15203, 15232, 15261, 15290, 15318, 15347, 15376, 15405, 15434,  /* 448 - 479*/
+                15462, 15491, 15520, 15549, 15578, 15606, 15635, 15664, 15693, 15722, 15750, 15779, 15808, 15837, 15866, 15894, 15923, 15952, 15981, 16010, 16038, 16067, 16096, 16125, 16154, 16182, 16211, 16240, 16269, 16298, 16326, 16355,  /* 480 - 511*/
+                16384, 16413, 16442, 16470, 16499, 16528, 16557, 16586, 16614, 16643, 16672, 16701, 16730, 16758, 16787, 16816, 16845, 16874, 16902, 16931, 16960, 16989, 17018, 17046, 17075, 17104, 17133, 17162, 17190, 17219, 17248, 17277,  /* 512 - 543*/
+                17306, 17334, 17363, 17392, 17421, 17450, 17478, 17507, 17536, 17565, 17594, 17622, 17651, 17680, 17709, 17738, 17766, 17795, 17824, 17853, 17882, 17910, 17939, 17968, 17997, 18026, 18054, 18083, 18112, 18141, 18170, 18198,  /* 544 - 575*/
+                18227, 18256, 18285, 18314, 18342, 18371, 18400, 18429, 18458, 18486, 18515, 18544, 18573, 18602, 18630, 18659, 18688, 18717, 18746, 18774, 18803, 18832, 18861, 18890, 18918, 18947, 18976, 19005, 19034, 19062, 19091, 19120,  /* 576 - 607*/
+                19149, 19178, 19206, 19235, 19264, 19293, 19322, 19350, 19379, 19408, 19437, 19466, 19494, 19523, 19552, 19581, 19610, 19638, 19667, 19696, 19725, 19754, 19782, 19811, 19840, 19869, 19898, 19926, 19955, 19984, 20013, 20042,  /* 608 - 639*/
+                20070, 20099, 20128, 20157, 20186, 20214, 20243, 20272, 20301, 20330, 20358, 20387, 20416, 20445, 20474, 20502, 20531, 20560, 20589, 20618, 20646, 20675, 20704, 20733, 20762, 20790, 20819, 20848, 20877, 20906, 20934, 20963,  /* 640 - 671*/
+                20992, 21021, 21050, 21078, 21107, 21136, 21165, 21194, 21222, 21251, 21280, 21309, 21338, 21366, 21395, 21424, 21453, 21482, 21510, 21539, 21568, 21597, 21626, 21654, 21683, 21712, 21741, 21770, 21798, 21827, 21856, 21885,  /* 672 - 703*/
+                21914, 21942, 21971, 22000, 22029, 22058, 22086, 22115, 22144, 22173, 22202, 22230, 22259, 22288, 22317, 22346, 22374, 22403, 22432, 22461, 22490, 22518, 22547, 22576, 22605, 22634, 22662, 22691, 22720, 22749, 22778, 22806,  /* 704 - 735*/
+                22835, 22864, 22893, 22922, 22950, 22979, 23008, 23037, 23066, 23094, 23123, 23152, 23181, 23210, 23238, 23267, 23296, 23325, 23354, 23382, 23411, 23440, 23469, 23498, 23526, 23555, 23584, 23613, 23642, 23670, 23699, 23728,  /* 736 - 767*/
+                23757, 23786, 23814, 23843, 23872, 23901, 23930, 23959, 23988, 24017, 24046, 24075, 24104, 24133, 24162, 24191, 24220, 24249, 24279, 24308, 24337, 24366, 24396, 24425, 24454, 24483, 24513, 24542, 24572, 24601, 24630, 24660,  /* 768 - 799*/
+                24689, 24719, 24748, 24778, 24808, 24837, 24867, 24897, 24926, 24956, 24986, 25015, 25045, 25075, 25105, 25135, 25165, 25195, 25225, 25255, 25285, 25315, 25345, 25375, 25405, 25435, 25465, 25495, 25526, 25556, 25586, 25616,  /* 800 - 831*/
+                25647, 25677, 25707, 25738, 25768, 25799, 25829, 25860, 25890, 25921, 25952, 25982, 26013, 26044, 26074, 26105, 26136, 26167, 26198, 26229, 26260, 26291, 26322, 26353, 26384, 26415, 26446, 26477, 26508, 26540, 26571, 26602,  /* 832 - 863*/
+                26634, 26665, 26696, 26728, 26759, 26791, 26822, 26854, 26886, 26917, 26949, 26981, 27013, 27044, 27076, 27108, 27140, 27172, 27204, 27236, 27268, 27301, 27333, 27365, 27397, 27430, 27462, 27494, 27527, 27559, 27592, 27625,  /* 864 - 895*/
+                27657, 27690, 27723, 27755, 27788, 27821, 27854, 27887, 27920, 27953, 27986, 28019, 28053, 28086, 28119, 28153, 28186, 28220, 28253, 28287, 28321, 28354, 28388, 28422, 28456, 28490, 28524, 28558, 28592, 28626, 28660, 28695,  /* 896 - 927*/
+                28729, 28764, 28798, 28833, 28867, 28902, 28937, 28972, 29007, 29042, 29077, 29112, 29147, 29182, 29218, 29253, 29289, 29324, 29360, 29396, 29432, 29468, 29504, 29540, 29576, 29612, 29649, 29685, 29722, 29759, 29795, 29832,  /* 928 - 959*/
+                29869, 29907, 29944, 29981, 30018, 30056, 30094, 30131, 30169, 30207, 30246, 30284, 30322, 30361, 30400, 30438, 30477, 30516, 30556, 30595, 30635, 30674, 30714, 30754, 30795, 30835, 30876, 30917, 30958, 30999, 31040, 31082,  /* 960 - 991*/
+                31124, 31166, 31209, 31251, 31294, 31337, 31381, 31425, 31469, 31513, 31558, 31603, 31649, 31695, 31741, 31788, 31836, 31884, 31932, 31981, 32031, 32082, 32133, 32186, 32239, 32294, 32350, 32408, 32468, 32531, 32598, 32672,  /* 992 - 1023*/
+                32768, /*1024 - 1024*/
+            },
+        },
+        /* tHistWt */
+        {
+            /* 0 */
+            {
+                /* 0 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 1 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 2 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 3 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 4 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 5 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 6 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 7 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 8 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 9 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 10 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 11 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 12 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 13 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 14 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 15 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+            },
+            /* 1 */
+            {
+                /* 0 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 1 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 2 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 3 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 4 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 5 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 6 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 7 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 8 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 9 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 10 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 11 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 12 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 13 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 14 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 15 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+            },
+            /* 2 */
+            {
+                /* 0 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 1 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 2 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 3 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 4 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 5 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 6 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 7 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 8 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 9 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 10 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 11 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 12 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 13 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 14 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 15 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+            },
+            /* 3 */
+            {
+                /* 0 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 1 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 2 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 3 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 4 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 5 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 6 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 7 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 8 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 9 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 10 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 11 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 12 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 13 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 14 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 15 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+            },
+            /* 4 */
+            {
+                /* 0 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 1 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 2 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 3 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 4 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 5 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 6 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 7 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 8 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 9 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 10 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 11 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 12 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 13 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 14 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 15 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+            },
+            /* 5 */
+            {
+                /* 0 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 1 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 2 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 3 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 4 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 5 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 6 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 7 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 8 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 9 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 10 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 11 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 12 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 13 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 14 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 15 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+            },
+            /* 6 */
+            {
+                /* 0 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 1 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 2 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 3 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 4 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 5 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 6 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 7 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 8 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 9 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 10 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 11 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 12 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 13 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 14 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 15 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+            },
+            /* 7 */
+            {
+                /* 0 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 1 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 2 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 3 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 4 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 5 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 6 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 7 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 8 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 9 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 10 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 11 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 12 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 13 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 14 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 15 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+            },
+            /* 8 */
+            {
+                /* 0 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 1 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 2 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 3 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 4 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 5 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 6 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 7 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 8 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 9 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 10 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 11 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 12 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 13 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 14 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 15 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+            },
+            /* 9 */
+            {
+                /* 0 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 1 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 2 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 3 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 4 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 5 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 6 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 7 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 8 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 9 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 10 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 11 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 12 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 13 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 14 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 15 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+            },
+            /* 10 */
+            {
+                /* 0 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 1 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 2 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 3 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 4 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 5 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 6 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 7 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 8 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 9 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 10 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 11 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 12 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 13 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 14 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 15 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+            },
+            /* 11 */
+            {
+                /* 0 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 1 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 2 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 3 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 4 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 5 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 6 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 7 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 8 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 9 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 10 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 11 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 12 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 13 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 14 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+                /* 15 */
+                {
+                    /* nHistogramWeight[63] */
+                    {
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,  /* 0 - 31*/
+                        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*32 - 62*/
+                    },
+                },
+            },
+        },
+        /* tHighFreqEnh[12] */
+        {
+            /* 0 */
+            {
+                /* nDetailSigmaDis */
+                8000,
+                /* nDetailSigmaVal */
+                800,
+                /* nDetailCoringPos */
+                0,
+                /* nDetailCoringNeg */
+                0,
+                /* nDetailGainPos */
+                16,
+                /* nDetailGainNeg */
+                32,
+                /* nDetailExtraStrPos */
+                12,
+                /* nDetailExtraStrNeg */
+                32,
+                /* nDetailGainLimitPos */
+                65535,
+                /* nDetailGainLimitNeg */
+                65535,
+                /* nSlopeStrengthLut[33] */
+                {
+                    8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,  /* 0 - 31*/
+                    8192, /*32 - 32*/
+                },
+                /* nSlopeCoeff */
+                16384,
+            },
+            /* 1 */
+            {
+                /* nDetailSigmaDis */
+                8000,
+                /* nDetailSigmaVal */
+                800,
+                /* nDetailCoringPos */
+                0,
+                /* nDetailCoringNeg */
+                0,
+                /* nDetailGainPos */
+                16,
+                /* nDetailGainNeg */
+                32,
+                /* nDetailExtraStrPos */
+                12,
+                /* nDetailExtraStrNeg */
+                32,
+                /* nDetailGainLimitPos */
+                65535,
+                /* nDetailGainLimitNeg */
+                65535,
+                /* nSlopeStrengthLut[33] */
+                {
+                    8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,  /* 0 - 31*/
+                    8192, /*32 - 32*/
+                },
+                /* nSlopeCoeff */
+                16384,
+            },
+            /* 2 */
+            {
+                /* nDetailSigmaDis */
+                8000,
+                /* nDetailSigmaVal */
+                800,
+                /* nDetailCoringPos */
+                0,
+                /* nDetailCoringNeg */
+                0,
+                /* nDetailGainPos */
+                16,
+                /* nDetailGainNeg */
+                32,
+                /* nDetailExtraStrPos */
+                12,
+                /* nDetailExtraStrNeg */
+                32,
+                /* nDetailGainLimitPos */
+                65535,
+                /* nDetailGainLimitNeg */
+                65535,
+                /* nSlopeStrengthLut[33] */
+                {
+                    8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,  /* 0 - 31*/
+                    8192, /*32 - 32*/
+                },
+                /* nSlopeCoeff */
+                16384,
+            },
+            /* 3 */
+            {
+                /* nDetailSigmaDis */
+                8000,
+                /* nDetailSigmaVal */
+                700,
+                /* nDetailCoringPos */
+                90,
+                /* nDetailCoringNeg */
+                60,
+                /* nDetailGainPos */
+                60,
+                /* nDetailGainNeg */
+                105,
+                /* nDetailExtraStrPos */
+                20,
+                /* nDetailExtraStrNeg */
+                35,
+                /* nDetailGainLimitPos */
+                65535,
+                /* nDetailGainLimitNeg */
+                65535,
+                /* nSlopeStrengthLut[33] */
+                {
+                    8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,  /* 0 - 31*/
+                    8192, /*32 - 32*/
+                },
+                /* nSlopeCoeff */
+                16384,
+            },
+            /* 4 */
+            {
+                /* nDetailSigmaDis */
+                8000,
+                /* nDetailSigmaVal */
+                700,
+                /* nDetailCoringPos */
+                100,
+                /* nDetailCoringNeg */
+                60,
+                /* nDetailGainPos */
+                55,
+                /* nDetailGainNeg */
+                100,
+                /* nDetailExtraStrPos */
+                20,
+                /* nDetailExtraStrNeg */
+                35,
+                /* nDetailGainLimitPos */
+                65535,
+                /* nDetailGainLimitNeg */
+                65535,
+                /* nSlopeStrengthLut[33] */
+                {
+                    8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,  /* 0 - 31*/
+                    8192, /*32 - 32*/
+                },
+                /* nSlopeCoeff */
+                16384,
+            },
+            /* 5 */
+            {
+                /* nDetailSigmaDis */
+                8000,
+                /* nDetailSigmaVal */
+                700,
+                /* nDetailCoringPos */
+                100,
+                /* nDetailCoringNeg */
+                60,
+                /* nDetailGainPos */
+                50,
+                /* nDetailGainNeg */
+                95,
+                /* nDetailExtraStrPos */
+                20,
+                /* nDetailExtraStrNeg */
+                35,
+                /* nDetailGainLimitPos */
+                65535,
+                /* nDetailGainLimitNeg */
+                65535,
+                /* nSlopeStrengthLut[33] */
+                {
+                    8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,  /* 0 - 31*/
+                    8192, /*32 - 32*/
+                },
+                /* nSlopeCoeff */
+                16384,
+            },
+            /* 6 */
+            {
+                /* nDetailSigmaDis */
+                8000,
+                /* nDetailSigmaVal */
+                700,
+                /* nDetailCoringPos */
+                100,
+                /* nDetailCoringNeg */
+                60,
+                /* nDetailGainPos */
+                50,
+                /* nDetailGainNeg */
+                90,
+                /* nDetailExtraStrPos */
+                20,
+                /* nDetailExtraStrNeg */
+                35,
+                /* nDetailGainLimitPos */
+                65535,
+                /* nDetailGainLimitNeg */
+                65535,
+                /* nSlopeStrengthLut[33] */
+                {
+                    8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,  /* 0 - 31*/
+                    8192, /*32 - 32*/
+                },
+                /* nSlopeCoeff */
+                16384,
+            },
+            /* 7 */
+            {
+                /* nDetailSigmaDis */
+                8000,
+                /* nDetailSigmaVal */
+                700,
+                /* nDetailCoringPos */
+                100,
+                /* nDetailCoringNeg */
+                60,
+                /* nDetailGainPos */
+                50,
+                /* nDetailGainNeg */
+                90,
+                /* nDetailExtraStrPos */
+                20,
+                /* nDetailExtraStrNeg */
+                35,
+                /* nDetailGainLimitPos */
+                65535,
+                /* nDetailGainLimitNeg */
+                65535,
+                /* nSlopeStrengthLut[33] */
+                {
+                    8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,  /* 0 - 31*/
+                    8192, /*32 - 32*/
+                },
+                /* nSlopeCoeff */
+                16384,
+            },
+            /* 8 */
+            {
+                /* nDetailSigmaDis */
+                8000,
+                /* nDetailSigmaVal */
+                700,
+                /* nDetailCoringPos */
+                100,
+                /* nDetailCoringNeg */
+                60,
+                /* nDetailGainPos */
+                50,
+                /* nDetailGainNeg */
+                90,
+                /* nDetailExtraStrPos */
+                15,
+                /* nDetailExtraStrNeg */
+                35,
+                /* nDetailGainLimitPos */
+                65535,
+                /* nDetailGainLimitNeg */
+                65535,
+                /* nSlopeStrengthLut[33] */
+                {
+                    8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,  /* 0 - 31*/
+                    8192, /*32 - 32*/
+                },
+                /* nSlopeCoeff */
+                16384,
+            },
+            /* 9 */
+            {
+                /* nDetailSigmaDis */
+                8000,
+                /* nDetailSigmaVal */
+                700,
+                /* nDetailCoringPos */
+                120,
+                /* nDetailCoringNeg */
+                60,
+                /* nDetailGainPos */
+                50,
+                /* nDetailGainNeg */
+                90,
+                /* nDetailExtraStrPos */
+                10,
+                /* nDetailExtraStrNeg */
+                25,
+                /* nDetailGainLimitPos */
+                65535,
+                /* nDetailGainLimitNeg */
+                65535,
+                /* nSlopeStrengthLut[33] */
+                {
+                    8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,  /* 0 - 31*/
+                    8192, /*32 - 32*/
+                },
+                /* nSlopeCoeff */
+                16384,
+            },
+            /* 10 */
+            {
+                /* nDetailSigmaDis */
+                8000,
+                /* nDetailSigmaVal */
+                700,
+                /* nDetailCoringPos */
+                140,
+                /* nDetailCoringNeg */
+                70,
+                /* nDetailGainPos */
+                50,
+                /* nDetailGainNeg */
+                90,
+                /* nDetailExtraStrPos */
+                5,
+                /* nDetailExtraStrNeg */
+                20,
+                /* nDetailGainLimitPos */
+                65535,
+                /* nDetailGainLimitNeg */
+                65535,
+                /* nSlopeStrengthLut[33] */
+                {
+                    8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,  /* 0 - 31*/
+                    8192, /*32 - 32*/
+                },
+                /* nSlopeCoeff */
+                16384,
+            },
+            /* 11 */
+            {
+                /* nDetailSigmaDis */
+                8000,
+                /* nDetailSigmaVal */
+                700,
+                /* nDetailCoringPos */
+                160,
+                /* nDetailCoringNeg */
+                80,
+                /* nDetailGainPos */
+                50,
+                /* nDetailGainNeg */
+                90,
+                /* nDetailExtraStrPos */
+                0,
+                /* nDetailExtraStrNeg */
+                15,
+                /* nDetailGainLimitPos */
+                65535,
+                /* nDetailGainLimitNeg */
+                65535,
+                /* nSlopeStrengthLut[33] */
+                {
+                    8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192, 8192,  /* 0 - 31*/
+                    8192, /*32 - 32*/
+                },
+                /* nSlopeCoeff */
+                16384,
+            },
+        },
+        /* tLowFreqEnh[12] */
+        {
+            /* 0 */
+            {
+                /* nRltmDetailLowEn */
+                0,
+                /* nSigmaDisBlur */
+                9000,
+                /* nDetailGainPosLow */
+                64,
+                /* nDetailGainNegLow */
+                64,
+                /* nDetailLimitPosLow */
+                65535,
+                /* nDetailLimitNegLow */
+                65535,
+                /* nSigmaDisPst */
+                9000,
+                /* nSigmaValPst */
+                1000,
+            },
+            /* 1 */
+            {
+                /* nRltmDetailLowEn */
+                0,
+                /* nSigmaDisBlur */
+                9000,
+                /* nDetailGainPosLow */
+                64,
+                /* nDetailGainNegLow */
+                64,
+                /* nDetailLimitPosLow */
+                65535,
+                /* nDetailLimitNegLow */
+                65535,
+                /* nSigmaDisPst */
+                9000,
+                /* nSigmaValPst */
+                1000,
+            },
+            /* 2 */
+            {
+                /* nRltmDetailLowEn */
+                0,
+                /* nSigmaDisBlur */
+                9000,
+                /* nDetailGainPosLow */
+                64,
+                /* nDetailGainNegLow */
+                64,
+                /* nDetailLimitPosLow */
+                65535,
+                /* nDetailLimitNegLow */
+                65535,
+                /* nSigmaDisPst */
+                9000,
+                /* nSigmaValPst */
+                1000,
+            },
+            /* 3 */
+            {
+                /* nRltmDetailLowEn */
+                0,
+                /* nSigmaDisBlur */
+                9000,
+                /* nDetailGainPosLow */
+                64,
+                /* nDetailGainNegLow */
+                64,
+                /* nDetailLimitPosLow */
+                65535,
+                /* nDetailLimitNegLow */
+                65535,
+                /* nSigmaDisPst */
+                9000,
+                /* nSigmaValPst */
+                1000,
+            },
+            /* 4 */
+            {
+                /* nRltmDetailLowEn */
+                0,
+                /* nSigmaDisBlur */
+                9000,
+                /* nDetailGainPosLow */
+                64,
+                /* nDetailGainNegLow */
+                64,
+                /* nDetailLimitPosLow */
+                65535,
+                /* nDetailLimitNegLow */
+                65535,
+                /* nSigmaDisPst */
+                9000,
+                /* nSigmaValPst */
+                1000,
+            },
+            /* 5 */
+            {
+                /* nRltmDetailLowEn */
+                0,
+                /* nSigmaDisBlur */
+                9000,
+                /* nDetailGainPosLow */
+                64,
+                /* nDetailGainNegLow */
+                64,
+                /* nDetailLimitPosLow */
+                65535,
+                /* nDetailLimitNegLow */
+                65535,
+                /* nSigmaDisPst */
+                9000,
+                /* nSigmaValPst */
+                1000,
+            },
+            /* 6 */
+            {
+                /* nRltmDetailLowEn */
+                0,
+                /* nSigmaDisBlur */
+                9000,
+                /* nDetailGainPosLow */
+                64,
+                /* nDetailGainNegLow */
+                64,
+                /* nDetailLimitPosLow */
+                65535,
+                /* nDetailLimitNegLow */
+                65535,
+                /* nSigmaDisPst */
+                9000,
+                /* nSigmaValPst */
+                1000,
+            },
+            /* 7 */
+            {
+                /* nRltmDetailLowEn */
+                0,
+                /* nSigmaDisBlur */
+                9000,
+                /* nDetailGainPosLow */
+                64,
+                /* nDetailGainNegLow */
+                64,
+                /* nDetailLimitPosLow */
+                65535,
+                /* nDetailLimitNegLow */
+                65535,
+                /* nSigmaDisPst */
+                9000,
+                /* nSigmaValPst */
+                1000,
+            },
+            /* 8 */
+            {
+                /* nRltmDetailLowEn */
+                0,
+                /* nSigmaDisBlur */
+                9000,
+                /* nDetailGainPosLow */
+                64,
+                /* nDetailGainNegLow */
+                64,
+                /* nDetailLimitPosLow */
+                65535,
+                /* nDetailLimitNegLow */
+                65535,
+                /* nSigmaDisPst */
+                9000,
+                /* nSigmaValPst */
+                1000,
+            },
+            /* 9 */
+            {
+                /* nRltmDetailLowEn */
+                0,
+                /* nSigmaDisBlur */
+                9000,
+                /* nDetailGainPosLow */
+                64,
+                /* nDetailGainNegLow */
+                64,
+                /* nDetailLimitPosLow */
+                65535,
+                /* nDetailLimitNegLow */
+                65535,
+                /* nSigmaDisPst */
+                9000,
+                /* nSigmaValPst */
+                1000,
+            },
+            /* 10 */
+            {
+                /* nRltmDetailLowEn */
+                0,
+                /* nSigmaDisBlur */
+                9000,
+                /* nDetailGainPosLow */
+                64,
+                /* nDetailGainNegLow */
+                64,
+                /* nDetailLimitPosLow */
+                65535,
+                /* nDetailLimitNegLow */
+                65535,
+                /* nSigmaDisPst */
+                9000,
+                /* nSigmaValPst */
+                1000,
+            },
+            /* 11 */
+            {
+                /* nRltmDetailLowEn */
+                0,
+                /* nSigmaDisBlur */
+                9000,
+                /* nDetailGainPosLow */
+                64,
+                /* nDetailGainNegLow */
+                64,
+                /* nDetailLimitPosLow */
+                65535,
+                /* nDetailLimitNegLow */
+                65535,
+                /* nSigmaDisPst */
+                9000,
+                /* nSigmaValPst */
+                1000,
+            },
+        },
+    },
+};
+
+const static AX_ISP_IQ_DEMOSAIC_PARAM_T demosaic_param_sdr = {
+    /* nDemosaicEn */
+    1,
+    /* nMode */
+    0,
+    /* nFreqSensitivity */
+    12,
+    /* nEdgeDirectEstStrengthLut[9] */
+    {128, 256, 384, 448, 512, 576, 640, 704, 768, /*0 - 8*/},
+    /* nAutoMode */
+    1,
+    /* nRefMode */
+    1,
+    /* tManualParam */
+    {
+        /* nEdgeDirectEstStrength */
+        64,
+    },
+    /* tAutoParam */
+    {
+        /* nParamGrpNum */
+        16,
+        /* nRefVal[16] */
+        {1024, 2048, 4096, 8192, 16384, 24576, 32768, 55296, 131072, 262144, 524288, 1048576, 2097152, 2097152, 2097152, 2097152, /*0 - 15*/},
+        /* nEdgeDirectEstStrength[16] */
+        {64, 64, 64, 64, 96, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 15*/},
+    },
+};
+
+const static AX_ISP_IQ_GIC_PARAM_T gic_param_sdr = {
+    /* nGicEnable */
+    1,
+    /* nAutoMode */
+    1,
+    /* nRefMode */
+    0,
+    /* tManualParam */
+    {
+        /* nGicStrengthLut[9] */
+        {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+    },
+    /* tAutoParam */
+    {
+        /* nParamGrpNum */
+        16,
+        /* nRefVal[16] */
+        {1024, 2048, 4096, 8192, 16384, 24576, 32768, 55296, 131072, 262144, 524288, 1048576, 2097152, 2097152, 2097152, 2097152, /*0 - 15*/},
+        /* nGicStrengthLut[16][9] */
+        {
+            {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+            {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+            {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+            {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+            {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+            {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+            {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+            {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+            {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+            {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+            {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+            {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+            {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+            {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+            {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+            {128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+        },
+    },
+};
+
+const static AX_ISP_IQ_FCC_PARAM_T fcc_param_sdr = {
+    /* nFcCorEnable */
+    0,
+    /* nFcCorLimit */
+    512,
+    /* nAutoMode */
+    0,
+    /* nRefMode */
+    0,
+    /* tManualParam */
+    {
+        /* nFcCorStrength */
+        16,
+        /* nFcCorSatLut[9] */
+        {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
+        /* nFcCorSatLevel0 */
+        11,
+        /* nFcCorSatLevel1 */
+        16,
+    },
+    /* tAutoParam */
+    {
+        /* nParamGrpNum */
+        16,
+        /* nRefVal[16] */
+        {1024, 2048, 4096, 8192, 16384, 24576, 32768, 55296, 131072, 262144, 524288, 1048576, 2097152, 2097152, 2097152, 2097152, /*0 - 15*/},
+        /* nFcCorStrength[16] */
+        {16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, /*0 - 15*/},
+        /* nFcCorSatLut[16][9] */
+        {
+            {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
+            {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
+            {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
+            {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
+            {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
+            {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
+            {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
+            {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
+            {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
+            {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
+            {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
+            {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
+            {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
+            {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
+            {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
+            {8, 16, 32, 64, 128, 256, 256, 256, 256, /*0 - 8*/},
+        },
+        /* nFcCorSatLevel0[16] */
+        {11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,  /*0 - 15*/},
+        /* nFcCorSatLevel1[16] */
+        {16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,  /*0 - 15*/},
+    },
+};
+
+const static AX_ISP_IQ_DEPURPLE_PARAM_T depurple_param_sdr = {
+    /* nEnable */
+    1,
+    /* nAutoMode */
+    1,
+    /* nRefMode */
+    1,
+    /* nDepurpleMode */
+    1,
+    /* tDetParam */
+    {
+        /* nDetMode */
+        1,
+        /* nDetEdgeSlopeY */
+        10,
+        /* nDetEdgeOffsetY */
+        -32,
+        /* nDetEdgeEnableC */
+        1,
+        /* nDetEdgeSlopeC */
+        10,
+        /* nDetEdgeOffsetC */
+        -32,
+        /* nDetSeledgeThrY */
+        14080,
+        /* nDetSeledgeSlopeY */
+        1,
+        /* nDetSeledgeWeight[7] */
+        {64, 64, 48, 40, 32, 24, 16, /*0 - 6*/},
+        /* nDetMaskStrength */
+        300,
+        /* nDetMaskStrengthPre */
+        64,
+        /* nDetMaskWeightPre[11] */
+        {64, 64, 64, 48, 48, 48, 32, 32, 32, 32, 16, /*0 - 10*/},
+    },
+    /* tCmpParam */
+    {
+        /* nDebugMaskHighlightEnable */
+        0,
+        /* nDebugMaskHighlightThr */
+        0,
+    },
+    /* tManualParam */
+    {
+        /* nCompStrength */
+        80,
+        /* nCompTargetLuma[8] */
+        {17, 56, 60, 76, 99, 128, 128, 128, /*0 - 7*/},
+        /* nCompTargetHue[16] */
+        {102, 128, 128, 90, 26, 13, 0, 0, 0, 0, 0, 0, 0, 0, 51, 102, /*0 - 15*/},
+        /* nCompTargetSat[6] */
+        {26, 43, 46, 72, 101, 128, /*0 - 5*/},
+    },
+    /* tAutoParam */
+    {
+        /* nParamGrpNum */
+        12,
+        /* nRefVal[16] */
+        {1024, 2048, 4096, 8192, 16384, 32382, 64610, 128913, 257218, 513216, 1026432, 2052684, /*0 - 11*/},
+        /* nCompStrength[16] */
+        {80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, 80, /*0 - 11*/},
+        /* nCompTargetLuma[16][8] */
+        {
+            {17, 56, 60, 76, 99, 128, 128, 128, /*0 - 7*/},
+            {17, 56, 60, 76, 99, 128, 128, 128, /*0 - 7*/},
+            {17, 56, 60, 76, 99, 128, 128, 128, /*0 - 7*/},
+            {17, 56, 60, 76, 99, 128, 128, 128, /*0 - 7*/},
+            {17, 56, 60, 76, 99, 128, 128, 128, /*0 - 7*/},
+            {17, 56, 60, 76, 99, 128, 128, 128, /*0 - 7*/},
+            {17, 56, 60, 76, 99, 128, 128, 128, /*0 - 7*/},
+            {17, 56, 60, 76, 99, 128, 128, 128, /*0 - 7*/},
+            {17, 56, 60, 76, 99, 128, 128, 128, /*0 - 7*/},
+            {17, 56, 60, 76, 99, 128, 128, 128, /*0 - 7*/},
+            {17, 56, 60, 76, 99, 128, 128, 128, /*0 - 7*/},
+            {17, 56, 60, 76, 99, 128, 128, 128, /*0 - 7*/},
+        },
+        /* nCompTargetHue[16][16] */
+        {
+            {102, 128, 128, 90, 26, 13, 0, 0, 0, 0, 0, 0, 0, 0, 51, 102, /*0 - 15*/},
+            {102, 128, 128, 90, 26, 13, 0, 0, 0, 0, 0, 0, 0, 0, 51, 102, /*0 - 15*/},
+            {102, 128, 128, 90, 26, 13, 0, 0, 0, 0, 0, 0, 0, 0, 51, 102, /*0 - 15*/},
+            {102, 128, 128, 90, 26, 13, 0, 0, 0, 0, 0, 0, 0, 0, 51, 102, /*0 - 15*/},
+            {102, 128, 128, 90, 26, 13, 0, 0, 0, 0, 0, 0, 0, 0, 51, 102, /*0 - 15*/},
+            {102, 128, 128, 90, 26, 13, 0, 0, 0, 0, 0, 0, 0, 0, 51, 102, /*0 - 15*/},
+            {102, 128, 128, 90, 26, 13, 0, 0, 0, 0, 0, 0, 0, 0, 51, 102, /*0 - 15*/},
+            {102, 128, 128, 90, 26, 13, 0, 0, 0, 0, 0, 0, 0, 0, 51, 102, /*0 - 15*/},
+            {102, 128, 128, 90, 26, 13, 0, 0, 0, 0, 0, 0, 0, 0, 51, 102, /*0 - 15*/},
+            {102, 128, 128, 90, 26, 13, 0, 0, 0, 0, 0, 0, 0, 0, 51, 102, /*0 - 15*/},
+            {102, 128, 128, 90, 26, 13, 0, 0, 0, 0, 0, 0, 0, 0, 51, 102, /*0 - 15*/},
+            {102, 128, 128, 90, 26, 13, 0, 0, 0, 0, 0, 0, 0, 0, 51, 102, /*0 - 15*/},
+        },
+        /* nCompTargetSat[16][6] */
+        {
+            {26, 43, 46, 72, 101, 128, /*0 - 5*/},
+            {26, 43, 46, 72, 101, 128, /*0 - 5*/},
+            {26, 43, 46, 72, 101, 128, /*0 - 5*/},
+            {26, 43, 46, 72, 101, 128, /*0 - 5*/},
+            {26, 43, 46, 72, 101, 128, /*0 - 5*/},
+            {26, 43, 46, 72, 101, 128, /*0 - 5*/},
+            {26, 43, 46, 72, 101, 128, /*0 - 5*/},
+            {26, 43, 46, 72, 101, 128, /*0 - 5*/},
+            {26, 43, 46, 72, 101, 128, /*0 - 5*/},
+            {26, 43, 46, 72, 101, 128, /*0 - 5*/},
+            {26, 43, 46, 72, 101, 128, /*0 - 5*/},
+            {26, 43, 46, 72, 101, 128, /*0 - 5*/},
+        },
+    },
+};
+
+const static AX_ISP_IQ_CC_PARAM_T cc_param_sdr = {
+    /* nCcEn */
+    1,
+    /* nCcMode */
+    1,
+    /* nAutoMode */
+    1,
+    /* nRefMode */
+    1,
+    /* nLumaRatio[2] */
+    {38, 15, /*0 - 1*/},
+    /* tManualParam */
+    {
+        /* nCcmCtrlLevel */
+        256,
+        /* nCcmSat */
+        5,
+        /* nCcmHue */
+        0,
+        /* nCcmMatrix[6] */
+        {-257, -5, -53, -30, 0, -155, /*0 - 5*/},
+        /* nXcmCtrlLevel[16] */
+        {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+        /* nXcmSat[16] */
+        {-8, -5, 0, -5, -10, -5, 0, 0, 5, 12, 15, 12, 0, 0, 0, -5, /*0 - 15*/},
+        /* nXcmHue[16] */
+        {0, 0, 0, 0, 0, 0, 0, 0, 640, 320, 320, 320, 0, 0, 0, 0, /*0 - 15*/},
+    },
+    /* tAutoParam */
+    {
+        /* nLightSourceRatio */
+        0,
+        /* tColorTempAuto */
+        {
+            /* nCtNum */
+            7,
+            /* nRefValCt[12] */
+            {2300, 2854, 3800, 4100, 5000, 6500, 7500, /*0 - 6*/},
+            /* nLuxGainNum */
+            4,
+            /* nRefValLuxGain[12][5] */
+            {
+                {1024, 16384, 165888, 524288, /*0 - 3*/},
+                {1024, 16384, 165888, 524288, /*0 - 3*/},
+                {1024, 16384, 165888, 524288, /*0 - 3*/},
+                {1024, 16384, 165888, 524288, /*0 - 3*/},
+                {1024, 16384, 165888, 524288, /*0 - 3*/},
+                {1024, 16384, 165888, 524288, /*0 - 3*/},
+                {1024, 16384, 165888, 524288, /*0 - 3*/},
+            },
+            /* nCcmCtrlLevel[12][5] */
+            {
+                {256, 256, 256, 256, /*0 - 3*/},
+                {256, 256, 256, 256, /*0 - 3*/},
+                {256, 256, 256, 256, /*0 - 3*/},
+                {256, 256, 256, 256, /*0 - 3*/},
+                {256, 256, 256, 256, /*0 - 3*/},
+                {256, 256, 256, 256, /*0 - 3*/},
+                {256, 256, 256, 256, /*0 - 3*/},
+            },
+            /* nCcmSat[12][5] */
+            {
+                {-10, -15, -20, -20, /*0 - 3*/},
+                {-10, -15, -15, -15, /*0 - 3*/},
+                {0, -2, -4, -5, /*0 - 3*/},
+                {0, 0, 0, 0, /*0 - 3*/},
+                {5, 2, 0, 0, /*0 - 3*/},
+                {5, 2, 0, 0, /*0 - 3*/},
+                {3, 1, 0, 0, /*0 - 3*/},
+            },
+            /* nCcmHue[12][5] */
+            {
+                {0, 0, 0, 0, /*0 - 3*/},
+                {0, 0, 0, 0, /*0 - 3*/},
+                {0, 0, 0, 0, /*0 - 3*/},
+                {0, 0, 0, 0, /*0 - 3*/},
+                {0, 0, 0, 0, /*0 - 3*/},
+                {0, 0, 0, 0, /*0 - 3*/},
+                {0, 0, 0, 0, /*0 - 3*/},
+            },
+            /* nCcmMatrix[12][5][6] */
+            {
+                /* nCcmMatrix 0 */
+                {
+                    {-257, -39, -94, -16, 20, -406, /*0 - 5*/},
+                    {-257, -39, -94, -16, 20, -406, /*0 - 5*/},
+                    {-257, -39, -94, -16, 20, -406, /*0 - 5*/},
+                    {-257, -39, -94, -16, 20, -406, /*0 - 5*/},
+                },
+                /* nCcmMatrix 1 */
+                {
+                    {-271, -17, -73, -13, 2, -262, /*0 - 5*/},
+                    {-271, -17, -73, -13, 2, -262, /*0 - 5*/},
+                    {-271, -17, -73, -13, 2, -262, /*0 - 5*/},
+                    {-271, -17, -73, -13, 2, -262, /*0 - 5*/},
+                },
+                /* nCcmMatrix 2 */
+                {
+                    {-227, -26, -100, -50, 10, -194, /*0 - 5*/},
+                    {-227, -26, -100, -50, 10, -194, /*0 - 5*/},
+                    {-227, -26, -100, -50, 10, -194, /*0 - 5*/},
+                    {-227, -26, -100, -50, 10, -194, /*0 - 5*/},
+                },
+                /* nCcmMatrix 3 */
+                {
+                    {-217, -19, -80, -44, -2, -156, /*0 - 5*/},
+                    {-217, -19, -80, -44, -2, -156, /*0 - 5*/},
+                    {-217, -19, -80, -44, -2, -156, /*0 - 5*/},
+                    {-217, -19, -80, -44, -2, -156, /*0 - 5*/},
+                },
+                /* nCcmMatrix 4 */
+                {
+                    {-248, -19, -40, -40, 5, -156, /*0 - 5*/},
+                    {-248, -19, -40, -40, 5, -156, /*0 - 5*/},
+                    {-248, -19, -40, -40, 5, -156, /*0 - 5*/},
+                    {-248, -19, -40, -40, 5, -156, /*0 - 5*/},
+                },
+                /* nCcmMatrix 5 */
+                {
+                    {-280, 20, -36, -45, 20, -159, /*0 - 5*/},
+                    {-280, 20, -36, -45, 20, -159, /*0 - 5*/},
+                    {-280, 20, -36, -45, 20, -159, /*0 - 5*/},
+                    {-280, 20, -36, -45, 20, -159, /*0 - 5*/},
+                },
+                /* nCcmMatrix 6 */
+                {
+                    {-310, 25, -35, -40, 8, -154, /*0 - 5*/},
+                    {-310, 25, -35, -40, 8, -154, /*0 - 5*/},
+                    {-310, 25, -35, -40, 8, -154, /*0 - 5*/},
+                    {-310, 25, -35, -40, 8, -154, /*0 - 5*/},
+                },
+            },
+            /* nXcmCtrlLevel[12][5][16] */
+            {
+                /* nXcmCtrlLevel 0 */
+                {
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                },
+                /* nXcmCtrlLevel 1 */
+                {
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                },
+                /* nXcmCtrlLevel 2 */
+                {
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                },
+                /* nXcmCtrlLevel 3 */
+                {
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                },
+                /* nXcmCtrlLevel 4 */
+                {
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                },
+                /* nXcmCtrlLevel 5 */
+                {
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                },
+                /* nXcmCtrlLevel 6 */
+                {
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                    {256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, 256, /*0 - 15*/},
+                },
+            },
+            /* nXcmSat[12][5][16] */
+            {
+                /* nXcmSat 0 */
+                {
+                    {-20, -20, -20, -20, -10, -10, -5, 0, 0, 5, 5, 5, 0, 0, -10, -15, /*0 - 15*/},
+                    {-15, -15, -15, -15, -10, -10, -5, 0, 0, 0, 0, 0, 0, 0, -10, -15, /*0 - 15*/},
+                    {-15, -10, -10, -10, -10, -10, -5, 0, 0, 0, 0, 0, 0, 0, -10, -15, /*0 - 15*/},
+                    {-15, -10, -5, -5, -10, -10, -5, 0, 0, 0, 0, 0, 0, 0, -10, -15, /*0 - 15*/},
+                },
+                /* nXcmSat 1 */
+                {
+                    {-15, -15, -15, -15, -10, -10, -5, 0, 0, 10, 10, 10, 0, 0, -10, -15, /*0 - 15*/},
+                    {-15, -10, -10, -10, -10, -10, -5, 0, 0, 5, 5, 5, 0, 0, -10, -15, /*0 - 15*/},
+                    {-15, -10, -5, -5, -10, -10, -5, 0, 0, 0, 0, 0, 0, 0, -10, -15, /*0 - 15*/},
+                    {-15, -10, -5, -5, -10, -10, -5, 0, 0, 0, 0, 0, 0, 0, -10, -15, /*0 - 15*/},
+                },
+                /* nXcmSat 2 */
+                {
+                    {-5, 0, 0, 0, -15, -10, -5, 0, 0, 10, 10, 10, 0, 0, 0, -5, /*0 - 15*/},
+                    {-10, -5, -5, -5, -15, -15, -12, -10, -10, 5, 5, 5, 0, 0, -5, -10, /*0 - 15*/},
+                    {-15, -10, -5, -10, -18, -15, -15, -15, -10, 5, 5, 5, 0, 0, -10, -15, /*0 - 15*/},
+                    {-15, -15, -12, -10, -18, -15, -15, -15, -5, 10, 10, 10, 0, 0, -10, -15, /*0 - 15*/},
+                },
+                /* nXcmSat 3 */
+                {
+                    {-15, -10, 0, 0, -15, -10, -5, 0, 0, 10, 10, 10, 0, 0, -10, -15, /*0 - 15*/},
+                    {-15, -10, -5, -5, -15, -15, -12, -10, -10, 10, 10, 10, 0, 0, -10, -15, /*0 - 15*/},
+                    {-15, -10, -5, -10, -18, -15, -15, -15, -5, 15, 15, 15, 0, 0, -10, -15, /*0 - 15*/},
+                    {-20, -20, -15, -10, -18, -15, -15, -15, 0, 20, 20, 20, 0, 0, -10, -15, /*0 - 15*/},
+                },
+                /* nXcmSat 4 */
+                {
+                    {-15, -10, -5, -5, -15, -15, -20, -10, 0, 10, 10, 10, 0, 0, -15, -20, /*0 - 15*/},
+                    {-15, -10, -5, -5, -15, -15, -20, -10, -5, 10, 10, 10, 0, 0, -10, -15, /*0 - 15*/},
+                    {-15, -10, -5, -10, -18, -15, -12, -10, -5, 20, 20, 20, 0, 0, -10, -15, /*0 - 15*/},
+                    {-20, -20, -15, -10, -18, -15, -12, -10, 0, 20, 20, 20, 0, 0, -10, -15, /*0 - 15*/},
+                },
+                /* nXcmSat 5 */
+                {
+                    {-10, -10, -5, -5, -15, -15, -20, -15, 5, 10, 10, 10, 0, 0, -10, -15, /*0 - 15*/},
+                    {-15, -10, -5, -5, -15, -15, -20, -15, 0, 5, 5, 5, 0, 0, -10, -15, /*0 - 15*/},
+                    {-15, -10, -5, -10, -15, -15, -12, -10, -5, 5, 5, 5, 0, 0, -10, -15, /*0 - 15*/},
+                    {-20, -20, -15, -10, -15, -15, -12, -10, 0, 10, 10, 10, 0, 0, -10, -15, /*0 - 15*/},
+                },
+                /* nXcmSat 6 */
+                {
+                    {-15, -10, -5, -5, -15, -10, -5, 0, 0, 10, 10, 10, 0, 0, -10, -15, /*0 - 15*/},
+                    {-15, -10, -5, -5, -15, -15, -12, -5, 0, 5, 5, 5, 0, 0, -10, -15, /*0 - 15*/},
+                    {-15, -10, -10, -10, -15, -15, -12, -5, 0, 5, 5, 5, 0, 0, -10, -15, /*0 - 15*/},
+                    {-15, -15, -10, -10, -15, -15, -12, -5, 0, 5, 5, 5, 0, 0, -10, -15, /*0 - 15*/},
+                },
+            },
+            /* nXcmHue[12][5][16] */
+            {
+                /* nXcmHue 0 */
+                {
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+                },
+                /* nXcmHue 1 */
+                {
+                    {0, 0, 0, 0, 0, -240, -204, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, -240, -240, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+                },
+                /* nXcmHue 2 */
+                {
+                    {0, 0, 0, 0, 0, -240, -240, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, -240, 160, 0, -160, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, -160, 320, 320, 320, 0, 0, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, -160, 320, 320, 320, 0, 0, 0, 0, /*0 - 15*/},
+                },
+                /* nXcmHue 3 */
+                {
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, -160, 320, 320, 320, 0, 0, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, -160, 320, 320, 320, 0, 0, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, -160, 320, 320, 320, 0, 0, 0, 0, /*0 - 15*/},
+                },
+                /* nXcmHue 4 */
+                {
+                    {0, 0, 0, 0, 0, 0, 0, -100, 320, 320, 0, 0, -320, -160, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 160, 320, 0, 0, -320, -160, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 160, 320, 320, 320, 0, 0, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 160, 320, 320, 320, 0, 0, 0, 0, /*0 - 15*/},
+                },
+                /* nXcmHue 5 */
+                {
+                    {0, 0, 0, 0, 0, 0, 0, 0, 320, 320, 0, -160, -320, -160, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 160, 320, 0, 0, -320, -160, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 160, 320, 320, 320, 0, 0, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 160, 320, 320, 320, 0, 0, 0, 0, /*0 - 15*/},
+                },
+                /* nXcmHue 6 */
+                {
+                    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 160, 320, 320, 320, 0, 0, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 160, 320, 320, 320, 0, 0, 0, 0, /*0 - 15*/},
+                    {0, 0, 0, 0, 0, 0, 0, 0, 160, 320, 320, 320, 0, 0, 0, 0, /*0 - 15*/},
+                },
+            },
+        },
+        /* tLightSourceAuto */
+        {
+            /* nLightSource */
+            0,
+            /* nLightSourceNum */
+            0,
+            /* nCcmCtrlLevel[12] */
+            {0, /*0 - 0*/},
+            /* nCcmSat[12] */
+            {0, /*0 - 0*/},
+            /* nCcmHue[12] */
+            {0, /*0 - 0*/},
+            /* nCcmMatrix[12][6] */
+            {
+                {0, 0, 0, 0, 0, 0, /*0 - 5*/},
+            },
+            /* nXcmCtrlLevel[12][16] */
+            {
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+            },
+            /* nXcmSat[12][16] */
+            {
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+            },
+            /* nXcmHue[12][16] */
+            {
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+            },
+        },
+    },
+};
+
+const static AX_ISP_IQ_HS2DLUT_PARAM_T hs2dlut_param_sdr = {
+    /* nHs2dLutEn */
+    0,
+    /* nAutoMode */
+    0,
+    /* nRefMode */
+    1,
+    /* tManualParam */
+    {
+        /* tHs2dLut */
+        {
+            /* nHueLut[25][17] */
+            {
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+            },
+            /* nSatLut[25][17] */
+            {
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+            },
+        },
+    },
+    /* tAutoParam */
+    {
+        /* nRefListNum */
+        1,
+        /* tRefTbl[12] */
+        {
+            /* 0 */
+            {
+                /* nRefStartVal */
+                1024,
+                /* nRefEndVal */
+                2048,
+                /* nCctListNum */
+                1,
+                /* tCctTbl[16] */
+                {
+                    /* 0 */
+                    {
+                        /* nCctStart */
+                        5000,
+                        /* nCctEnd */
+                        6000,
+                        /* tHs2dLut */
+                        {
+                            /* nHueLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                            /* nSatLut[25][17] */
+                            {
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                                {0, 2048, 4096, 6144, 8192, 10240, 12288, 14336, 16384, 18432, 20480, 22528, 24576, 26624, 28672, 30720, 32768, /*0 - 16*/},
+                            },
+                        },
+                    },
+                    /* 1 */
+                    {
+                        /* nCctStart */
+                        0,
+                        /* nCctEnd */
+                        0,
+                        /* tHs2dLut */
+                        {
+                            /* nHueLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                            /* nSatLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                        },
+                    },
+                    /* 2 */
+                    {
+                        /* nCctStart */
+                        0,
+                        /* nCctEnd */
+                        0,
+                        /* tHs2dLut */
+                        {
+                            /* nHueLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                            /* nSatLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                        },
+                    },
+                    /* 3 */
+                    {
+                        /* nCctStart */
+                        0,
+                        /* nCctEnd */
+                        0,
+                        /* tHs2dLut */
+                        {
+                            /* nHueLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                            /* nSatLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                        },
+                    },
+                    /* 4 */
+                    {
+                        /* nCctStart */
+                        0,
+                        /* nCctEnd */
+                        0,
+                        /* tHs2dLut */
+                        {
+                            /* nHueLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                            /* nSatLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                        },
+                    },
+                    /* 5 */
+                    {
+                        /* nCctStart */
+                        0,
+                        /* nCctEnd */
+                        0,
+                        /* tHs2dLut */
+                        {
+                            /* nHueLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                            /* nSatLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                        },
+                    },
+                    /* 6 */
+                    {
+                        /* nCctStart */
+                        0,
+                        /* nCctEnd */
+                        0,
+                        /* tHs2dLut */
+                        {
+                            /* nHueLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                            /* nSatLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                        },
+                    },
+                    /* 7 */
+                    {
+                        /* nCctStart */
+                        0,
+                        /* nCctEnd */
+                        0,
+                        /* tHs2dLut */
+                        {
+                            /* nHueLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                            /* nSatLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                        },
+                    },
+                    /* 8 */
+                    {
+                        /* nCctStart */
+                        0,
+                        /* nCctEnd */
+                        0,
+                        /* tHs2dLut */
+                        {
+                            /* nHueLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                            /* nSatLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                        },
+                    },
+                    /* 9 */
+                    {
+                        /* nCctStart */
+                        0,
+                        /* nCctEnd */
+                        0,
+                        /* tHs2dLut */
+                        {
+                            /* nHueLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                            /* nSatLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                        },
+                    },
+                    /* 10 */
+                    {
+                        /* nCctStart */
+                        0,
+                        /* nCctEnd */
+                        0,
+                        /* tHs2dLut */
+                        {
+                            /* nHueLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                            /* nSatLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                        },
+                    },
+                    /* 11 */
+                    {
+                        /* nCctStart */
+                        0,
+                        /* nCctEnd */
+                        0,
+                        /* tHs2dLut */
+                        {
+                            /* nHueLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                            /* nSatLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                        },
+                    },
+                    /* 12 */
+                    {
+                        /* nCctStart */
+                        0,
+                        /* nCctEnd */
+                        0,
+                        /* tHs2dLut */
+                        {
+                            /* nHueLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                            /* nSatLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                        },
+                    },
+                    /* 13 */
+                    {
+                        /* nCctStart */
+                        0,
+                        /* nCctEnd */
+                        0,
+                        /* tHs2dLut */
+                        {
+                            /* nHueLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                            /* nSatLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                        },
+                    },
+                    /* 14 */
+                    {
+                        /* nCctStart */
+                        0,
+                        /* nCctEnd */
+                        0,
+                        /* tHs2dLut */
+                        {
+                            /* nHueLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                            /* nSatLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                        },
+                    },
+                    /* 15 */
+                    {
+                        /* nCctStart */
+                        0,
+                        /* nCctEnd */
+                        0,
+                        /* tHs2dLut */
+                        {
+                            /* nHueLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                            /* nSatLut[25][17] */
+                            {
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                                {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 16*/},
+                            },
+                        },
+                    },
+                },
+            },
+        },
+        /* tConvergeParam */
+        {
+            /* nConvergeSpeed */
+            5,
+            /* nGainTrigger */
+            10240,
+            /* nLuxTrigger */
+            10240,
+            /* nCctTrigger */
+            50,
+        },
+    },
+};
+
+const static AX_ISP_IQ_GAMMA_PARAM_T gamma_param_sdr = {
+    /* nGammaEn */
+    1,
+    /* nAutoMode */
+    0,
+    /* nRefMode */
+    0,
+    /* eGammaMode */
+    /* 0:AX_ISP_GAM_USER_GAMMA, 1:AX_ISP_GAM_PRESET_GAMMA */
+    AX_ISP_GAM_PRESET_GAMMA,
+    /* ePresetGammaType */
+    /* 0:AX_ISP_GAM_LINEAR, 1:AX_ISP_GAM_BT709, 2:AX_ISP_GAM_SRGB, 10:AX_ISP_GAM_AX_GAM0, 11:AX_ISP_GAM_AX_GAM1, 12:AX_ISP_GAM_AX_GAM2, 255:AX_ISP_GAM_MODE_CUSTOMER */
+    AX_ISP_GAM_AX_GAM2,
+    /* eLutMode */
+    /* 0:AX_ISP_GAM_LUT_LINEAR, 1:AX_ISP_GAM_EXPONENTIAL */
+    AX_ISP_GAM_EXPONENTIAL,
+    /* tManualParam */
+    {
+        /* tGammaLut */
+        {
+            /* nLut[129] */
+            {
+                0, 3, 6, 10, 13, 16, 20, 23, 27, 30, 34, 38, 41, 45, 48, 52, 56, 60, 63, 67, 71, 75, 79, 83, 87, 91, 94, 98, 103, 107, 111, 115,  /* 0 - 31*/
+                119, 127, 136, 144, 153, 162, 171, 180, 189, 198, 207, 217, 226, 236, 245, 255, 265, 285, 306, 326, 348, 369, 391, 414, 437, 460, 483, 507, 531, 556, 581, 606,  /* 32 - 63*/
+                632, 683, 733, 782, 830, 877, 922, 967, 1011, 1055, 1097, 1138, 1179, 1219, 1258, 1297, 1335, 1408, 1479, 1548, 1614, 1679, 1741, 1802, 1860, 1917, 1972, 2026, 2078, 2129, 2178, 2226,  /* 64 - 95*/
+                2273, 2362, 2448, 2529, 2606, 2679, 2749, 2816, 2880, 2941, 2999, 3055, 3108, 3159, 3208, 3255, 3300, 3385, 3463, 3534, 3601, 3662, 3719, 3771, 3820, 3864, 3906, 3944, 3979, 4012, 4042, 4070,  /* 96 - 127*/
+                4095, /*128 - 128*/
+            },
+        },
+    },
+    /* tAutoParam */
+    {
+        /* nRefValStart[3] */
+        {0, 100, 500, /*0 - 2*/},
+        /* nRefValEnd[3] */
+        {50, 200, 1000, /*0 - 2*/},
+        /* tGammaLut[3] */
+        {
+            /* 0 */
+            {
+                /* nLut[129] */
+                {
+                    0, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53, 55, 57, 59, 61,  /* 0 - 31*/
+                    63, 67, 71, 75, 79, 83, 87, 91, 95, 99, 103, 107, 111, 115, 119, 123, 127, 135, 143, 151, 159, 167, 175, 183, 191, 199, 207, 215, 223, 231, 239, 247,  /* 32 - 63*/
+                    255, 271, 287, 303, 319, 335, 351, 367, 383, 399, 415, 431, 447, 463, 479, 495, 511, 543, 575, 607, 639, 671, 703, 735, 767, 799, 831, 863, 895, 927, 959, 991,  /* 64 - 95*/
+                    1023, 1087, 1151, 1215, 1279, 1343, 1407, 1471, 1535, 1599, 1663, 1727, 1791, 1855, 1919, 1983, 2047, 2175, 2303, 2431, 2559, 2687, 2815, 2943, 3071, 3199, 3327, 3455, 3583, 3711, 3839, 3967,  /* 96 - 127*/
+                    4095, /*128 - 128*/
+                },
+            },
+            /* 1 */
+            {
+                /* nLut[129] */
+                {
+                    0, 8, 17, 26, 35, 44, 53, 62, 71, 80, 89, 98, 107, 116, 125, 134, 143, 152, 161, 170, 179, 188, 197, 206, 215, 224, 233, 242, 251, 260, 269, 278,  /* 0 - 31*/
+                    287, 305, 323, 342, 360, 377, 393, 410, 425, 441, 456, 471, 485, 499, 513, 527, 540, 566, 592, 616, 640, 663, 686, 708, 730, 751, 771, 792, 811, 831, 850, 868,  /* 32 - 63*/
+                    887, 922, 957, 991, 1023, 1055, 1086, 1116, 1145, 1174, 1202, 1230, 1257, 1283, 1309, 1335, 1360, 1409, 1456, 1502, 1546, 1590, 1632, 1673, 1713, 1753, 1791, 1829, 1865, 1902, 1937, 1972,  /* 64 - 95*/
+                    2006, 2073, 2137, 2200, 2261, 2320, 2378, 2434, 2489, 2543, 2595, 2647, 2697, 2746, 2795, 2842, 2889, 2980, 3068, 3154, 3237, 3318, 3397, 3474, 3549, 3622, 3694, 3764, 3833, 3900, 3966, 4031,  /* 96 - 127*/
+                    4095, /*128 - 128*/
+                },
+            },
+            /* 2 */
+            {
+                /* nLut[129] */
+                {
+                    0, 25, 51, 77, 103, 129, 155, 180, 203, 224, 245, 264, 282, 299, 316, 331, 346, 361, 375, 389, 402, 415, 428, 440, 452, 463, 475, 486, 497, 507, 518, 528,  /* 0 - 31*/
+                    538, 558, 577, 595, 613, 630, 646, 663, 679, 694, 709, 724, 739, 753, 767, 780, 794, 820, 845, 870, 893, 916, 939, 960, 982, 1002, 1022, 1042, 1062, 1081, 1099, 1117,  /* 32 - 63*/
+                    1135, 1170, 1204, 1236, 1268, 1299, 1328, 1357, 1386, 1413, 1440, 1467, 1493, 1518, 1543, 1567, 1591, 1637, 1682, 1726, 1768, 1809, 1849, 1888, 1925, 1962, 1998, 2034, 2068, 2102, 2135, 2167,  /* 64 - 95*/
+                    2199, 2261, 2321, 2379, 2436, 2490, 2543, 2595, 2646, 2695, 2743, 2790, 2836, 2881, 2925, 2969, 3011, 3094, 3174, 3252, 3327, 3400, 3471, 3540, 3607, 3673, 3737, 3800, 3861, 3922, 3981, 4038,  /* 96 - 127*/
+                    4095, /*128 - 128*/
+                },
+            },
+        },
+    },
+};
+
+const static AX_ISP_IQ_DEHAZE_PARAM_T dehaze_param_sdr = {
+    /* nDehazeEn */
+    1,
+    /* nAutoMode */
+    1,
+    /* nRefMode */
+    1,
+    /* tGlbParam */
+    {
+        /* nCalcMode */
+        1,
+        /* nAirReflect */
+        52224,
+        /* nSpatialSmoothness */
+        2,
+        /* nStrengthLimit */
+        64,
+        /* nMeshSize */
+        32,
+        /* nEps */
+        8192,
+        /* nBlurEnable */
+        1,
+        /* nSigmaBlur */
+        4096,
+    },
+    /* tManualParam */
+    {
+        /* nEffectStrength */
+        48,
+        /* nGrayDcRatio */
+        64,
+    },
+    /* tAutoParam */
+    {
+        /* nParamGrpNum */
+        12,
+        /* nRefVal[12] */
+        {1024, 2048, 4096, 8192, 16384, 24576, 32768, 55296, 131072, 262144, 524288, 1048576, /*0 - 11*/},
+        /* nEffectStrength[12] */
+        {44, 48, 48, 48, 56, 64, 64, 64, 64, 64, 64, 64, /*0 - 11*/},
+        /* nGrayDcRatio[12] */
+        {64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, 64, /*0 - 11*/},
+    },
+};
+
+const static AX_ISP_IQ_CSC_PARAM_T csc_param_sdr = {
+    /* nMatrix[3][3] */
+    {
+        {77, 150, 29, /*0 - 2*/},
+        {-43, -85, 128, /*0 - 2*/},
+        {128, -107, -21, /*0 - 2*/},
+    },
+    /* eColorSpaceMode */
+    /* 0:AX_ISP_CSC_USER, 1:AX_ISP_CSC_BT601, 2:AX_ISP_CSC_BT709, 3:AX_ISP_CSC_BT2020, 4:AX_ISP_CSC_BUTT */
+    AX_ISP_CSC_BT601,
+    /* eUvSeqSel */
+    /* 0:AX_ISP_NV12_SEL, 1:AX_ISP_NV21_SEL */
+    AX_ISP_NV12_SEL,
+};
+
+const static AX_ISP_IQ_CA_PARAM_T ca_param_sdr = {
+    /* nCppEn */
+    0,
+    /* nAutoMode */
+    0,
+    /* nRefMode */
+    0,
+    /* tManualParam */
+    {
+        /* nCtrlLevel */
+        0,
+        /* nSat */
+        0,
+        /* nHue */
+        0,
+        /* nCmtx[2][2] */
+        {
+            {256, 0, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+        },
+    },
+    /* tAutoParam */
+    {
+        /* nParamGrpNumCt */
+        12,
+        /* nParamGrpNumLG */
+        1,
+        /* nRefValCt[12] */
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 11*/},
+        /* nRefValLG[12][5] */
+        {
+            {1024, /*0 - 0*/},
+            {1024, /*0 - 0*/},
+            {1024, /*0 - 0*/},
+            {1024, /*0 - 0*/},
+            {1024, /*0 - 0*/},
+            {1024, /*0 - 0*/},
+            {1024, /*0 - 0*/},
+            {1024, /*0 - 0*/},
+            {1024, /*0 - 0*/},
+            {1024, /*0 - 0*/},
+            {1024, /*0 - 0*/},
+            {1024, /*0 - 0*/},
+        },
+        /* nCmtx[12][5][4] */
+        {
+            /* nCmtx 0 */
+            {
+                {0, 0, 0, 0, /*0 - 3*/},
+            },
+            /* nCmtx 1 */
+            {
+                {0, 0, 0, 0, /*0 - 3*/},
+            },
+            /* nCmtx 2 */
+            {
+                {0, 0, 0, 0, /*0 - 3*/},
+            },
+            /* nCmtx 3 */
+            {
+                {0, 0, 0, 0, /*0 - 3*/},
+            },
+            /* nCmtx 4 */
+            {
+                {0, 0, 0, 0, /*0 - 3*/},
+            },
+            /* nCmtx 5 */
+            {
+                {0, 0, 0, 0, /*0 - 3*/},
+            },
+            /* nCmtx 6 */
+            {
+                {0, 0, 0, 0, /*0 - 3*/},
+            },
+            /* nCmtx 7 */
+            {
+                {0, 0, 0, 0, /*0 - 3*/},
+            },
+            /* nCmtx 8 */
+            {
+                {0, 0, 0, 0, /*0 - 3*/},
+            },
+            /* nCmtx 9 */
+            {
+                {0, 0, 0, 0, /*0 - 3*/},
+            },
+            /* nCmtx 10 */
+            {
+                {0, 0, 0, 0, /*0 - 3*/},
+            },
+            /* nCmtx 11 */
+            {
+                {0, 0, 0, 0, /*0 - 3*/},
+            },
+        },
+    },
+};
+
+const static AX_ISP_IQ_YNR_PARAM_T ynr_param_sdr = {
+    /* nYnrEn */
+    1,
+    /* nColorTargetEn */
+    0,
+    /* nAutoMode */
+    1,
+    /* nRefMode */
+    1,
+    /* nIoFlag */
+    0,
+    /* tManualParam */
+    {
+        /* nYnrCenter[3] */
+        {0, 0, 0, /*0 - 2*/},
+        /* nYnrRadius[3] */
+        {0, 0, 0, /*0 - 2*/},
+        /* nYnrSmooth[3] */
+        {0, 0, 0, /*0 - 2*/},
+        /* nYnrLevel[2] */
+        {255, 0, /*0 - 1*/},
+        /* nYnrInvNrLut[4] */
+        {192, 240, 256, 256, /*0 - 3*/},
+    },
+    /* tAutoParam */
+    {
+        /* nParamGrpNum */
+        12,
+        /* nRefVal[12] */
+        {1024, 2048, 4096, 8192, 16384, 24576, 32768, 55296, 131072, 262144, 524288, 1048576, /*0 - 11*/},
+        /* nYnrCenter[12][3] */
+        {
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+        },
+        /* nYnrRadius[12][3] */
+        {
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+        },
+        /* nYnrSmooth[12][3] */
+        {
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+        },
+        /* nYnrLevel[12][2] */
+        {
+            {255, 0, /*0 - 1*/},
+            {255, 0, /*0 - 1*/},
+            {255, 0, /*0 - 1*/},
+            {255, 0, /*0 - 1*/},
+            {255, 0, /*0 - 1*/},
+            {255, 0, /*0 - 1*/},
+            {255, 0, /*0 - 1*/},
+            {255, 0, /*0 - 1*/},
+            {255, 0, /*0 - 1*/},
+            {255, 0, /*0 - 1*/},
+            {255, 0, /*0 - 1*/},
+            {255, 0, /*0 - 1*/},
+        },
+        /* nYnrInvNrLut[12][4] */
+        {
+            {256, 360, 384, 384, /*0 - 3*/},
+            {256, 360, 384, 384, /*0 - 3*/},
+            {224, 320, 384, 384, /*0 - 3*/},
+            {224, 300, 384, 384, /*0 - 3*/},
+            {224, 300, 384, 384, /*0 - 3*/},
+            {192, 300, 384, 384, /*0 - 3*/},
+            {192, 280, 384, 384, /*0 - 3*/},
+            {192, 280, 384, 384, /*0 - 3*/},
+            {192, 280, 384, 384, /*0 - 3*/},
+            {160, 240, 384, 384, /*0 - 3*/},
+            {128, 160, 256, 256, /*0 - 3*/},
+            {96, 128, 192, 192, /*0 - 3*/},
+        },
+    },
+};
+
+const static AX_ISP_IQ_CNR_PARAM_T cnr_param_sdr = {
+    /* nCnrEn */
+    1,
+    /* nAutoMode */
+    1,
+    /* nRefMode */
+    1,
+    /* tManualParam */
+    {
+        /* nCnrLevel */
+        16,
+        /* nCnrInvNrLut[4] */
+        {128, 128, 128, 128, /*0 - 3*/},
+    },
+    /* tAutoParam */
+    {
+        /* nParamGrpNum */
+        12,
+        /* nRefVal[12] */
+        {1024, 2048, 4096, 8192, 16384, 24576, 32768, 55296, 131072, 262144, 524288, 1048576, /*0 - 11*/},
+        /* nCnrLevel[12] */
+        {16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, /*0 - 11*/},
+        /* nCnrInvNrLut[12][4] */
+        {
+            {256, 360, 384, 384, /*0 - 3*/},
+            {224, 300, 320, 320, /*0 - 3*/},
+            {192, 240, 256, 256, /*0 - 3*/},
+            {144, 180, 192, 192, /*0 - 3*/},
+            {120, 150, 160, 160, /*0 - 3*/},
+            {96, 120, 128, 128, /*0 - 3*/},
+            {96, 120, 128, 128, /*0 - 3*/},
+            {96, 120, 128, 128, /*0 - 3*/},
+            {80, 120, 128, 128, /*0 - 3*/},
+            {64, 120, 128, 128, /*0 - 3*/},
+            {64, 120, 128, 128, /*0 - 3*/},
+            {64, 120, 128, 128, /*0 - 3*/},
+        },
+    },
+};
+
+const static AX_ISP_IQ_YUV3DNR_PARAM_T yuv3dnr_param_sdr = {
+    /* nYuv3dnrEnable */
+    1,
+    /* nAutoMode */
+    1,
+    /* nRefMode */
+    1,
+    /* nConvergeSpeed */
+    160,
+    /* tExtMaskParam */
+    {
+        /* nExtMaskEnable */
+        1,
+        /* nExtMaskMode */
+        0,
+    },
+    /* tSubModuleEnParam */
+    {
+        /* nMotionDetEnable */
+        1,
+        /* nTfEnable */
+        1,
+        /* nSf0YnrEnable */
+        1,
+        /* nSf1YnrEnable */
+        1,
+        /* nSf2YnrEnable */
+        1,
+        /* nSf0CnrEnable */
+        1,
+        /* nSf1CnrEnable */
+        1,
+    },
+    /* tManualParam */
+    {
+        /* nMotDetNoiseLut[2][17] */
+        {
+            {24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 16*/},
+            {24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 16*/},
+        },
+        /* nMotDetStrenLuma[2] */
+        {128, 0, /*0 - 1*/},
+        /* nMotDetStrenChrom[2] */
+        {96, 0, /*0 - 1*/},
+        /* nMotDetSmoothLuma[2] */
+        {2, 1, /*0 - 1*/},
+        /* nMotDetSmoothChroma[2] */
+        {2, 1, /*0 - 1*/},
+        /* nMotDetLimitLuma[2] */
+        {0, 256, /*0 - 1*/},
+        /* nMotDetLimitChrom[2] */
+        {0, 256, /*0 - 1*/},
+        /* nMotDetBlendRatio[2] */
+        {256, 256, /*0 - 1*/},
+        /* nStasUpdateLut[2][16] */
+        {
+            {4, 4, 4, 4, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, /*0 - 15*/},
+            {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, /*0 - 15*/},
+        },
+        /* nTfRatioLut[16] */
+        {128, 128, 128, 96, 80, 80, 64, 64, 48, 32, 32, 24, 24, 16, 16, 16, /*0 - 15*/},
+        /* nTfRatLimitLuma[2][2] */
+        {
+            {0, 255, /*0 - 1*/},
+            {0, 255, /*0 - 1*/},
+        },
+        /* nTfRatLimitChroma[2][2] */
+        {
+            {0, 255, /*0 - 1*/},
+            {0, 255, /*0 - 1*/},
+        },
+        /* nSf0EdgeStre */
+        128,
+        /* nSf0DirStre */
+        128,
+        /* nSf0DetailStre */
+        128,
+        /* nSf0LumaNoiseLut[4][9] */
+        {
+            {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+            {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+            {16, 16, 16, 16, 16, 16, 16, 16, 16, /*0 - 8*/},
+            {16, 16, 16, 16, 16, 16, 16, 16, 16, /*0 - 8*/},
+        },
+        /* nSf0LumaKernelSize[2] */
+        {3, 3, /*0 - 1*/},
+        /* nSf0LumaGauStre[2] */
+        {16, 16, /*0 - 1*/},
+        /* nSf0lumaBlendRatio[2][3] */
+        {
+            {214, 32, 0, /*0 - 2*/},
+            {214, 32, 0, /*0 - 2*/},
+        },
+        /* nSf0ChromaAttenStre[2] */
+        {1023, 1023, /*0 - 1*/},
+        /* nSf0ChromaAttenLimit[2] */
+        {230, 255, /*0 - 1*/},
+        /* nSf0ChromaProtLut[2][9] */
+        {
+            {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+            {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+        },
+        /* nSf1LumaMedEn */
+        0,
+        /* nSf1LumaGauStre[2] */
+        {16, 0, /*0 - 1*/},
+        /* nSf1LumaGauRatio[2] */
+        {16, 16, /*0 - 1*/},
+        /* nSf1LumaKernelSize */
+        2,
+        /* nSf1LumaNoiseLut[2][9] */
+        {
+            {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+            {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+        },
+        /* nSf1LumaIdrThre[2] */
+        {32, 64, /*0 - 1*/},
+        /* nSf1LumaIdrGain[2] */
+        {128, 128, /*0 - 1*/},
+        /* nSf1LumaClipLevel[2] */
+        {1023, 1023, /*0 - 1*/},
+        /* nSf1LumaCoring[2] */
+        {0, 0, /*0 - 1*/},
+        /* nSf1LumaBlendRatio[2] */
+        {24, 224, /*0 - 1*/},
+        /* nSf1ChromaCoring */
+        130,
+        /* nSf1ChromaBlendRatio */
+        128,
+        /* nSf2LumaGauStre[2] */
+        {16, 16, /*0 - 1*/},
+        /* nSf2LumaMedEn */
+        0,
+        /* nSf2KernelSize */
+        1,
+        /* nSf2NoiseLut[2][9] */
+        {
+            {64, 64, 64, 64, 64, 64, 64, 64, 64, /*0 - 8*/},
+            {64, 64, 64, 64, 64, 64, 64, 64, 64, /*0 - 8*/},
+        },
+        /* nSf2BlendRatio[2][3] */
+        {
+            {214, 32, 0, /*0 - 2*/},
+            {214, 32, 0, /*0 - 2*/},
+        },
+        /* nExtMaskStrenLuma */
+        128,
+        /* nExtMaskStrenChrom */
+        128,
+        /* nExtMaskStrenStatus */
+        128,
+        /* nExtMaskRatioLuma[2] */
+        {256, 256, /*0 - 1*/},
+        /* nExtMaskRatioChrom[2] */
+        {256, 256, /*0 - 1*/},
+        /* nExtMaskRatioStatus[2] */
+        {256, 256, /*0 - 1*/},
+        /* nY3dnrPos */
+        0,
+        /* nStaRefineErode */
+        0,
+        /* nSfGuideMapLuma[2] */
+        {0, 0, /*0 - 1*/},
+        /* nSfGuideMapChroma[2] */
+        {0, 0, /*0 - 1*/},
+    },
+    /* tAutoParam */
+    {
+        /* nParamGrpNum */
+        12,
+        /* nRefVal[12] */
+        {1024, 2048, 4096, 8192, 16384, 24576, 32768, 55296, 131072, 262144, 524288, 1048576, /*0 - 11*/},
+        /* nMotDetNoiseLut[12][2][17] */
+        {
+            /* nMotDetNoiseLut 0 */
+            {
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 16*/},
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 16*/},
+            },
+            /* nMotDetNoiseLut 1 */
+            {
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 16*/},
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 16*/},
+            },
+            /* nMotDetNoiseLut 2 */
+            {
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 16*/},
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 16*/},
+            },
+            /* nMotDetNoiseLut 3 */
+            {
+                {64, 72, 80, 80, 80, 80, 72, 72, 64, 56, 48, 40, 40, 36, 32, 24, 20, /*0 - 16*/},
+                {64, 72, 80, 80, 80, 80, 72, 72, 64, 56, 48, 40, 40, 36, 32, 24, 20, /*0 - 16*/},
+            },
+            /* nMotDetNoiseLut 4 */
+            {
+                {72, 80, 80, 88, 96, 96, 88, 80, 72, 72, 72, 64, 56, 48, 40, 32, 24, /*0 - 16*/},
+                {72, 80, 80, 88, 96, 96, 88, 80, 72, 72, 72, 64, 56, 48, 40, 32, 24, /*0 - 16*/},
+            },
+            /* nMotDetNoiseLut 5 */
+            {
+                {80, 96, 100, 110, 110, 110, 100, 96, 80, 80, 80, 72, 64, 56, 48, 40, 32, /*0 - 16*/},
+                {80, 96, 100, 110, 110, 110, 100, 96, 80, 80, 80, 72, 64, 56, 48, 40, 32, /*0 - 16*/},
+            },
+            /* nMotDetNoiseLut 6 */
+            {
+                {80, 96, 100, 110, 110, 110, 100, 96, 80, 80, 80, 72, 64, 56, 48, 40, 32, /*0 - 16*/},
+                {80, 96, 100, 110, 110, 110, 100, 96, 80, 80, 80, 72, 64, 56, 48, 40, 32, /*0 - 16*/},
+            },
+            /* nMotDetNoiseLut 7 */
+            {
+                {80, 96, 100, 110, 110, 110, 100, 96, 80, 80, 80, 72, 64, 56, 48, 40, 32, /*0 - 16*/},
+                {80, 96, 100, 110, 110, 110, 100, 96, 80, 80, 80, 72, 64, 56, 48, 40, 32, /*0 - 16*/},
+            },
+            /* nMotDetNoiseLut 8 */
+            {
+                {80, 96, 100, 110, 110, 110, 100, 96, 80, 80, 80, 72, 64, 56, 48, 40, 32, /*0 - 16*/},
+                {80, 96, 100, 110, 110, 110, 100, 96, 80, 80, 80, 72, 64, 56, 48, 40, 32, /*0 - 16*/},
+            },
+            /* nMotDetNoiseLut 9 */
+            {
+                {80, 96, 100, 110, 110, 110, 100, 96, 80, 80, 80, 72, 64, 56, 48, 40, 32, /*0 - 16*/},
+                {80, 96, 100, 110, 110, 110, 100, 96, 80, 80, 80, 72, 64, 56, 48, 40, 32, /*0 - 16*/},
+            },
+            /* nMotDetNoiseLut 10 */
+            {
+                {80, 96, 100, 110, 110, 110, 100, 96, 80, 80, 80, 72, 64, 56, 48, 40, 32, /*0 - 16*/},
+                {80, 96, 100, 110, 110, 110, 100, 96, 80, 80, 80, 72, 64, 56, 48, 40, 32, /*0 - 16*/},
+            },
+            /* nMotDetNoiseLut 11 */
+            {
+                {80, 96, 100, 110, 110, 110, 100, 96, 80, 80, 80, 72, 64, 56, 48, 40, 32, /*0 - 16*/},
+                {80, 96, 100, 110, 110, 110, 100, 96, 80, 80, 80, 72, 64, 56, 48, 40, 32, /*0 - 16*/},
+            },
+        },
+        /* nMotDetStrenLuma[12][2] */
+        {
+            {128, 0, /*0 - 1*/},
+            {128, -4, /*0 - 1*/},
+            {128, -8, /*0 - 1*/},
+            {128, -8, /*0 - 1*/},
+            {128, -8, /*0 - 1*/},
+            {128, -8, /*0 - 1*/},
+            {128, -8, /*0 - 1*/},
+            {128, -8, /*0 - 1*/},
+            {128, -8, /*0 - 1*/},
+            {128, -8, /*0 - 1*/},
+            {128, -8, /*0 - 1*/},
+            {128, -8, /*0 - 1*/},
+        },
+        /* nMotDetStrenChrom[12][2] */
+        {
+            {96, 0, /*0 - 1*/},
+            {96, -8, /*0 - 1*/},
+            {128, -16, /*0 - 1*/},
+            {160, -16, /*0 - 1*/},
+            {160, -16, /*0 - 1*/},
+            {160, -16, /*0 - 1*/},
+            {160, -16, /*0 - 1*/},
+            {160, -16, /*0 - 1*/},
+            {160, -16, /*0 - 1*/},
+            {160, -16, /*0 - 1*/},
+            {160, -16, /*0 - 1*/},
+            {160, -16, /*0 - 1*/},
+        },
+        /* nMotDetSmoothLuma[12][2] */
+        {
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+        },
+        /* nMotDetSmoothChroma[12][2] */
+        {
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+        },
+        /* nMotDetLimitLuma[12][2] */
+        {
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+        },
+        /* nMotDetLimitChrom[12][2] */
+        {
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+            {0, 256, /*0 - 1*/},
+        },
+        /* nMotDetBlendRatio[12][2] */
+        {
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+        },
+        /* nStasUpdateLut[12][2][16] */
+        {
+            /* nStasUpdateLut 0 */
+            {
+                {4, 4, 4, 4, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, /*0 - 15*/},
+                {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, /*0 - 15*/},
+            },
+            /* nStasUpdateLut 1 */
+            {
+                {4, 4, 4, 4, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, /*0 - 15*/},
+                {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, /*0 - 15*/},
+            },
+            /* nStasUpdateLut 2 */
+            {
+                {4, 4, 4, 4, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, /*0 - 15*/},
+                {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, /*0 - 15*/},
+            },
+            /* nStasUpdateLut 3 */
+            {
+                {4, 4, 4, 4, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, /*0 - 15*/},
+                {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, /*0 - 15*/},
+            },
+            /* nStasUpdateLut 4 */
+            {
+                {4, 4, 4, 4, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, /*0 - 15*/},
+                {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, /*0 - 15*/},
+            },
+            /* nStasUpdateLut 5 */
+            {
+                {4, 4, 4, 4, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, /*0 - 15*/},
+                {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, /*0 - 15*/},
+            },
+            /* nStasUpdateLut 6 */
+            {
+                {4, 4, 4, 4, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, /*0 - 15*/},
+                {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, /*0 - 15*/},
+            },
+            /* nStasUpdateLut 7 */
+            {
+                {4, 4, 4, 4, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, /*0 - 15*/},
+                {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, /*0 - 15*/},
+            },
+            /* nStasUpdateLut 8 */
+            {
+                {4, 4, 4, 4, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, /*0 - 15*/},
+                {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, /*0 - 15*/},
+            },
+            /* nStasUpdateLut 9 */
+            {
+                {4, 4, 4, 4, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, /*0 - 15*/},
+                {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, /*0 - 15*/},
+            },
+            /* nStasUpdateLut 10 */
+            {
+                {4, 4, 4, 4, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, /*0 - 15*/},
+                {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, /*0 - 15*/},
+            },
+            /* nStasUpdateLut 11 */
+            {
+                {4, 4, 4, 4, 3, 3, 3, 2, 2, 2, 1, 1, 1, 1, 1, 1, /*0 - 15*/},
+                {15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15, /*0 - 15*/},
+            },
+        },
+        /* nTfRatioLut[12][16] */
+        {
+            {128, 128, 128, 96, 80, 80, 64, 64, 48, 32, 32, 24, 24, 16, 16, 16, /*0 - 15*/},
+            {128, 128, 128, 96, 80, 80, 64, 64, 48, 32, 32, 24, 24, 16, 16, 16, /*0 - 15*/},
+            {128, 128, 128, 96, 80, 80, 64, 64, 48, 32, 32, 24, 24, 16, 16, 16, /*0 - 15*/},
+            {128, 128, 128, 128, 128, 126, 120, 96, 64, 42, 32, 28, 24, 20, 16, 12, /*0 - 15*/},
+            {128, 128, 128, 128, 128, 126, 120, 96, 64, 42, 32, 28, 24, 20, 16, 12, /*0 - 15*/},
+            {128, 128, 128, 128, 128, 126, 120, 96, 64, 42, 32, 28, 24, 20, 16, 12, /*0 - 15*/},
+            {128, 128, 128, 128, 128, 126, 120, 96, 64, 42, 32, 28, 24, 20, 16, 12, /*0 - 15*/},
+            {128, 128, 128, 128, 128, 126, 120, 96, 64, 42, 32, 28, 24, 20, 16, 12, /*0 - 15*/},
+            {128, 128, 128, 128, 128, 126, 120, 96, 64, 42, 32, 28, 24, 20, 16, 12, /*0 - 15*/},
+            {128, 128, 128, 128, 128, 126, 120, 96, 64, 42, 32, 28, 24, 20, 16, 12, /*0 - 15*/},
+            {128, 128, 128, 128, 128, 126, 120, 96, 64, 42, 32, 28, 24, 20, 16, 12, /*0 - 15*/},
+            {128, 128, 128, 128, 128, 126, 120, 96, 64, 42, 32, 28, 24, 20, 16, 12, /*0 - 15*/},
+        },
+        /* nTfRatLimitLuma[12][2][2] */
+        {
+            /* nTfRatLimitLuma 0 */
+            {
+                {0, 255, /*0 - 1*/},
+                {0, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitLuma 1 */
+            {
+                {0, 255, /*0 - 1*/},
+                {0, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitLuma 2 */
+            {
+                {0, 255, /*0 - 1*/},
+                {0, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitLuma 3 */
+            {
+                {48, 255, /*0 - 1*/},
+                {8, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitLuma 4 */
+            {
+                {32, 255, /*0 - 1*/},
+                {0, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitLuma 5 */
+            {
+                {32, 255, /*0 - 1*/},
+                {0, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitLuma 6 */
+            {
+                {32, 255, /*0 - 1*/},
+                {0, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitLuma 7 */
+            {
+                {64, 255, /*0 - 1*/},
+                {16, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitLuma 8 */
+            {
+                {64, 255, /*0 - 1*/},
+                {8, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitLuma 9 */
+            {
+                {64, 255, /*0 - 1*/},
+                {0, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitLuma 10 */
+            {
+                {64, 255, /*0 - 1*/},
+                {0, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitLuma 11 */
+            {
+                {64, 255, /*0 - 1*/},
+                {0, 255, /*0 - 1*/},
+            },
+        },
+        /* nTfRatLimitChroma[12][2][2] */
+        {
+            /* nTfRatLimitChroma 0 */
+            {
+                {0, 255, /*0 - 1*/},
+                {0, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitChroma 1 */
+            {
+                {0, 255, /*0 - 1*/},
+                {0, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitChroma 2 */
+            {
+                {0, 255, /*0 - 1*/},
+                {0, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitChroma 3 */
+            {
+                {64, 255, /*0 - 1*/},
+                {8, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitChroma 4 */
+            {
+                {64, 255, /*0 - 1*/},
+                {0, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitChroma 5 */
+            {
+                {64, 255, /*0 - 1*/},
+                {0, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitChroma 6 */
+            {
+                {64, 255, /*0 - 1*/},
+                {0, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitChroma 7 */
+            {
+                {64, 255, /*0 - 1*/},
+                {16, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitChroma 8 */
+            {
+                {64, 255, /*0 - 1*/},
+                {8, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitChroma 9 */
+            {
+                {64, 255, /*0 - 1*/},
+                {0, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitChroma 10 */
+            {
+                {64, 255, /*0 - 1*/},
+                {0, 255, /*0 - 1*/},
+            },
+            /* nTfRatLimitChroma 11 */
+            {
+                {64, 255, /*0 - 1*/},
+                {0, 255, /*0 - 1*/},
+            },
+        },
+        /* nSf0EdgeStre[12] */
+        {128, 128, 128, 192, 192, 192, 192, 192, 192, 192, 192, 192, /*0 - 11*/},
+        /* nSf0DirStre[12] */
+        {128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 11*/},
+        /* nSf0DetailStre[12] */
+        {128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 11*/},
+        /* nSf0LumaNoiseLut[12][4][9] */
+        {
+            /* nSf0LumaNoiseLut 0 */
+            {
+                {12, 12, 12, 12, 12, 12, 12, 12, 12, /*0 - 8*/},
+                {12, 12, 12, 12, 12, 12, 12, 12, 24, /*0 - 8*/},
+                {8, 8, 8, 8, 8, 8, 8, 8, 8, /*0 - 8*/},
+                {8, 8, 8, 8, 8, 8, 8, 8, 8, /*0 - 8*/},
+            },
+            /* nSf0LumaNoiseLut 1 */
+            {
+                {12, 12, 12, 12, 12, 12, 12, 12, 12, /*0 - 8*/},
+                {12, 12, 12, 12, 12, 12, 12, 12, 12, /*0 - 8*/},
+                {8, 8, 8, 8, 8, 8, 8, 8, 8, /*0 - 8*/},
+                {8, 8, 8, 8, 8, 8, 8, 8, 8, /*0 - 8*/},
+            },
+            /* nSf0LumaNoiseLut 2 */
+            {
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+                {16, 16, 16, 16, 16, 16, 16, 16, 16, /*0 - 8*/},
+                {16, 16, 16, 16, 16, 16, 16, 16, 16, /*0 - 8*/},
+            },
+            /* nSf0LumaNoiseLut 3 */
+            {
+                {96, 80, 64, 56, 48, 48, 48, 48, 48, /*0 - 8*/},
+                {80, 64, 32, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+                {80, 64, 48, 40, 32, 32, 32, 32, 32, /*0 - 8*/},
+                {64, 48, 32, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+            },
+            /* nSf0LumaNoiseLut 4 */
+            {
+                {128, 96, 80, 64, 64, 64, 64, 64, 64, /*0 - 8*/},
+                {80, 64, 48, 40, 32, 32, 32, 32, 32, /*0 - 8*/},
+                {96, 80, 64, 56, 48, 48, 48, 48, 48, /*0 - 8*/},
+                {64, 56, 48, 40, 32, 32, 32, 32, 32, /*0 - 8*/},
+            },
+            /* nSf0LumaNoiseLut 5 */
+            {
+                {128, 96, 80, 64, 64, 64, 64, 64, 64, /*0 - 8*/},
+                {80, 64, 48, 40, 32, 32, 32, 32, 32, /*0 - 8*/},
+                {96, 80, 64, 56, 48, 48, 48, 48, 48, /*0 - 8*/},
+                {64, 56, 48, 40, 32, 32, 32, 32, 32, /*0 - 8*/},
+            },
+            /* nSf0LumaNoiseLut 6 */
+            {
+                {128, 96, 80, 64, 64, 64, 64, 64, 64, /*0 - 8*/},
+                {80, 64, 48, 40, 32, 32, 32, 32, 32, /*0 - 8*/},
+                {96, 80, 64, 56, 48, 48, 48, 48, 48, /*0 - 8*/},
+                {64, 56, 48, 40, 32, 32, 32, 32, 32, /*0 - 8*/},
+            },
+            /* nSf0LumaNoiseLut 7 */
+            {
+                {128, 96, 80, 64, 64, 64, 64, 64, 64, /*0 - 8*/},
+                {80, 64, 48, 40, 32, 32, 32, 32, 32, /*0 - 8*/},
+                {96, 80, 64, 56, 48, 48, 48, 48, 48, /*0 - 8*/},
+                {64, 56, 48, 40, 32, 32, 32, 32, 32, /*0 - 8*/},
+            },
+            /* nSf0LumaNoiseLut 8 */
+            {
+                {192, 128, 96, 80, 64, 64, 64, 64, 64, /*0 - 8*/},
+                {120, 80, 64, 48, 40, 32, 32, 32, 32, /*0 - 8*/},
+                {144, 96, 80, 64, 56, 48, 48, 48, 48, /*0 - 8*/},
+                {96, 64, 56, 48, 40, 32, 32, 32, 32, /*0 - 8*/},
+            },
+            /* nSf0LumaNoiseLut 9 */
+            {
+                {256, 192, 120, 80, 64, 64, 64, 64, 64, /*0 - 8*/},
+                {160, 128, 64, 48, 40, 32, 32, 32, 32, /*0 - 8*/},
+                {192, 160, 96, 64, 56, 48, 48, 48, 48, /*0 - 8*/},
+                {128, 112, 72, 48, 40, 32, 32, 32, 32, /*0 - 8*/},
+            },
+            /* nSf0LumaNoiseLut 10 */
+            {
+                {256, 192, 120, 80, 64, 64, 64, 64, 64, /*0 - 8*/},
+                {160, 128, 64, 48, 40, 32, 32, 32, 32, /*0 - 8*/},
+                {192, 160, 96, 64, 56, 48, 48, 48, 48, /*0 - 8*/},
+                {128, 112, 72, 48, 40, 32, 32, 32, 32, /*0 - 8*/},
+            },
+            /* nSf0LumaNoiseLut 11 */
+            {
+                {256, 192, 120, 80, 64, 64, 64, 64, 64, /*0 - 8*/},
+                {160, 128, 64, 48, 40, 32, 32, 32, 32, /*0 - 8*/},
+                {192, 160, 96, 64, 56, 48, 48, 48, 48, /*0 - 8*/},
+                {128, 112, 72, 48, 40, 32, 32, 32, 32, /*0 - 8*/},
+            },
+        },
+        /* nSf0LumaKernelSize[12][2] */
+        {
+            {1, 1, /*0 - 1*/},
+            {1, 1, /*0 - 1*/},
+            {1, 1, /*0 - 1*/},
+            {1, 0, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 1, /*0 - 1*/},
+            {2, 2, /*0 - 1*/},
+            {2, 2, /*0 - 1*/},
+            {2, 2, /*0 - 1*/},
+        },
+        /* nSf0LumaGauStre[12][2] */
+        {
+            {16, 16, /*0 - 1*/},
+            {16, 16, /*0 - 1*/},
+            {16, 16, /*0 - 1*/},
+            {32, 128, /*0 - 1*/},
+            {32, 128, /*0 - 1*/},
+            {32, 128, /*0 - 1*/},
+            {32, 128, /*0 - 1*/},
+            {32, 128, /*0 - 1*/},
+            {32, 128, /*0 - 1*/},
+            {32, 128, /*0 - 1*/},
+            {32, 128, /*0 - 1*/},
+            {32, 128, /*0 - 1*/},
+        },
+        /* nSf0lumaBlendRatio[12][2][3] */
+        {
+            /* nSf0lumaBlendRatio 0 */
+            {
+                {174, 42, 40, /*0 - 2*/},
+                {174, 42, 40, /*0 - 2*/},
+            },
+            /* nSf0lumaBlendRatio 1 */
+            {
+                {174, 42, 40, /*0 - 2*/},
+                {174, 42, 40, /*0 - 2*/},
+            },
+            /* nSf0lumaBlendRatio 2 */
+            {
+                {112, 32, 112, /*0 - 2*/},
+                {64, 0, 192, /*0 - 2*/},
+            },
+            /* nSf0lumaBlendRatio 3 */
+            {
+                {112, 32, 112, /*0 - 2*/},
+                {64, 0, 192, /*0 - 2*/},
+            },
+            /* nSf0lumaBlendRatio 4 */
+            {
+                {160, 32, 64, /*0 - 2*/},
+                {64, 0, 192, /*0 - 2*/},
+            },
+            /* nSf0lumaBlendRatio 5 */
+            {
+                {128, 32, 96, /*0 - 2*/},
+                {64, 0, 192, /*0 - 2*/},
+            },
+            /* nSf0lumaBlendRatio 6 */
+            {
+                {128, 32, 96, /*0 - 2*/},
+                {64, 0, 192, /*0 - 2*/},
+            },
+            /* nSf0lumaBlendRatio 7 */
+            {
+                {96, 32, 128, /*0 - 2*/},
+                {64, 0, 192, /*0 - 2*/},
+            },
+            /* nSf0lumaBlendRatio 8 */
+            {
+                {96, 32, 128, /*0 - 2*/},
+                {64, 0, 192, /*0 - 2*/},
+            },
+            /* nSf0lumaBlendRatio 9 */
+            {
+                {96, 32, 128, /*0 - 2*/},
+                {64, 0, 192, /*0 - 2*/},
+            },
+            /* nSf0lumaBlendRatio 10 */
+            {
+                {96, 32, 128, /*0 - 2*/},
+                {64, 0, 192, /*0 - 2*/},
+            },
+            /* nSf0lumaBlendRatio 11 */
+            {
+                {96, 32, 128, /*0 - 2*/},
+                {64, 0, 192, /*0 - 2*/},
+            },
+        },
+        /* nSf0ChromaAttenStre[12][2] */
+        {
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+        },
+        /* nSf0ChromaAttenLimit[12][2] */
+        {
+            {230, 250, /*0 - 1*/},
+            {230, 250, /*0 - 1*/},
+            {230, 250, /*0 - 1*/},
+            {220, 240, /*0 - 1*/},
+            {200, 230, /*0 - 1*/},
+            {200, 230, /*0 - 1*/},
+            {200, 230, /*0 - 1*/},
+            {200, 240, /*0 - 1*/},
+            {200, 240, /*0 - 1*/},
+            {180, 240, /*0 - 1*/},
+            {160, 230, /*0 - 1*/},
+            {140, 210, /*0 - 1*/},
+        },
+        /* nSf0ChromaProtLut[12][2][9] */
+        {
+            /* nSf0ChromaProtLut 0 */
+            {
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+            },
+            /* nSf0ChromaProtLut 1 */
+            {
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+            },
+            /* nSf0ChromaProtLut 2 */
+            {
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+            },
+            /* nSf0ChromaProtLut 3 */
+            {
+                {96, 80, 64, 64, 64, 64, 64, 64, 64, /*0 - 8*/},
+                {80, 72, 64, 48, 48, 48, 48, 48, 48, /*0 - 8*/},
+            },
+            /* nSf0ChromaProtLut 4 */
+            {
+                {128, 128, 96, 80, 72, 64, 64, 64, 64, /*0 - 8*/},
+                {128, 128, 96, 80, 72, 64, 64, 64, 64, /*0 - 8*/},
+            },
+            /* nSf0ChromaProtLut 5 */
+            {
+                {128, 128, 128, 128, 96, 64, 64, 64, 64, /*0 - 8*/},
+                {128, 128, 128, 128, 96, 64, 64, 64, 64, /*0 - 8*/},
+            },
+            /* nSf0ChromaProtLut 6 */
+            {
+                {160, 128, 128, 128, 96, 96, 96, 96, 96, /*0 - 8*/},
+                {128, 128, 128, 128, 96, 64, 64, 64, 64, /*0 - 8*/},
+            },
+            /* nSf0ChromaProtLut 7 */
+            {
+                {192, 160, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+                {128, 128, 96, 80, 64, 64, 64, 64, 64, /*0 - 8*/},
+            },
+            /* nSf0ChromaProtLut 8 */
+            {
+                {192, 160, 128, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+                {128, 128, 96, 80, 64, 64, 64, 64, 64, /*0 - 8*/},
+            },
+            /* nSf0ChromaProtLut 9 */
+            {
+                {256, 192, 160, 128, 128, 128, 128, 128, 128, /*0 - 8*/},
+                {160, 144, 112, 96, 80, 64, 64, 64, 64, /*0 - 8*/},
+            },
+            /* nSf0ChromaProtLut 10 */
+            {
+                {384, 288, 192, 160, 128, 128, 128, 128, 128, /*0 - 8*/},
+                {256, 192, 144, 96, 80, 64, 64, 64, 64, /*0 - 8*/},
+            },
+            /* nSf0ChromaProtLut 11 */
+            {
+                {384, 288, 192, 160, 128, 128, 128, 128, 128, /*0 - 8*/},
+                {256, 192, 144, 96, 80, 64, 64, 64, 64, /*0 - 8*/},
+            },
+        },
+        /* nSf1LumaMedEn[12] */
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 11*/},
+        /* nSf1LumaGauStre[12][2] */
+        {
+            {16, 0, /*0 - 1*/},
+            {16, 0, /*0 - 1*/},
+            {16, 0, /*0 - 1*/},
+            {32, 0, /*0 - 1*/},
+            {32, 0, /*0 - 1*/},
+            {32, 0, /*0 - 1*/},
+            {32, 0, /*0 - 1*/},
+            {32, 0, /*0 - 1*/},
+            {32, 0, /*0 - 1*/},
+            {32, 0, /*0 - 1*/},
+            {32, 0, /*0 - 1*/},
+            {32, 0, /*0 - 1*/},
+        },
+        /* nSf1LumaGauRatio[12][2] */
+        {
+            {16, 16, /*0 - 1*/},
+            {16, 16, /*0 - 1*/},
+            {16, 16, /*0 - 1*/},
+            {32, 16, /*0 - 1*/},
+            {32, 16, /*0 - 1*/},
+            {32, 16, /*0 - 1*/},
+            {32, 16, /*0 - 1*/},
+            {32, 16, /*0 - 1*/},
+            {32, 16, /*0 - 1*/},
+            {32, 16, /*0 - 1*/},
+            {32, 16, /*0 - 1*/},
+            {32, 16, /*0 - 1*/},
+        },
+        /* nSf1LumaKernelSize[12] */
+        {2, 2, 2, 1, 1, 1, 1, 1, 1, 2, 2, 2, /*0 - 11*/},
+        /* nSf1LumaNoiseLut[12][2][9] */
+        {
+            /* nSf1LumaNoiseLut 0 */
+            {
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+            },
+            /* nSf1LumaNoiseLut 1 */
+            {
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+            },
+            /* nSf1LumaNoiseLut 2 */
+            {
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+                {24, 24, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+            },
+            /* nSf1LumaNoiseLut 3 */
+            {
+                {64, 56, 48, 48, 48, 48, 48, 44, 40, /*0 - 8*/},
+                {64, 56, 40, 32, 32, 32, 32, 32, 32, /*0 - 8*/},
+            },
+            /* nSf1LumaNoiseLut 4 */
+            {
+                {96, 80, 72, 64, 56, 56, 56, 48, 48, /*0 - 8*/},
+                {64, 56, 48, 48, 48, 48, 48, 44, 40, /*0 - 8*/},
+            },
+            /* nSf1LumaNoiseLut 5 */
+            {
+                {128, 112, 96, 80, 80, 80, 72, 64, 64, /*0 - 8*/},
+                {96, 80, 72, 64, 56, 56, 56, 48, 48, /*0 - 8*/},
+            },
+            /* nSf1LumaNoiseLut 6 */
+            {
+                {128, 112, 96, 80, 80, 80, 72, 64, 64, /*0 - 8*/},
+                {96, 80, 72, 64, 56, 56, 56, 48, 48, /*0 - 8*/},
+            },
+            /* nSf1LumaNoiseLut 7 */
+            {
+                {128, 112, 96, 80, 80, 80, 72, 64, 64, /*0 - 8*/},
+                {96, 80, 72, 64, 56, 56, 56, 48, 48, /*0 - 8*/},
+            },
+            /* nSf1LumaNoiseLut 8 */
+            {
+                {192, 144, 128, 96, 96, 88, 80, 72, 64, /*0 - 8*/},
+                {128, 112, 96, 80, 80, 80, 72, 64, 64, /*0 - 8*/},
+            },
+            /* nSf1LumaNoiseLut 9 */
+            {
+                {256, 192, 144, 128, 96, 96, 88, 80, 72, /*0 - 8*/},
+                {192, 128, 112, 96, 80, 80, 80, 72, 64, /*0 - 8*/},
+            },
+            /* nSf1LumaNoiseLut 10 */
+            {
+                {288, 256, 192, 144, 128, 96, 96, 88, 80, /*0 - 8*/},
+                {192, 160, 128, 112, 96, 80, 80, 80, 72, /*0 - 8*/},
+            },
+            /* nSf1LumaNoiseLut 11 */
+            {
+                {288, 256, 192, 144, 128, 96, 96, 88, 80, /*0 - 8*/},
+                {192, 160, 128, 112, 96, 80, 80, 80, 72, /*0 - 8*/},
+            },
+        },
+        /* nSf1LumaIdrThre[12][2] */
+        {
+            {32, 64, /*0 - 1*/},
+            {32, 64, /*0 - 1*/},
+            {32, 64, /*0 - 1*/},
+            {48, 96, /*0 - 1*/},
+            {64, 128, /*0 - 1*/},
+            {96, 192, /*0 - 1*/},
+            {128, 256, /*0 - 1*/},
+            {128, 256, /*0 - 1*/},
+            {128, 256, /*0 - 1*/},
+            {128, 256, /*0 - 1*/},
+            {128, 256, /*0 - 1*/},
+            {128, 256, /*0 - 1*/},
+        },
+        /* nSf1LumaIdrGain[12][2] */
+        {
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+        },
+        /* nSf1LumaClipLevel[12][2] */
+        {
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+        },
+        /* nSf1LumaCoring[12][2] */
+        {
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {16, 0, /*0 - 1*/},
+            {32, 16, /*0 - 1*/},
+            {64, 32, /*0 - 1*/},
+            {96, 64, /*0 - 1*/},
+            {96, 64, /*0 - 1*/},
+            {16, 0, /*0 - 1*/},
+            {16, 0, /*0 - 1*/},
+            {16, 0, /*0 - 1*/},
+            {16, 0, /*0 - 1*/},
+            {16, 0, /*0 - 1*/},
+        },
+        /* nSf1LumaBlendRatio[12][2] */
+        {
+            {24, 224, /*0 - 1*/},
+            {24, 224, /*0 - 1*/},
+            {24, 128, /*0 - 1*/},
+            {24, 128, /*0 - 1*/},
+            {20, 96, /*0 - 1*/},
+            {16, 96, /*0 - 1*/},
+            {16, 128, /*0 - 1*/},
+            {28, 192, /*0 - 1*/},
+            {32, 224, /*0 - 1*/},
+            {32, 224, /*0 - 1*/},
+            {32, 224, /*0 - 1*/},
+            {32, 224, /*0 - 1*/},
+        },
+        /* nSf1ChromaCoring[12] */
+        {130, 130, 256, 384, 512, 1023, 1023, 1023, 1023, 1023, 1023, 1023, /*0 - 11*/},
+        /* nSf1ChromaBlendRatio[12] */
+        {128, 128, 96, 64, 32, 24, 24, 48, 24, 24, 24, 24, /*0 - 11*/},
+        /* nSf2LumaGauStre[12][2] */
+        {
+            {16, 16, /*0 - 1*/},
+            {16, 16, /*0 - 1*/},
+            {16, 16, /*0 - 1*/},
+            {64, 64, /*0 - 1*/},
+            {64, 64, /*0 - 1*/},
+            {64, 64, /*0 - 1*/},
+            {64, 64, /*0 - 1*/},
+            {64, 64, /*0 - 1*/},
+            {64, 64, /*0 - 1*/},
+            {64, 64, /*0 - 1*/},
+            {64, 64, /*0 - 1*/},
+            {64, 64, /*0 - 1*/},
+        },
+        /* nSf2LumaMedEn[12] */
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 11*/},
+        /* nSf2KernelSize[12] */
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*0 - 11*/},
+        /* nSf2NoiseLut[12][2][9] */
+        {
+            /* nSf2NoiseLut 0 */
+            {
+                {16, 16, 16, 16, 16, 16, 16, 16, 16, /*0 - 8*/},
+                {16, 16, 16, 16, 16, 16, 16, 16, 16, /*0 - 8*/},
+            },
+            /* nSf2NoiseLut 1 */
+            {
+                {16, 16, 16, 16, 16, 16, 16, 16, 16, /*0 - 8*/},
+                {16, 16, 16, 16, 16, 16, 16, 16, 16, /*0 - 8*/},
+            },
+            /* nSf2NoiseLut 2 */
+            {
+                {16, 16, 16, 16, 16, 16, 16, 16, 16, /*0 - 8*/},
+                {16, 16, 16, 16, 16, 16, 16, 16, 16, /*0 - 8*/},
+            },
+            /* nSf2NoiseLut 3 */
+            {
+                {48, 32, 24, 24, 24, 24, 24, 24, 24, /*0 - 8*/},
+                {32, 24, 16, 16, 16, 16, 16, 16, 16, /*0 - 8*/},
+            },
+            /* nSf2NoiseLut 4 */
+            {
+                {128, 96, 64, 64, 64, 64, 64, 64, 64, /*0 - 8*/},
+                {96, 64, 48, 48, 48, 48, 48, 48, 48, /*0 - 8*/},
+            },
+            /* nSf2NoiseLut 5 */
+            {
+                {192, 144, 96, 96, 96, 96, 96, 96, 96, /*0 - 8*/},
+                {128, 96, 64, 64, 64, 64, 64, 64, 64, /*0 - 8*/},
+            },
+            /* nSf2NoiseLut 6 */
+            {
+                {192, 144, 96, 96, 96, 96, 96, 96, 96, /*0 - 8*/},
+                {128, 96, 64, 64, 64, 64, 64, 64, 64, /*0 - 8*/},
+            },
+            /* nSf2NoiseLut 7 */
+            {
+                {192, 144, 96, 96, 96, 96, 96, 96, 96, /*0 - 8*/},
+                {128, 96, 64, 64, 64, 64, 64, 64, 64, /*0 - 8*/},
+            },
+            /* nSf2NoiseLut 8 */
+            {
+                {192, 144, 96, 96, 96, 96, 96, 96, 96, /*0 - 8*/},
+                {128, 96, 64, 64, 64, 64, 64, 64, 64, /*0 - 8*/},
+            },
+            /* nSf2NoiseLut 9 */
+            {
+                {256, 192, 144, 96, 96, 96, 96, 96, 96, /*0 - 8*/},
+                {160, 128, 96, 64, 64, 64, 64, 64, 64, /*0 - 8*/},
+            },
+            /* nSf2NoiseLut 10 */
+            {
+                {256, 192, 144, 96, 96, 96, 96, 96, 96, /*0 - 8*/},
+                {160, 128, 96, 64, 64, 64, 64, 64, 64, /*0 - 8*/},
+            },
+            /* nSf2NoiseLut 11 */
+            {
+                {256, 192, 144, 96, 96, 96, 96, 96, 96, /*0 - 8*/},
+                {160, 128, 96, 64, 64, 64, 64, 64, 64, /*0 - 8*/},
+            },
+        },
+        /* nSf2BlendRatio[12][2][3] */
+        {
+            /* nSf2BlendRatio 0 */
+            {
+                {128, 32, 96, /*0 - 2*/},
+                {128, 32, 96, /*0 - 2*/},
+            },
+            /* nSf2BlendRatio 1 */
+            {
+                {128, 32, 96, /*0 - 2*/},
+                {128, 32, 96, /*0 - 2*/},
+            },
+            /* nSf2BlendRatio 2 */
+            {
+                {128, 32, 96, /*0 - 2*/},
+                {128, 32, 96, /*0 - 2*/},
+            },
+            /* nSf2BlendRatio 3 */
+            {
+                {128, 32, 96, /*0 - 2*/},
+                {128, 32, 96, /*0 - 2*/},
+            },
+            /* nSf2BlendRatio 4 */
+            {
+                {128, 32, 96, /*0 - 2*/},
+                {96, 16, 144, /*0 - 2*/},
+            },
+            /* nSf2BlendRatio 5 */
+            {
+                {128, 32, 96, /*0 - 2*/},
+                {96, 32, 128, /*0 - 2*/},
+            },
+            /* nSf2BlendRatio 6 */
+            {
+                {128, 32, 96, /*0 - 2*/},
+                {96, 32, 128, /*0 - 2*/},
+            },
+            /* nSf2BlendRatio 7 */
+            {
+                {96, 32, 128, /*0 - 2*/},
+                {96, 0, 160, /*0 - 2*/},
+            },
+            /* nSf2BlendRatio 8 */
+            {
+                {96, 32, 128, /*0 - 2*/},
+                {96, 0, 160, /*0 - 2*/},
+            },
+            /* nSf2BlendRatio 9 */
+            {
+                {96, 32, 128, /*0 - 2*/},
+                {96, 0, 160, /*0 - 2*/},
+            },
+            /* nSf2BlendRatio 10 */
+            {
+                {96, 32, 128, /*0 - 2*/},
+                {96, 0, 160, /*0 - 2*/},
+            },
+            /* nSf2BlendRatio 11 */
+            {
+                {96, 32, 128, /*0 - 2*/},
+                {96, 0, 160, /*0 - 2*/},
+            },
+        },
+        /* nExtMaskStrenLuma[12] */
+        {128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 11*/},
+        /* nExtMaskStrenChrom[12] */
+        {128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 11*/},
+        /* nExtMaskStrenStatus[12] */
+        {128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, 128, /*0 - 11*/},
+        /* nExtMaskRatioLuma[12][2] */
+        {
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+        },
+        /* nExtMaskRatioChrom[12][2] */
+        {
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+        },
+        /* nExtMaskRatioStatus[12][2] */
+        {
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+        },
+        /* nY3dnrPos[12] */
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 11*/},
+        /* nStaRefineErode[12] */
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 11*/},
+        /* nSfGuideMapLuma[12][2] */
+        {
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {128, 256, /*0 - 1*/},
+            {128, 256, /*0 - 1*/},
+            {128, 256, /*0 - 1*/},
+            {128, 256, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+        },
+        /* nSfGuideMapChroma[12][2] */
+        {
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {128, 0, /*0 - 1*/},
+            {256, 0, /*0 - 1*/},
+            {256, 0, /*0 - 1*/},
+            {256, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+        },
+    },
+};
+
+const static AX_ISP_IQ_SHARPEN_PARAM_T sharpen_param_sdr = {
+    /* nShpEn */
+    1,
+    /* nAutoMode */
+    1,
+    /* nRefMode */
+    1,
+    /* tMaskControl */
+    {
+        /* nMotionMaskEn */
+        1,
+        /* nShpClnpNpuMaskEn */
+        1,
+        /* nShpLumaMaskLut[17] */
+        {0, 0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200, 220, 240, 255, 255, 255, /*0 - 16*/},
+    },
+    /* tFineGrainNoise */
+    {
+        /* nGrainNoiseEn */
+        0,
+        /* nGnMotionMskEn */
+        0,
+        /* nGnMotionLut[5] */
+        {0, 0, 0, 0, 0, /*0 - 4*/},
+        /* nGnLumaMskEn */
+        0,
+        /* nGnLumaLut[5] */
+        {0, 0, 0, 0, 0, /*0 - 4*/},
+        /* nGnTextureMskEn */
+        0,
+        /* nGnTextureLut[9] */
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 8*/},
+        /* nGnClnpMskEn[4] */
+        {0, 0, 0, 0, /*0 - 3*/},
+        /* nGnClnpLut[4][5] */
+        {
+            {0, 0, 0, 0, 0, /*0 - 4*/},
+            {0, 0, 0, 0, 0, /*0 - 4*/},
+            {0, 0, 0, 0, 0, /*0 - 4*/},
+            {0, 0, 0, 0, 0, /*0 - 4*/},
+        },
+    },
+    /* tOsStaticMotion */
+    {
+        /* nOsStaticLimit[2] */
+        {127, 96, /*0 - 1*/},
+        /* nOsStaticGain[2] */
+        {3, 4, /*0 - 1*/},
+        /* nOsMotionLimit[2] */
+        {64, 48, /*0 - 1*/},
+        /* nOsMotionGain[2] */
+        {5, 4, /*0 - 1*/},
+    },
+    /* tCommonLutCore */
+    {
+        /* nCommonLutEnable */
+        0,
+        /* nCommonMotionLut[5] */
+        {0, 0, 0, 0, 0, /*0 - 4*/},
+        /* nCommonLumaLut[5] */
+        {0, 0, 0, 0, 0, /*0 - 4*/},
+        /* nCommonTextureStaticLut[9] */
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 8*/},
+        /* nCommonTexturemotionLut[9] */
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 8*/},
+        /* nCommonClnpLut[4][5] */
+        {
+            {0, 0, 0, 0, 0, /*0 - 4*/},
+            {0, 0, 0, 0, 0, /*0 - 4*/},
+            {0, 0, 0, 0, 0, /*0 - 4*/},
+            {0, 0, 0, 0, 0, /*0 - 4*/},
+        },
+    },
+    /* tColorTarget */
+    {
+        /* nColorEnable[8] */
+        {1, 1, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+        /* nColorCenter[8][3] */
+        {
+            {440, -171, -175, /*0 - 2*/},
+            {748, -132, 96, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+        },
+        /* nColorRange[8][3] */
+        {
+            {384, 148, 172, /*0 - 2*/},
+            {128, 48, 32, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+        },
+        /* nColorSmooth[8][3] */
+        {
+            {7, 2, 2, /*0 - 2*/},
+            {6, 3, 3, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+        },
+        /* nColorIoFlag[8] */
+        {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+        /* nColorMaskIndex[8] */
+        {0, 1, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+        /* nColorMaskLimit[8] */
+        {128, 128, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+    },
+    /* tC3x3Control */
+    {
+        /* nC3x3Enable */
+        1,
+        /* nC3x3MotionMskEn */
+        1,
+        /* nC3x3MotionLutLevel */
+        0,
+        /* nC3x3LumaMskEn */
+        1,
+        /* nC3x3LumaLutLevel */
+        0,
+        /* nC3x3TextureMskEn */
+        1,
+        /* nC3x3TextureLutLevel */
+        0,
+        /* nC3x3TextureLutMotionLevel */
+        0,
+        /* nC3x3ClnpMskEn[4] */
+        {1, 1, 0, 0, /*0 - 3*/},
+        /* nC3x3ClnpLutLevel[4] */
+        {0, 0, 0, 0, /*0 - 3*/},
+        /* nC3x3MotionLut[5] */
+        {0, 0, 0, -32, -64, /*0 - 4*/},
+        /* nC3x3LumaLut[5] */
+        {-64, -32, 0, 0, -32, /*0 - 4*/},
+        /* nC3x3TextureLut[9] */
+        {0, 32, 64, 96, 127, 127, 127, 127, 127, /*0 - 8*/},
+        /* nC3x3TextureLutMotion[9] */
+        {0, 32, 64, 96, 96, 96, 96, 96, 96, /*0 - 8*/},
+        /* nC3x3ClnpLut[4][5] */
+        {
+            {0, 8, 24, 48, 64, /*0 - 4*/},
+            {0, -8, -24, -48, -64, /*0 - 4*/},
+            {0, 0, 0, 0, 0, /*0 - 4*/},
+            {0, 0, 0, 0, 0, /*0 - 4*/},
+        },
+        /* nC3x3OsLimit[2] */
+        {64, 64, /*0 - 1*/},
+        /* nC3x3OsGain[2] */
+        {2, 2, /*0 - 1*/},
+    },
+    /* tC5x5Control */
+    {
+        /* nC5x5Enable */
+        1,
+        /* nC5x5MotionMskEn */
+        1,
+        /* nC5x5MotionLutLevel */
+        0,
+        /* nC5x5LumaMskEn */
+        1,
+        /* nC5x5LumaLutLevel */
+        0,
+        /* nC5x5TextureMskEn */
+        1,
+        /* nC5x5TextureLutLevel */
+        0,
+        /* nC5x5TextureLutMotionLevel */
+        0,
+        /* nC5x5ClnpMskEn[4] */
+        {1, 1, 0, 0, /*0 - 3*/},
+        /* nC5x5ClnpLutLevel[4] */
+        {0, 0, 0, 0, /*0 - 3*/},
+        /* nC5x5MotionLut[5] */
+        {0, 0, 0, -8, -16, /*0 - 4*/},
+        /* nC5x5LumaLut[5] */
+        {-96, -48, 0, 0, -64, /*0 - 4*/},
+        /* nC5x5TextureLut[9] */
+        {-32, 0, 32, 64, 96, 96, 96, 96, 96, /*0 - 8*/},
+        /* nC5x5TextureLutMotion[9] */
+        {-32, -16, -8, 0, 8, 16, 24, 32, 32, /*0 - 8*/},
+        /* nC5x5ClnpLut[4][5] */
+        {
+            {0, 8, 24, 48, 64, /*0 - 4*/},
+            {0, -8, -24, -32, -48, /*0 - 4*/},
+            {0, 0, 0, 0, 0, /*0 - 4*/},
+            {0, 0, 0, 0, 0, /*0 - 4*/},
+        },
+        /* nC5x5OsLimit[2] */
+        {48, 32, /*0 - 1*/},
+        /* nC5x5OsGain[2] */
+        {2, 2, /*0 - 1*/},
+    },
+    /* tD5x5Control */
+    {
+        /* nD5x5Enable */
+        1,
+        /* nD5x5MotionMskEn */
+        1,
+        /* nD5x5MotionLutLevel */
+        0,
+        /* nD5x5LumaMskEn */
+        1,
+        /* nD5x5LumaLutLevel */
+        0,
+        /* nD5x5TextureMskEn */
+        1,
+        /* nD5x5TextureLutLevel */
+        0,
+        /* nD5x5TextureLutMotionLevel */
+        0,
+        /* nD5x5ClnpMskEn[4] */
+        {1, 1, 0, 0, /*0 - 3*/},
+        /* nD5x5ClnpLutLevel[4] */
+        {0, 0, 0, 0, /*0 - 3*/},
+        /* nD5x5MotionLut[5] */
+        {0, 0, 0, 0, 0, /*0 - 4*/},
+        /* nD5x5LumaLut[5] */
+        {-48, -24, 8, 8, -32, /*0 - 4*/},
+        /* nD5x5TextureLut[9] */
+        {0, 32, 64, 96, 127, 127, 127, 127, 127, /*0 - 8*/},
+        /* nD5x5TextureLutMotion[9] */
+        {0, 32, 64, 96, 96, 96, 96, 96, 96, /*0 - 8*/},
+        /* nD5x5ClnpLut[4][5] */
+        {
+            {0, 8, 24, 48, 64, /*0 - 4*/},
+            {0, -8, -24, -48, -64, /*0 - 4*/},
+            {0, 0, 0, 0, 0, /*0 - 4*/},
+            {0, 0, 0, 0, 0, /*0 - 4*/},
+        },
+        /* nD5x5OsLimit[2] */
+        {64, 64, /*0 - 1*/},
+        /* nD5x5OsGain[2] */
+        {2, 2, /*0 - 1*/},
+        /* nD5x5DirEdgeLevelLut[9] */
+        {64, 64, 108, 152, 192, 192, 192, 224, 255, /*0 - 8*/},
+    },
+    /* tC7x7Control */
+    {
+        /* nC7x7Enable */
+        1,
+        /* nC7x7MotionMskEn */
+        1,
+        /* nC7x7MotionLutLevel */
+        0,
+        /* nC7x7LumaMskEn */
+        1,
+        /* nC7x7LumaLutLevel */
+        0,
+        /* nC7x7TextureMskEn */
+        1,
+        /* nC7x7TextureLutLevel */
+        0,
+        /* nC7x7TextureLutMotionLevel */
+        0,
+        /* nC7x7ClnpMskEn[4] */
+        {1, 0, 0, 0, /*0 - 3*/},
+        /* nC7x7ClnpLutLevel[4] */
+        {0, 0, 0, 0, /*0 - 3*/},
+        /* nC7x7MotionLut[5] */
+        {0, 0, 0, -12, -24, /*0 - 4*/},
+        /* nC7x7LumaLut[5] */
+        {-96, -48, 0, 0, -64, /*0 - 4*/},
+        /* nC7x7TextureLut[9] */
+        {0, 0, 0, 16, 32, 48, 64, 64, 64, /*0 - 8*/},
+        /* nC7x7TextureLutMotion[9] */
+        {-32, -16, -8, 0, 0, 0, 4, 8, 16, /*0 - 8*/},
+        /* nC7x7ClnpLut[4][5] */
+        {
+            {0, 8, 24, 48, 64, /*0 - 4*/},
+            {0, 0, 0, 0, 0, /*0 - 4*/},
+            {0, 0, 0, 0, 0, /*0 - 4*/},
+            {0, 0, 0, 0, 0, /*0 - 4*/},
+        },
+        /* nC7x7OsLimit[2] */
+        {16, 16, /*0 - 1*/},
+        /* nC7x7OsGain[2] */
+        {1, 1, /*0 - 1*/},
+    },
+    /* tManualParam */
+    {
+        /* nC3x3LogGain[2] */
+        {127, 127, /*0 - 1*/},
+        /* nC3x3GainLimit[2] */
+        {0, 255, /*0 - 1*/},
+        /* nC3x3CorBaseGain */
+        0,
+        /* nC3x3CorSlope */
+        0,
+        /* nC3x3CorOffset */
+        0,
+        /* nC3x3Limit[2] */
+        {1023, 64, /*0 - 1*/},
+        /* nC5x5LogGain[2] */
+        {64, 64, /*0 - 1*/},
+        /* nC5x5GainLimit[2] */
+        {0, 255, /*0 - 1*/},
+        /* nC5x5CorBaseGain */
+        0,
+        /* nC5x5CorSlope */
+        0,
+        /* nC5x5CorOffset */
+        0,
+        /* nC5x5Limit[2] */
+        {1023, 1023, /*0 - 1*/},
+        /* nD5x5LogGain[2] */
+        {72, 64, /*0 - 1*/},
+        /* nD5x5GainLimit[2] */
+        {0, 255, /*0 - 1*/},
+        /* nD5x5CorBaseGain */
+        0,
+        /* nD5x5CorSlope */
+        0,
+        /* nD5x5CorOffset */
+        0,
+        /* nD5x5Limit[2] */
+        {512, 256, /*0 - 1*/},
+        /* nC7x7LogGain[2] */
+        {54, 32, /*0 - 1*/},
+        /* nC7x7GainLimit[2] */
+        {0, 255, /*0 - 1*/},
+        /* nC7x7CorBaseGain */
+        0,
+        /* nC7x7CorSlope */
+        0,
+        /* nC7x7CorOffset */
+        0,
+        /* nC7x7Limit[2] */
+        {1023, 1023, /*0 - 1*/},
+        /* nShpHpfBsigma[3] */
+        {8, 16, 24, /*0 - 2*/},
+        /* nShpHpfDsigma[3] */
+        {16, 24, 32, /*0 - 2*/},
+        /* nShpHpfScale[3] */
+        {128, 128, 128, /*0 - 2*/},
+        /* nShpGain[2] */
+        {16, 16, /*0 - 1*/},
+        /* nShpLimit[2] */
+        {-4096, 4095, /*0 - 1*/},
+        /* nGrainLogGain */
+        0,
+    },
+    /* tAutoParam */
+    {
+        /* nParamGrpNum */
+        12,
+        /* nRefVal[12] */
+        {1024, 2048, 4096, 8192, 16384, 24576, 32768, 55296, 131072, 262144, 524288, 1048576, /*0 - 11*/},
+        /* nC3x3LogGain[12][2] */
+        {
+            {127, 127, /*0 - 1*/},
+            {96, 96, /*0 - 1*/},
+            {78, 78, /*0 - 1*/},
+            {64, 48, /*0 - 1*/},
+            {64, 48, /*0 - 1*/},
+            {64, 48, /*0 - 1*/},
+            {64, 48, /*0 - 1*/},
+            {64, 48, /*0 - 1*/},
+            {64, 48, /*0 - 1*/},
+            {64, 48, /*0 - 1*/},
+            {64, 48, /*0 - 1*/},
+            {64, 48, /*0 - 1*/},
+        },
+        /* nC3x3GainLimit[12][2] */
+        {
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {64, 128, /*0 - 1*/},
+            {0, 80, /*0 - 1*/},
+            {0, 80, /*0 - 1*/},
+            {0, 80, /*0 - 1*/},
+            {0, 80, /*0 - 1*/},
+            {0, 64, /*0 - 1*/},
+            {0, 64, /*0 - 1*/},
+            {0, 64, /*0 - 1*/},
+            {0, 64, /*0 - 1*/},
+            {0, 64, /*0 - 1*/},
+        },
+        /* nC3x3CorBaseGain[12] */
+        {0, 0, 0, 2, 2, 2, 2, 2, 2, 2, 2, 2, /*0 - 11*/},
+        /* nC3x3CorSlope[12] */
+        {2, 2, 2, 8, 8, 8, 8, 8, 8, 8, 8, 8, /*0 - 11*/},
+        /* nC3x3CorOffset[12] */
+        {4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, /*0 - 11*/},
+        /* nC3x3Limit[12][2] */
+        {
+            {512, 512, /*0 - 1*/},
+            {512, 512, /*0 - 1*/},
+            {512, 512, /*0 - 1*/},
+            {512, 512, /*0 - 1*/},
+            {512, 512, /*0 - 1*/},
+            {512, 512, /*0 - 1*/},
+            {512, 512, /*0 - 1*/},
+            {512, 512, /*0 - 1*/},
+            {512, 512, /*0 - 1*/},
+            {512, 512, /*0 - 1*/},
+            {512, 512, /*0 - 1*/},
+            {512, 512, /*0 - 1*/},
+        },
+        /* nC5x5LogGain[12][2] */
+        {
+            {64, 64, /*0 - 1*/},
+            {64, 64, /*0 - 1*/},
+            {64, 64, /*0 - 1*/},
+            {48, 32, /*0 - 1*/},
+            {48, 32, /*0 - 1*/},
+            {48, 32, /*0 - 1*/},
+            {48, 32, /*0 - 1*/},
+            {48, 32, /*0 - 1*/},
+            {48, 32, /*0 - 1*/},
+            {48, 32, /*0 - 1*/},
+            {48, 32, /*0 - 1*/},
+            {48, 32, /*0 - 1*/},
+        },
+        /* nC5x5GainLimit[12][2] */
+        {
+            {128, 128, /*0 - 1*/},
+            {64, 128, /*0 - 1*/},
+            {32, 128, /*0 - 1*/},
+            {0, 80, /*0 - 1*/},
+            {0, 80, /*0 - 1*/},
+            {0, 80, /*0 - 1*/},
+            {0, 80, /*0 - 1*/},
+            {0, 64, /*0 - 1*/},
+            {0, 64, /*0 - 1*/},
+            {0, 64, /*0 - 1*/},
+            {0, 64, /*0 - 1*/},
+            {0, 64, /*0 - 1*/},
+        },
+        /* nC5x5CorBaseGain[12] */
+        {0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*0 - 11*/},
+        /* nC5x5CorSlope[12] */
+        {4, 4, 4, 8, 8, 8, 8, 8, 8, 8, 8, 8, /*0 - 11*/},
+        /* nC5x5CorOffset[12] */
+        {0, 0, 0, 12, 12, 12, 12, 12, 12, 12, 12, 12, /*0 - 11*/},
+        /* nC5x5Limit[12][2] */
+        {
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+            {256, 256, /*0 - 1*/},
+        },
+        /* nD5x5LogGain[12][2] */
+        {
+            {72, 64, /*0 - 1*/},
+            {72, 64, /*0 - 1*/},
+            {72, 64, /*0 - 1*/},
+            {96, 64, /*0 - 1*/},
+            {96, 64, /*0 - 1*/},
+            {96, 64, /*0 - 1*/},
+            {96, 64, /*0 - 1*/},
+            {96, 64, /*0 - 1*/},
+            {96, 64, /*0 - 1*/},
+            {96, 64, /*0 - 1*/},
+            {96, 64, /*0 - 1*/},
+            {96, 64, /*0 - 1*/},
+        },
+        /* nD5x5GainLimit[12][2] */
+        {
+            {128, 128, /*0 - 1*/},
+            {64, 128, /*0 - 1*/},
+            {32, 128, /*0 - 1*/},
+            {0, 128, /*0 - 1*/},
+            {0, 128, /*0 - 1*/},
+            {0, 128, /*0 - 1*/},
+            {0, 128, /*0 - 1*/},
+            {0, 96, /*0 - 1*/},
+            {0, 96, /*0 - 1*/},
+            {0, 96, /*0 - 1*/},
+            {0, 96, /*0 - 1*/},
+            {0, 96, /*0 - 1*/},
+        },
+        /* nD5x5CorBaseGain[12] */
+        {0, 0, 0, 8, 8, 8, 8, 8, 8, 8, 8, 8, /*0 - 11*/},
+        /* nD5x5CorSlope[12] */
+        {0, 0, 0, 8, 8, 8, 8, 8, 8, 8, 8, 8, /*0 - 11*/},
+        /* nD5x5CorOffset[12] */
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 11*/},
+        /* nD5x5Limit[12][2] */
+        {
+            {512, 512, /*0 - 1*/},
+            {512, 512, /*0 - 1*/},
+            {512, 512, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+            {1023, 1023, /*0 - 1*/},
+        },
+        /* nC7x7LogGain[12][2] */
+        {
+            {10, 10, /*0 - 1*/},
+            {10, 10, /*0 - 1*/},
+            {18, 18, /*0 - 1*/},
+            {32, 32, /*0 - 1*/},
+            {32, 32, /*0 - 1*/},
+            {32, 32, /*0 - 1*/},
+            {32, 32, /*0 - 1*/},
+            {32, 32, /*0 - 1*/},
+            {32, 32, /*0 - 1*/},
+            {32, 32, /*0 - 1*/},
+            {32, 32, /*0 - 1*/},
+            {32, 32, /*0 - 1*/},
+        },
+        /* nC7x7GainLimit[12][2] */
+        {
+            {128, 128, /*0 - 1*/},
+            {64, 128, /*0 - 1*/},
+            {32, 128, /*0 - 1*/},
+            {0, 64, /*0 - 1*/},
+            {0, 64, /*0 - 1*/},
+            {0, 64, /*0 - 1*/},
+            {0, 64, /*0 - 1*/},
+            {0, 48, /*0 - 1*/},
+            {0, 48, /*0 - 1*/},
+            {0, 48, /*0 - 1*/},
+            {0, 48, /*0 - 1*/},
+            {0, 48, /*0 - 1*/},
+        },
+        /* nC7x7CorBaseGain[12] */
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 11*/},
+        /* nC7x7CorSlope[12] */
+        {2, 2, 2, 12, 12, 12, 8, 8, 8, 8, 8, 8, /*0 - 11*/},
+        /* nC7x7CorOffset[12] */
+        {8, 8, 8, 16, 16, 16, 16, 16, 16, 16, 16, 16, /*0 - 11*/},
+        /* nC7x7Limit[12][2] */
+        {
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+            {128, 128, /*0 - 1*/},
+        },
+        /* nShpHpfBsigma[12][3] */
+        {
+            {8, 16, 24, /*0 - 2*/},
+            {8, 16, 24, /*0 - 2*/},
+            {8, 16, 24, /*0 - 2*/},
+            {10, 16, 24, /*0 - 2*/},
+            {10, 16, 24, /*0 - 2*/},
+            {10, 16, 24, /*0 - 2*/},
+            {10, 16, 24, /*0 - 2*/},
+            {10, 16, 24, /*0 - 2*/},
+            {10, 16, 24, /*0 - 2*/},
+            {10, 16, 24, /*0 - 2*/},
+            {10, 16, 24, /*0 - 2*/},
+            {10, 16, 24, /*0 - 2*/},
+        },
+        /* nShpHpfDsigma[12][3] */
+        {
+            {16, 24, 32, /*0 - 2*/},
+            {16, 24, 32, /*0 - 2*/},
+            {16, 24, 32, /*0 - 2*/},
+            {24, 36, 48, /*0 - 2*/},
+            {24, 36, 48, /*0 - 2*/},
+            {24, 36, 48, /*0 - 2*/},
+            {24, 32, 40, /*0 - 2*/},
+            {24, 32, 40, /*0 - 2*/},
+            {24, 32, 40, /*0 - 2*/},
+            {24, 32, 40, /*0 - 2*/},
+            {24, 32, 40, /*0 - 2*/},
+            {24, 32, 40, /*0 - 2*/},
+        },
+        /* nShpHpfScale[12][3] */
+        {
+            {128, 32, 8, /*0 - 2*/},
+            {128, 32, 8, /*0 - 2*/},
+            {128, 48, 8, /*0 - 2*/},
+            {128, 96, 80, /*0 - 2*/},
+            {128, 128, 128, /*0 - 2*/},
+            {128, 128, 128, /*0 - 2*/},
+            {128, 128, 128, /*0 - 2*/},
+            {128, 128, 128, /*0 - 2*/},
+            {128, 128, 128, /*0 - 2*/},
+            {128, 128, 128, /*0 - 2*/},
+            {128, 128, 128, /*0 - 2*/},
+            {128, 128, 128, /*0 - 2*/},
+        },
+        /* nShpGain[12][2] */
+        {
+            {32, 24, /*0 - 1*/},
+            {32, 24, /*0 - 1*/},
+            {32, 24, /*0 - 1*/},
+            {32, 24, /*0 - 1*/},
+            {30, 22, /*0 - 1*/},
+            {34, 24, /*0 - 1*/},
+            {34, 24, /*0 - 1*/},
+            {30, 22, /*0 - 1*/},
+            {28, 22, /*0 - 1*/},
+            {28, 19, /*0 - 1*/},
+            {30, 16, /*0 - 1*/},
+            {30, 16, /*0 - 1*/},
+        },
+        /* nShpLimit[12][2] */
+        {
+            {-4096, 4095, /*0 - 1*/},
+            {-4096, 4095, /*0 - 1*/},
+            {-4096, 4095, /*0 - 1*/},
+            {-4096, 4095, /*0 - 1*/},
+            {-4096, 4095, /*0 - 1*/},
+            {-4096, 4095, /*0 - 1*/},
+            {-4096, 4095, /*0 - 1*/},
+            {-4096, 4095, /*0 - 1*/},
+            {-4096, 4095, /*0 - 1*/},
+            {-4096, 4095, /*0 - 1*/},
+            {-4096, 4095, /*0 - 1*/},
+            {-4096, 4095, /*0 - 1*/},
+        },
+        /* nGrainLogGain[12] */
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 11*/},
+    },
+};
+
+const static AX_ISP_IQ_CCMP_PARAM_T ccmp_param_sdr = {
+    /* nChromaCompEn */
+    1,
+    /* nAutoMode */
+    1,
+    /* nRefMode */
+    1,
+    /* tManualParam */
+    {
+        /* nChromaCompY[29] */
+        {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 28*/},
+        /* nChromaCompSat[23] */
+        {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 22*/},
+    },
+    /* tAutoParam */
+    {
+        /* nParamGrpNum */
+        12,
+        /* nRefVal[12] */
+        {1024, 2048, 4096, 8192, 16384, 32768, 55296, 131072, 262144, 393216, 524288, 1048576, /*0 - 11*/},
+        /* nChromaCompY[12][29] */
+        {
+            {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 28*/},
+            {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 28*/},
+            {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 28*/},
+            {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 28*/},
+            {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 28*/},
+            {480, 480, 480, 480, 480, 480, 480, 500, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 28*/},
+            {450, 450, 450, 450, 450, 480, 480, 480, 500, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 28*/},
+            {420, 420, 420, 420, 420, 420, 450, 480, 480, 500, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 28*/},
+            {360, 360, 360, 360, 360, 400, 420, 420, 450, 480, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, 500, /*0 - 28*/},
+            {320, 320, 320, 320, 320, 360, 400, 420, 450, 450, 450, 450, 450, 450, 450, 450, 450, 450, 450, 450, 450, 450, 450, 450, 450, 450, 450, 450, 450, /*0 - 28*/},
+            {300, 300, 300, 300, 300, 320, 350, 380, 400, 420, 420, 420, 420, 420, 420, 420, 420, 420, 420, 420, 420, 420, 420, 420, 420, 420, 420, 420, 420, /*0 - 28*/},
+            {250, 250, 250, 250, 250, 280, 300, 300, 300, 350, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, 400, /*0 - 28*/},
+        },
+        /* nChromaCompSat[12][23] */
+        {
+            {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 22*/},
+            {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 22*/},
+            {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 22*/},
+            {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 22*/},
+            {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 22*/},
+            {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 22*/},
+            {512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 22*/},
+            {480, 480, 480, 490, 500, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 22*/},
+            {450, 460, 470, 480, 490, 500, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 22*/},
+            {400, 420, 440, 460, 480, 490, 500, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, /*0 - 22*/},
+            {350, 390, 420, 440, 460, 480, 490, 500, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 500, /*0 - 22*/},
+            {250, 320, 380, 440, 460, 480, 480, 480, 480, 500, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 500, /*0 - 22*/},
+        },
+    },
+};
+
+const static AX_ISP_IQ_SCM_PARAM_T scm_param_sdr = {
+    /* nScmEn */
+    0,
+    /* nAutoMode */
+    0,
+    /* nRefMode */
+    0,
+    /* nScmIoFlag */
+    0,
+    /* tManualParam */
+    {
+        /* nScmColor[2] */
+        {0, 0, /*0 - 1*/},
+        /* nScmCenterY */
+        0,
+        /* nScmCenterUv[2] */
+        {0, 0, /*0 - 1*/},
+        /* nScmRadius[3] */
+        {0, 0, 0, /*0 - 2*/},
+        /* nScmSmooth[3] */
+        {0, 0, 0, /*0 - 2*/},
+    },
+    /* tAutoParam */
+    {
+        /* nParamGrpNum */
+        16,
+        /* nRefVal[16] */
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+        /* nScmColor[16][2] */
+        {
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+        },
+        /* nScmCenterY[16] */
+        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 15*/},
+        /* nScmCenterUv[16][2] */
+        {
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+            {0, 0, /*0 - 1*/},
+        },
+        /* nScmRadius[16][3] */
+        {
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+        },
+        /* nScmSmooth[16][3] */
+        {
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+        },
+    },
+};
+
+const static AX_ISP_IQ_YCPROC_PARAM_T ycproc_param_sdr = {
+    /* nYCprocEn */
+    0,
+    /* nBrightness */
+    256,
+    /* nContrast */
+    256,
+    /* nSaturation */
+    4096,
+    /* nHue */
+    0,
+};
+
+const static AX_ISP_IQ_YCRT_PARAM_T ycrt_param_sdr = {
+    /* nYcrtEn */
+    1,
+    /* nSignalRangeMode */
+    0,
+    /* nYrtInputRange[2] */
+    {64, 1023, /*0 - 1*/},
+    /* nYrtOutputRange[2] */
+    {64, 1023, /*0 - 1*/},
+    /* nCrtInputRange[2] */
+    {64, 960, /*0 - 1*/},
+    /* nCrtOutputRange[2] */
+    {64, 960, /*0 - 1*/},
+    /* nClipLevelY[2] */
+    {0, 1023, /*0 - 1*/},
+    /* nClipLevelUV[2] */
+    {-512, 511, /*0 - 1*/},
+};
+
+const static AX_ISP_IQ_CLP_PARAM_T clp_param_sdr = {
+    /* nClpEn */
+    0,
+    /* nColorPaletteId */
+    0,
+    /* nColorPaletteYuvLut[3][256] */
+    {
+        {
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 0 - 31*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 32 - 63*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 64 - 95*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 96 - 127*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 128 - 159*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 160 - 191*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 192 - 223*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 224 - 255*/
+        },
+        {
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 0 - 31*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 32 - 63*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 64 - 95*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 96 - 127*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 128 - 159*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 160 - 191*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 192 - 223*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 224 - 255*/
+        },
+        {
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 0 - 31*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 32 - 63*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 64 - 95*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 96 - 127*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 128 - 159*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 160 - 191*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 192 - 223*/
+            0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,  /* 224 - 255*/
+        },
+    },
+};
+
+const static AX_ISP_IQ_LDC_PARAM_T ldc_param_sdr = {
+    /* nLdcEnable */
+    0,
+    /* nType */
+    0,
+    /* tLdcV1Param */
+    {
+        /* bAspect */
+        /* 0:AX_FALSE, 1:AX_TRUE */
+        AX_FALSE,
+        /* nXRatio */
+        0,
+        /* nYRatio */
+        0,
+        /* nXYRatio */
+        0,
+        /* nCenterXOffset */
+        0,
+        /* nCenterYOffset */
+        0,
+        /* nDistortionRatio */
+        0,
+        /* nSpreadCoef */
+        0,
+    },
+    /* tLdcV2Param */
+    {
+        /* nMatrix[3][3] */
+        {
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 0, /*0 - 2*/},
+            {0, 0, 1, /*0 - 2*/},
+        },
+        /* nDistortionCoeff[8] */
+        {0, 0, 0, 0, 0, 0, 0, 0, /*0 - 7*/},
+    },
+};
+
+const static AX_ISP_IQ_DIS_PARAM_T dis_param_sdr = {
+    /* bDisEnable */
+    0,
+    /* nDisType */
+    0,
+    /* tDisV1Param */
+    {
+        /* bSWCalcEnable */
+        0,
+        /* nDelayFrameNum */
+        0,
+        /* nHistoryFrameNum */
+        8,
+        /* nCropRatio */
+        205,
+        /* nFramePosWeights[16] */
+        {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, /*0 - 15*/},
+        /* nSadThreshold */
+        0xFFFFFF,
+    },
+};
+
+const static AX_ISP_IQ_ME_PARAM_T me_param_sdr = {
+    /* nEnable */
+    1,
+    /* nLutEnable */
+    1,
+    /* nLut[33] */
+    {
+        0, 8, 16, 24, 32, 40, 48, 56, 64, 72, 80, 88, 96, 104, 112, 120, 128, 136, 144, 152, 160, 168, 176, 184, 192, 200, 208, 216, 224, 232, 240, 248,  /* 0 - 31*/
+        256, /*32 - 32*/
+    },
+    /* nProjShiftBit[2] */
+    {2, 2, /*0 - 1*/},
+    /* nScaleRatio */
+    0,
+    /* tGridRoiH */
+    {
+        /* nRoiOffsetH */
+        16,
+        /* nRoiOffsetV */
+        0,
+        /* nRoiRegionNumH */
+        4,
+        /* nRoiRegionNumV */
+        2,
+        /* nRoiRegionSizeH */
+        664,
+        /* nRoiRegionSizeV */
+        760,
+        /* nSearchRange */
+        32,
+    },
+    /* tGridRoiV */
+    {
+        /* nRoiOffsetH */
+        0,
+        /* nRoiOffsetV */
+        16,
+        /* nRoiRegionNumH */
+        4,
+        /* nRoiRegionNumV */
+        3,
+        /* nRoiRegionSizeH */
+        672,
+        /* nRoiRegionSizeV */
+        496,
+        /* nSearchRange */
+        32,
+    },
+};
+
+const static AX_ISP_IQ_NUC_PARAM_T nuc_param_sdr = {
+    /* nNucEnable */
+    0,
+    /* nModuleMode */
+    0,
+    /* tManualParam */
+    {
+        /* tSensorNucCalib */
+        {
+            /* nNuc1stFrame */
+            1,
+            /* nStepEnhEn */
+            0,
+            /* nEffectiveBits */
+            7,
+            /* nNucAdjustTrend */
+            0,
+            /* nNucFineBitMask */
+            15,
+            /* nNucCoarseBitMask */
+            240,
+            /* nNucInitFine */
+            0,
+            /* nNucInitCoarse */
+            0,
+            /* nNucFineStep */
+            17,
+            /* nNucCoarseStep */
+            17,
+            /* nNucMaxFVal */
+            17,
+            /* nNucMaxCVal */
+            17,
+            /* nNucMinFVal */
+            0,
+            /* nNucMinCVal */
+            0,
+            /* nNucAdFineHigh */
+            65535,
+            /* nNucAdCoarseHigh */
+            65535,
+            /* nNucAdFineLow */
+            65535,
+            /* nNucAdCoarseLow */
+            65535,
+            /* nNucFineCnt */
+            1,
+            /* nNucCoarseCnt */
+            1,
+        },
+        /* tTwoPointsCalib */
+        {
+            /* nNucFpnEn */
+            0,
+            /* nNucBaseGain */
+            256,
+            /* nNucFpnGain */
+            256,
+        },
+    },
+};
+
+#endif

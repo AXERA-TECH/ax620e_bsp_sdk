@@ -18,7 +18,9 @@ The input parameters are described as follows:
         --pipeline_ext (optional) : import ini file to config all the filters in another pipeline
         --change       (optional) : import ini file to change parameters for one filter dynamicly
         --region       (optional) : import ini file to config region parameters
+        --region_stop  (optional) : region stop test
         --dewarp       (optional) : import ini file to config dewarp parameters, including LDC, perspective, fisheye, etc.
+        --few_pool     (optional) : set few common pool to test retry get vb
         --cmmcopy      (optional) : cmm copy API test
         --csc          (optional) : color space covert API test
         --fliprotation (optional) : flip and rotation API test
@@ -63,7 +65,7 @@ The input parameters are described as follows:
         <CropW>x<CropH>    (required) : crop rect width & height (2 aligned)
         +<CropX0>+<CropY0> (optional) : crop rect coordinates
         +<DstX0>+<DstY0>   (optional) : output position coordinates
-        <Alpha>            (optional) : (0: transparent; 255: opaque)
+        <Alpha>            (optional) : ( (0, 255], 0: transparent; 255: opaque)
 
 Notes：
     -v is a required item, with the input source image path and frame information.

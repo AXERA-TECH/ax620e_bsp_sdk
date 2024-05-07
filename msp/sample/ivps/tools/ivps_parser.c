@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -630,6 +630,7 @@ enum LONG_OPTION
 {
     LONG_OPTION_CONFIG_PIPELINE = 5000,
     LONG_OPTION_CONFIG_REGION,
+    LONG_OPTION_CONFIG_RGN_STOP,
     LONG_OPTION_CONFIG_CHANGE,       /* dynamic change resolution */
     LONG_OPTION_CONFIG_PIPELINE_EXT, /* cascaded with pipeline  */
     LONG_OPTION_CONFIG_CMMCOPY,
@@ -643,13 +644,17 @@ enum LONG_OPTION
     LONG_OPTION_CONFIG_CROPRESIZE_V3,
     LONG_OPTION_CONFIG_OSD,
     LONG_OPTION_CONFIG_MOSAIC,
-    LONG_OPTION_CONFIG_COVER,
+    LONG_OPTION_CONFIG_MASK,
     LONG_OPTION_CONFIG_DEWARP,
     LONG_OPTION_CONFIG_STREAM,
     LONG_OPTION_CONFIG_POOL_TYPE,
     LONG_OPTION_CONFIG_CHN,
     LONG_OPTION_CONFIG_CROP,
     LONG_OPTION_CONFIG_SAVE,
+    LONG_OPTION_CONFIG_FEW_POOL,
+    LONG_OPTION_CONFIG_ANGLE,
+    LONG_OPTION_CONFIG_FLIP,
+    LONG_OPTION_CONFIG_FORMAT,
     LONG_OPTION_CONFIG_HELP,
     LONG_OPTION_CONFIG_BUTT
 };
@@ -658,6 +663,7 @@ static struct option long_options[] = {
     {"pipeline", required_argument, NULL, LONG_OPTION_CONFIG_PIPELINE},
     {"pipeline_ext", required_argument, NULL, LONG_OPTION_CONFIG_PIPELINE_EXT},
     {"region", required_argument, NULL, LONG_OPTION_CONFIG_REGION},
+    {"region_stop", required_argument, NULL, LONG_OPTION_CONFIG_RGN_STOP},
     {"change", required_argument, NULL, LONG_OPTION_CONFIG_CHANGE},
     {"cmmcopy", required_argument, NULL, LONG_OPTION_CONFIG_CMMCOPY},
     {"csc", required_argument, NULL, LONG_OPTION_CONFIG_CSC},
@@ -670,13 +676,17 @@ static struct option long_options[] = {
     {"cropresize3", required_argument, NULL, LONG_OPTION_CONFIG_CROPRESIZE_V3},
     {"osd", required_argument, NULL, LONG_OPTION_CONFIG_OSD},
     {"mosaic", required_argument, NULL, LONG_OPTION_CONFIG_MOSAIC},
-    {"cover", required_argument, NULL, LONG_OPTION_CONFIG_COVER},
+    {"mask", required_argument, NULL, LONG_OPTION_CONFIG_MASK},
     {"dewarp", required_argument, NULL, LONG_OPTION_CONFIG_DEWARP},
     {"stream", required_argument, NULL, LONG_OPTION_CONFIG_STREAM},
     {"pool_type", required_argument, NULL, LONG_OPTION_CONFIG_POOL_TYPE},
     {"ch", required_argument, NULL, LONG_OPTION_CONFIG_CHN},
     {"crop", required_argument, NULL, LONG_OPTION_CONFIG_CROP},
+    {"few_pool", required_argument, NULL, LONG_OPTION_CONFIG_FEW_POOL},
     {"save", required_argument, NULL, LONG_OPTION_CONFIG_SAVE},
+    {"angle", required_argument, NULL, LONG_OPTION_CONFIG_ANGLE},
+    {"flip", required_argument, NULL, LONG_OPTION_CONFIG_FLIP},
+    {"format", required_argument, NULL, LONG_OPTION_CONFIG_FORMAT},
     {"h", no_argument, NULL, LONG_OPTION_CONFIG_HELP},
     {NULL, 0, NULL, 0}};
 
@@ -714,6 +724,7 @@ int IVPS_ArgsParser(int argc, char *argv[], IVPS_ARG_T *ptArg)
     signal(SIGINT, SigInt);
     signal(SIGTSTP, SigStop);
 
+    ptArg->nFormat = AX_FORMAT_ARGB8888;
     while ((c = getopt_long(argc, argv, "v:a:g:s:c:p:t:n:r:l:", long_options, &option_index)) != -1)
     {
 
@@ -758,13 +769,16 @@ int IVPS_ArgsParser(int argc, char *argv[], IVPS_ARG_T *ptArg)
             ptArg->bCropResizeV3 = AX_TRUE;
             ptArg->bOsd = AX_TRUE;
             ptArg->bMosaic = AX_TRUE;
-            ptArg->bCover = AX_TRUE;
+            ptArg->bMask = AX_TRUE;
             break;
         case LONG_OPTION_CONFIG_PIPELINE:
             ptArg->pPipelineIni = optarg;
             break;
         case LONG_OPTION_CONFIG_REGION:
             ptArg->pRegionIni = optarg;
+            break;
+        case LONG_OPTION_CONFIG_RGN_STOP:
+            ptArg->bRegionStop = atoi(optarg);
             break;
         case LONG_OPTION_CONFIG_CHANGE:
             ptArg->pChangeIni = optarg;
@@ -816,8 +830,8 @@ int IVPS_ArgsParser(int argc, char *argv[], IVPS_ARG_T *ptArg)
             ptArg->nEngineId = atoi(optarg);
             ptArg->bMosaic = AX_TRUE;
             break;
-        case LONG_OPTION_CONFIG_COVER:
-            ptArg->bCover = AX_TRUE;
+        case LONG_OPTION_CONFIG_MASK:
+            ptArg->bMask = AX_TRUE;
             break;
         case LONG_OPTION_CONFIG_DEWARP:
             ptArg->pDewarpIni = optarg;
@@ -836,8 +850,20 @@ int IVPS_ArgsParser(int argc, char *argv[], IVPS_ARG_T *ptArg)
             CHECK_RESULT(CropInfoParse(optarg, &ptArg->tCropInfo));
             ptArg->bCropInfo = AX_TRUE;
             break;
+        case LONG_OPTION_CONFIG_FEW_POOL:
+            ptArg->bFewPool = atoi(optarg);
+            break;
         case LONG_OPTION_CONFIG_SAVE:
             ptArg->pSavePath = optarg;
+            break;
+        case LONG_OPTION_CONFIG_ANGLE:
+            ptArg->nAngle = atoi(optarg);
+            break;
+        case LONG_OPTION_CONFIG_FLIP:
+            ptArg->nFlip = atoi(optarg);
+            break;
+        case LONG_OPTION_CONFIG_FORMAT:
+            ptArg->nFormat = atoi(optarg);
             break;
         case LONG_OPTION_CONFIG_HELP:
         default:

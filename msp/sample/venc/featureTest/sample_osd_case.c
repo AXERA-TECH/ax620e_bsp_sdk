@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -190,7 +190,7 @@ AX_S32 UTestOSD(SAMPLE_VENC_CMD_PARA_T *pCml)
         return -1;
     }
 
-    pCml->syncType = 100;
+    pCml->syncGet = 100;
 
     for (chnIdx = 0; chnIdx < chnNum; chnIdx++) {
         memset(&gstFrmParam[chnIdx], 0, sizeof(SAMPLE_VENC_SENDFRAME_PARA_T));
@@ -258,8 +258,8 @@ AX_S32 UTestOSD(SAMPLE_VENC_CMD_PARA_T *pCml)
 FREE:
 
     for (chnIdx = 0; chnIdx < chnNum; chnIdx++) {
-        COMMON_VENC_StopSendFrame(&gstFrmParam[chnIdx]);
-        COMMON_VENC_StopGetStream(&gstStrmParam[chnIdx]);
+        SAMPLE_VENC_StopSendFrame(&gstFrmParam[chnIdx]);
+        SAMPLE_VENC_StopGetStream(&gstStrmParam[chnIdx]);
         COMMON_VENC_Stop(chnIdx);
 
         for (osdIdx = 0; osdIdx < AX_MAX_VENC_OSD_NUM; osdIdx++) {

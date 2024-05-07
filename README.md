@@ -1,8 +1,13 @@
-# ax620q_bsp_sdk
+# ax620e_bsp_sdk
 
 ## What is this?
 
 This is a ax620e linux bsp sdk form AX620e_SDK_V1.7.0_P2. currently it is application layer open source.
+
+## Which target support
+
+- AX630C
+- AX620Q
 
 ## How to compile
 

@@ -1,40 +1,39 @@
-CUR_PATH            := $(shell pwd)
-HOME_PATH           := $(abspath $(CUR_PATH)/../../..)
+CUR_PATH			:= $(shell pwd)
+HOME_PATH			:= $(abspath $(CUR_PATH)/../../..)
 
 include $(HOME_PATH)/build/color.mk
 include $(HOME_PATH)/build/config.mak
 
-PRJ_OUT_HOME        := $(HOME_PATH)/build/out/$(PROJECT)
-OBJ_OUT_PATH        := $(PRJ_OUT_HOME)/objs
-SRC_RELATIVE_PATH   := $(subst $(HOME_PATH)/,,$(SRC_PATH))
-TARGET_OUT_PATH     := $(OBJ_OUT_PATH)/$(SRC_RELATIVE_PATH)
+PRJ_OUT_HOME		:= $(HOME_PATH)/build/out/$(PROJECT)
+OBJ_OUT_PATH		:= $(PRJ_OUT_HOME)/objs
+SRC_RELATIVE_PATH    := $(subst $(HOME_PATH)/,,$(CUR_PATH))
+TARGET_OUT_PATH		:= $(OBJ_OUT_PATH)/$(SRC_RELATIVE_PATH)
 
-SRC_PATH            := $(CUR_PATH)
-SAMPLE_PATH         := $(CUR_PATH)/..
-OUT_PATH            := $(MSP_OUT_PATH)
-LIB_PATH            := $(MSP_OUT_PATH)/lib
-SSL_PATH            := $(HOME_PATH)/third-party/openssl/$(ARCH)
-LIVE_PATH           := $(HOME_PATH)/third-party/live/out/$(ARCH)/$(LIBC)
-OPENCV_PATH         := $(HOME_PATH)/third-party/opencv-4.5.5
+SRC_PATH			:= $(CUR_PATH)
+SAMPLE_PATH          := $(SRC_PATH)/..
+OUT_PATH			:= $(MSP_OUT_PATH)
+SSL_PATH			:= $(HOME_PATH)/third-party/openssl/$(ARCH)
+LIVE_PATH			:= $(HOME_PATH)/third-party/live/out/$(ARCH)/$(LIBC)
+OPENCV_PATH			:= $(HOME_PATH)/third-party/opencv
 
 USE_OPENSSL			:= no
 
-include $(HOME_PATH)/build/config.mak
 
 # output
 MOD_NAME 			:= sample_vin_ivps_engine_venc_rtsp_s
-OUTPUT 				:= $(TARGET_OUT_PATH)/obj_a
+OUTPUT 			:= $(TARGET_OUT_PATH)/.obj_a
 
 # source
 SRCS 				:= $(wildcard $(SRC_PATH)/*.c)
-SRCS				+= $(SAMPLE_COMMON_PATH)/common_venc.c
-SRCS				+= $(SAMPLE_COMMON_PATH)/common_venc_log.c
+SRCS				+= $(SAMPLE_PATH)/common/common_venc.c
+SRCS				+= $(SAMPLE_PATH)/common/common_venc_log.c
 SRCS				+= $(SAMPLE_PATH)/common/common_arg_parse.c
 SRCS				+= $(SAMPLE_PATH)/common/common_cam.c
 SRCS				+= $(SAMPLE_PATH)/common/common_sys.c
 SRCS				+= $(SAMPLE_PATH)/common/common_vin.c
 SRCS				+= $(SAMPLE_PATH)/common/common_isp.c
 SRCS				+= $(SAMPLE_PATH)/common/common_nt.c
+SRCS			    += $(SAMPLE_PATH)/common/common_hw.c
 SRCCPPS				:= $(wildcard $(SAMPLE_PATH)/rtsp/*.cpp)
 SRCCPPS				+= $(wildcard $(SRC_PATH)/*.cpp)
 
@@ -53,24 +52,25 @@ CINCLUDE			+= -I$(SRC_PATH)                                \
 					   -I$(OPENCV_PATH)/include/opencv4	            \
 					   -I$(SRC_PATH)/include
 
-OBJS 				:= $(addprefix $(OUTPUT)/,$(notdir $(patsubst %.c,%.o,$(SRCS))))
-OBJS 				+= $(SRCCPPS:%.cpp=$(OUTPUT)/%.o)
+#OBJS 			:= $(SRCS:%.c=$(OUTPUT)/%.o)
+OBJS 			:= $(addprefix $(OUTPUT)/,$(notdir $(patsubst %.c,%.o,$(SRCS))))
+OBJS 			+= $(SRCCPPS:%.cpp=$(OUTPUT)/%.o)
 DEPS				:= $(OBJS:%.o=%.d)
 # exec
-TARGET				:= $(TARGET_OUT_PATH)/$(MOD_NAME)
+TARGET				:= $(MOD_NAME)
 
 # build flags
-CPPFLAGS			:= --std=c++11 -fopenmp
+CPPFLAGS			:= --std=c++11
 CFLAGS				:= ${EXEC_FLAG}
 
 ifeq ($(debug),yes)
-CFLAGS				+= -fopenmp -Wall -O0 -ggdb3
+CFLAGS				+= -Wall -O0 -ggdb3
 else
 CFLAGS				+= -Wall -O2
 endif
 
 CFLAGS				+= -ldl
-
+CFLAGS			+= -DSAMPLE_BUILD_STATIC
 ifeq ($(USE_OPENSSL),no)
 CFLAGS				+= -DNO_OPENSSL
 endif
@@ -78,9 +78,9 @@ endif
 # dependency
 CLIB				+= -Wl,-rpath-link=$(OUT_PATH)/lib
 CLIB				+= -L$(OUT_PATH)/lib
-CLIB				+= -l:libax_mipi.a
+CLIB			+= -lstdc++
+CLIB			+= -lm -lpthread -lrt
 CLIB				+= -l:libax_nt_ctrl.a
-CLIB				+= -l:libax_nt_stream.a
 CLIB				+= -l:libax_proton.a
 ifeq ($(CHIP_TYPE), AX620Q)
 CLIB				+= -l:libax_engine_tiny.a
@@ -91,20 +91,27 @@ CLIB				+= -l:libax_interpreter.a
 CLIB				+= -l:libax_ae.a
 CLIB				+= -l:libax_awb.a
 CLIB				+= -l:libax_af.a
+CLIB			+= -l:libax_mipi.a
+CLIB			+= -l:libax_nt_stream.a
 CLIB				+= -l:libax_venc.a
 CLIB				+= -l:libax_ivps.a
+CLIB			+= -lm -lpthread
+CLIB			+= -l:libsns_dummy.a
+CLIB			+= -l:libsns_os04a10.a
 CLIB				+= -l:libax_sys.a
-CLIB				+= -lm -lpthread -lrt -ldl -lstdc++ -fopenmp
+CLIB				+= -lm -lpthread -lrt -ldl -lstdc++
 CLIB				+= -L$(OPENCV_PATH)/lib/$(ARCH)/$(LIBC)
 CLIB				+= -L$(OPENCV_PATH)/lib/$(ARCH)/$(LIBC)/opencv4/3rdparty/
-CLIB				+= -Wl,--start-group -lopencv_imgcodecs -lopencv_imgproc -lopencv_core -ldl -lm -lpthread -lrt -littnotify -ltegra_hal -llibjpeg-turbo -llibwebp -llibpng -llibtiff -llibopenjp2 -lzlib -Wl,--end-group
+CLIB				+= -Wl,--start-group -lopencv_imgcodecs -lopencv_imgproc -lopencv_core -ldl -lm -lpthread -lrt -llibjpeg-turbo -llibwebp -llibpng -llibtiff -llibopenjp2 -lzlib -Wl,--end-group
 ifeq ($(USE_OPENSSL),yes)
 CLIB				+= -L$(SSL_PATH)/$(LIBC)/lib -lssl -lcrypto
 endif
 CLIB				+= -L$(LIVE_PATH)/lib -lliveMedia -lgroupsock -lBasicUsageEnvironment -lUsageEnvironment
 
 # install
-INSTALL_BIN			:= $(TARGET)
+INSTALL_TARGET	:= $(TARGET)
+MV_TARGET	:= $(INSTALL_TARGET)
+INSTALL_DIR		:= $(ROOTFS_TARGET_PATH)/bin/
 
 # link
 LINK = $(CC)

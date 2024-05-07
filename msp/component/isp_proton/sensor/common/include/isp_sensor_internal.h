@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Shanghai) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Shanghai) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Shanghai) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -59,6 +59,10 @@
 
 #define SNS_1_SECOND_UNIT_US            (1000000)
 
+#define AX_SNS_FPS_EPS                  (0.3f)
+#define AX_SNS_FPS_MIN                  (SNS_MIN_FRAME_RATE - AX_SNS_FPS_EPS)
+#define AX_SNS_FPS_MAX                  (SNS_MAX_FRAME_RATE + AX_SNS_FPS_EPS)
+
 
 typedef struct s_camera_i2c_reg_array {
     int addr;
@@ -88,6 +92,7 @@ typedef struct _AX_SNS_STATE_OBJ_ {
     AX_S32                          sns_id;
     AX_BOOL                         bSyncInit;         /* AX_TRUE: ae ctrl regs init */
     AX_U32                          eImgMode;          /* xxx_settings.h  enum xxx_SETTING_SEL_E  */
+    AX_ISP_LFHDR_MODE_E             eLFHdrMode;
     AX_SNS_I2C_T                    sns_i2c_obj;
     AX_SNS_MODE_T                   sns_mode_obj;
     AX_SNS_ATTR_T                   sns_attr_param;

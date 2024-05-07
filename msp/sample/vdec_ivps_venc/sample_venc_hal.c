@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -120,7 +120,6 @@ static AX_VOID *SAMPLE_VencGetStreamProc(AX_VOID *arg)
         pStrm = fopen(esName, "wb");
         if (NULL == pStrm) {
             SAMPLE_LOG_ERR("CHN[%d] Open output file error!", VeChn);
-            return NULL;
         }
     }
 
@@ -129,7 +128,7 @@ static AX_VOID *SAMPLE_VencGetStreamProc(AX_VOID *arg)
         s32Ret = AX_VENC_GetStream(VeChn, &stStream, pstArg->syncType);
         if (AX_SUCCESS == s32Ret) {
 
-            if (pstArg->bSaveStrm) {
+            if (pstArg->bSaveStrm && pStrm) {
                 s32Ret = SAMPLE_VencStreamSave(pstArg, totalGetStream, pStrm, &stStream);
                 if (0 != s32Ret)
                     SAMPLE_LOG_ERR("CHN[%d] SAMPLE_VencStreamSave error", VeChn);

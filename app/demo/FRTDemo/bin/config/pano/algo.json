@@ -5,8 +5,8 @@
 		{
 			"sns_id": 0,
 			"SKEL": {
-				"//": "0: none; 4: HVCP",
-				"detect_algo_type": 4,
+				"//": "0: none; 1: HVCP",
+				"detect_algo_type": 1,
 				"detect_models_path": "/opt/etc/skelModels",
 				"detect_track_active": true,
 				"push_enabled": true,
@@ -205,10 +205,60 @@
 					"lux diff": 60
 				},
 				"SCD": {
-					"enable": true,
+					"enable": false,
 					"threshold": 60,
 					"confidence": 60
 				}
+			},
+			"SVC": {
+				"enable": false,
+				"sync_mode": false,
+				"bg_qp": {
+					"iQp": 2,
+					"pQp": 2
+				},
+				"object_filter": [
+					{
+						"object_category": "face",
+						"enable": false,
+						"qp": {
+							"iQp": -3,
+							"pQp": -3
+						}
+					},
+					{
+						"object_category": "body",
+						"enable": false,
+						"qp": {
+							"iQp": -1,
+							"pQp": -1
+						}
+					},
+					{
+						"object_category": "vehicle",
+						"enable": false,
+						"qp": {
+							"iQp": -1,
+							"pQp": -1
+						}
+					},
+					{
+						"object_category": "cycle",
+						"enable": false,
+						"qp": {
+							"iQp": -1,
+							"pQp": -1
+						}
+					},
+					{
+						"object_category": "plate",
+						"enable": false,
+						"qp": {
+							"iQp": -3,
+							"pQp": -3
+						}
+					}
+				]
 			}
 		}
 	],

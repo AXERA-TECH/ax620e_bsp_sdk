@@ -1,0 +1,81 @@
+software =
+{
+	version = "0.1.0";
+
+	hardware-compatibility: [ "1.0" ];
+	stable : {
+		copy1 : {
+			images: (
+				{
+					filename = "u-boot_signed.bin";
+					device = "/dev/mmcblk0p5";
+					type = "raw";
+				},
+				{
+					filename = "axera_logo.bmp";
+					device = "/dev/mmcblk0p8";
+					type = "raw";
+				},
+				{
+					filename = "AX630C_emmc_arm64_k419_signed.dtb";
+					device = "/dev/mmcblk0p12";
+					type = "raw";
+				},
+				{
+					filename = "boot_signed.bin";
+					device = "/dev/mmcblk0p14";
+					type = "raw";
+				},
+			);
+			scripts: (
+				{
+					filename = "ota.sh";
+					type = "shellscript";
+				},
+			);
+			uboot: (
+				{
+					name = "upgrade_slota_available";
+					value = "1";
+				},
+			);
+
+		};
+		copy2 : {
+			images: (
+				{
+					filename = "u-boot_b_signed.bin";
+					device = "/dev/mmcblk0p6";
+					type = "raw";
+				},
+				{
+					filename = "axera_logo.bmp";
+					device = "/dev/mmcblk0p9";
+					type = "raw";
+				},
+				{
+					filename = "AX630C_emmc_arm64_k419_signed.dtb";
+					device = "/dev/mmcblk0p13";
+					type = "raw";
+				},
+				{
+					filename = "boot_signed.bin";
+					device = "/dev/mmcblk0p15";
+					type = "raw";
+				},
+			);
+			scripts: (
+				{
+					filename = "ota.sh";
+					type = "shellscript";
+				},
+			);
+			uboot: (
+				{
+					name = "upgrade_slotb_available";
+					value = "1";
+				},
+			);
+		};
+	};
+}

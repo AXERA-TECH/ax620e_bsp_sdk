@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor (Ningbo) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Ningbo) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Ningbo) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -27,8 +27,8 @@ Sample_Test_Case_T gTestCaseSet[SAMPLE_MAX_TESTCASE_NUM] = {
     VENC_TEST_CASE_INIT(UT_CASE_CHN_ATTR, UTestSetChnAttr, NULL),
     VENC_TEST_CASE_INIT(UT_CASE_RC_MODE, UTestDynamicAttr, SampleDynRcMode),
     VENC_TEST_CASE_INIT(UT_CASE_VUI, UTestDynamicAttr, SampleDynVui),
-     VENC_TEST_CASE_INIT(UT_CASE_JPEG_ENCODE_ONCE, UTestJpegStartEncOnce, NULL),
-     VENC_TEST_CASE_INIT(UT_CASE_JPEG_PARAM, UTestDynamicJpeg, SampleJpegParam),
+    VENC_TEST_CASE_INIT(UT_CASE_JPEG_ENCODE_ONCE, UTestJpegStartEncOnce, NULL),
+    VENC_TEST_CASE_INIT(UT_CASE_JPEG_PARAM, UTestDynamicJpeg, SampleJpegParam),
     VENC_TEST_CASE_INIT(UT_CASE_VIR_INTRA_INTERVAL, UTestDynamicAttr, SampleVirIntraInterval),
     VENC_TEST_CASE_INIT(UT_CASE_INTRA_REFRESH, UTestDynamicAttr, SampleIntraRefresh),
     VENC_TEST_CASE_INIT(UT_CASE_RESOLUTION, UTestDynamicAttr, SampleDynResolution),
@@ -43,6 +43,10 @@ Sample_Test_Case_T gTestCaseSet[SAMPLE_MAX_TESTCASE_NUM] = {
     VENC_TEST_CASE_INIT(UT_CASE_OSD, UTestOSD, NULL),
     VENC_TEST_CASE_INIT(UT_CASE_BPS_ADAPT, UTestDynamicAttr, SampleTestBpsAdapt),
     VENC_TEST_CASE_INIT(UT_CASE_GOP_LEN, UTestDynamicAttr, SampleTestGop),
+    VENC_TEST_CASE_INIT(UT_CASE_BLOCK_NOBLOCK_TIMEOUT, UTestNormal, NULL),
+    VENC_TEST_CASE_INIT(UT_CASE_STD_SELECT, UTestSelect, NULL),
+    VENC_TEST_CASE_INIT(UT_CASE_STD_EPOLL, UTestEpoll, NULL),
+    VENC_TEST_CASE_INIT(UT_CASE_SVC, UTestDynamicAttr, SampleVencSvc),
 };
 
 AX_VOID SampleTestCaseStart(SAMPLE_VENC_CMD_PARA_T *pCml)
