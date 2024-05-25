@@ -21,16 +21,6 @@ typedef AX_S32 (*NotifyEventCallback)(const AX_NOTIFY_EVENT_E event,AX_VOID * pd
 #define AX_MEM_CACHED (1 << 1)    /* alloc mem is cached */
 #define AX_MEM_NONCACHED (1 << 2) /* alloc mem is not cached */
 
-/* Models pac head info */
-#define PAC_MAGIC             (0x5C6D8E9F)
-#define PAC_VERSION           (1)
-#define MAX_MD5_LEN           (32)
-#define MAX_PROD_NAME_LEN     (32)
-#define MAX_PROD_VER_LEN      (40)
-#define MAX_FILE_ID_LEN       (32)
-#define MAX_FILE_TYPE_LEN     (32)
-#define MAX_FILE_NAME_LEN     (256)
-
 typedef struct {
     AX_U64 PhysAddr;
     AX_U32 SizeKB;
@@ -48,43 +38,6 @@ typedef struct {
     AX_U32 BlockCnt;
     AX_CMM_PARTITION_INFO_T Partition;
 } AX_CMM_STATUS_T;
-
-typedef struct {
-    AX_U64  u64Base;
-    AX_U64  u64Size;
-    AX_CHAR szPartID[72];
-} BLOCK_T;
-
-typedef struct {
-    AX_CHAR szID[MAX_FILE_ID_LEN];
-    AX_CHAR szType[MAX_FILE_TYPE_LEN];
-    AX_CHAR szFile[MAX_FILE_NAME_LEN];
-    AX_U64  u64CodeOffset;
-    AX_U64  u64CodeSize;
-    BLOCK_T tBlock;
-    AX_U32  u32Flag;
-    AX_U32  u32Select;
-    AX_U32  u32Reserved[8];
-} MODEL_PAC_FILE_T;
-
-typedef struct {
-    AX_U32 u32Magic;    /* 0x5C6D8E9F */
-    AX_U32 u32PacVer;        /* 1 */
-    AX_U64 u64PacSize;     /* pac file size */
-    AX_CHAR szProdName[MAX_PROD_NAME_LEN];
-    AX_CHAR szProdVer[MAX_PROD_VER_LEN];
-    AX_U32  u32FileOffset;    /* offset of PAC_FILE_T */
-    AX_U32  u32FileCount;
-    AX_U32  u32Auth;          /* 0: no auth, 1: md5, 2: crc16 */
-    AX_U32  u32Crc16;
-    AX_CHAR szMd5[MAX_MD5_LEN];
-    AX_U32  u32Reserved;
-} MODEL_PAC_HEAD_T;
-
-typedef struct {
-    AX_U64 u64PhysAddr;
-    AX_U64 u64Size;
-} AX_MODEL_INFO_T;
 
 /* error code define */
 #define AX_ERR_CMM_ILLEGAL_PARAM    AX_DEF_ERR(AX_ID_SYS, 0x00, AX_ERR_ILLEGAL_PARAM)  //0x800B000A
@@ -212,10 +165,6 @@ AX_S32 AX_SYS_WakeLock(const AX_MOD_ID_E ModId);
 AX_S32 AX_SYS_WakeUnlock(const AX_MOD_ID_E ModId);
 AX_S32 AX_SYS_RegisterEventCb(const AX_MOD_ID_E ModId,NotifyEventCallback pFunction,AX_VOID * pData);
 AX_S32 AX_SYS_UnregisterEventCb(const AX_MOD_ID_E ModId);
-
-/* GET MODELS API*/
-AX_S32 AX_SYS_GetModelsInfo(AX_MODEL_INFO_T *pModelInfo, AX_CHAR *pName, AX_U32 u32Timeout);
-AX_S32 AX_SYS_ModelMemRelease(AX_VOID);
 
 #ifdef __cplusplus
 }

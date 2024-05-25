@@ -32,7 +32,7 @@ COMMON_SYS_POOL_CFG_T gtSysCommPoolSingleDummySdr[] = {
 };
 
 COMMON_SYS_POOL_CFG_T gtSysCommPoolSingleDVPSdr[] = {
-    {320, 240, 320, AX_FORMAT_YUV420_SEMIPLANAR, 10},          /* vin nv21/nv21 use */
+    {2560, 1440, 2560, AX_FORMAT_YUV420_SEMIPLANAR, 10},          /* vin nv21/nv21 use */
 };
 
 COMMON_SYS_POOL_CFG_T gtSysCommPoolSingleBTSdr[] = {
@@ -49,7 +49,7 @@ COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleDummySdr[] = {
 };
 
 COMMON_SYS_POOL_CFG_T gtSysPrivatePoolSingleDVPSdr[] = {
-    {320, 240, 320, AX_FORMAT_BAYER_RAW_10BPP, 25 * 2},         /*vin raw10 use */
+    {2560, 1440, 2560, AX_FORMAT_BAYER_RAW_10BPP, 25 * 2},         /*vin raw10 use */
 };
 
 COMMON_SYS_POOL_CFG_T gtSysPrivatePoolSingleBTSdr[] = {

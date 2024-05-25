@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -54,8 +54,14 @@ AX_BOOL CPoolCfgParser::GetConfig(std::map<std::string, std::string>& mapKeys) {
     m_iniParser.GetAllKeys(strPoolKey, mapKeys);
 
     if (mapKeys.size() == 0) {
-        LOG_MM_E(POOL_PARSER, "not find pool settings: [%s]", strPoolKey);
-        return AX_FALSE;
+        string strScenario = CCmdLineParser::ScenarioEnum2Str((AX_U8)nCfgScenario);
+        nCfgScenario = m_iniParser.GetIntValue("N-LINK", strScenario.c_str(), 1);
+        sprintf(strPoolKey, "S%dN%d", nLoadType, nCfgScenario);
+        LOG_MM_C(POOL_PARSER, "Links to %d, strPoolKey:%s", nCfgScenario, strPoolKey);
+        m_iniParser.GetAllKeys(strPoolKey, mapKeys);
+        if (mapKeys.size() == 0) {
+            return AX_FALSE;
+        }
     }
 
     return AX_TRUE;

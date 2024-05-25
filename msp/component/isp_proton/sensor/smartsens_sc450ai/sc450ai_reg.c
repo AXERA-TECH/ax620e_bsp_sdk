@@ -234,25 +234,16 @@ AX_S32 sc450ai_reset(ISP_PIPE_ID nPipeId, AX_U32 nResetGpio)
 
 AX_U32 sc450ai_get_hts(ISP_PIPE_ID nPipeId)
 {
-    AX_U8 frame_length_l = 0;
-    AX_U8 frame_length_h = 0;
-    AX_U16 frame_length = 0;
+    AX_U8 hts_l = 0;
+    AX_U8 hts_h = 0;
     AX_U32 hts = 0;
-    AX_U32 fps = 0;
-    SNS_STATE_OBJ *sns_obj = AX_NULL;
 
     SNS_CHECK_VALUE_RANGE_VALID(nPipeId, 0, AX_VIN_MAX_PIPE_NUM - 1);
 
-    SENSOR_GET_CTX(nPipeId, sns_obj);
-    SNS_CHECK_PTR_VALID(sns_obj);
+    hts_h = sc450ai_reg_read(nPipeId, SC450AI_HTS_L_H);
+    hts_l = sc450ai_reg_read(nPipeId, SC450AI_HTS_L_L);
 
-    // one line time = 1 / (fps * frame_length)
-    frame_length_h = sc450ai_reg_read(nPipeId, SC450AI_VTS_L_H);
-    frame_length_l = sc450ai_reg_read(nPipeId, SC450AI_VTS_L_L);
-    frame_length = (frame_length_h << 8) | frame_length_l;
-    fps = (AX_U32)sns_obj->sns_mode_obj.fFrameRate;
-
-    hts = 1000000 / (fps * frame_length);
+    hts = hts_h << 8 | hts_l;
 
     return hts;
 }
@@ -434,6 +425,27 @@ AX_U32 sc450ai_set_s_vts(ISP_PIPE_ID nPipeId, AX_U32 vts)
 
 
     return result;
+}
+
+AX_F32 sc450ai_get_exp_offset(ISP_PIPE_ID nPipeId)
+{
+    AX_F32 offset = 0.0f;
+
+    SNS_CHECK_VALUE_RANGE_VALID(nPipeId, 0, AX_VIN_MAX_PIPE_NUM - 1);
+
+    offset += (sc450ai_reg_read(nPipeId, 0x3301) & 0x3) * 2.0f;
+    offset += sc450ai_reg_read(nPipeId, 0x3302);
+    offset += (sc450ai_reg_read(nPipeId, 0x3303) & 0x1f);
+    offset += sc450ai_reg_read(nPipeId, 0x3304);
+    offset += ((sc450ai_reg_read(nPipeId, 0x3305) & 0xFF) << 8) |
+              (sc450ai_reg_read(nPipeId, 0x3306) & 0xFF);
+    offset += (sc450ai_reg_read(nPipeId, 0x3307) & 0x1f);
+    offset += sc450ai_reg_read(nPipeId, 0x3308) * 2.0f;
+    offset += sc450ai_reg_read(nPipeId, 0x330d);
+
+    offset /= (AX_F32)sc450ai_get_hts(nPipeId);
+
+    return offset;
 }
 
 AX_S32 sc450ai_get_vts_from_setting(ISP_PIPE_ID nPipeId, camera_i2c_reg_array *setting, AX_U32 reg_cnt, AX_U32 *vts)

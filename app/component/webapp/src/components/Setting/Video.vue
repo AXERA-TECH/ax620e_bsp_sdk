@@ -26,7 +26,7 @@
             </div>
           </el-form-item>
           <el-form-item label="码率(kbps):" class="inline">
-            <el-input-number controls-position="right" :min="500" :max="15000" :step="500" v-model="formVideo.videoFormat.video0.bit_rate" style="width:91%" :disabled="formVideo.videoFormat.video0.rc_type >= 2" size="mini"></el-input-number>
+            <el-input-number controls-position="right" :min="300" :max="15000" :step="500" v-model="formVideo.videoFormat.video0.bit_rate" style="width:91%" :disabled="formVideo.videoFormat.video0.rc_type == 2" size="mini"></el-input-number>
           </el-form-item>
           <el-row>
             <el-form-item label="分辨率:" class="inline">
@@ -77,16 +77,23 @@
               </div>
             </el-form-item>
           </el-row>
-          <el-form-item label="min_i_prop:" class="inline" v-show="(formVideo.videoFormat.video0.rc_type === 0 || formVideo.videoFormat.video0.rc_type === 4) && formVideo.videoFormat.video0.encoder_type != 1">
-            <div id="rc_min_i_prop_0">
-              <el-input-number controls-position="right" :min="0" :max=formVideo.videoFormat.video0.max_iprop :step="10" v-model="formVideo.videoFormat.video0.min_iprop" style="width:91%" :disabled="false" @change="onChangeRcVal(0)" size="mini"></el-input-number>
-            </div>
-          </el-form-item>
-          <el-form-item label="max_i_prop:" class="inline" v-show="(formVideo.videoFormat.video0.rc_type === 0 || formVideo.videoFormat.video0.rc_type === 4) && formVideo.videoFormat.video0.encoder_type != 1">
-            <div id="rc_max_i_prop_0">
-              <el-input-number controls-position="right" :min=formVideo.videoFormat.video0.min_iprop :max="100" :step="10" v-model="formVideo.videoFormat.video0.max_iprop" style="width:91%" :disabled="false" @change="onChangeRcVal(0)" size="mini"></el-input-number>
-            </div>
-          </el-form-item>
+            <el-form-item label="min_i_prop:" class="inline" v-show="(formVideo.videoFormat.video0.rc_type === 0 || formVideo.videoFormat.video0.rc_type === 4) && formVideo.videoFormat.video0.encoder_type != 1">
+              <div id="rc_min_i_prop_0">
+                <el-input-number controls-position="right" :min="0" :max=formVideo.videoFormat.video0.max_iprop :step="10" v-model="formVideo.videoFormat.video0.min_iprop" style="width:91%" :disabled="false" @change="onChangeRcVal(0)" size="mini"></el-input-number>
+              </div>
+            </el-form-item>
+            <el-form-item label="max_i_prop:" class="inline" v-show="(formVideo.videoFormat.video0.rc_type === 0 || formVideo.videoFormat.video0.rc_type === 4) && formVideo.videoFormat.video0.encoder_type != 1">
+              <div id="rc_max_i_prop_0">
+                <el-input-number controls-position="right" :min=formVideo.videoFormat.video0.min_iprop :max="100" :step="10" v-model="formVideo.videoFormat.video0.max_iprop" style="width:91%" :disabled="false" @change="onChangeRcVal(0)" size="mini"></el-input-number>
+              </div>
+            </el-form-item>
+          <el-row>
+            <el-form-item label="gop:" class="inline" v-show="formVideo.videoFormat.video0.encoder_type != 1">
+              <div id="rc_gop_0" >
+                <el-input-number controls-position="right" :min="1" :max=120 :step="1" v-model="formVideo.videoFormat.video0.gop" style="width:91%" :disabled="false" size="mini"></el-input-number>
+              </div>
+            </el-form-item>
+          </el-row>
         <!--el-row>
           <el-form-item label="sht_stat_time:" class="inline" v-show="formVideo.videoFormat.video0.rc_type === 4 && formVideo.videoFormat.video0.encoder_type != 1">
             <div id="sht_stat_time_0">
@@ -126,7 +133,7 @@
             </div>
           </el-form-item>
           <el-form-item label="码率(kbps):" class="inline">
-            <el-input-number controls-position="right" :min="500" :max="15000" :step="500" v-model="formVideo.videoFormat.video1.bit_rate" style="width:91%" :disabled="formVideo.videoFormat.video1.rc_type >= 2" size="mini"></el-input-number>
+            <el-input-number controls-position="right" :min="300" :max="15000" :step="500" v-model="formVideo.videoFormat.video1.bit_rate" style="width:91%" :disabled="formVideo.videoFormat.video1.rc_type == 2" size="mini"></el-input-number>
           </el-form-item>
           <el-row>
           <el-form-item label="分辨率:" class="inline">
@@ -167,26 +174,33 @@
           </el-form-item>
           <el-row>
             <el-form-item label="min_iqp:" class="inline" v-show="formVideo.videoFormat.video1.rc_type != 2 && formVideo.videoFormat.video1.encoder_type != 1">
-            <div id="rc_min_iqp_1">
-              <el-input-number controls-position="right" :min="0" :max=formVideo.videoFormat.video1.max_iqp :step="10" v-model="formVideo.videoFormat.video1.min_iqp" style="width:91%" :disabled="false" @change="onChangeRcVal(1)" size="mini"></el-input-number>
-            </div>
-          </el-form-item>
+              <div id="rc_min_iqp_1">
+                <el-input-number controls-position="right" :min="0" :max=formVideo.videoFormat.video1.max_iqp :step="10" v-model="formVideo.videoFormat.video1.min_iqp" style="width:91%" :disabled="false" @change="onChangeRcVal(1)" size="mini"></el-input-number>
+              </div>
+            </el-form-item>
             <el-form-item label="max_iqp:" class="inline" v-show="formVideo.videoFormat.video1.rc_type != 2 && formVideo.videoFormat.video1.encoder_type != 1">
-            <div id="rc_max_iqp_1">
-              <el-input-number controls-position="right" :min=formVideo.videoFormat.video1.min_iqp :max="51" :step="10" v-model="formVideo.videoFormat.video1.max_iqp" style="width:91%" :disabled="false" @change="onChangeRcVal(1)" size="mini"></el-input-number>
-            </div>
-          </el-form-item>
+              <div id="rc_max_iqp_1">
+                <el-input-number controls-position="right" :min=formVideo.videoFormat.video1.min_iqp :max="51" :step="10" v-model="formVideo.videoFormat.video1.max_iqp" style="width:91%" :disabled="false" @change="onChangeRcVal(1)" size="mini"></el-input-number>
+              </div>
+            </el-form-item>
           </el-row>
-          <el-form-item label="min_i_prop:" class="inline" v-show="(formVideo.videoFormat.video1.rc_type === 0 || formVideo.videoFormat.video1.rc_type === 4) && formVideo.videoFormat.video1.encoder_type != 1">
-            <div id="rc_min_i_prop_1">
-              <el-input-number controls-position="right" :min="0" :max=formVideo.videoFormat.video1.max_iprop :step="10" v-model="formVideo.videoFormat.video1.min_iprop" style="width:91%" :disabled="false" @change="onChangeRcVal(1)" size="mini"></el-input-number>
-            </div>
-          </el-form-item>
-          <el-form-item label="max_i_prop:" class="inline" v-show="(formVideo.videoFormat.video1.rc_type === 0 || formVideo.videoFormat.video1.rc_type === 4) && formVideo.videoFormat.video1.encoder_type != 1">
-            <div id="rc_max_i_prop_1">
-              <el-input-number controls-position="right" :min=formVideo.videoFormat.video1.min_iprop :max="100" :step="10" v-model="formVideo.videoFormat.video1.max_iprop" style="width:91%" :disabled="false" @change="onChangeRcVal(1)" size="mini"></el-input-number>
-            </div>
-          </el-form-item>
+            <el-form-item label="min_i_prop:" class="inline" v-show="(formVideo.videoFormat.video1.rc_type === 0 || formVideo.videoFormat.video1.rc_type === 4) && formVideo.videoFormat.video1.encoder_type != 1">
+              <div id="rc_min_i_prop_1">
+                <el-input-number controls-position="right" :min="0" :max=formVideo.videoFormat.video1.max_iprop :step="10" v-model="formVideo.videoFormat.video1.min_iprop" style="width:91%" :disabled="false" @change="onChangeRcVal(1)" size="mini"></el-input-number>
+              </div>
+            </el-form-item>
+            <el-form-item label="max_i_prop:" class="inline" v-show="(formVideo.videoFormat.video1.rc_type === 0 || formVideo.videoFormat.video1.rc_type === 4) && formVideo.videoFormat.video1.encoder_type != 1">
+              <div id="rc_max_i_prop_1">
+                <el-input-number controls-position="right" :min=formVideo.videoFormat.video1.min_iprop :max="100" :step="10" v-model="formVideo.videoFormat.video1.max_iprop" style="width:91%" :disabled="false" @change="onChangeRcVal(1)" size="mini"></el-input-number>
+              </div>
+            </el-form-item>
+          <el-row>
+            <el-form-item label="gop:" class="inline" v-show="formVideo.videoFormat.video1.encoder_type != 1">
+              <div id="rc_gop_1" >
+                <el-input-number controls-position="right" :min="1" :max=120 :step="1" v-model="formVideo.videoFormat.video1.gop" style="width:91%" :disabled="false" size="mini"></el-input-number>
+              </div>
+            </el-form-item>
+          </el-row>
           <!--el-row>
             <el-form-item label="sht_stat_time:" class="inline" v-show="formVideo.videoFormat.video1.rc_type === 4 && formVideo.videoFormat.video1.encoder_type != 1">
               <div id="sht_stat_time_1">
@@ -226,7 +240,7 @@
             </div>
           </el-form-item>
           <el-form-item label="码率(kbps):" class="inline">
-            <el-input-number controls-position="right" :min="500" :max="15000" :step="500" v-model="formVideo.videoFormat.video2.bit_rate" style="width:91%" :disabled="formVideo.videoFormat.video2.rc_type >= 2" size="mini"></el-input-number>
+            <el-input-number controls-position="right" :min="300" :max="15000" :step="500" v-model="formVideo.videoFormat.video2.bit_rate" style="width:91%" :disabled="formVideo.videoFormat.video2.rc_type == 2" size="mini"></el-input-number>
           </el-form-item>
           <el-row>
             <el-form-item label="分辨率:" class="inline">
@@ -277,16 +291,23 @@
               </div>
             </el-form-item>
           </el-row>
-          <el-form-item label="min_i_prop:" class="inline" v-show="(formVideo.videoFormat.video2.rc_type === 0 || formVideo.videoFormat.video2.rc_type === 4) && formVideo.videoFormat.video2.encoder_type != 1">
-            <div id="rc_min_i_prop_2">
-              <el-input-number controls-position="right" :min="0" :max=formVideo.videoFormat.video2.max_iprop :step="10" v-model="formVideo.videoFormat.video2.min_iprop" style="width:91%" :disabled="false" @change="onChangeRcVal(2)" size="mini"></el-input-number>
-            </div>
-          </el-form-item>
-          <el-form-item label="max_i_prop:" class="inline" v-show="(formVideo.videoFormat.video2.rc_type === 0 || formVideo.videoFormat.video2.rc_type === 4) && formVideo.videoFormat.video2.encoder_type != 1">
-            <div id="rc_max_i_prop_2">
-              <el-input-number controls-position="right" :min=formVideo.videoFormat.video2.min_iprop :max="100" :step="10" v-model="formVideo.videoFormat.video2.max_iprop" style="width:91%" :disabled="false" @change="onChangeRcVal(2)" size="mini"></el-input-number>
-            </div>
-          </el-form-item>
+            <el-form-item label="min_i_prop:" class="inline" v-show="(formVideo.videoFormat.video2.rc_type === 0 || formVideo.videoFormat.video2.rc_type === 4) && formVideo.videoFormat.video2.encoder_type != 1">
+              <div id="rc_min_i_prop_2">
+                <el-input-number controls-position="right" :min="0" :max=formVideo.videoFormat.video2.max_iprop :step="10" v-model="formVideo.videoFormat.video2.min_iprop" style="width:91%" :disabled="false" @change="onChangeRcVal(2)" size="mini"></el-input-number>
+              </div>
+            </el-form-item>
+            <el-form-item label="max_i_prop:" class="inline" v-show="(formVideo.videoFormat.video2.rc_type === 0 || formVideo.videoFormat.video2.rc_type === 4) && formVideo.videoFormat.video2.encoder_type != 1">
+              <div id="rc_max_i_prop_2">
+                <el-input-number controls-position="right" :min=formVideo.videoFormat.video2.min_iprop :max="100" :step="10" v-model="formVideo.videoFormat.video2.max_iprop" style="width:91%" :disabled="false" @change="onChangeRcVal(2)" size="mini"></el-input-number>
+              </div>
+            </el-form-item>
+          <el-row>
+            <el-form-item label="gop:" class="inline" v-show="formVideo.videoFormat.video2.encoder_type != 1">
+              <div id="rc_gop_2" >
+                <el-input-number controls-position="right" :min="1" :max=120 :step="1" v-model="formVideo.videoFormat.video2.gop" style="width:91%" :disabled="false" size="mini"></el-input-number>
+              </div>
+            </el-form-item>
+          </el-row>
           <!--el-row>
             <el-form-item label="sht_stat_time:" class="inline" v-show="formVideo.videoFormat.video2.rc_type === 4 && formVideo.videoFormat.video2.encoder_type != 1">
               <div id="sht_stat_time_2">
@@ -326,7 +347,7 @@
             </div>
           </el-form-item>
           <el-form-item label="码率(kbps):" class="inline">
-            <el-input-number controls-position="right" :min="500" :max="15000" :step="500" v-model="formVideo.videoFormat.video3.bit_rate" style="width:91%" :disabled="formVideo.videoFormat.video3.rc_type >= 2" size="mini"></el-input-number>
+            <el-input-number controls-position="right" :min="300" :max="15000" :step="500" v-model="formVideo.videoFormat.video3.bit_rate" style="width:91%" :disabled="formVideo.videoFormat.video3.rc_type == 2" size="mini"></el-input-number>
           </el-form-item>
           <el-row>
             <el-form-item label="分辨率:" class="inline">
@@ -377,16 +398,23 @@
               </div>
             </el-form-item>
           </el-row>
-          <el-form-item label="min_i_prop:" class="inline" v-show="(formVideo.videoFormat.video3.rc_type === 0 || formVideo.videoFormat.video3.rc_type === 4) && formVideo.videoFormat.video3.encoder_type != 1">
-            <div id="rc_min_i_prop_3">
-              <el-input-number controls-position="right" :min="0" :max=formVideo.videoFormat.video3.max_iprop :step="10" v-model="formVideo.videoFormat.video3.min_iprop" style="width:91%" :disabled="false" @change="onChangeRcVal(3)" size="mini"></el-input-number>
-            </div>
-          </el-form-item>
-          <el-form-item label="max_i_prop:" class="inline" v-show="(formVideo.videoFormat.video3.rc_type === 0 || formVideo.videoFormat.video3.rc_type === 4) && formVideo.videoFormat.video3.encoder_type != 1">
-            <div id="rc_max_i_prop_3">
-              <el-input-number controls-position="right" :min=formVideo.videoFormat.video3.min_iprop :max="100" :step="10" v-model="formVideo.videoFormat.video3.max_iprop" style="width:91%" :disabled="false" @change="onChangeRcVal(3)" size="mini"></el-input-number>
-            </div>
-          </el-form-item>
+            <el-form-item label="min_i_prop:" class="inline" v-show="(formVideo.videoFormat.video3.rc_type === 0 || formVideo.videoFormat.video3.rc_type === 4) && formVideo.videoFormat.video3.encoder_type != 1">
+              <div id="rc_min_i_prop_3">
+                <el-input-number controls-position="right" :min="0" :max=formVideo.videoFormat.video3.max_iprop :step="10" v-model="formVideo.videoFormat.video3.min_iprop" style="width:91%" :disabled="false" @change="onChangeRcVal(3)" size="mini"></el-input-number>
+              </div>
+            </el-form-item>
+            <el-form-item label="max_i_prop:" class="inline" v-show="(formVideo.videoFormat.video3.rc_type === 0 || formVideo.videoFormat.video3.rc_type === 4) && formVideo.videoFormat.video3.encoder_type != 1">
+              <div id="rc_max_i_prop_3">
+                <el-input-number controls-position="right" :min=formVideo.videoFormat.video3.min_iprop :max="100" :step="10" v-model="formVideo.videoFormat.video3.max_iprop" style="width:91%" :disabled="false" @change="onChangeRcVal(3)" size="mini"></el-input-number>
+              </div>
+            </el-form-item>
+          <el-row>
+            <el-form-item label="gop:" class="inline" v-show="formVideo.videoFormat.video3.encoder_type != 1">
+              <div id="rc_gop_3" >
+                <el-input-number controls-position="right" :min="1" :max=120 :step="1" v-model="formVideo.videoFormat.video3.gop" style="width:91%" :disabled="false" size="mini"></el-input-number>
+              </div>
+            </el-form-item>
+          </el-row>
           <!-- el-row>
           <el-form-item label="sht_stat_time:" class="inline" v-show="formVideo.videoFormat.video3.rc_type === 4 && formVideo.videoFormat.video3.encoder_type != 1">
             <div id="sht_stat_time_3">
@@ -481,6 +509,7 @@ export default {
             enable_res_chg: false,
             encoder_type: 0,
             bit_rate: 0,
+            gop: 0,
             resolution: '',
             resolution_opt: [],
             rc_type: 0,
@@ -500,6 +529,7 @@ export default {
             enable_res_chg: false,
             encoder_type: 0,
             bit_rate: 0,
+            gop: 0,
             resolution: '',
             resolution_opt: [],
             rc_type: 0,
@@ -519,6 +549,7 @@ export default {
             enable_res_chg: false,
             encoder_type: 0,
             bit_rate: 0,
+            gop: 0,
             resolution: '',
             resolution_opt: [],
             rc_type: 0,
@@ -538,6 +569,7 @@ export default {
             enable_res_chg: false,
             encoder_type: 0,
             bit_rate: 0,
+            gop: 0,
             resolution: '',
             resolution_opt: [],
             rc_type: 0,
@@ -597,6 +629,7 @@ export default {
   created() {
     console.log('video++')
     this.getInfo()
+    var appName = window.localStorage.getItem("app_name");
     console.log('video--')
   },
   methods: {

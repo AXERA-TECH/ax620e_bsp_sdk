@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -387,16 +387,13 @@ AX_VOID CMD::AddArea(const AX_APP_ALGO_MOTION_PARAM_T &stConfig) {
 }
 
 AX_VOID CMD::SetConfig(const AX_APP_ALGO_MOTION_PARAM_T &stConfig, AX_BOOL bUpdateParam) {
+    Cleanup();
     if (stConfig.bEnable) {
-        Cleanup();
         Startup(m_nSnsID, m_mdImgW, m_mdImgH);
         AddArea(stConfig);
-    } else {
-        Cleanup();
     }
 
     m_stConfig = stConfig;
-
     if (bUpdateParam) {
         SET_ALGO_MD_PARAM(m_nSnsID, stConfig);
     }

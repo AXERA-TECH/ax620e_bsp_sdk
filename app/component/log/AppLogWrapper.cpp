@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -122,7 +122,11 @@ AX_VOID CAppLogWrapper::DeInit(AX_VOID) {
 AX_U64 CAppLogWrapper::GetTickCount(AX_VOID) {
     struct timespec ts;
     clock_gettime(CLOCK_MONOTONIC, &ts);
-    return (ts.tv_sec * 1000000 + ts.tv_nsec / 1000);
+
+    AX_U64 result = ts.tv_sec;
+    result *= 1000000;
+    result += (ts.tv_nsec / 1000);
+    return result;
 }
 
 AX_VOID CAppLogWrapper::LogArgStr(AX_S32 nLv, const AX_CHAR* pFmt, va_list vlist) {

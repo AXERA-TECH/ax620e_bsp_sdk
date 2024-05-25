@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -93,7 +93,7 @@ public:
     AX_BOOL GetIspImageAttr(APP_ISP_IMAGE_ATTR_T& tAttr);
     AX_BOOL SetIspImageAttr(const APP_ISP_IMAGE_ATTR_T& tAttr);
     AX_BOOL ChangeDaynightMode(AX_DAYNIGHT_MODE_E eDaynightMode);
-    AX_VOID ChangeHdrMode(AX_U32 nSnsMode);
+    AX_VOID ChangeHdrMode(AX_U32 nSnsMode, AX_U8 nHdrRatio);
     AX_BOOL ChangeSnsMirrorFlip(AX_BOOL bMirror, AX_BOOL bFlip);
     AX_BOOL SetAeRoiAttr(AX_BOOL bEnable);
     AX_BOOL SetAeRoi(const std::vector<AX_APP_ALGO_AE_ROI_ITEM_T>& stVecItem);
@@ -115,6 +115,7 @@ public:
     AX_BOOL LoadBinParams(const std::string &strBinName);
     AX_BOOL GetSnsTemperature(AX_F32 &fTemperature);
     AX_VOID GetResolution(AX_U32 &nWidth, AX_U32 &nHeight);
+    AX_BOOL SetHdrRatio(AX_U8 nHdrRatio);
 
     AX_BOOL SetMultiSnsSync(AX_BOOL bSync);
     AX_BOOL IsSnsSync();
@@ -143,6 +144,7 @@ private:
     AX_BOOL RestoreSnsAttr();
     AX_S32 CalcValueToIspIQ(AX_F32 fVal, AX_S32 nLow, AX_S32 nMedium, AX_S32 nHigh);
     AX_F32 CalcIspIQToValue(AX_S32 nIQ, AX_S32 nLow, AX_S32 nMedium, AX_S32 nHigh);
+    AX_BOOL LoadParams(const std::string &strBinName);
 
 protected:
     SENSOR_CONFIG_T m_tSnsCfg;

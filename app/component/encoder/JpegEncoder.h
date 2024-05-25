@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -85,6 +85,7 @@ public:
     }
 
     AX_BOOL ResetQFactor(AX_U32 nQFactor);
+    AX_VOID SetPauseFlag(AX_BOOL bGetFlag);
 
 protected:
     virtual AX_BOOL ProcessFrame(CAXFrame* pFrame) override;
@@ -107,4 +108,6 @@ private:
     std::vector<IObserver*> m_vecObserver;
     CFramerateCtrlHelper* m_pFramectrl{nullptr};
     AX_U8 m_nRotation{0};
+    AX_BOOL m_bPauseGet{AX_FALSE};
+    std::mutex m_mtx;
 };

@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -14,13 +14,15 @@
 #include "AXStage.hpp"
 #include "IObserver.h"
 #include "ax_ai_api.h"
+#include "ax_aac.h"
+#include "ax_opus.h"
 #include "ax_codec_comm.h"
 #include "ax_comm_aio.h"
 
 #define AUDIO_CAP_DEV_META_SIZE (4 * 1024)
 #define AUDIO_CAP_DEV_DEFAULT_BLK_SIZE (4 * 1024)
 #define AUDIO_CAP_DEV_DEFAULT_BLK_CNT (12)  // 4(ai) + 8(aenc)
-#define AUDIO_CAP_DEV_DEFAULT_DEPTH (32)
+#define AUDIO_CAP_DEV_DEFAULT_DEPTH (30)
 #define AUDIO_CAP_DEV_PERIOD_COUNT (4)
 
 typedef struct audio_CAP_FRAME_T {

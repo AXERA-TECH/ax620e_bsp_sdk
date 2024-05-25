@@ -79,8 +79,8 @@ AX_VIN_CHN_ATTR_T gDummyChn0Attr = {
 };
 
 AX_SNS_ATTR_T gDVPSnsAttr = {
-    .nWidth = 320,
-    .nHeight = 240,
+    .nWidth = 2560,
+    .nHeight = 1440,
     .fFrameRate = 15.0,
     .eSnsMode = AX_SNS_LINEAR_MODE,
     .eRawType = AX_RT_RAW10,
@@ -98,10 +98,10 @@ AX_VIN_DEV_ATTR_T gDVPDevAttr = {
     .bNonImgDataEnable = AX_FALSE,
     .eDevMode = AX_VIN_DEV_ONLINE,
     .eSnsIntfType = AX_SNS_INTF_TYPE_DVP,
-    .tDevImgRgn[0] = {0, 0, 320, 240},
-    .tDevImgRgn[1] = {0, 0, 320, 240},
-    .tDevImgRgn[2] = {0, 0, 320, 240},
-    .tDevImgRgn[3] = {0, 0, 320, 240},
+    .tDevImgRgn[0] = {0, 0, 2560, 1440},
+    .tDevImgRgn[1] = {0, 0, 2560, 1440},
+    .tDevImgRgn[2] = {0, 0, 2560, 1440},
+    .tDevImgRgn[3] = {0, 0, 2560, 1440},
     .ePixelFmt = AX_FORMAT_BAYER_RAW_10BPP_PACKED,
     .eBayerPattern = AX_BP_RGGB,
     .eSnsMode = AX_SNS_LINEAR_MODE,
@@ -119,7 +119,7 @@ AX_VIN_DEV_ATTR_T gDVPDevAttr = {
 
 AX_VIN_PIPE_ATTR_T gDVPPipeAttr = {
     .ePipeWorkMode = 0x1,
-    .tPipeImgRgn = {0, 0, 320, 240},
+    .tPipeImgRgn = {0, 0, 2560, 1440},
     .eBayerPattern = AX_BP_RGGB,
     .ePixelFmt = AX_FORMAT_BAYER_RAW_10BPP_PACKED,
     .eSnsMode = AX_SNS_LINEAR_MODE,
@@ -127,11 +127,11 @@ AX_VIN_PIPE_ATTR_T gDVPPipeAttr = {
 };
 
 AX_VIN_CHN_ATTR_T gDVPChn0Attr = {
-    .nWidth = 320,
-    .nHeight = 240,
-    .nWidthStride = 320,
+    .nWidth = 2560,
+    .nHeight = 1440,
+    .nWidthStride = 2560,
     .eImgFormat = AX_FORMAT_YUV420_SEMIPLANAR,
-    .nDepth = 3,
+    .nDepth = 1,
     .tCompressInfo = {AX_COMPRESS_MODE_NONE, 0},
 };
 

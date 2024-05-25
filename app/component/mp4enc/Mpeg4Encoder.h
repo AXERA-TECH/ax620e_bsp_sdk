@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -19,8 +19,10 @@
 typedef enum axMPEG4_SESS_MEDIA_TYPE_E { MPEG4_SESS_MEDIA_VIDEO, MPEG4_SESS_MEDIA_AUDIO, MPEG4_SESS_MEDIA_BUTT } MPEG4_SESS_MEDIA_TYPE_E;
 
 typedef struct MPEG4EC_INFO_S {
+    AX_BOOL bLoopSet;
     AX_U32 nchn;
     AX_U32 nMaxFileInMBytes;
+    AX_U32 nMaxFileCount;
     std::string strSavePath;
 
     struct mpeg4_video_sess_attr {
@@ -45,6 +47,8 @@ typedef struct MPEG4EC_INFO_S {
     MPEG4EC_INFO_S() {
         nchn = 0;
         nMaxFileInMBytes = 0;
+        nMaxFileCount = 0;
+        bLoopSet = AX_TRUE;
         memset(&stVideoAttr, 0x00, sizeof(stVideoAttr));
         memset(&stAudioAttr, 0x00, sizeof(stAudioAttr));
     }

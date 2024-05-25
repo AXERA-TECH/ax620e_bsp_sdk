@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -215,6 +215,19 @@ AX_BOOL CWebOptionHelper::InitAiAttr(AX_U8 nSnsID) {
     m_mapSns2AiAttr[nSnsID].tAeRoiBody.nWidth = ALGO_HVCFP_PARAM(nSnsID).stAeRoiConfig[AX_APP_ALGO_HVCFP_BODY].nWidth;
     m_mapSns2AiAttr[nSnsID].tAeRoiBody.nHeight = ALGO_HVCFP_PARAM(nSnsID).stAeRoiConfig[AX_APP_ALGO_HVCFP_BODY].nHeight;
     m_mapSns2AiAttr[nSnsID].tAeRoiBody.eMode = ALGO_HVCFP_PARAM(nSnsID).stAeRoiConfig[AX_APP_ALGO_HVCFP_BODY].eMode;
+
+    m_mapSns2AiAttr[nSnsID].tSvcParam.bValid = AX_TRUE;
+    m_mapSns2AiAttr[nSnsID].tSvcParam.bEnable = ALGO_SVC_PARAM(nSnsID).bEnable;
+    m_mapSns2AiAttr[nSnsID].tSvcParam.bSyncValid = ALGO_SVC_PARAM(nSnsID).bSync;
+    m_mapSns2AiAttr[nSnsID].tSvcParam.bSync = ALGO_SVC_PARAM(nSnsID).bSync;
+    m_mapSns2AiAttr[nSnsID].tSvcParam.tBgQpCfg.iQp = ALGO_SVC_PARAM(nSnsID).tBgQpCfg.iQp;
+    m_mapSns2AiAttr[nSnsID].tSvcParam.tBgQpCfg.pQp = ALGO_SVC_PARAM(nSnsID).tBgQpCfg.pQp;
+
+    for (size_t i = 0; i < AX_APP_ALGO_HVCFP_TYPE_BUTT; i++) {
+        m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[i].bEnable = ALGO_SVC_PARAM(nSnsID).tQpCfg[i].bEnable;
+        m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[i].tQpMap.iQp = ALGO_SVC_PARAM(nSnsID).tQpCfg[i].tQpMap.iQp;
+        m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[i].tQpMap.pQp = ALGO_SVC_PARAM(nSnsID).tQpCfg[i].tQpMap.pQp;
+    }
     return AX_TRUE;
 }
 
@@ -264,6 +277,8 @@ MprJson* CWebOptionHelper::GetCameraJson(AX_U8 nSnsID) {
     WRITE_JSON_INT(json, "switch_PN_mode_enable", attr.bPNModeEnable);
     WRITE_JSON_BOOL(json, "switch_mirror_flip_enable", attr.bMirrorFlipEnable);
     WRITE_JSON_BOOL(json, "switch_rotation_enable", attr.bRotationEnable);
+    WRITE_JSON_BOOL(json, "hdr_ratio_enable", attr.bHdrRatioEnable);
+    WRITE_JSON_INT(json, "hdr_ratio", attr.nHdrRatio);
 
     return json;
 }
@@ -434,6 +449,7 @@ picojson::object CWebOptionHelper::GetVideoJsonObj(AX_U8 nSnsID, AX_U32 nPrevChn
     json["enable_res_chg"] = picojson::value(bool(1));
     json["encoder_type"] = picojson::value(double(pAttr->nEncoderType));
     json["bit_rate"] = picojson::value(double(pAttr->nBitrate));
+    json["gop"] = picojson::value(double(pAttr->nGop));
     json["resolution"] = picojson::value(std::string(GenResStr(pAttr->nWidth, pAttr->nHeight)));
 
     json["rc_type"] = picojson::value(double(pAttr->nRcType));
@@ -632,8 +648,12 @@ AX_BOOL CWebOptionHelper::GetAiInfoStr(AX_U8 nSnsID, AX_CHAR* pOutBuf, AX_U32 nS
     AX_CHAR szPushStrgy[128] = {0};
     AX_CHAR szDetModelAttr[512] = {0};
     AX_CHAR szEvent[256] = {0};
+    AX_CHAR szSvc[512] = {0};
 
-    if (!GetPushStrgyStr(nSnsID, szPushStrgy, 128) || !GetDetectModelAttrStr(szDetModelAttr, 512) || !GetEventsStr(nSnsID, szEvent, 256)) {
+    if (!GetPushStrgyStr(nSnsID, szPushStrgy, 128)
+        || !GetDetectModelAttrStr(szDetModelAttr, 512)
+        || !GetEventsStr(nSnsID, szEvent, 256)
+        || !GetAlgoSvcStr(nSnsID, szSvc, 512)) {
         return AX_FALSE;
     }
 
@@ -645,7 +665,8 @@ AX_BOOL CWebOptionHelper::GetAiInfoStr(AX_U8 nSnsID, AX_CHAR* pOutBuf, AX_U32 nS
         detect_only: %s, \
         %s: {%s}, \
         body_roi: {enable:%s, min_width:%d, min_height:%d, mode:%d}, \
-        events: {%s}}",
+        events: {%s}, \
+        svc: {%s}}",
         ADAPTER_INT2BOOLSTR(m_mapSns2AiAttr[nSnsID].bEnable),
         GetDetectModelStr().c_str(),
         10,
@@ -653,7 +674,8 @@ AX_BOOL CWebOptionHelper::GetAiInfoStr(AX_U8 nSnsID, AX_CHAR* pOutBuf, AX_U32 nS
         ADAPTER_INT2BOOLSTR(1),
         GetDetectModelStr().c_str(), szDetModelAttr,
         ADAPTER_INT2BOOLSTR(m_mapSns2AiAttr[nSnsID].tAeRoiBody.bEnable),m_mapSns2AiAttr[nSnsID].tAeRoiBody.nWidth, m_mapSns2AiAttr[nSnsID].tAeRoiBody.nHeight,m_mapSns2AiAttr[nSnsID].tAeRoiBody.eMode,
-        szEvent);
+        szEvent,
+        szSvc);
 
     return nCount > 0 ? AX_TRUE : AX_FALSE;
 }
@@ -752,6 +774,37 @@ std::string CWebOptionHelper::GetDetectModelStr() {
     // }
 }
 
+AX_BOOL CWebOptionHelper::GetAlgoSvcStr(AX_U8 nSnsID, AX_CHAR* pOutBuf, AX_U32 nSize) {
+    if (nullptr == pOutBuf || 0 == nSize) {
+        return AX_FALSE;
+    }
+
+    const AI_SVC_OPTION_T &tSvcParam = m_mapSns2AiAttr[nSnsID].tSvcParam;
+
+    AX_S32 nCount =
+        snprintf(pOutBuf, nSize,
+                 "valid: %s, \
+                  sync_valid: %s, \
+                  enable: %s, \
+                  sync_mode: %s, \
+                  bg_qp: {iQp: %d, pQp: %d}, \
+                  body: {enable: %s, qp: {iQp: %d, pQp: %d}}, \
+                  vehicle: {enable: %s, qp: {iQp: %d, pQp: %d}}, \
+                  cycle: {enable: %s, qp: {iQp: %d, pQp: %d}}, \
+                  face: {enable: %s, qp: {iQp: %d, pQp: %d}}, \
+                  plate: {enable: %s, qp: {iQp: %d, pQp: %d}}",
+                  ADAPTER_BOOL2BOOLSTR(tSvcParam.bValid), ADAPTER_BOOL2BOOLSTR(tSvcParam.bSyncValid),
+                  ADAPTER_BOOL2BOOLSTR(tSvcParam.bEnable), ADAPTER_BOOL2BOOLSTR(tSvcParam.bSync),
+                  tSvcParam.tBgQpCfg.iQp, tSvcParam.tBgQpCfg.pQp,
+                  ADAPTER_BOOL2BOOLSTR(tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_BODY].bEnable), tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_BODY].tQpMap.iQp, tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_BODY].tQpMap.pQp,
+                  ADAPTER_BOOL2BOOLSTR(tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_VEHICLE].bEnable), tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_VEHICLE].tQpMap.iQp, tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_VEHICLE].tQpMap.pQp,
+                  ADAPTER_BOOL2BOOLSTR(tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_CYCLE].bEnable), tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_CYCLE].tQpMap.iQp, tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_CYCLE].tQpMap.pQp,
+                  ADAPTER_BOOL2BOOLSTR(tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_FACE].bEnable), tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_FACE].tQpMap.iQp, tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_FACE].tQpMap.pQp,
+                  ADAPTER_BOOL2BOOLSTR(tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_PLATE].bEnable), tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_PLATE].tQpMap.iQp, tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_PLATE].tQpMap.pQp);
+
+    return nCount > 0 ? AX_TRUE : AX_FALSE;
+}
+
 AX_BOOL CWebOptionHelper::ParseWebRequest(WEB_REQUEST_TYPE_E eReqType, const AX_VOID* pJsonReq, vector<WEB_REQ_OPERATION_T>& vecWebOpr) {
 #ifndef _OPAL_LIB_
 #ifndef SLT
@@ -789,24 +842,32 @@ AX_BOOL CWebOptionHelper::ParseWebRequest(WEB_REQUEST_TYPE_E eReqType, const AX_
             }
             LOG_MM_C(WEB_OPTION, "[Camera] Web request: sensor %d", nSnsID);
 
-            AX_U8 nSnsMode = 0;
+            AX_U8 nSnsMode = m_mapSns2CameraSetting[nSnsID].nSnsMode;
+            AX_U8 nHdrRatio = m_mapSns2CameraSetting[nSnsID].nHdrRatio;
             MprJson* pJsonCamera = mprReadJsonObj(pJson, "camera_attr");
             WEB_SET_INT(nSnsMode, pJsonCamera, "sns_work_mode");
-            if (nSnsMode != m_mapSns2CameraSetting[nSnsID].nSnsMode) {
+            WEB_SET_INT(nHdrRatio, pJsonCamera, "hdr_ratio");
+            if (nSnsMode != m_mapSns2CameraSetting[nSnsID].nSnsMode
+                || (nSnsMode > 1
+                    && m_mapSns2CameraSetting[nSnsID].bHdrRatioEnable
+                    && nHdrRatio != m_mapSns2CameraSetting[nSnsID].nHdrRatio)) {
                 WEB_REQ_OPERATION_T tOperation;
                 tOperation.nSnsID = nSnsID;
                 tOperation.nChannel = -1;
                 tOperation.eReqType = E_REQ_TYPE_CAMERA;
                 tOperation.SetOperaType(E_WEB_OPERATION_TYPE_SNS_MODE);
                 tOperation.tSnsMode.nSnsMode = nSnsMode;
+                tOperation.tSnsMode.nHdrRatio = nHdrRatio;
 
                 vecWebOpr.emplace_back(tOperation);
-                LOG_MM_C(WEB_OPTION, "[%d] sensor work mode changed: [%d] => [%d]", nSnsID, m_mapSns2CameraSetting[nSnsID].nSnsMode,
-                         nSnsMode);
+                LOG_MM_C(WEB_OPTION, "[%d] sensor work mode changed: [%d] => [%d], hdr ratio: [%d] => [%d]",
+                        nSnsID, m_mapSns2CameraSetting[nSnsID].nSnsMode, nSnsMode,
+                        m_mapSns2CameraSetting[nSnsID].nHdrRatio, nHdrRatio);
                 m_mapSns2CameraSetting[nSnsID].nSnsMode = nSnsMode;
+                m_mapSns2CameraSetting[nSnsID].nHdrRatio = nHdrRatio;
             }
 
-            AX_U8 nRotation = 0;
+            AX_U8 nRotation = m_mapSns2CameraSetting[nSnsID].nRotation;
             WEB_SET_INT(nRotation, pJsonCamera, "rotation");
             if (nRotation != m_mapSns2CameraSetting[nSnsID].nRotation) {
                 WEB_REQ_OPERATION_T tOperation;
@@ -822,7 +883,7 @@ AX_BOOL CWebOptionHelper::ParseWebRequest(WEB_REQUEST_TYPE_E eReqType, const AX_
                 m_mapSns2CameraSetting[nSnsID].nRotation = nRotation;
             }
 
-            AX_U8 nDayNightMode = 0;
+            AX_U8 nDayNightMode = m_mapSns2CameraSetting[nSnsID].nDayNightMode;
             WEB_SET_INT(nDayNightMode, pJsonCamera, "daynight");
             if (nDayNightMode != m_mapSns2CameraSetting[nSnsID].nDayNightMode) {
                 WEB_REQ_OPERATION_T tOperation;
@@ -853,9 +914,10 @@ AX_BOOL CWebOptionHelper::ParseWebRequest(WEB_REQUEST_TYPE_E eReqType, const AX_
                 m_mapSns2CameraSetting[nSnsID].bCapture = bCapture;
             }
 
-            AX_U32 nFrameRate = 0;
+            AX_U32 nFrameRate = m_mapSns2CameraSetting[nSnsID].fFramerate;
             WEB_SET_INT(nFrameRate, pJsonCamera, "framerate");
-            if (nFrameRate != m_mapSns2CameraSetting[nSnsID].fFramerate) {
+            if (GetFramerateOptStr(nSnsID).find(std::to_string(nFrameRate)) != std::string::npos
+                && nFrameRate != m_mapSns2CameraSetting[nSnsID].fFramerate) {
                 WEB_REQ_OPERATION_T tOperation;
                 tOperation.nSnsID = nSnsID;
                 tOperation.nChannel = -1;
@@ -901,11 +963,11 @@ AX_BOOL CWebOptionHelper::ParseWebRequest(WEB_REQUEST_TYPE_E eReqType, const AX_
             }
             LOG_MM_C(WEB_OPTION, "[Image] Web request: sensor %d", nSnsID);
 
-            AX_U8 nAutoMode = 0;
-            AX_U8 nSharpness = 0;
-            AX_U8 nBrightness = 0;
-            AX_U8 nContrast = 0;
-            AX_U8 nSaturation = 0;
+            AX_U8 nAutoMode = m_mapSns2CameraSetting[nSnsID].tImageAttr.nAutoMode;
+            AX_U8 nSharpness = m_mapSns2CameraSetting[nSnsID].tImageAttr.nSharpness;
+            AX_U8 nBrightness = m_mapSns2CameraSetting[nSnsID].tImageAttr.nBrightness;
+            AX_U8 nContrast = m_mapSns2CameraSetting[nSnsID].tImageAttr.nContrast;
+            AX_U8 nSaturation = m_mapSns2CameraSetting[nSnsID].tImageAttr.nSaturation;
 
             MprJson* pJsonImage = mprReadJsonObj(pJson, "image_attr");
             WEB_SET_INT(nAutoMode, pJsonImage, "isp_auto_mode");
@@ -1070,7 +1132,7 @@ AX_BOOL CWebOptionHelper::ParseWebRequest(WEB_REQUEST_TYPE_E eReqType, const AX_
                 LOG_MM_C(WEB_OPTION, "[video] Web request: sensor %d => %s", nSnsID, szKey);
 
                 WEB_VIDEO_ATTR_T tOldAttr = GetVideo(nSnsID, i);
-                AX_U8 nEncoderType = 0;
+                AX_U8 nEncoderType = tOldAttr.nEncoderType;
                 WEB_SET_INT(nEncoderType, jsonObj, "encoder_type");
                 if (nEncoderType != tOldAttr.nEncoderType) {
                     WEB_REQ_OPERATION_T tOperation;
@@ -1111,7 +1173,7 @@ AX_BOOL CWebOptionHelper::ParseWebRequest(WEB_REQUEST_TYPE_E eReqType, const AX_
                     }
                 }
 
-                AX_BOOL bEnable = AX_FALSE;
+                AX_BOOL bEnable = tOldAttr.bEnable;
                 WEB_SET_BOOL(bEnable, jsonObj, "enable_stream");
                 if (bEnable != tOldAttr.bEnable) {
                     WEB_REQ_OPERATION_T tOperation;
@@ -1137,6 +1199,7 @@ AX_BOOL CWebOptionHelper::ParseWebRequest(WEB_REQUEST_TYPE_E eReqType, const AX_
                 cchar* cMin_iprop = mprReadJson(jsonObj, "min_iprop");
                 cchar* cMax_iprop = mprReadJson(jsonObj, "max_iprop");
                 cchar* cBitrate = mprReadJson(jsonObj, "bit_rate");
+                cchar* cGop = mprReadJson(jsonObj, "gop");
 
                 cchar* cSht_stat_time = mprReadJson(jsonObj, "sht_stat_time");
                 cchar* cLt_stat_time = mprReadJson(jsonObj, "lt_stat_time");
@@ -1145,7 +1208,7 @@ AX_BOOL CWebOptionHelper::ParseWebRequest(WEB_REQUEST_TYPE_E eReqType, const AX_
 
                 if (nullptr != cMin_qp && nullptr != cMax_qp && nullptr != cMin_iqp && nullptr != cMax_iqp && nullptr != cMin_iprop &&
                     nullptr != cMax_iprop && nullptr != cBitrate && nullptr != cSht_stat_time && nullptr != cLt_stat_time &&
-                    nullptr != cLt_min_bitrate && nullptr != cLt_max_bitrate) {
+                    nullptr != cLt_min_bitrate && nullptr != cLt_max_bitrate && nullptr != cGop) {
                     AX_U32 nRcType = atoi(mprReadJson(jsonObj, "rc_type"));
                     AX_U32 nMinQp = (AX_U32)atoi(cMin_qp);
                     AX_U32 nMaxQp = (AX_U32)atoi(cMax_qp);
@@ -1154,6 +1217,7 @@ AX_BOOL CWebOptionHelper::ParseWebRequest(WEB_REQUEST_TYPE_E eReqType, const AX_
                     AX_U32 nMinIProp = (AX_U32)atoi(cMin_iprop);
                     AX_U32 nMaxIProp = (AX_U32)atoi(cMax_iprop);
                     AX_U32 nBitrate = (AX_U32)atoi(cBitrate);
+                    AX_U32 nGop = (AX_U32)atoi(cGop);
 
                     AX_U32 nShtTime = (AX_U32)atoi(cSht_stat_time);
                     AX_U32 nLtTime = (AX_U32)atoi(cLt_stat_time);
@@ -1165,8 +1229,8 @@ AX_BOOL CWebOptionHelper::ParseWebRequest(WEB_REQUEST_TYPE_E eReqType, const AX_
                     if (nRcType != tOldAttr.nRcType || nMinQp != rOldRcInfo.nMinQp || nMaxQp != rOldRcInfo.nMaxQp ||
                         nMinIQp != rOldRcInfo.nMinIQp || nMaxIQp != rOldRcInfo.nMaxIQp || nMinIProp != rOldRcInfo.nMinIProp ||
                         nMaxIProp != rOldRcInfo.nMaxIProp || nShtTime != rOldRcInfo.nShtStaTime || nLtTime != rOldRcInfo.nLtStaTime ||
-                        nLtMinBr != rOldRcInfo.nLtMinBitrate || nLtMaxBr != rOldRcInfo.nLtMaxBitrate ||
-                        nBitrate != tOldAttr.nBitrate) {
+                        nLtMinBr != rOldRcInfo.nLtMinBitrate || nLtMaxBr != rOldRcInfo.nLtMaxBitrate || nBitrate != tOldAttr.nBitrate ||
+                        nGop != tOldAttr.nGop) {
                         WEB_REQ_OPERATION_T tOperation;
                         tOperation.nSnsID = nSnsID;
                         tOperation.nGroup = 0;
@@ -1181,6 +1245,7 @@ AX_BOOL CWebOptionHelper::ParseWebRequest(WEB_REQUEST_TYPE_E eReqType, const AX_
                         tOperation.tRcInfo.nMaxIProp = nMaxIProp;
                         tOperation.tRcInfo.nMinIProp = nMinIProp;
                         tOperation.tRcInfo.nBitrate = nBitrate;
+                        tOperation.tRcInfo.nGop = nGop;
                         tOperation.tRcInfo.nEncoderType = nEncoderType;
 
                         tOperation.tRcInfo.nShtStaTime = nShtTime;
@@ -1189,10 +1254,12 @@ AX_BOOL CWebOptionHelper::ParseWebRequest(WEB_REQUEST_TYPE_E eReqType, const AX_
                         tOperation.tRcInfo.nLtMaxBitrate = nLtMaxBr;
 
                         vecWebOpr.emplace_back(tOperation);
-                        LOG_MM_C(WEB_OPTION, "[%d,%d] changed: rc info: [%d %d %d %d %d %d %d] => [%d %d %d %d %d %d %d], bitrate: [%d] => [%d]", nSnsID, i,
-                                 tOldAttr.nRcType, rOldRcInfo.nMinQp, rOldRcInfo.nMaxQp, rOldRcInfo.nMinIQp, rOldRcInfo.nMaxIQp,
+                        LOG_MM_C(WEB_OPTION,
+                                 "[%d,%d] changed: rc info: [%d %d %d %d %d %d %d] => [%d %d %d %d %d %d %d], bitrate: [%d] => [%d], gop: "
+                                 "[%d] => [%d]",
+                                 nSnsID, i, tOldAttr.nRcType, rOldRcInfo.nMinQp, rOldRcInfo.nMaxQp, rOldRcInfo.nMinIQp, rOldRcInfo.nMaxIQp,
                                  rOldRcInfo.nMinIProp, rOldRcInfo.nMaxIProp, nRcType, nMinQp, nMaxQp, nMinIQp, nMaxIQp, nMinIProp,
-                                 nMaxIProp, tOldAttr.nBitrate, nBitrate);
+                                 nMaxIProp, tOldAttr.nBitrate, nBitrate, tOldAttr.nGop, nGop);
 
                         RC_INFO_T rRcInfo;
                         rRcInfo.eRcType = tOperation.tRcInfo.eRcType;
@@ -1206,6 +1273,7 @@ AX_BOOL CWebOptionHelper::ParseWebRequest(WEB_REQUEST_TYPE_E eReqType, const AX_
                         m_mapSns2VideoAttr[nSnsID][i].SetEncRcCfg(rRcInfo);
                         m_mapSns2VideoAttr[nSnsID][i].nRcType = nRcType;
                         m_mapSns2VideoAttr[nSnsID][i].nBitrate = nBitrate;
+                        m_mapSns2VideoAttr[nSnsID][i].nGop = nGop;
                     }
                 }
             }
@@ -1221,7 +1289,7 @@ AX_BOOL CWebOptionHelper::ParseWebRequest(WEB_REQUEST_TYPE_E eReqType, const AX_
 
             LOG_MM_C(WEB_OPTION, "[AI] Web request: sensor %d", nSnsID);
 
-            AX_BOOL bAiEnable = AX_FALSE;
+            AX_BOOL bAiEnable = m_mapSns2AiAttr[nSnsID].bEnable;
             MprJson* pJsonAI = mprReadJsonObj(pJson, "ai_attr");
             WEB_SET_BOOL(bAiEnable, pJsonAI, "ai_enable");
             if (bAiEnable != m_mapSns2AiAttr[nSnsID].bEnable) {
@@ -1360,6 +1428,121 @@ AX_BOOL CWebOptionHelper::ParseWebRequest(WEB_REQUEST_TYPE_E eReqType, const AX_
                     m_mapSns2AiAttr[nSnsID].tAeRoiBody.nWidth = tOperation.tAiAeRoi.nWidth;
                     m_mapSns2AiAttr[nSnsID].tAeRoiBody.nHeight = tOperation.tAiAeRoi.nHeight;
                     m_mapSns2AiAttr[nSnsID].tAeRoiBody.eMode = tOperation.tAiAeRoi.eMode;
+                }
+            }
+
+            MprJson* pJsonSvc = mprReadJsonObj(pJsonAI, "svc");
+            if (pJsonSvc) {
+                WEB_REQ_OPERATION_T tOperation;
+                tOperation.nGroup = nSnsID; /* Enable attribute only controls the sensor level's osd's display */
+                tOperation.nSnsID = nSnsID;
+                tOperation.nChannel = -1;
+                tOperation.eReqType = E_REQ_TYPE_AI;
+                tOperation.SetOperaType(E_WEB_OPERATION_TYPE_AI_SVC);
+
+                tOperation.tSvcParam.bValid = m_mapSns2AiAttr[nSnsID].tSvcParam.bValid;
+                tOperation.tSvcParam.bSyncValid = m_mapSns2AiAttr[nSnsID].tSvcParam.bSyncValid;
+
+                WEB_SET_BOOL(tOperation.tSvcParam.bEnable, pJsonSvc, "enable");
+                WEB_SET_BOOL(tOperation.tSvcParam.bSync, pJsonSvc, "sync_mode");
+
+                MprJson* pJsonSvcBgQp = mprReadJsonObj(pJsonSvc, "bg_qp");
+                WEB_SET_INT(tOperation.tSvcParam.tBgQpCfg.iQp, pJsonSvcBgQp, "iQp");
+                WEB_SET_INT(tOperation.tSvcParam.tBgQpCfg.pQp, pJsonSvcBgQp, "pQp");
+
+                MprJson* pJsonSvcBody = mprReadJsonObj(pJsonSvc, "body");
+                MprJson* pJsonSvcBodyQp = mprReadJsonObj(pJsonSvcBody, "qp");
+                WEB_SET_BOOL(tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_BODY].bEnable, pJsonSvcBody, "enable");
+                WEB_SET_INT(tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_BODY].tQpMap.iQp, pJsonSvcBodyQp, "iQp");
+                WEB_SET_INT(tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_BODY].tQpMap.pQp, pJsonSvcBodyQp, "pQp");
+
+                MprJson* pJsonSvcVehicle = mprReadJsonObj(pJsonSvc, "vehicle");
+                MprJson* pJsonSvcVehicleQp = mprReadJsonObj(pJsonSvcVehicle, "qp");
+                WEB_SET_BOOL(tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_VEHICLE].bEnable, pJsonSvcVehicle, "enable");
+                WEB_SET_INT(tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_VEHICLE].tQpMap.iQp, pJsonSvcVehicleQp, "iQp");
+                WEB_SET_INT(tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_VEHICLE].tQpMap.pQp, pJsonSvcVehicleQp, "pQp");
+
+                MprJson* pJsonSvcCycle = mprReadJsonObj(pJsonSvc, "cycle");
+                MprJson* pJsonSvcCycleQp = mprReadJsonObj(pJsonSvcCycle, "qp");
+                WEB_SET_BOOL(tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_CYCLE].bEnable, pJsonSvcCycle, "enable");
+                WEB_SET_INT(tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_CYCLE].tQpMap.iQp, pJsonSvcCycleQp, "iQp");
+                WEB_SET_INT(tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_CYCLE].tQpMap.pQp, pJsonSvcCycleQp, "pQp");
+
+                MprJson* pJsonSvcFace = mprReadJsonObj(pJsonSvc, "face");
+                MprJson* pJsonSvcFaceQp = mprReadJsonObj(pJsonSvcFace, "qp");
+                WEB_SET_BOOL(tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_FACE].bEnable, pJsonSvcFace, "enable");
+                WEB_SET_INT(tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_FACE].tQpMap.iQp, pJsonSvcFaceQp, "iQp");
+                WEB_SET_INT(tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_FACE].tQpMap.pQp, pJsonSvcFaceQp, "pQp");
+
+                MprJson* pJsonSvcPlate = mprReadJsonObj(pJsonSvc, "plate");
+                MprJson* pJsonSvcPlateQp = mprReadJsonObj(pJsonSvcPlate, "qp");
+                WEB_SET_BOOL(tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_PLATE].bEnable, pJsonSvcPlate, "enable");
+                WEB_SET_INT(tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_PLATE].tQpMap.iQp, pJsonSvcPlateQp, "iQp");
+                WEB_SET_INT(tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_PLATE].tQpMap.pQp, pJsonSvcPlateQp, "pQp");
+
+                if (m_mapSns2AiAttr[nSnsID].tSvcParam.bEnable != tOperation.tSvcParam.bEnable ||
+                    m_mapSns2AiAttr[nSnsID].tSvcParam.bSync != tOperation.tSvcParam.bSync ||
+                    m_mapSns2AiAttr[nSnsID].tSvcParam.tBgQpCfg.iQp != tOperation.tSvcParam.tBgQpCfg.iQp ||
+                    m_mapSns2AiAttr[nSnsID].tSvcParam.tBgQpCfg.pQp != tOperation.tSvcParam.tBgQpCfg.pQp ||
+                    m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_BODY].bEnable != tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_BODY].bEnable ||
+                    m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_BODY].tQpMap.iQp != tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_BODY].tQpMap.iQp ||
+                    m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_BODY].tQpMap.pQp != tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_BODY].tQpMap.pQp ||
+                    m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_VEHICLE].bEnable != tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_VEHICLE].bEnable ||
+                    m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_VEHICLE].tQpMap.iQp != tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_VEHICLE].tQpMap.iQp ||
+                    m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_VEHICLE].tQpMap.pQp != tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_VEHICLE].tQpMap.pQp ||
+                    m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_CYCLE].bEnable != tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_CYCLE].bEnable ||
+                    m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_CYCLE].tQpMap.iQp != tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_CYCLE].tQpMap.iQp ||
+                    m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_CYCLE].tQpMap.pQp != tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_CYCLE].tQpMap.pQp ||
+                    m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_FACE].bEnable != tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_FACE].bEnable ||
+                    m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_FACE].tQpMap.iQp != tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_FACE].tQpMap.iQp ||
+                    m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_FACE].tQpMap.pQp != tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_FACE].tQpMap.pQp ||
+                    m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_PLATE].bEnable != tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_PLATE].bEnable ||
+                    m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_PLATE].tQpMap.iQp != tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_PLATE].tQpMap.iQp ||
+                    m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_PLATE].tQpMap.pQp != tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_PLATE].tQpMap.pQp) {
+                    vecWebOpr.emplace_back(tOperation);
+
+                    LOG_MM_C(WEB_OPTION, "[%d] svc changed: [%d %d] bg[%d %d] body[%d %d %d] vehicle[%d %d %d] cycle[%d %d %d] face[%d %d %d] plate[%d %d %d] => \
+[%d %d] bg[%d %d] body[%d %d %d] vehicle[%d %d %d] cycle[%d %d %d] face[%d %d %d] plate[%d %d %d]", nSnsID,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.bEnable,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.bSync,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.tBgQpCfg.iQp,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.tBgQpCfg.pQp,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_BODY].bEnable,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_BODY].tQpMap.iQp,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_BODY].tQpMap.pQp,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_VEHICLE].bEnable,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_VEHICLE].tQpMap.iQp,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_VEHICLE].tQpMap.pQp,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_CYCLE].bEnable,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_CYCLE].tQpMap.iQp,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_CYCLE].tQpMap.pQp,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_FACE].bEnable,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_FACE].tQpMap.iQp,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_FACE].tQpMap.pQp,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_PLATE].bEnable,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_PLATE].tQpMap.iQp,
+                            m_mapSns2AiAttr[nSnsID].tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_PLATE].tQpMap.pQp,
+                            tOperation.tSvcParam.bEnable,
+                            tOperation.tSvcParam.bSync,
+                            tOperation.tSvcParam.tBgQpCfg.iQp,
+                            tOperation.tSvcParam.tBgQpCfg.pQp,
+                            tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_BODY].bEnable,
+                            tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_BODY].tQpMap.iQp,
+                            tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_BODY].tQpMap.pQp,
+                            tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_VEHICLE].bEnable,
+                            tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_VEHICLE].tQpMap.iQp,
+                            tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_VEHICLE].tQpMap.pQp,
+                            tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_CYCLE].bEnable,
+                            tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_CYCLE].tQpMap.iQp,
+                            tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_CYCLE].tQpMap.pQp,
+                            tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_FACE].bEnable,
+                            tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_FACE].tQpMap.iQp,
+                            tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_FACE].tQpMap.pQp,
+                            tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_PLATE].bEnable,
+                            tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_PLATE].tQpMap.iQp,
+                            tOperation.tSvcParam.tQpCfg[AX_APP_ALGO_HVCFP_PLATE].tQpMap.pQp);
+
+                    m_mapSns2AiAttr[nSnsID].tSvcParam = tOperation.tSvcParam;
                 }
             }
 
@@ -1578,6 +1761,16 @@ AX_BOOL CWebOptionHelper::ParseWebRequest(WEB_REQUEST_TYPE_E eReqType, const AX_
             vecWebOpr.emplace_back(tOperation);
             break;
         }
+        case E_REQ_TYPE_SWITCH_SCREEN: {
+            AX_BOOL bWinEnable = AX_FALSE;
+            WEB_SET_BOOL(bWinEnable, pJson, "screen_enable");
+
+            WEB_REQ_OPERATION_T tOperation;
+            tOperation.tScreenEnable.bEnable = bWinEnable;
+            tOperation.SetOperaType(E_WEB_OPERATION_TYPE_SCREEN_ENABLE);
+            vecWebOpr.emplace_back(tOperation);
+            break;
+        }
         default:
             LOG_MM_E(WEB_OPTION, "Invalid web request: unknown type(%d)", eReqType);
             return AX_FALSE;
@@ -1644,6 +1837,11 @@ AX_BOOL CWebOptionHelper::CheckRequest(WEB_REQUEST_TYPE_E eReqType, const AX_VOI
 
 AX_BOOL CWebOptionHelper::ParseResStr(string& strResolution, AX_U32& nWidth, AX_U32& nHeight) {
     AX_U8 nCount = sscanf(strResolution.c_str(), "%dx%d", &nWidth, &nHeight);
+
+    if (nWidth == 0 || nHeight == 0) {
+        return AX_FALSE;
+    }
+
     if (2 == nCount) {
         return AX_TRUE;
     }

@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -57,7 +57,7 @@ AX_VOID CIMX678::InitSnsAttr() {
     m_tSnsAttr.fFrameRate = m_tSnsCfg.fFrameRate;
 
     m_tSnsAttr.eSnsMode = m_tSnsCfg.eSensorMode;
-    m_tSnsAttr.eRawType = (m_tSnsCfg.eSensorMode > AX_SNS_LINEAR_MODE) ? AX_RT_RAW10 : AX_RT_RAW12;
+    m_tSnsAttr.eRawType = IS_SNS_HDR_MODE(m_tSnsCfg.eSensorMode) ? AX_RT_RAW10 : AX_RT_RAW12;
     m_tSnsAttr.eBayerPattern = AX_BP_RGGB;
     m_tSnsAttr.bTestPatternEnable = AX_FALSE;
 }
@@ -76,11 +76,11 @@ AX_VOID CIMX678::InitMipiRxAttr() {
     m_tMipiRxDev.tMipiAttr.nDataRate = 1440;
     m_tMipiRxDev.tMipiAttr.nDataLaneMap[0] = 0x00;
     m_tMipiRxDev.tMipiAttr.nDataLaneMap[1] = 0x01;
-    m_tMipiRxDev.tMipiAttr.nDataLaneMap[2] = 0x02;
-    m_tMipiRxDev.tMipiAttr.nDataLaneMap[3] = 0x03;
+    m_tMipiRxDev.tMipiAttr.nDataLaneMap[2] = 0x03;
+    m_tMipiRxDev.tMipiAttr.nDataLaneMap[3] = 0x04;
 
-    m_tMipiRxDev.tMipiAttr.nClkLane[0] = 0x01;
-    m_tMipiRxDev.tMipiAttr.nClkLane[1] = 0x00;
+    m_tMipiRxDev.tMipiAttr.nClkLane[0] = 0x02;
+    m_tMipiRxDev.tMipiAttr.nClkLane[1] = 0x05;
 }
 
 AX_VOID CIMX678::InitDevAttr() {
@@ -95,9 +95,9 @@ AX_VOID CIMX678::InitDevAttr() {
     m_tDevAttr.ePixelFmt = (m_tSnsAttr.eRawType == AX_RT_RAW12) ? AX_FORMAT_BAYER_RAW_12BPP_PACKED : AX_FORMAT_BAYER_RAW_10BPP_PACKED;
     m_tDevAttr.eBayerPattern = AX_BP_RGGB;
     m_tDevAttr.eSnsMode = m_tSnsCfg.eSensorMode;
-    m_tDevAttr.eSnsOutputMode = m_tSnsCfg.eSensorMode > AX_SNS_LINEAR_MODE ? AX_SNS_DOL_HDR : AX_SNS_NORMAL;
+    m_tDevAttr.eSnsOutputMode = IS_SNS_HDR_MODE(m_tSnsCfg.eSensorMode) ? AX_SNS_DOL_HDR : AX_SNS_NORMAL;
 
-    if (AX_SNS_LINEAR_MODE == m_tSnsCfg.eSensorMode) {
+    if (IS_SNS_LINEAR_MODE(m_tSnsCfg.eSensorMode)) {
         m_tDevAttr.tMipiIntfAttr.szImgVc[0] = 0;
         m_tDevAttr.tMipiIntfAttr.szImgVc[1] = 1;
         m_tDevAttr.tMipiIntfAttr.szImgDt[0] = 44;
@@ -135,7 +135,11 @@ AX_VOID CIMX678::InitPipeAttr() {
         } else {
             tPipeAttr.bAiIspEnable = AX_TRUE;
         }
-        if (tPipeAttr.eSnsMode < AX_SNS_HDR_MODE_MAX) {
+        if (IS_SNS_LINEAR_MODE(tPipeAttr.eSnsMode)) {
+            tPipeAttr.tCompressInfo = m_tSnsCfg.arrPipeAttr[i].tIfeCompress[AX_SNS_LINEAR_MODE];
+            tPipeAttr.tNrAttr.t3DnrAttr.tCompressInfo = m_tSnsCfg.arrPipeAttr[i].t3DNrCompress[AX_SNS_LINEAR_MODE];
+            tPipeAttr.tNrAttr.tAinrAttr.tCompressInfo = m_tSnsCfg.arrPipeAttr[i].tAiNrCompress[AX_SNS_LINEAR_MODE];
+        } else if (tPipeAttr.eSnsMode < AX_SNS_HDR_MODE_MAX) {
             tPipeAttr.tCompressInfo = m_tSnsCfg.arrPipeAttr[i].tIfeCompress[tPipeAttr.eSnsMode];
             tPipeAttr.tNrAttr.t3DnrAttr.tCompressInfo = m_tSnsCfg.arrPipeAttr[i].t3DNrCompress[tPipeAttr.eSnsMode];
             tPipeAttr.tNrAttr.tAinrAttr.tCompressInfo = m_tSnsCfg.arrPipeAttr[i].tAiNrCompress[tPipeAttr.eSnsMode];

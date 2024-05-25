@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -1118,8 +1118,8 @@ static AX_VOID AiAction(HttpConn* conn) {
     AX_U8 nSnsID = atoi(httpGetParam(conn, PARAM_KEY_PREVIEW_SNS_SRC, "0"));
     if (strcmp(conn->rx->method, "GET") == 0) {
         MprJson* pResponseBody = ConstructBaseResponse(RESPONSE_STATUS_OK, 0);
-        AX_CHAR szAiAttr[1024] = {0};
-        if (!CWebOptionHelper::GetInstance()->GetAiInfoStr(nSnsID, szAiAttr, 1024)) {
+        AX_CHAR szAiAttr[2048] = {0};
+        if (!CWebOptionHelper::GetInstance()->GetAiInfoStr(nSnsID, szAiAttr, 2048)) {
             LOG_MM_E(WEB, "Get AI info failed.");
             return;
         }
@@ -1195,6 +1195,29 @@ static AX_VOID Switch3ASyncAction(HttpConn* conn) {
     ResponseStatusCode(conn, nHttpStatusCode);
 }
 
+static AX_VOID SwitchScreenAction(HttpConn* conn) {
+    LOG_MM_C(WEB, "...");
+    if (!IsAuthorized(conn, AX_TRUE)) {
+        ResponseUnauthorized(conn);
+        return;
+    }
+
+    static AX_BOOL bActionProcessing = AX_FALSE;
+    AX_S32 nHttpStatusCode = RESPONSE_STATUS_OK_CODE;
+
+    if (!bActionProcessing) {
+        bActionProcessing = AX_TRUE;
+
+        nHttpStatusCode = YieldProcessWebOpr(conn, E_REQ_TYPE_SWITCH_SCREEN);
+
+        bActionProcessing = AX_FALSE;
+    } else if (bActionProcessing) {
+        // Response status: Not Acceptable
+        nHttpStatusCode = RESPONSE_STATUS_FAILURE_CODE;
+    }
+
+    ResponseStatusCode(conn, nHttpStatusCode);
+}
 
 static AX_VOID ReportHttpStatus(AX_VOID) {
     printf("%s", httpStatsReport(HTTP_STATS_ALL));
@@ -1223,6 +1246,7 @@ const HTTP_ACTION_INFO g_httpActionInfo[] = {{"/action/login", LoginAction},
                                              {"/action/preview/trigger", TriggerAction},
                                              {"/action/preview/ezoom", EZoomAction},
                                              {"/action/preview/3a_sync", Switch3ASyncAction},
+                                             {"/action/preview/screen", SwitchScreenAction},
                                              {"/audio_0", WSAudioAction},
                                              {"/talk", WSTalkAction},
                                              {"/preview_0", WSPreviewAction},
@@ -1523,7 +1547,7 @@ AX_VOID CWebServer::SendWSData(AX_VOID) {
         arrDataStatus[nUniChannel] = AX_TRUE;  // got data
         AX_U32 limit = client->rx->route->limits->webSocketsFrameSize;
         if (pData->nSize >= (AX_U32)limit) {
-            LOG_MM_E(WEB, "Websocket data size(%d) exceeding max frame size(%d).", pData->nSize, limit);
+            LOG_MM_E(WEB, "Websocket data size(%u) exceeding max frame size(%u).", pData->nSize, limit);
         }
 
         if (nUniChannel == 0) {

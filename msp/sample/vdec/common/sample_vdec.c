@@ -1020,7 +1020,9 @@ static AX_S32 __VdecInputModeFrame(SAMPLE_VDEC_ARGS_T *pstFuncArgs,
                 SAMPLE_CRIT_LOG("VdGrp=%d,  AX_VDEC_StopRecvStream FAILED! ret:0x%x", VdGrp, ret);
 
             /* wait release frm */
-            while (pstCtx->recvFrmCnt[VdGrp] != pstCtx->releaseFrmCnt[VdGrp] && !bSkipRelease)
+            while ((pstCtx->recvFrmCnt[VdGrp] != pstCtx->releaseFrmCnt[VdGrp]
+                || u64SendPicNum != pstCtx->releaseFrmCnt[VdGrp])
+                && !bSkipRelease)
                 usleep(5000);
 
             ret = AX_VDEC_ResetGrp(VdGrp);

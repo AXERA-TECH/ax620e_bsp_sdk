@@ -104,7 +104,7 @@
         <el-main class="preview_capture_left_container" v-show="preview_sns_mode === 2">
           <el-container id="video_container_1" class="preview_container">
             <el-main ref="axMain1" class="video_container">
-              <video id="myVideo1" v-show="streamOptions[1].showVideoStatus" ref="axVideoRef1" class="axVideo" autoplay
+              <video id="myVideo1" v-show="streamOptions[1].showVideoStatus" ref="axVideoRef1" class="axVideo" autoplay muted="true"
                 playsinline oncontextmenu="return false;">
               </video>
               <canvas id="myMjpeg1" v-show="!streamOptions[1].showVideoStatus" class="axVideo2">
@@ -925,7 +925,8 @@ export default {
           let config = {
             wsMinPacketInterval: 2000, // 最大接收数据超时时间，单位毫秒
             wsMaxPacketInterval: 8000,  // 检查超时间隔，单位毫秒
-            fps: mediaFPS
+            fps: mediaFPS,
+            liveMaxLatency: 0.5 // 画面最大延迟时间，单位秒
           };
           let displayInfo = this.getDisplayInfo(snsId);
           console.log('new wfs obj, sns id: ' + snsId + ', mediaType: ' + displayInfo.mediaType);
@@ -1368,6 +1369,10 @@ export default {
       this.streamOptions[snsId].encInfo = ''
     },
     async onStartTalk() {
+      const { data: res } = await this.$http.post('preview/screen', { screen_enable: !this.isTalking })
+      if (res.meta.status !== 200) return this.$message.error('set screen attribute failed')
+      console.log('-- enable small windows:' + !this.isTalking)
+
       if (this.isTalking) {
         this.onStopTalk()
         return

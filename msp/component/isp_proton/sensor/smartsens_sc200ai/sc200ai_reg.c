@@ -335,6 +335,44 @@ AX_U32 sc200ai_set_vts_s(ISP_PIPE_ID nPipeId, AX_U32 vts)
     return result;
 }
 
+AX_U32 sc200ai_get_hts(ISP_PIPE_ID nPipeId)
+{
+    AX_U8 hts_l = 0;
+    AX_U8 hts_h = 0;
+    AX_U32 hts = 0;
+
+    SNS_CHECK_VALUE_RANGE_VALID(nPipeId, 0, AX_VIN_MAX_PIPE_NUM - 1);
+
+    hts_h = sc200ai_reg_read(nPipeId, SC200AI_HTS_LONG_H);
+    hts_l = sc200ai_reg_read(nPipeId, SC200AI_HTS_LONG_L);
+
+    hts = hts_h << 8 | hts_l;
+
+    return hts;
+}
+
+AX_F32 sc200ai_get_exp_offset(ISP_PIPE_ID nPipeId)
+{
+    AX_F32 offset = 0.0f;
+
+    SNS_CHECK_VALUE_RANGE_VALID(nPipeId, 0, AX_VIN_MAX_PIPE_NUM - 1);
+
+    offset += (sc200ai_reg_read(nPipeId, 0x3301) & 0x3) * 2.0f;
+    offset += sc200ai_reg_read(nPipeId, 0x3302);
+    offset += (sc200ai_reg_read(nPipeId, 0x3303) & 0x1f);
+    offset += sc200ai_reg_read(nPipeId, 0x3304);
+    offset += ((sc200ai_reg_read(nPipeId, 0x3305) & 0xFF) << 8) |
+              (sc200ai_reg_read(nPipeId, 0x3306) & 0xFF);
+    offset += (sc200ai_reg_read(nPipeId, 0x3307) & 0x1f);
+    offset += sc200ai_reg_read(nPipeId, 0x3308) * 2.0f;
+    offset += sc200ai_reg_read(nPipeId, 0x330d);
+
+    offset /= (AX_F32)sc200ai_get_hts(nPipeId);
+
+    return offset;
+}
+
+
 AX_S32 sc200ai_get_vts_from_setting(ISP_PIPE_ID nPipeId, camera_i2c_reg_array *setting, AX_U32 reg_cnt, AX_U32 *vts)
 {
     AX_U32 i = 0;

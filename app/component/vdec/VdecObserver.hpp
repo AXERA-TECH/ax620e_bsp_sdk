@@ -1,16 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2024 Axera Semiconductor (Shanghai) Co., Ltd. All Rights Reserved.
- *
- * This source file is the property of Axera Semiconductor (Shanghai) Co., Ltd. and
- * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Shanghai) Co., Ltd.
- *
- **************************************************************************************************/
-
-/**************************************************************************************************
- *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior

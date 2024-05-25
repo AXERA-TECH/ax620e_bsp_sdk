@@ -205,7 +205,7 @@ const static AX_ISP_IQ_AE_PARAM_T ae_param_sdr_qs = {
                     /* sTableName[32] */
                     "DefaultAeRoute",
                     /* nRouteCurveNum */
-                    7,
+                    6,
                     /* tRouteCurveList[16] */
                     {
                         /* 0 */
@@ -222,9 +222,9 @@ const static AX_ISP_IQ_AE_PARAM_T ae_param_sdr_qs = {
                         /* 1 */
                         {
                             /* nIntergrationTime */
-                            39880,
+                            20000,
                             /* nGain */
-                            8192,
+                            2048,
                             /* nAperture */
                             0,
                             /* nIncrementPriority */
@@ -233,9 +233,9 @@ const static AX_ISP_IQ_AE_PARAM_T ae_param_sdr_qs = {
                         /* 2 */
                         {
                             /* nIntergrationTime */
-                            49850,
+                            30000,
                             /* nGain */
-                            24576,
+                            8192,
                             /* nAperture */
                             0,
                             /* nIncrementPriority */
@@ -244,9 +244,9 @@ const static AX_ISP_IQ_AE_PARAM_T ae_param_sdr_qs = {
                         /* 3 */
                         {
                             /* nIntergrationTime */
-                            66000,
+                            39880,
                             /* nGain */
-                            40960,
+                            16384,
                             /* nAperture */
                             0,
                             /* nIncrementPriority */
@@ -255,9 +255,9 @@ const static AX_ISP_IQ_AE_PARAM_T ae_param_sdr_qs = {
                         /* 4 */
                         {
                             /* nIntergrationTime */
-                            80000,
+                            49850,
                             /* nGain */
-                            81920,
+                            32768,
                             /* nAperture */
                             0,
                             /* nIncrementPriority */
@@ -266,18 +266,7 @@ const static AX_ISP_IQ_AE_PARAM_T ae_param_sdr_qs = {
                         /* 5 */
                         {
                             /* nIntergrationTime */
-                            110000,
-                            /* nGain */
-                            184320,
-                            /* nAperture */
-                            0,
-                            /* nIncrementPriority */
-                            0,
-                        },
-                        /* 6 */
-                        {
-                            /* nIntergrationTime */
-                            166000,
+                            66000,
                             /* nGain */
                             884336,
                             /* nAperture */
@@ -4932,9 +4921,9 @@ const static AX_ISP_IQ_AINR_PARAM_T ainr_param_sdr_qs = {
         /* tMeta */
         {
             /* szModelPath[256] */
-            "/opt/etc/models/aiisp/SC200AI_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0000_MULTI2_00000695723_240308_AX620E.axmodel",
+            "/opt/etc/models/aiisp/SC200AI_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0300_MULTI2_00000000000_240413_AX620E.axmodel",
             /* szModelName[256] */
-            "SC200AI_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0000_MULTI2_00000695723_240308_AX620E.axmodel",
+            "SC200AI_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0300_MULTI2_00000000000_240413_AX620E.axmodel",
             /* szTemporalBaseNrName[256] */
             "3d_0108_again54x_lv0",
             /* szSpatialBaseNrName[256] */
@@ -5038,9 +5027,9 @@ const static AX_ISP_IQ_AINR_PARAM_T ainr_param_sdr_qs = {
                 /* tMata */
                 {
                     /* szModelPath[256] */
-                    "/opt/etc/models/aiisp/SC200AI_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0000_MULTI2_00000695723_240308_AX620E.axmodel",
+                    "/opt/etc/models/aiisp/SC200AI_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0300_MULTI2_00000000000_240413_AX620E.axmodel",
                     /* szModelName[256] */
-                    "SC200AI_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0000_MULTI2_00000695723_240308_AX620E.axmodel",
+                    "SC200AI_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0300_MULTI2_00000000000_240413_AX620E.axmodel",
                     /* szTemporalBaseNrName[256] */
                     "3d_0108_again54x_lv0",
                     /* szSpatialBaseNrName[256] */
@@ -5363,9 +5352,9 @@ const static AX_ISP_IQ_AINR_PARAM_T ainr_param_sdr_qs = {
                 /* tMata */
                 {
                     /* szModelPath[256] */
-                    "/opt/etc/models/aiisp/SC200AI_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0000_MULTI2_00000695723_240308_AX620E.axmodel",
+                    "/opt/etc/models/aiisp/SC200AI_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0300_MULTI2_00000000000_240413_AX620E.axmodel",
                     /* szModelName[256] */
-                    "SC200AI_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0000_MULTI2_00000695723_240308_AX620E.axmodel",
+                    "SC200AI_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0300_MULTI2_00000000000_240413_AX620E.axmodel",
                     /* szTemporalBaseNrName[256] */
                     "3d_0108_isp1-16x_lv0",
                     /* szSpatialBaseNrName[256] */
@@ -5688,9 +5677,9 @@ const static AX_ISP_IQ_AINR_PARAM_T ainr_param_sdr_qs = {
                 /* tMata */
                 {
                     /* szModelPath[256] */
-                    "/opt/etc/models/aiisp/SC200AI_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0000_MULTI2_00000695723_240308_AX620E.axmodel",
+                    "/opt/etc/models/aiisp/SC200AI_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0300_MULTI2_00000000000_240413_AX620E.axmodel",
                     /* szModelName[256] */
-                    "SC200AI_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0000_MULTI2_00000695723_240308_AX620E.axmodel",
+                    "SC200AI_SDR_1920x1080_10b_LCG_ISP1_A54X_I1-16X_0300_MULTI2_00000000000_240413_AX620E.axmodel",
                     /* szTemporalBaseNrName[256] */
                     "3d_0108_isp1-16x_lv0",
                     /* szSpatialBaseNrName[256] */
@@ -6483,7 +6472,7 @@ const static AX_ISP_IQ_RLTM_PARAM_T rltm_param_sdr_qs = {
         /* nPreGamma */
         32,
         /* nPostGamma */
-        45,
+        48,
         /* nExtraDgain */
         16,
         /* nRltmStrength */
@@ -6740,13 +6729,13 @@ const static AX_ISP_IQ_RLTM_PARAM_T rltm_param_sdr_qs = {
         /* nExtraDgain[12] */
         {16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, /*0 - 11*/},
         /* nRltmStrength[12] */
-        {48, 45, 40, 36, 32, 32, 32, 32, 32, 32, 28, 24, /*0 - 11*/},
+        {48, 48, 48, 45, 42, 40, 36, 32, 32, 32, 28, 24, /*0 - 11*/},
         /* nLog10Offset[12] */
         {96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, 96, /*0 - 11*/},
         /* nContrastStrength[12] */
         {42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 38, 32, /*0 - 11*/},
         /* nBaseGain[12] */
-        {64, 64, 72, 80, 96, 96, 96, 96, 112, 128, 128, 128, /*0 - 11*/},
+        {64, 64, 64, 64, 68, 72, 80, 96, 104, 112, 120, 128, /*0 - 11*/},
         /* nDitherMode[12] */
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, /*0 - 11*/},
         /* nDitherScale[12] */
@@ -12162,22 +12151,22 @@ const static AX_ISP_IQ_YUV3DNR_PARAM_T yuv3dnr_param_sdr_qs = {
             /* nSf0lumaBlendRatio 1 */
             {
                 {144, 0, 112, /*0 - 2*/},
-                {96, 0, 160, /*0 - 2*/},
+                {80, 0, 176, /*0 - 2*/},
             },
             /* nSf0lumaBlendRatio 2 */
             {
                 {160, 0, 96, /*0 - 2*/},
-                {112, 0, 144, /*0 - 2*/},
+                {96, 0, 160, /*0 - 2*/},
             },
             /* nSf0lumaBlendRatio 3 */
             {
                 {176, 0, 80, /*0 - 2*/},
-                {128, 0, 128, /*0 - 2*/},
+                {112, 0, 144, /*0 - 2*/},
             },
             /* nSf0lumaBlendRatio 4 */
             {
-                {200, 0, 56, /*0 - 2*/},
-                {144, 0, 112, /*0 - 2*/},
+                {192, 0, 64, /*0 - 2*/},
+                {128, 0, 128, /*0 - 2*/},
             },
             /* nSf0lumaBlendRatio 5 */
             {
@@ -12468,9 +12457,9 @@ const static AX_ISP_IQ_YUV3DNR_PARAM_T yuv3dnr_param_sdr_qs = {
         /* nSf1LumaBlendRatio[12][2] */
         {
             {24, 192, /*0 - 1*/},
-            {22, 160, /*0 - 1*/},
-            {20, 128, /*0 - 1*/},
-            {18, 128, /*0 - 1*/},
+            {22, 176, /*0 - 1*/},
+            {20, 160, /*0 - 1*/},
+            {18, 144, /*0 - 1*/},
             {16, 128, /*0 - 1*/},
             {20, 128, /*0 - 1*/},
             {24, 128, /*0 - 1*/},
@@ -13403,7 +13392,7 @@ const static AX_ISP_IQ_CCMP_PARAM_T ccmp_param_sdr_qs = {
             {400, 405, 415, 430, 450, 470, 480, 490, 500, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 500, /*0 - 22*/},
             {400, 405, 415, 430, 450, 470, 480, 490, 500, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 500, /*0 - 22*/},
             {350, 360, 380, 410, 440, 460, 480, 490, 500, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 500, /*0 - 22*/},
-			{300, 310, 330, 360, 400, 430, 450, 465, 480, 500, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 500, /*0 - 22*/},
+            {300, 310, 330, 360, 400, 430, 450, 465, 480, 500, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 500, /*0 - 22*/},
             {250, 260, 280, 310, 350, 390, 420, 440, 460, 500, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 500, /*0 - 22*/},
             {200, 200, 210, 230, 260, 300, 350, 390, 420, 480, 500, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 512, 500, /*0 - 22*/},
         },

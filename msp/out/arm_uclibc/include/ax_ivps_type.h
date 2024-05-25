@@ -277,6 +277,7 @@ typedef struct
     AX_IVPS_ASPECT_RATIO_T tAspectRatio;
     AX_IVPS_SCL_TYPE_E eSclType;
     AX_IVPS_SCL_INPUT_E eSclInput;
+    AX_U8 nAlpha;                            /* RW; range: [0, 255]; 0: transparent, 255: opaque */
 } AX_IVPS_CROP_RESIZE_ATTR_T;
 
 typedef enum
@@ -554,5 +555,43 @@ typedef struct
     AX_U8 nHorLength;
     AX_U8 nVerLength;
 } AX_IVPS_CORNER_RECT_ATTR_T;
+
+typedef enum
+{
+    AX_IVPS_SCALE_RANGE_0 = 0, /* scale range <  8/64  */
+    AX_IVPS_SCALE_RANGE_1,     /* scale range >= 8/64  */
+    AX_IVPS_SCALE_RANGE_2,     /* scale range >= 16/64 */
+    AX_IVPS_SCALE_RANGE_3,     /* scale range >= 24/64 */
+    AX_IVPS_SCALE_RANGE_4,     /* scale range >= 32/64 */
+    AX_IVPS_SCALE_RANGE_5,     /* scale range >= 40/64 */
+    AX_IVPS_SCALE_RANGE_6,     /* scale range >= 48/64 */
+    AX_IVPS_SCALE_RANGE_7,     /* scale range >= 56/64 */
+    AX_IVPS_SCALE_RANGE_8,     /* scale range > 1      */
+    AX_IVPS_SCALE_RANGE_BUTT
+} AX_IVPS_SCALE_RANGE_TYPE_E;
+
+typedef struct {
+    AX_IVPS_SCALE_RANGE_TYPE_E eHorScaleRange;
+    AX_IVPS_SCALE_RANGE_TYPE_E eVerScaleRange; /* Reserved */
+} AX_IVPS_SCALE_RANGE_T;
+
+typedef enum
+{
+    AX_IVPS_COEF_LEVEL_0 = 0, /* coefficient level 0 */
+    AX_IVPS_COEF_LEVEL_1,     /* coefficient level 1 */
+    AX_IVPS_COEF_LEVEL_2,     /* coefficient level 2 */
+    AX_IVPS_COEF_LEVEL_3,     /* coefficient level 3 */
+    AX_IVPS_COEF_LEVEL_4,     /* coefficient level 4 */
+    AX_IVPS_COEF_LEVEL_5,     /* coefficient level 5 */
+    AX_IVPS_COEF_LEVEL_BUTT,
+} AX_IVPS_COEF_LEVEL_E;
+
+
+typedef struct {
+    AX_IVPS_COEF_LEVEL_E eHorLuma;   /* horizontal luminance coefficient level            */
+    AX_IVPS_COEF_LEVEL_E eHorChroma; /* horizontal chrominance coefficient level Reserved */
+    AX_IVPS_COEF_LEVEL_E eVerLuma;   /* vertical luminance coefficient level     Reserved */
+    AX_IVPS_COEF_LEVEL_E eVerChroma; /* vertical chrominance coefficient level   Reserved */
+} AX_IVPS_SCALE_COEF_LEVEL_T;
 
 #endif

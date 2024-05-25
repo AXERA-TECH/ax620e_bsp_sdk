@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -60,7 +60,7 @@ AX_BOOL CAlgoOptionHelper::InitOnce() {
         m_stAlgoParam[i].stSceneChangeParam.fConfidence = AX_APP_ALGO_IVES_SCD_DEFAULT_CONFIDENCE;
     }
 
-    return CAlgoCfgParser::GetInstance()->GetConfig(m_stAlgoParam, m_stAudioParam);
+    return CAlgoCfgParser::GetInstance()->GetConfig(m_stAlgoParam, m_stAlgoSvcParam, m_stAudioParam);
 }
 
 const AX_APP_ALGO_PARAM_T& CAlgoOptionHelper::GetAlgoParam(AX_U32 nSnsId) {
@@ -95,6 +95,10 @@ const AX_APP_ALGO_AUDIO_PARAM_T& CAlgoOptionHelper::GetAudioParam(AX_VOID) {
     return m_stAudioParam;
 }
 
+const AX_APP_ALGO_SVC_PARAM_T& CAlgoOptionHelper::GetSvcParam(AX_U32 nSnsId) {
+    return m_stAlgoSvcParam[nSnsId];
+}
+
 AX_VOID CAlgoOptionHelper::SetAlgoParam(AX_U32 nSnsId, const AX_APP_ALGO_PARAM_T& stParam) {
     m_stAlgoParam[nSnsId] = stParam;
 }
@@ -127,11 +131,15 @@ AX_VOID CAlgoOptionHelper::SetAudioParam(const AX_APP_ALGO_AUDIO_PARAM_T& stPara
     m_stAudioParam = stParam;
 }
 
+AX_VOID CAlgoOptionHelper::SetSvcParam(AX_U32 nSnsId, const AX_APP_ALGO_SVC_PARAM_T& stParam) {
+    m_stAlgoSvcParam[nSnsId] = stParam;
+}
+
 AX_U32 CAlgoOptionHelper::GetDetectAlgoType(AX_U32 nSnsId) {
     AX_S32 nDetectAlgoType = 0;
 
     if (m_stAlgoParam[nSnsId].nAlgoType & (AX_APP_ALGO_FACE_DETECT | AX_APP_ALGO_FACE_RECOGNIZE)) {
-        nDetectAlgoType = AX_SKEL_PPL_FH;
+        nDetectAlgoType = AX_SKEL_PPL_FACE;
     } else if (m_stAlgoParam[nSnsId].nAlgoType & AX_APP_ALGO_LICENSE_PLATE_RECOGNIZE) {
         nDetectAlgoType = AX_SKEL_PPL_HVCP;
     } else if (m_stAlgoParam[nSnsId].nAlgoType & AX_APP_ALGO_TYPE_HVCP) {

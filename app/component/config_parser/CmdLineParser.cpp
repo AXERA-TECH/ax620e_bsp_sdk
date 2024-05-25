@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -124,6 +124,12 @@ string CCmdLineParser::ScenarioEnum2Str(AX_U8 nScenario) {
         }
         case E_APP_SCENARIO_SINGLE_WITH_VO: {
             return AX_APP_SCENARIO_SINGLE_WITH_VO;
+        }
+        case E_APP_SCENARIO_DUAL_10_1_WITH_VO: {
+            return AX_APP_SCENARIO_DUAL_10_1_WITH_VO;
+        }
+        case E_APP_SCENARIO_SINGLE_10_1__WITH_VO: {
+            return AX_APP_SCENARIO_SINGLE_10_1_WITH_VO;
         }
         default:
             return AX_APP_SCENARIO_INVALID;

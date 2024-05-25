@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -25,6 +25,8 @@
 #define AX_RTSP_RING_BUFF_COUNT (2)
 
 #define AX_VENC_THREAD_NUM (2)
+
+#define AX_VIRTUAL_NPU_MODE (1)
 
 AX_BOOL COptionHelper::InitOnce() {
 #ifndef _OPAL_LIB_
@@ -133,7 +135,7 @@ AX_BOOL COptionHelper::IsEnableOSD() {
 
 AX_BOOL COptionHelper::IsEnableMp4Record() {
 #ifndef _OPAL_LIB_
-    AX_U32 value = (AX_U32)m_iniWrapper.GetIntValue("options", "EnableMp4Record", 0);
+    AX_U32 value = (AX_U32)m_iniWrapper.GetIntValue("mp4", "EnableMp4Record", 0);
     return value ? AX_TRUE : AX_FALSE;
 #else
     return AX_FALSE;
@@ -142,11 +144,37 @@ AX_BOOL COptionHelper::IsEnableMp4Record() {
 
 string COptionHelper::GetMp4SavedPath() {
 #ifndef _OPAL_LIB_
-    string strVal = m_iniWrapper.GetStringValue("options", "MP4RecordSavedPath", "./");
+    string strVal = m_iniWrapper.GetStringValue("mp4", "MP4RecordSavedPath", "./");
     return strVal;
-
 #else
     return "./";
+#endif
+}
+
+AX_U32 COptionHelper::GetMp4FileSize() {
+#ifndef _OPAL_LIB_
+    AX_U32 value = (AX_U32)m_iniWrapper.GetIntValue("mp4", "MP4RecordFileSize", 64);
+    return value;
+#else
+    return 64;
+#endif
+}
+
+AX_U32 COptionHelper::GetMp4FileCount() {
+#ifndef _OPAL_LIB_
+    AX_U32 value = (AX_U32)m_iniWrapper.GetIntValue("mp4", "MP4RecordFileCount", 10);
+    return value;
+#else
+    return 10;
+#endif
+}
+
+AX_BOOL COptionHelper::GetMp4LoopSet() {
+#ifndef _OPAL_LIB_
+    AX_U32 value = (AX_U32)m_iniWrapper.GetIntValue("mp4", "MP4RecordLoopSet", 1);
+    return value ? AX_TRUE : AX_FALSE;
+#else
+    return AX_TRUE;
 #endif
 }
 
@@ -258,6 +286,15 @@ AX_BOOL COptionHelper::GetSnsHnbPrintTemperature() {
 #endif
 }
 
+AX_U32 COptionHelper::GetSnsLowMemoryMode() {
+#ifndef _OPAL_LIB_
+    AX_U32 value = (AX_U32)m_iniWrapper.GetIntValue("sns", "LowMemoryMode", 0);
+    return value;
+#else
+    return 0;
+#endif
+}
+
 AX_BOOL COptionHelper::IsEnableWebServerStatusCheck() {
 #ifndef _OPAL_LIB_
     AX_U32 value = (AX_U32)m_iniWrapper.GetIntValue("options", "WebServerStatusCheck", 0);
@@ -301,4 +338,13 @@ AX_U32 COptionHelper::GetWebVencRingBufCount(AX_U32 width, AX_U32 height) {
 
 #endif
     return nCount;
+}
+
+AX_U32 COptionHelper::GetVnpuMode() {
+#ifndef _OPAL_LIB_
+    AX_U32 value = (AX_U32)m_iniWrapper.GetIntValue("npu", "NpuMode", AX_VIRTUAL_NPU_MODE);
+    return value;
+#else
+    return AX_VIRTUAL_NPU_MODE;
+#endif
 }

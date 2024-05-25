@@ -60,6 +60,117 @@
               <el-slider v-model="formAi.ai_attr.body_roi.min_height" :min="10" :max="1000" show-input></el-slider>
             </el-form-item>
           </el-form-item>
+          <el-form-item label="智能编码:" v-show="formAi.ai_attr.ai_enable && formAi.ai_attr.svc.valid">
+            <el-switch v-model="formAi.ai_attr.svc.enable"></el-switch>
+          </el-form-item>
+          <el-form-item label="" label-width="100px" v-show="formAi.ai_attr.ai_enable && formAi.ai_attr.svc.enable">
+            <el-form-item label="同步模式:" v-show="formAi.ai_attr.ai_enable && formAi.ai_attr.svc.enable && formAi.ai_attr.svc.sync_valid" class="inline">
+              <el-switch v-model="formAi.ai_attr.svc.sync_mode"></el-switch>
+            </el-form-item>
+          </el-form-item>
+          <el-form-item label="" label-width="100px" v-show="formAi.ai_attr.ai_enable && formAi.ai_attr.svc.enable">
+            <el-row>
+              <el-form-item label="背景Qp:" class="inline">
+                <div width="100px" class="inline">
+                </div>
+              </el-form-item>
+              <el-form-item label="iQp:" class="inline">
+                <div id="bg_iQp">
+                  <el-input-number controls-position="right" :min="-31" :max="32" v-model="formAi.ai_attr.svc.bg_qp.iQp" style="width:91%" :disabled="false" size="mini"></el-input-number>
+                </div>
+              </el-form-item>
+              <el-form-item label="pQp:" class="inline-margin">
+                <div id="bg_pQp">
+                  <el-input-number controls-position="right" :min="-31" :max="32" v-model="formAi.ai_attr.svc.bg_qp.pQp" style="width:91%" :disabled="false" size="mini"></el-input-number>
+                </div>
+              </el-form-item>
+            </el-row>
+          </el-form-item>
+          <el-form-item label="" label-width="100px" v-show="formAi.ai_attr.ai_enable && formAi.ai_attr.svc.enable">
+            <el-row>
+              <el-form-item label="人脸:" class="inline">
+                <el-switch v-model="formAi.ai_attr.svc.face.enable"></el-switch>
+              </el-form-item>
+              <el-form-item label="iQp:" class="inline" v-show="formAi.ai_attr.svc.face.enable">
+                <div id="face_iQp">
+                  <el-input-number controls-position="right" :min="-31" :max="32" v-model="formAi.ai_attr.svc.face.qp.iQp" style="width:91%" :disabled="false" size="mini"></el-input-number>
+                </div>
+              </el-form-item>
+              <el-form-item label="pQp:" class="inline-margin" v-show="formAi.ai_attr.svc.face.enable">
+                <div id="face_pQp">
+                  <el-input-number controls-position="right" :min="-31" :max="32" v-model="formAi.ai_attr.svc.face.qp.pQp" style="width:91%" :disabled="false" size="mini"></el-input-number>
+                </div>
+              </el-form-item>
+            </el-row>
+          </el-form-item>
+          <el-form-item label="" label-width="100px" v-show="formAi.ai_attr.ai_enable && formAi.ai_attr.svc.enable">
+            <el-row>
+              <el-form-item label="人形:" class="inline">
+                <el-switch v-model="formAi.ai_attr.svc.body.enable"></el-switch>
+              </el-form-item>
+              <el-form-item label="iQp:" class="inline" v-show="formAi.ai_attr.svc.body.enable">
+                <div id="body_iQp">
+                  <el-input-number controls-position="right" :min="-31" :max="32" v-model="formAi.ai_attr.svc.body.qp.iQp" style="width:91%" :disabled="false" size="mini"></el-input-number>
+                </div>
+              </el-form-item>
+              <el-form-item label="pQp:" class="inline-margin" v-show="formAi.ai_attr.svc.body.enable">
+                <div id="body_pQp">
+                  <el-input-number controls-position="right" :min="-31" :max="32" v-model="formAi.ai_attr.svc.body.qp.pQp" style="width:91%" :disabled="false" size="mini"></el-input-number>
+                </div>
+              </el-form-item>
+            </el-row>
+          </el-form-item>
+          <el-form-item label="" label-width="100px" v-show="formAi.ai_attr.ai_enable && formAi.ai_attr.svc.enable">
+            <el-row>
+              <el-form-item label="机动车:" class="inline">
+                <el-switch v-model="formAi.ai_attr.svc.vehicle.enable"></el-switch>
+              </el-form-item>
+              <el-form-item label="iQp:" class="inline" v-show="formAi.ai_attr.svc.vehicle.enable">
+                <div id="vehicle_iQp">
+                  <el-input-number controls-position="right" :min="-31" :max="32" v-model="formAi.ai_attr.svc.vehicle.qp.iQp" style="width:91%" :disabled="false" size="mini"></el-input-number>
+                </div>
+              </el-form-item>
+              <el-form-item label="pQp:" class="inline-margin" v-show="formAi.ai_attr.svc.vehicle.enable">
+                <div id="vehicle_pQp">
+                  <el-input-number controls-position="right" :min="-31" :max="32" v-model="formAi.ai_attr.svc.vehicle.qp.pQp" style="width:91%" :disabled="false" size="mini"></el-input-number>
+                </div>
+              </el-form-item>
+            </el-row>
+          </el-form-item>
+          <el-form-item label="" label-width="100px" v-show="formAi.ai_attr.ai_enable && formAi.ai_attr.svc.enable">
+            <el-row>
+              <el-form-item label="非机动车:" class="inline">
+                <el-switch v-model="formAi.ai_attr.svc.cycle.enable"></el-switch>
+              </el-form-item>
+              <el-form-item label="iQp:" class="inline" v-show="formAi.ai_attr.svc.cycle.enable">
+                <div id="cycle_iQp">
+                  <el-input-number controls-position="right" :min="-31" :max="32" v-model="formAi.ai_attr.svc.cycle.qp.iQp" style="width:91%" :disabled="false" size="mini"></el-input-number>
+                </div>
+              </el-form-item>
+              <el-form-item label="pQp:" class="inline-margin" v-show="formAi.ai_attr.svc.cycle.enable">
+                <div id="cycle_pQp">
+                  <el-input-number controls-position="right" :min="-31" :max="32" v-model="formAi.ai_attr.svc.cycle.qp.pQp" style="width:91%" :disabled="false" size="mini"></el-input-number>
+                </div>
+              </el-form-item>
+            </el-row>
+          </el-form-item>
+          <el-form-item label="" label-width="100px" v-show="formAi.ai_attr.ai_enable && formAi.ai_attr.svc.enable">
+            <el-row>
+              <el-form-item label="车牌:" class="inline">
+                <el-switch v-model="formAi.ai_attr.svc.plate.enable"></el-switch>
+              </el-form-item>
+              <el-form-item label="iQp:" class="inline" v-show="formAi.ai_attr.svc.plate.enable">
+                <div id="plate_iQp">
+                  <el-input-number controls-position="right" :min="-31" :max="32" v-model="formAi.ai_attr.svc.plate.qp.iQp" style="width:91%" :disabled="false" size="mini"></el-input-number>
+                </div>
+              </el-form-item>
+              <el-form-item label="pQp:" class="inline-margin" v-show="formAi.ai_attr.svc.plate.enable">
+                <div id="plate_pQp">
+                  <el-input-number controls-position="right" :min="-31" :max="32" v-model="formAi.ai_attr.svc.plate.qp.pQp" style="width:91%" :disabled="false" size="mini"></el-input-number>
+                </div>
+              </el-form-item>
+            </el-row>
+          </el-form-item>
         </el-form>
       </el-tab-pane>
       <el-tab-pane label="事件上报" name="events">
@@ -367,6 +478,51 @@ export default {
             min_width: 100,
             min_height: 100,
             mode: 1
+          },
+          svc: {
+            valid: false,
+            sync_valid: false,
+            enable: false,
+            sync_mode: false,
+            bg_qp: {
+              iQp: 0,
+              pQp: 0
+            },
+            body: {
+              enable: false,
+              qp: {
+                iQp: 0,
+                pQp: 0
+              }
+            },
+            vehicle: {
+              enable: false,
+              qp: {
+                iQp: 0,
+                pQp: 0
+              }
+            },
+            cycle: {
+              enable: false,
+              qp: {
+                iQp: 0,
+                pQp: 0
+              }
+            },
+            face: {
+              enable: false,
+              qp: {
+                iQp: 0,
+                pQp: 0
+              }
+            },
+            plate: {
+              enable: false,
+              qp: {
+                iQp: 0,
+                pQp: 0
+              }
+            }
           }
         }
       },
@@ -447,6 +603,28 @@ export default {
           this.formAi.ai_attr.body_roi.min_width = res.data.ai_attr.body_roi.min_width
           this.formAi.ai_attr.body_roi.min_height = res.data.ai_attr.body_roi.min_height
           this.formAi.ai_attr.body_roi.mode = res.data.ai_attr.body_roi.mode
+
+          this.formAi.ai_attr.svc.valid = res.data.ai_attr.svc.valid
+          this.formAi.ai_attr.svc.sync_valid = res.data.ai_attr.svc.sync_valid
+          this.formAi.ai_attr.svc.enable = res.data.ai_attr.svc.enable
+          this.formAi.ai_attr.svc.sync_mode = res.data.ai_attr.svc.sync_mode
+          this.formAi.ai_attr.svc.bg_qp.iQp = res.data.ai_attr.svc.bg_qp.iQp
+          this.formAi.ai_attr.svc.bg_qp.pQp = res.data.ai_attr.svc.bg_qp.pQp
+          this.formAi.ai_attr.svc.body.enable = res.data.ai_attr.svc.body.enable
+          this.formAi.ai_attr.svc.body.qp.iQp = res.data.ai_attr.svc.body.qp.iQp
+          this.formAi.ai_attr.svc.body.qp.pQp = res.data.ai_attr.svc.body.qp.pQp
+          this.formAi.ai_attr.svc.vehicle.enable = res.data.ai_attr.svc.vehicle.enable
+          this.formAi.ai_attr.svc.vehicle.qp.iQp = res.data.ai_attr.svc.vehicle.qp.iQp
+          this.formAi.ai_attr.svc.vehicle.qp.pQp = res.data.ai_attr.svc.vehicle.qp.pQp
+          this.formAi.ai_attr.svc.cycle.enable = res.data.ai_attr.svc.cycle.enable
+          this.formAi.ai_attr.svc.cycle.qp.iQp = res.data.ai_attr.svc.cycle.qp.iQp
+          this.formAi.ai_attr.svc.cycle.qp.pQp = res.data.ai_attr.svc.cycle.qp.pQp
+          this.formAi.ai_attr.svc.face.enable = res.data.ai_attr.svc.face.enable
+          this.formAi.ai_attr.svc.face.qp.iQp = res.data.ai_attr.svc.face.qp.iQp
+          this.formAi.ai_attr.svc.face.qp.pQp = res.data.ai_attr.svc.face.qp.pQp
+          this.formAi.ai_attr.svc.plate.enable = res.data.ai_attr.svc.plate.enable
+          this.formAi.ai_attr.svc.plate.qp.iQp = res.data.ai_attr.svc.plate.qp.iQp
+          this.formAi.ai_attr.svc.plate.qp.pQp = res.data.ai_attr.svc.plate.qp.pQp
         }
       } catch (error) {
         console.log('ai getInfo got exception: ', error)
@@ -462,12 +640,27 @@ export default {
 
 <style lang="less" scoped>
 .el-form {
-  width: 700px!important;
+  width: 800px!important;
 }
 .el-input {
   width: 100%!important;
 }
 .el-select {
   width: 110px!important;
+}
+.el-select-dropdown__item {
+  text-align: center;
+}
+.inline {
+  display: inline-block;
+  width: 30%
+}
+.inline-margin {
+  display: inline-block;
+  width: 30%;
+  margin-left: 20px;
+}
+.el-form-item {
+  margin-bottom: 5px;
 }
 </style>

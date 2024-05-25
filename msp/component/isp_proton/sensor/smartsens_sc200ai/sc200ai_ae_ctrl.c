@@ -832,7 +832,7 @@ AX_S32 sc200ai_get_gain_table(ISP_PIPE_ID nPipeId, AX_SNS_AE_GAIN_TABLE_T *param
 /****************************************************************************
  * exposure control external function
  ****************************************************************************/
-static AX_S32 sc200ai_set_exp_limit(ISP_PIPE_ID nPipeId, AX_F32 fHdrRatio, AX_U32 nVts)
+static AX_S32 sc200ai_set_exp_limit(ISP_PIPE_ID nPipeId, AX_F32 fHdrRatio)
 {
     AX_U32 vts_s = 0;
     SNS_STATE_OBJ *sns_obj = NULL;
@@ -842,7 +842,7 @@ static AX_S32 sc200ai_set_exp_limit(ISP_PIPE_ID nPipeId, AX_F32 fHdrRatio, AX_U3
     SNS_CHECK_PTR_VALID(sns_obj);
 
     if (IS_LINEAR_MODE(sns_obj->sns_mode_obj.eHDRMode)) {
-        sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMaxIntegrationTime[HDR_LONG_FRAME_IDX] = (2 * nVts - 8) / 2.0;
+        sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMaxIntegrationTime[HDR_LONG_FRAME_IDX] = (2 * gSc200aiParams[nPipeId].vts - 8) / 2.0;
         sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMinIntegrationTime[HDR_LONG_FRAME_IDX] = 1 / 2.0;
         sns_obj->ae_ctrl_param.sns_ae_param.fIntegrationTimeIncrement[HDR_LONG_FRAME_IDX] = 1 / 2.0;
     } else if (IS_2DOL_HDR_MODE(sns_obj->sns_mode_obj.eHDRMode)) {
@@ -850,11 +850,11 @@ static AX_S32 sc200ai_set_exp_limit(ISP_PIPE_ID nPipeId, AX_F32 fHdrRatio, AX_U3
             SNS_ERR("pipe:%d, fHdrRatio:%f is zero !\n", nPipeId, fHdrRatio);
         }
         //2*vts - 2*vts_s - 10 = (2*vts_s - 10) * fHdrRatio
-        vts_s = (nVts + 5 * fHdrRatio - 5) / (fHdrRatio + 1);
+        vts_s = (gSc200aiParams[nPipeId].vts + 5 * fHdrRatio - 5) / (fHdrRatio + 1);
         sc200ai_set_vts_s(nPipeId, vts_s);
-        SNS_DBG("pipe:%d, user_ratio:%f, user_vts:0x%x, vts_s:0x%x\n", nPipeId, fHdrRatio, nVts, vts_s);
+        SNS_DBG("pipe:%d, user_ratio:%f, user_vts:0x%x, vts_s:0x%x\n", nPipeId, fHdrRatio, gSc200aiParams[nPipeId].vts, vts_s);
 
-        sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMaxIntegrationTime[HDR_LONG_FRAME_IDX] = (2 * nVts - 2 * vts_s - 10) / 2.0;
+        sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMaxIntegrationTime[HDR_LONG_FRAME_IDX] = (2 * gSc200aiParams[nPipeId].vts - 2 * vts_s - 10) / 2.0;
         sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMinIntegrationTime[HDR_LONG_FRAME_IDX] = 1 / 2.0;
         sns_obj->ae_ctrl_param.sns_ae_param.fIntegrationTimeIncrement[HDR_LONG_FRAME_IDX] = 4 / 2.0;
 
@@ -931,7 +931,7 @@ AX_S32 sc200ai_cfg_aec_param(ISP_PIPE_ID nPipeId)
     /* exp limit */
     sns_obj->ae_ctrl_param.sns_ae_limit.fMinRatio = SC200AI_MIN_RATIO;
     sns_obj->ae_ctrl_param.sns_ae_limit.fMaxRatio = SC200AI_MAX_RATIO;
-    sc200ai_set_exp_limit(nPipeId, SC200AI_MAX_RATIO, sns_obj->sns_mode_obj.nVts);
+    sc200ai_set_exp_limit(nPipeId, SC200AI_MAX_RATIO);
 
     /* gain limit */
     sns_obj->ae_ctrl_param.sns_ae_limit.fMinAgain[HDR_LONG_FRAME_IDX] = 1.0f;
@@ -952,6 +952,15 @@ AX_S32 sc200ai_cfg_aec_param(ISP_PIPE_ID nPipeId)
 
     /* hcglcg */
     sns_obj->ae_ctrl_param.eSnsHcgLcgMode = AX_LCG_NOTSUPPORT_MODE;
+
+    if (sns_obj->sns_mode_obj.eHDRMode == AX_SNS_LINEAR_MODE) {
+        sns_obj->ae_ctrl_param.sns_ae_param.fIntegrationTimeOffset[HDR_LONG_FRAME_IDX] = sc200ai_get_exp_offset(nPipeId);
+    } else if (sns_obj->sns_mode_obj.eHDRMode == AX_SNS_HDR_2X_MODE) {
+        sns_obj->ae_ctrl_param.sns_ae_param.fIntegrationTimeOffset[HDR_LONG_FRAME_IDX] = sc200ai_get_exp_offset(nPipeId);
+        sns_obj->ae_ctrl_param.sns_ae_param.fIntegrationTimeOffset[HDR_MEDIUM_FRAME_IDX] = sc200ai_get_exp_offset(nPipeId);
+    } else {
+        sns_obj->ae_ctrl_param.sns_ae_param.fIntegrationTimeOffset[HDR_LONG_FRAME_IDX] = sc200ai_get_exp_offset(nPipeId);
+    }
 
     /* current fps */
     sns_obj->ae_ctrl_param.sns_ae_param.fCurFps = sns_obj->sns_mode_obj.fFrameRate;
@@ -1078,7 +1087,7 @@ AX_S32 sc200ai_get_integration_time_range(ISP_PIPE_ID nPipeId, AX_F32 fHdrRatio,
     SNS_CHECK_PTR_VALID(sns_obj);
     SNS_CHECK_PTR_VALID(ptIntTimeRange);
 
-    sc200ai_set_exp_limit(nPipeId, fHdrRatio, sns_obj->sns_mode_obj.nVts);
+    sc200ai_set_exp_limit(nPipeId, fHdrRatio);
 
     ptIntTimeRange->fMaxIntegrationTime[HDR_LONG_FRAME_IDX] =
         sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMaxIntegrationTime[HDR_LONG_FRAME_IDX];
@@ -1324,7 +1333,7 @@ AX_S32 sc200ai_set_fps(ISP_PIPE_ID nPipeId, AX_F32 fFps)
         sns_obj->sns_mode_obj.fFrameRate = sns_obj->sns_attr_param.fFrameRate;
     }
 
-    sc200ai_set_exp_limit(nPipeId, SC200AI_MAX_RATIO, gSc200aiParams[nPipeId].vts);
+    sc200ai_set_exp_limit(nPipeId, SC200AI_MAX_RATIO);
     sns_obj->ae_ctrl_param.sns_ae_param.fCurFps = 1 * SNS_1_SECOND_UNIT_US / (sns_obj->ae_ctrl_param.fTimePerLine * vts);
 
     SNS_INFO("pipe:%d, userFps:%f, curFps:%f, vts:0x%x\n",

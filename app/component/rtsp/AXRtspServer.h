@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -10,7 +10,7 @@
 
 #pragma once
 
-#include <condition_variable>
+#include <condition_variable.hpp>
 #include <mutex>
 #include <thread>
 #include "AXLiveServerMediaSession.h"

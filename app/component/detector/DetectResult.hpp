@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -19,6 +19,7 @@
 #define MAX_DETECT_RESULT_COUNT (32)
 
 typedef struct DETECT_RESULT_S {
+    AX_U64 u64Pts;
     AX_U64 nSeqNum;
     AX_U32 nW;
     AX_U32 nH;

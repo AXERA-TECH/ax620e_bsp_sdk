@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -29,6 +29,8 @@ typedef enum {
     E_APP_SCENARIO_SINGLE = 1,                           /* Single sensor */
     E_APP_SCENARIO_DUAL_WITH_VO = 2,                     /* Dual sensor with vo*/
     E_APP_SCENARIO_SINGLE_WITH_VO = 3,                   /* Single sensor with vo*/
+    E_APP_SCENARIO_DUAL_10_1_WITH_VO = 4,                /* Dual sensor with 10.1 inch vo*/
+    E_APP_SCENARIO_SINGLE_10_1__WITH_VO = 5,             /* Single sensor with 10.1 inch vo*/
     E_APP_SCENARIO_SLT = 99,                             /* Similar to default scenario while without Web/RTSP */
     E_APP_SCENARIO_MAX
 } AX_APP_SCENARIO_E;

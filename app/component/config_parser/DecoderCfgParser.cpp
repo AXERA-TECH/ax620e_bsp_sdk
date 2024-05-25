@@ -1,12 +1,13 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
  * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
+
 #ifdef VO_SUPPORT
 #include "DecoderCfgParser.h"
 #include <fstream>
@@ -77,6 +78,16 @@ AX_BOOL CDecoderCfgParser::ParseJson(picojson::object &objJsonRoot, std::map<AX_
             return AX_TRUE;
         }
 
+        // Links to other scenarios
+        if (objJsonRoot[strScenario.c_str()].is<double>()) {
+            nScenario = objJsonRoot[strScenario.c_str()].get<double>();
+            LOG_MM_C(DEC_PARSER, "Links to scenario:%d", nScenario);
+            strScenario = CCmdLineParser::ScenarioEnum2Str((AX_U8)nScenario);
+            if (objJsonRoot.end() == objJsonRoot.find(strScenario.c_str())) {
+                return AX_FALSE;
+            }
+        }
+
         /* Parse vdec settings */
         picojson::object &objEncoder = objJsonRoot[strScenario.c_str()].get<picojson::object>();
         picojson::array &arrGrpSettings = objEncoder["instance"].get<picojson::array>();
@@ -90,17 +101,15 @@ AX_BOOL CDecoderCfgParser::ParseJson(picojson::object &objJsonRoot, std::map<AX_
             picojson::object &objGrpResolution = objSetting["resolution"].get<picojson::object>();
             tConfig.nWidth = objGrpResolution["w"].get<double>();
             tConfig.nHeight = objGrpResolution["h"].get<double>();
-            tConfig.nPoolDepth = objSetting["pool_depth"].get<double>();
             tConfig.nFrameOutFifoDepth = objSetting["out_fifo_depth"].get<double>();
             tConfig.strPath = objSetting["path"].get<std::string>();
             tConfig.eDisplayMode = (AX_VDEC_DISPLAY_MODE_E)objSetting["display_mode"].get<double>();
             tConfig.eInputMode = (AX_VDEC_INPUT_MODE_E)objSetting["input_mode"].get<double>();
             tConfig.eVdecMode = (AX_VDEC_MODE_E)objSetting["vdec_mode"].get<double>();
             tConfig.fFrameRate = objSetting["framerate"].get<double>();
-            LOG_MM_I(DEC_PARSER,
-                     "resolution[%d, %d], nFrameOutFifoDepth:%d,nPoolDepth:%d, strPath:%s, eDiaplayMode:%d, eInputMode:%d, eVdecMode:%d",
-                     tConfig.nWidth, tConfig.nHeight, tConfig.nFrameOutFifoDepth, tConfig.nPoolDepth, tConfig.strPath.c_str(),
-                     tConfig.eDisplayMode, tConfig.eInputMode, tConfig.eVdecMode);
+            LOG_MM_I(DEC_PARSER, "resolution[%d, %d], nFrameOutFifoDepth:%d, strPath:%s, eDiaplayMode:%d, eInputMode:%d, eVdecMode:%d",
+                     tConfig.nWidth, tConfig.nHeight, tConfig.nFrameOutFifoDepth, tConfig.strPath.c_str(), tConfig.eDisplayMode,
+                     tConfig.eInputMode, tConfig.eVdecMode);
             m_mapVdecChnConfig[i] = tConfig;
         }
 

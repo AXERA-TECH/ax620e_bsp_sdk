@@ -516,16 +516,16 @@ typedef struct {
  ************************************************************************************/
 typedef struct {
     AX_U16 nAlpha;          /* Accuracy: U1.15 Range: [0, 32768] */
-    AX_U8 nReset;           /* Accuracy: U1 Range: [0, 1] */
-    AX_U8 nStopUpdating;    /* Accuracy: U1 Range: [0, 1] */
+    AX_U8  nReset;          /* Accuracy: U8 Range: [0, 2], default 0 */
+    AX_U8  nStopUpdating;   /* Accuracy: U1 Range: [0, 1] */
 } AX_ISP_IQ_RLTM_TEMPO_FILTER_T;
 
 typedef struct {
-    AX_U8 nLumaWeight[AX_ISP_RLTM_LUMA_WEIGHT_NUM]; /* luma weight. (R, Gr, Gb, B, Max). Accuracy: U1.7 Range: [0, 128], default (0, 0, 0, 0, 128)*/
+    AX_U8 nLumaWeight[AX_ISP_RLTM_LUMA_WEIGHT_NUM]; /* luma weight. (R, Gr, Gb, B, Max). Accuracy: U1.7 Range: [0, 128], default (0, 0, 0, 0, 128) */
 } AX_ISP_IQ_RLTM_LUMAWT_T;
 
 typedef struct {
-    AX_U16 nHistogramWeight[AX_ISP_RLTM_HISTOGRAM_WEIGHT_MAX_LEN]; /* histogram bin weights. Accuracy: U16 Range: [0, 65535], default 1*/
+    AX_U16 nHistogramWeight[AX_ISP_RLTM_HISTOGRAM_WEIGHT_MAX_LEN]; /* histogram bin weights. Accuracy: U16 Range: [0, 65535], default 1 */
 } AX_ISP_IQ_RLTM_HISTWT_T;
 
 typedef struct {
@@ -533,10 +533,10 @@ typedef struct {
     AX_U16 nDetailSigmaVal;     /* Accuracy: U3.13 Range: [0, 65535], default 1000 */
     AX_U16 nDetailCoringPos;    /* Accuracy: U3.13 Range: [0, 65535], default 40 */
     AX_U16 nDetailCoringNeg;    /* Accuracy: U3.13 Range: [0, 65535], default 40 */
-    AX_U8 nDetailGainPos;       /* Accuracy: U3.5 Range: [0, 255], default 32 */
-    AX_U8 nDetailGainNeg;       /* Accuracy: U3.5 Range: [0, 255], default 32 */
-    AX_U8 nDetailExtraStrPos;   /* Accuracy: U3.5 Range: [0, 255], default 0 */
-    AX_U8 nDetailExtraStrNeg;   /* Accuracy: U3.5 Range: [0, 255], default 0 */
+    AX_U8  nDetailGainPos;      /* Accuracy: U3.5 Range: [0, 255], default 32 */
+    AX_U8  nDetailGainNeg;      /* Accuracy: U3.5 Range: [0, 255], default 32 */
+    AX_U8  nDetailExtraStrPos;  /* Accuracy: U3.5 Range: [0, 255], default 0 */
+    AX_U8  nDetailExtraStrNeg;  /* Accuracy: U3.5 Range: [0, 255], default 0 */
     AX_U16 nDetailGainLimitPos; /* Accuracy: U3.13 Range: [0, 65535], default 57344 */
     AX_U16 nDetailGainLimitNeg; /* Accuracy: U3.13 Range: [0, 65535], default 57344 */
     AX_U16 nSlopeStrengthLut[AX_ISP_RLTM_SLOPE_STRENGTH_LUT_NUM]; /* Accuracy: U3.13 Range: [0, 65535], default [8192, 8192, ...] */
@@ -546,8 +546,8 @@ typedef struct {
 typedef struct {
     AX_U8  nRltmDetailLowEn;    /* rltm detail low en -- detail low control */
     AX_U16 nSigmaDisBlur;       /* Accuracy: U3.13 Range: [1, 65535], default 9000 */
-    AX_U8 nDetailGainPosLow;    /* Accuracy: U3.5 Range: [0, 255], default 32 */
-    AX_U8 nDetailGainNegLow;    /* Accuracy: U3.5 Range: [0, 255], default 32 */
+    AX_U8  nDetailGainPosLow;   /* Accuracy: U3.5 Range: [0, 255], default 32 */
+    AX_U8  nDetailGainNegLow;   /* Accuracy: U3.5 Range: [0, 255], default 32 */
     AX_U16 nDetailLimitPosLow;  /* Accuracy: U3.13 Range: [0, 65535], default 57344 */
     AX_U16 nDetailLimitNegLow;  /* Accuracy: U3.13 Range: [0, 65535], default 57344 */
     AX_U16 nSigmaDisPst;        /* Accuracy: U3.13 Range: [0, 65535], default 9000 */

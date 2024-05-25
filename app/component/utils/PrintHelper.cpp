@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -38,7 +38,9 @@ AX_VOID CPrintHelper::PrintThreadFunc(CPrintHelper* pCaller) {
 
         CElapsedTimer::GetInstance()->mSleep(1000);
     }
+}
 
+AX_VOID CPrintHelper::FinalPrint() {
     /* for ut test*/
     for (AX_S32 i = 0; i < 3; i++) {
         m_stVencStatisticsInfo.FinalPrint();

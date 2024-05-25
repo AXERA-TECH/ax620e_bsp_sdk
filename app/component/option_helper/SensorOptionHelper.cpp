@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -24,6 +24,13 @@ AX_BOOL CSensorOptionHelper::GetSensorConfig(AX_U8 nSnsIndex, SENSOR_CONFIG_T& t
     }
 
     tOutSensorCfg = m_mapSensorCfg[nSnsIndex];
+
+    // AX620E TODO:
+    if (AX_SYS_GetChipType() == AX620Q_CHIP
+        && m_nSensorCount > 1
+        && tOutSensorCfg.eSensorMode == AX_SNS_LINEAR_MODE) {
+        tOutSensorCfg.eSensorMode = AX_SNS_LINEAR_ONLY_MODE;
+    }
 
     return AX_TRUE;
 }

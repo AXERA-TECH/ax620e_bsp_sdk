@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -34,6 +34,7 @@ typedef struct _WEB_CAMERA_ATTR_T {
     AX_F32 fFramerate;
     AX_U8 nDayNightMode;
     AX_U8 nNrMode;
+    AX_U8 nHdrRatio;
     AX_BOOL bMirror;
     AX_BOOL bFlip;
     AX_BOOL bCapture;
@@ -47,6 +48,7 @@ typedef struct _WEB_CAMERA_ATTR_T {
     AX_BOOL bLdcEnable;
     AX_BOOL bDisSupport;
     AX_BOOL bEZoomEnable;
+    AX_BOOL bHdrRatioEnable;
     WEB_OPR_IMAGE_ATTR_T tImageAttr;
     WEB_OPR_LDC_ATTR_T tLdcAttr;
     WEB_OPR_DIS_ATTR_T tDisAttr;
@@ -55,8 +57,9 @@ typedef struct _WEB_CAMERA_ATTR_T {
         nSnsMode = 0;  /* 0: SDR; 1: HDR; 2: SDR/HDR Split */
         nRotation = 0; /* 0:0°; 1:90°; 2:180°; 3:270° */
         fFramerate = 15.0;
-        nDayNightMode = 0;         /* 0:Day mode; 1:Night Mode */
-        nNrMode = 1;               /* 0:Dummy mode; 1:Nr Mode */
+        nDayNightMode = 0;         /* 0: Day mode; 1: Night Mode */
+        nNrMode = 1;               /* 0: Dummy mode; 1: Nr Mode */
+        nHdrRatio = 0;             /* 0: default; 1: 1:1 fusion*/
         bSnsModeEnable = AX_FALSE; /*Switch SDR/HDR */
         bPNModeEnable = AX_FALSE;  /* Switch sensor fps*/
         bCaptureEnable = AX_FALSE; /* Switch capture */
@@ -70,6 +73,7 @@ typedef struct _WEB_CAMERA_ATTR_T {
         bLdcEnable = AX_FALSE;
         bDisSupport = AX_FALSE;
         bEZoomEnable = AX_FALSE;
+        bHdrRatioEnable = AX_FALSE;
     }
 
 } WEB_CAMERA_ATTR_T, *WEB_CAMERA_ATTR_PTR;
@@ -87,6 +91,7 @@ typedef struct _WEB_VIDEO_ATTR_T {
     AX_BOOL bEnable;
     AX_U8 nEncoderType; /* 0: H264; 1: MJpeg 2: H265 */
     AX_U32 nBitrate;
+    AX_U32 nGop;
     AX_U32 nWidth;
     AX_U32 nHeight;
     AX_BOOL bLink;
@@ -98,6 +103,7 @@ typedef struct _WEB_VIDEO_ATTR_T {
         bLink = AX_TRUE;
         nEncoderType = 0;
         nBitrate = 4096;
+        nGop = 0;
         nWidth = 0;
         nHeight = 0;
         nRcType = 0;
@@ -146,6 +152,7 @@ typedef struct _AI_ATTR_T {
     //     AI_MODEL_HVCFP_ATTR_T      tHvcfpSetting;
     // };
     AI_AE_ROI_OPTION_T tAeRoiBody;
+    AI_SVC_OPTION_T tSvcParam;
 
     _AI_ATTR_T() {
         // tConfig.nWidth = DETECT_DEFAULT_WIDTH;
@@ -218,6 +225,7 @@ public:
     std::string GetPushModeStr(AX_S32 mode);
     AX_BOOL GetDetectModelAttrStr(AX_CHAR* pOutBuf, AX_U32 nSize);
     AX_BOOL GetEventsStr(AX_U8 nSnsID, AX_CHAR* pOutBuf, AX_U32 nSize);
+    AX_BOOL GetAlgoSvcStr(AX_U8 nSnsID, AX_CHAR* pOutBuf, AX_U32 nSize);
     E_AI_DETECT_PUSH_MODE_TYPE ParseResAiStr(std::string& strAiPushMode);
 
     AX_BOOL StatVencOutBytes(AX_U8 nSnsID, AX_U32 nUniChn, AX_U32 nBytes);

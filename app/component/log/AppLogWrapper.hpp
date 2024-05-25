@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -55,7 +55,7 @@ protected:
         }
     };
 
-    AX_U64 GetTickCount(AX_VOID);
+    static AX_U64 GetTickCount(AX_VOID);
 
 protected:
     APP_LOG_ATTR_T m_stAttr;

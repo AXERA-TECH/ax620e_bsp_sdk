@@ -311,6 +311,7 @@ typedef struct axVO_WBC_ATTR_T {
 #define VO_DISPLAY_MODE_FLAG_NVSYNC         (1<<3)
 #define VO_DISPLAY_MODE_FLAG_INTERLACE      (1<<4)
 
+#define VO_DISPLAY_TYPE_LVDS        7
 #define VO_DISPLAY_TYPE_HDMIA       11
 #define VO_DISPLAY_TYPE_VIRTUAL     15 /* Can be BT(601/656/1120) or DPI */
 #define VO_DISPLAY_TYPE_DSI         16

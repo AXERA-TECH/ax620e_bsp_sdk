@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -31,7 +31,7 @@
 
 namespace {
 static constexpr AX_S32 g_ivps_nMinFBCWidth = 512;
-static constexpr AX_S32 g_ivps_nMinFBCWidthFor4K = 1280; // AX620E TODO: WA
+static constexpr AX_S32 g_ivps_nMinFBCWidthFor4K = 512;
 }  // namespace
 
 CIVPSGrpStage::CIVPSGrpStage(IVPS_GROUP_CFG_T& tGrpConfig) : CAXStage(IVPS), m_tIvpsGrpCfg(tGrpConfig), m_nIvpsGrp(tGrpConfig.nGrp) {
@@ -191,18 +191,18 @@ AX_VOID CIVPSGrpStage::FrameGetThreadFunc(IVPS_GET_THREAD_PARAM_PTR pThreadParam
             }
         }
 
-        CAXFrame* pFrame = new (std::nothrow) CAXFrame();
-        if (!pFrame) {
+        auto spFrame = std::make_unique<CAXFrame>();
+        if (!spFrame) {
             LOG_M_E(IVPS, "alloc MediaFrame instance fail");
             continue;
         }
 
-        nRet = AX_IVPS_GetChnFrame(nIvpsGrp, nIvpsChn, &pFrame->stFrame.stVFrame.stVFrame, 95);
+        nRet = AX_IVPS_GetChnFrame(nIvpsGrp, nIvpsChn, &spFrame->stFrame.stVFrame.stVFrame, 95);
         constexpr AX_S32 nMaxRetrytimes = 10;
         if (bNeedDispatchFrame) {
             AX_S32 nGetTimes = 0;
             while (AX_SUCCESS != nRet && nGetTimes++ < nMaxRetrytimes) {
-                nRet = AX_IVPS_GetChnFrame(nIvpsGrp, nIvpsChn, &pFrame->stFrame.stVFrame.stVFrame, 95);
+                nRet = AX_IVPS_GetChnFrame(nIvpsGrp, nIvpsChn, &spFrame->stFrame.stVFrame.stVFrame, 95);
                 CElapsedTimer::GetInstance()->mSleep(100);
             }
             AX_IVPS_PIPELINE_ATTR_T tPipelineAttr = {0};
@@ -214,25 +214,27 @@ AX_VOID CIVPSGrpStage::FrameGetThreadFunc(IVPS_GET_THREAD_PARAM_PTR pThreadParam
         }
         if (AX_SUCCESS != nRet) {
             if (AX_ERR_IVPS_BUF_EMPTY == nRet) {
-                delete pFrame;
                 CElapsedTimer::GetInstance()->mSleep(1);
                 continue;
             }
-            delete pFrame;
             LOG_M(IVPS, "[%d][%d] Get ivps frame failed. ret=0x%x", nIvpsGrp, nIvpsChn, nRet);
 
             CElapsedTimer::GetInstance()->mSleep(1);
             continue;
         }
         LOG_MM_D(IVPS, "[%d][%d] Seq: %lld, w:%d, h:%d, size:%u, release:%p,PhyAddr:%lld", nIvpsGrp, nIvpsChn,
-                 pFrame->stFrame.stVFrame.stVFrame.u64SeqNum, pFrame->stFrame.stVFrame.stVFrame.u32Width,
-                 pFrame->stFrame.stVFrame.stVFrame.u32Height, pFrame->stFrame.stVFrame.stVFrame.u32FrameSize, pThreadParam->pReleaseStage,
-                 pFrame->stFrame.stVFrame.stVFrame.u64PhyAddr[0]);
+                 spFrame->stFrame.stVFrame.stVFrame.u64SeqNum, spFrame->stFrame.stVFrame.stVFrame.u32Width,
+                 spFrame->stFrame.stVFrame.stVFrame.u32Height, spFrame->stFrame.stVFrame.stVFrame.u32FrameSize, pThreadParam->pReleaseStage,
+                 spFrame->stFrame.stVFrame.stVFrame.u64PhyAddr[0]);
 
-        pFrame->nGrp = nIvpsGrp;
-        pFrame->nChn = nIvpsChn;
-        pFrame->pFrameRelease = pThreadParam->pReleaseStage;
-        NotifyAll(nIvpsGrp, nIvpsChn, pFrame);
+        if (pThreadParam->nChnEnable) {
+            spFrame->nGrp = nIvpsGrp;
+            spFrame->nChn = nIvpsChn;
+            spFrame->pFrameRelease = pThreadParam->pReleaseStage;
+            NotifyAll(nIvpsGrp, nIvpsChn, spFrame.release());
+        } else {
+            AX_IVPS_ReleaseChnFrame(nIvpsGrp, nIvpsChn, &spFrame->stFrame.stVFrame.stVFrame);
+        }
     }
 
     LOG_MM(IVPS, "[%d][%d] ---", nIvpsGrp, nIvpsChn);
@@ -556,6 +558,12 @@ AX_BOOL CIVPSGrpStage::EnableChannel(AX_U8 nChn, AX_BOOL bEnable /*= AX_TRUE*/) 
     return AX_TRUE;
 }
 
+AX_VOID CIVPSGrpStage::UpdateChannelState(AX_U8 nChn, AX_BOOL bEnable /*= AX_TRUE*/) {
+    std::lock_guard<std::mutex> lck(m_mutxRecv[nChn]);
+    m_tGetThreadParam[nChn].nChnEnable = bEnable;
+    return;
+}
+
 AX_BOOL CIVPSGrpStage::UpdateRotationResolution(AX_IVPS_ROTATION_E eRotation, AX_U8 nChn, AX_U32 nWidth, AX_U32 nHeight) {
     AX_U32 nStrideAlign = 0;
     AX_IVPS_GetPipelineAttr(m_tIvpsGrpCfg.nGrp, &m_tIvpsGrp.tPipelineAttr);
@@ -698,7 +706,6 @@ AX_BOOL CIVPSGrpStage::UpdateChnResolution(AX_U8 nChn, AX_S32 nWidth, AX_S32 nHe
 
 AX_BOOL CIVPSGrpStage::UpdateRotation(AX_IVPS_ROTATION_E eRotation) {
     if (!m_bEnableRotation) {
-        LOG_MM_W(IVPS, "[%d] don't have to rotation.", m_nIvpsGrp);
         return AX_TRUE;
     }
     LOG_MM_I(IVPS, "UpdateRotation+++ nGrp:%d, eRotation:%d", m_tIvpsGrpCfg.nGrp, eRotation);
@@ -832,7 +839,6 @@ AX_VOID CIVPSGrpStage::UpdateCompressInfo(AX_FRAME_COMPRESS_INFO_T& tCompressInf
 
     if (tCompressInfo.enCompressMode > AX_COMPRESS_MODE_NONE) {
         if (nChnWidth < g_ivps_nMinFBCWidth
-            // AX620E TODO: WA
             || (tSensorCfg.arrPipeAttr[0].arrChannelAttr[0].nWidth >= 3840 && nChnWidth <= g_ivps_nMinFBCWidthFor4K)) {
             tCompressInfo.enCompressMode = AX_COMPRESS_MODE_NONE;
             tCompressInfo.u32CompressLevel = 0;

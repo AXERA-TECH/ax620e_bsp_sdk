@@ -1,3 +1,13 @@
+/**************************************************************************************************
+ *
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ *
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
+ * may not be copied or distributed in any isomorphic form without the prior
+ * written consent of Axera Semiconductor Co., Ltd.
+ *
+ **************************************************************************************************/
+
 #include "TestSuiteCfgParser.h"
 #include <fstream>
 #include "AXTypeConverter.hpp"
@@ -443,6 +453,7 @@ AX_BOOL CTestSuiteCfgParser::ParseVENCJson(picojson::object& objSetting, std::ve
                             tOperation.tRcInfo.nMinIProp = operObj["min_iprop"].get<double>();
                             tOperation.tRcInfo.nMaxIProp = operObj["max_iprop"].get<double>();
                             tOperation.tRcInfo.nBitrate = operObj["bitRate"].get<double>();
+                            tOperation.tRcInfo.nGop = operObj["gop"].get<double>();
                             vecReq.emplace_back(tOperation);
                         }
                     }
