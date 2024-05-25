@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -88,6 +88,15 @@ AX_BOOL CEncoderCfgParser::ParseJson(picojson::object &objJsonRoot, std::map<AX_
             return AX_FALSE;
         }
 
+        // Links to other scenarios
+        if (objJsonRoot[strScenario.c_str()].is<double>()) {
+            nScenario = objJsonRoot[strScenario.c_str()].get<double>();
+            LOG_MM_C(ENC_PARSER, "Links to scenario:%d", nScenario);
+            strScenario = CCmdLineParser::ScenarioEnum2Str((AX_U8)nScenario);
+            if (objJsonRoot.end() == objJsonRoot.find(strScenario.c_str())) {
+                return AX_FALSE;
+            }
+        }
         std::vector<APP_ENC_RC_CONFIG> vecEncRc;
         /* Parse VENC settings */
         picojson::object &objEncoder = objJsonRoot[strScenario.c_str()].get<picojson::object>();
@@ -202,7 +211,7 @@ AX_BOOL CEncoderCfgParser::ParseJson(picojson::object &objJsonRoot, std::map<AX_
                 tOutConfig.nInFifoDepth = objSetting["in_fifo_depth"].get<double>();
                 tOutConfig.nOutFifoDepth = objSetting["out_fifo_depth"].get<double>();
                 tOutConfig.eMemSource = (AX_MEMORY_SOURCE_E)objSetting["mem_source"].get<double>();
-                tOutConfig.nGOP = objSetting["gop"].get<double>();
+                tOutConfig.nGop = objSetting["gop"].get<double>();
                 tOutConfig.fDstFrameRate = objSetting["frame_rate"].get<double>();
 
                 AX_U32 nRcType = objSetting["rc_type"].get<double>();

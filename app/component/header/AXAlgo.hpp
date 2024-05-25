@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -11,8 +11,10 @@
 #pragma once
 
 #include <string>
+#include <cstring>
 #include "ax_global_type.h"
 #include "ax_skel_type.h"
+#include "ax_venc_comm.h"
 
 #define AX_APP_ALGO_SNS_MAX (2)
 #define AX_APP_ALGO_PATH_LEN (128)
@@ -67,7 +69,7 @@ typedef enum axAPP_ALGO_TYPE_E {
     (AX_APP_ALGO_PERSON_DETECT | AX_APP_ALGO_VEHICLE_DETECT | AX_APP_ALGO_CYCLE_DETECT | AX_APP_ALGO_PLATE_DETECT | \
      AX_APP_ALGO_LICENSE_PLATE_RECOGNIZE)
 
-#define AX_APP_ALGO_TYPE_FH (AX_APP_ALGO_PERSON_DETECT | AX_APP_ALGO_FACE_DETECT | AX_APP_ALGO_FACE_RECOGNIZE)
+#define AX_APP_ALGO_TYPE_FACE (AX_APP_ALGO_FACE_DETECT | AX_APP_ALGO_FACE_RECOGNIZE)
 
 // algorithm hvcfp object type
 typedef enum axAPP_ALGO_HVCFP_TYPE_E {
@@ -158,6 +160,16 @@ typedef enum axAPP_ALGO_FACE_RECOGNIZE_ERR_CODE_E {
     AX_APP_ALGO_CATPURE_FACE_RECOGNIZE_ERR_OTHERS = 11,
     AX_APP_ALGO_CATPURE_FACE_RECOGNIZE_ERR_BUTT
 } AX_APP_ALGO_FACE_RECOGNIZE_ERR_CODE_E;
+
+// smart video coding region type
+typedef enum axAPP_ALGO_SVC_REGION_TYPE_E {
+    AX_APP_ALGO_SVC_REGION_TYPE0 = 0,
+    AX_APP_ALGO_SVC_REGION_TYPE1,
+    AX_APP_ALGO_SVC_REGION_TYPE2,
+    AX_APP_ALGO_SVC_REGION_TYPE3,
+    AX_APP_ALGO_SVC_REGION_TYPE4,
+    AX_APP_ALGO_SVC_REGION_TYPE_BUTT
+} AX_APP_ALGO_SVC_REGION_TYPE_E;
 
 // face recognize attribute
 typedef struct axAPP_ALGO_FACE_RECOGNIZE_ATTR_T {
@@ -287,7 +299,9 @@ typedef struct axAPP_ALGO_HVCFP_ITEM_T {
 
 // algorithm hvcfp result
 typedef struct axAPP_ALGO_HVCFP_RESULT_T {
+    AX_BOOL bValid;
     AX_S32 nSnsId;
+    AX_U64 u64Pts;
     AX_U32 u64FrameId;
     AX_U32 nWidth;
     AX_U32 nHeight;
@@ -314,7 +328,9 @@ typedef struct axAPP_ALGO_IVES_ITEM_T {
 
 // algorithm ives result
 typedef struct axAPP_ALGO_IVES_RESULT_T {
+    AX_BOOL bValid;
     AX_S32 nSnsId;
+    AX_U64 u64Pts;
     AX_U64 u64FrameId;
     AX_U32 nMdSize;
     AX_APP_ALGO_IVES_ITEM_PTR pstMds;
@@ -521,6 +537,37 @@ typedef struct axAPP_ALGO_AE_ROI_ITEM_T {
     AX_F32 fConfidence;
     AX_APP_ALGO_BOX_T tBox;
 } AX_APP_ALGO_AE_ROI_ITEM_T, *AX_APP_ALGO_AE_ROI_ITEM_PTR;
+
+// algorithm svc map param
+typedef struct {
+    AX_S8 iQp;
+    AX_S8 pQp;
+} AX_APP_ALGO_SVC_MAP_PARAM_T, *AX_APP_ALGO_SVC_MAP_PARAM_PTR;
+
+// algorithm svc qp config
+typedef struct axAPP_ALGO_SVC_QP_CFG_T {
+    AX_BOOL bEnable;
+    AX_APP_ALGO_SVC_MAP_PARAM_T tQpMap;
+} AX_APP_ALGO_SVC_QP_CFG_T, *AX_APP_ALGO_SVC_QP_CFG_PTR;
+
+// algorithm svc
+typedef struct axAPP_ALGO_SVC_PARAM_T {
+    AX_BOOL bEnable;
+    AX_BOOL bAbsQp;
+    AX_BOOL bSync;
+    AX_U32 nRegionTypeNum;
+    AX_APP_ALGO_SVC_MAP_PARAM_T tBgQpCfg;
+    AX_APP_ALGO_SVC_QP_CFG_T tQpCfg[AX_APP_ALGO_SVC_REGION_TYPE_BUTT];
+
+    axAPP_ALGO_SVC_PARAM_T() {
+        bEnable = AX_FALSE;
+        bAbsQp = AX_FALSE;
+        bSync = AX_FALSE;
+        nRegionTypeNum = 0;
+        memset(&tBgQpCfg, 0x00, sizeof(tBgQpCfg));
+        memset(tQpCfg, 0x00, sizeof(tQpCfg));
+    }
+} AX_APP_ALGO_SVC_PARAM_T, *AX_APP_ALGO_SVC_PARAM_PTR;
 
 // video algorithm callback
 typedef AX_VOID (*AX_APP_VIDEO_ALGO_CALLBACK)(AX_S32 nSnsId, const AX_APP_ALGO_RESULT_PTR pstResult);

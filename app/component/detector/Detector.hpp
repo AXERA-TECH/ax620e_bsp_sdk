@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -38,6 +38,7 @@ typedef struct DETECTOR_ATTR_S {
 } DETECTOR_ATTR_T;
 
 typedef struct {
+    AX_U64 u64Pts{0};
     AX_U64 nSeqNum{0};
     AX_S32 nGrpId{0};
     AX_S32 nChnId{0};

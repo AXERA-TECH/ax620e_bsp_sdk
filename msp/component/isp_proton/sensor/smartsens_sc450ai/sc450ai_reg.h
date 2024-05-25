@@ -53,6 +53,8 @@
 #define     SC450AI_VTS_S_H               (0x3E23)  /* bit[6:0], vts[15:8] */
 #define     SC450AI_VTS_S_L               (0x3E24)  /* bit[7:0], vts[7:0] */
 
+#define     SC450AI_HTS_L_H             (0x320C)
+#define     SC450AI_HTS_L_L             (0x320D)
 
 AX_S32 sc450ai_reset(ISP_PIPE_ID nPipeId, AX_U32 nResetGpio);
 AX_S32 sc450ai_sensor_i2c_init(ISP_PIPE_ID nPipeId);
@@ -74,5 +76,7 @@ AX_S32 sc450ai_write_settings(ISP_PIPE_ID nPipeId);
 AX_S32 sc450ai_set_bus_info(ISP_PIPE_ID nPipeId, AX_SNS_COMMBUS_T tSnsBusInfo);
 AX_S32 sc450ai_get_bus_num(ISP_PIPE_ID nPipeId);
 AX_S32 sc450ai_set_slaveaddr(ISP_PIPE_ID nPipeId, AX_U8 nslaveaddr);
+
+AX_F32 sc450ai_get_exp_offset(ISP_PIPE_ID nPipeId);
 
 #endif  //end __SC450AI_REG_H__

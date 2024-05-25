@@ -37,11 +37,16 @@
 #define SC450AI_HDR_2X_SHORT_EXP_LINE_MAX(vts_s)                      (2 * vts_s - 11)
 #define SC450AI_HDR_2X_SHORT_INTEGRATION_TIME_STEP                    (2.0f)
 
+#define SC450AI_HDR_LINE_GAP(vts_s)                                   (vts_s)
+#define SC450AI_HDR_LINE_STEP                                         (16)
+
 typedef struct _SNSSC450AI_OBJ_T_ {
     AX_U32 vts;
     AX_U32 vts_s;
     AX_U32 setting_vts;
     AX_F32 setting_fps;
+    AX_U32 vblank;      /* unit: line */
+    AX_U32 linegap;     /* unit: line */
 } SNSSC450AI_OBJ_T;
 
 typedef struct _SC450AI_GAIN_TABLE_T_ {

@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -27,6 +27,8 @@
 #define AX_APP_SCENARIO_SINGLE "scenario_1"
 #define AX_APP_SCENARIO_DUAL_WITH_VO "scenario_2"
 #define AX_APP_SCENARIO_SINGLE_WITH_VO "scenario_3"
+#define AX_APP_SCENARIO_DUAL_10_1_WITH_VO "scenario_4"
+#define AX_APP_SCENARIO_SINGLE_10_1_WITH_VO "scenario_5"
 #define AX_APP_SCENARIO_SLT "scenario_slt"
 #define AX_APP_UT "unit_test"
 

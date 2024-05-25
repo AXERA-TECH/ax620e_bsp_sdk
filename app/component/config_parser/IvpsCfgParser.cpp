@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -78,6 +78,16 @@ AX_BOOL CIvpsCfgParser::ParseJson(picojson::object &objJsonRoot, std::map<AX_U8,
         string strScenario = CCmdLineParser::ScenarioEnum2Str((AX_U8)nScenario);
         if (objJsonRoot.end() == objJsonRoot.find(strScenario.c_str())) {
             return AX_FALSE;
+        }
+
+        // Links to other scenarios
+        if (objJsonRoot[strScenario.c_str()].is<double>()) {
+            nScenario = objJsonRoot[strScenario.c_str()].get<double>();
+            LOG_MM_C(IVPS_PARSER, "Links to scenario:%d", nScenario);
+            strScenario = CCmdLineParser::ScenarioEnum2Str((AX_U8)nScenario);
+            if (objJsonRoot.end() == objJsonRoot.find(strScenario.c_str())) {
+                return AX_FALSE;
+            }
         }
 
         picojson::array &arrGrpSetting = objJsonRoot[strScenario.c_str()].get<picojson::array>();

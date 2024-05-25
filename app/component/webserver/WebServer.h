@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -52,6 +52,7 @@ typedef enum {
     E_REQ_TYPE_IMAGE,
     E_REQ_TYPE_EZOOM,
     E_REQ_TYPE_SWITCH_3A_SYNC,
+    E_REQ_TYPE_SWITCH_SCREEN,
     E_REQ_TYPE_MAX,
 } WEB_REQUEST_TYPE_E;
 
@@ -84,6 +85,7 @@ typedef enum {
     E_WEB_OPERATION_TYPE_AI_PUSH_MODE,
     E_WEB_OPERATION_TYPE_AI_EVENT,
     E_WEB_OPERATION_TYPE_AI_AE_ROI,
+    E_WEB_OPERATION_TYPE_AI_SVC,
     E_WEB_OPERATION_TYPE_OSD_ENABLE,
     E_WEB_OPERATION_TYPE_OSD_ATTR,
     E_WEB_OPERATION_TYPE_CHANNEL_SWITCH,
@@ -93,6 +95,7 @@ typedef enum {
     E_WEB_OPERATION_TYPE_IMAGE_ATTR,
     E_WEB_OPERATION_TYPE_CAPTURE,
     E_WEB_OPERATION_TYPE_CAMERA_FPS,
+    E_WEB_OPERATION_TYPE_SCREEN_ENABLE,
     E_WEB_OPERATION_TYPE_AUDIO_ATTR,
     E_WEB_OPERATION_TYPE_TRIGGER,
     E_WEB_OPERATION_TYPE_SNS_MIRROR_FLIP,
@@ -171,9 +174,11 @@ typedef struct _WEB_OPR_ROTATION {
 
 typedef struct _WEB_OPR_SNS_MODE {
     AX_U8 nSnsMode;
+    AX_U8 nHdrRatio;
 
     _WEB_OPR_SNS_MODE() {
         nSnsMode = 0;
+        nHdrRatio = 0;
     }
 } WEB_OPR_SNS_MODE_T;
 
@@ -296,6 +301,37 @@ typedef struct _WEB_OPR_AI_AE_ROI {
     }
 } WEB_OPR_AI_AE_ROI_T, AI_AE_ROI_OPTION_T;
 
+// svc map param
+typedef struct _WEB_OPR_AI_SVC_MAP_PARAM {
+    AX_S8 iQp;
+    AX_S8 pQp;
+} WEB_OPR_AI_SVC_MAP_PARAM_T, AI_SVC_MAP_PARAM_T, *WEB_OPR_AI_SVC_MAP_PARAM_PTR;
+
+// svc qp cfg
+typedef struct _WEB_OPR_AI_SVC_QP_CFG {
+    AX_BOOL bEnable;
+    WEB_OPR_AI_SVC_MAP_PARAM_T tQpMap;
+} WEB_OPR_AI_SVC_QP_CFG_T, *WEB_OPR_AI_SVC_QP_CFG_PTR;
+
+// algorithm svc(smart video coding)
+typedef struct _WEB_OPR_AI_SVC {
+    AX_BOOL bValid;
+    AX_BOOL bSyncValid;
+    AX_BOOL bEnable;
+    AX_BOOL bSync;
+    WEB_OPR_AI_SVC_MAP_PARAM_T tBgQpCfg;
+    WEB_OPR_AI_SVC_QP_CFG_T tQpCfg[AX_APP_ALGO_HVCFP_TYPE_BUTT];
+
+    _WEB_OPR_AI_SVC() {
+        bValid = AX_FALSE;
+        bSyncValid = AX_FALSE;
+        bEnable = AX_FALSE;
+        bSync = AX_FALSE;
+        memset(&tBgQpCfg, 0x00, sizeof(tBgQpCfg));
+        memset(tQpCfg, 0x00, sizeof(tQpCfg));
+    }
+} WEB_OPR_AI_SVC_T, AI_SVC_OPTION_T, *WEB_OPR_AI_SVC_PTR;
+
 typedef struct _WEB_OPR_OSD_ATTR {
     AX_U8 nVideoIndex;
     AX_U8 nOsdIndex;
@@ -350,6 +386,10 @@ typedef struct _WEB_OPR_RC_INFO : public RC_INFO_T {
 typedef struct _WEB_OPR_VENC_LINK_T {
     AX_BOOL bLinkEnable{AX_FALSE};
 } WEB_OPR_VENC_LINK_T;
+
+typedef struct _WEB_OPR_SCREEN_T {
+    AX_BOOL bEnable{AX_FALSE};
+} WEB_OPR_SCREEN_T;
 
 typedef struct _WEB_OPR_IMAGE_ATTR_T {
     AX_U8 nAutoMode{0}; /*1:Auto; 0:Manual*/
@@ -417,9 +457,11 @@ typedef struct _WEB_REQ_OPERATION_T {
         WEB_OPR_LDC_ATTR_T tLdcAttr;
         WEB_OPR_DIS_ATTR_T tDisAttr;
         WEB_OPR_SNS_FPS_ATTR_T tSnsFpsAttr;
+        WEB_OPR_SCREEN_T tScreenEnable;
         WEB_OPR_AUDIO_ATTR_T tAudioAttr;
         WEB_OPR_EZOOM_ATTR_T tEZoom;
         WEB_OPR_SNS_MIRROR_FLIP_ATTR_T tSnsMirrorFlip;
+        WEB_OPR_AI_SVC_T tSvcParam;
     };
     _WEB_REQ_OPERATION_T() {
         nGroup = -1;

@@ -1,3 +1,13 @@
+/**************************************************************************************************
+ *
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ *
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
+ * may not be copied or distributed in any isomorphic form without the prior
+ * written consent of Axera Semiconductor Co., Ltd.
+ *
+ **************************************************************************************************/
+
 #pragma once
 
 #include "AudioCap.hpp"
@@ -30,8 +40,10 @@ static inline AX_AI_LAYOUT_MODE_E _AX_LAYOUT_MODE(AX_APP_AUDIO_LAYOUT_MODE_E eLa
             return AX_AI_MIC_REF;
         case AX_APP_AUDIO_LAYOUT_REF_MIC:
             return AX_AI_REF_MIC;
-        case AX_APP_AUDIO_LAYOUT_INTERNAL_REF:
-            return AX_AI_INTERNAL_REF;
+        case AX_APP_AUDIO_LAYOUT_INTERNAL_MIC_NULL:
+            return AX_AI_INTERNAL_MIC_NULL;
+        case AX_APP_AUDIO_LAYOUT_INTERNAL_NULL_MIC:
+            return AX_AI_INTERNAL_NULL_MIC;
         case AX_APP_AUDIO_LAYOUT_DOORBELL:
             return AX_AI_DOORBELL;
         default:

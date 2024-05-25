@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -65,11 +65,11 @@ AX_VOID CC4395::InitMipiRxAttr() {
     m_tMipiRxDev.tMipiAttr.nDataRate = 80;
     m_tMipiRxDev.tMipiAttr.nDataLaneMap[0] = 0;
     m_tMipiRxDev.tMipiAttr.nDataLaneMap[1] = 1;
-    m_tMipiRxDev.tMipiAttr.nDataLaneMap[2] = 2;
-    m_tMipiRxDev.tMipiAttr.nDataLaneMap[3] = 3;
+    m_tMipiRxDev.tMipiAttr.nDataLaneMap[2] = 3;
+    m_tMipiRxDev.tMipiAttr.nDataLaneMap[3] = 4;
 
-    m_tMipiRxDev.tMipiAttr.nClkLane[0] = 1;
-    m_tMipiRxDev.tMipiAttr.nClkLane[1] = 0;
+    m_tMipiRxDev.tMipiAttr.nClkLane[0] = 2;
+    m_tMipiRxDev.tMipiAttr.nClkLane[1] = 5;
 }
 
 AX_VOID CC4395::InitDevAttr() {
@@ -84,7 +84,7 @@ AX_VOID CC4395::InitDevAttr() {
     m_tDevAttr.ePixelFmt = AX_FORMAT_BAYER_RAW_10BPP_PACKED;
     m_tDevAttr.eBayerPattern = AX_BP_RGGB;
     m_tDevAttr.eSnsMode = m_tSnsCfg.eSensorMode;
-    m_tDevAttr.eSnsOutputMode = m_tSnsCfg.eSensorMode > AX_SNS_LINEAR_MODE ? AX_SNS_DOL_HDR : AX_SNS_NORMAL;
+    m_tDevAttr.eSnsOutputMode = IS_SNS_HDR_MODE(m_tSnsCfg.eSensorMode) ? AX_SNS_DOL_HDR : AX_SNS_NORMAL;
     // m_tDevAttr.tMipiIntfAttr.szImgVc[0] = 0;
     m_tDevAttr.tMipiIntfAttr.szImgDt[0] = 43;
     m_tDevAttr.tMipiIntfAttr.szImgDt[1] = 43;
@@ -111,7 +111,11 @@ AX_VOID CC4395::InitPipeAttr() {
         } else {
             tPipeAttr.bAiIspEnable = AX_TRUE;
         }
-        if (tPipeAttr.eSnsMode < AX_SNS_HDR_MODE_MAX) {
+        if (IS_SNS_LINEAR_MODE(tPipeAttr.eSnsMode)) {
+            tPipeAttr.tCompressInfo = m_tSnsCfg.arrPipeAttr[i].tIfeCompress[AX_SNS_LINEAR_MODE];
+            tPipeAttr.tNrAttr.t3DnrAttr.tCompressInfo = m_tSnsCfg.arrPipeAttr[i].t3DNrCompress[AX_SNS_LINEAR_MODE];
+            tPipeAttr.tNrAttr.tAinrAttr.tCompressInfo = m_tSnsCfg.arrPipeAttr[i].tAiNrCompress[AX_SNS_LINEAR_MODE];
+        } else if (tPipeAttr.eSnsMode < AX_SNS_HDR_MODE_MAX) {
             tPipeAttr.tCompressInfo = m_tSnsCfg.arrPipeAttr[i].tIfeCompress[tPipeAttr.eSnsMode];
             tPipeAttr.tNrAttr.t3DnrAttr.tCompressInfo = m_tSnsCfg.arrPipeAttr[i].t3DNrCompress[tPipeAttr.eSnsMode];
             tPipeAttr.tNrAttr.tAinrAttr.tCompressInfo = m_tSnsCfg.arrPipeAttr[i].tAiNrCompress[tPipeAttr.eSnsMode];

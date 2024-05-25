@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -167,7 +167,7 @@ AX_BOOL CHotNoiseBalance::Process(AX_F32 fThermal) {
                     LOG_MM_C(HNB_MONITOR, "Thermal: %.2f", fThermal);
 
                     std::string strBinName;
-                    if (m_pSensorInst->GetSnsConfig().eSensorMode > AX_SNS_LINEAR_MODE) {
+                    if (IS_SNS_HDR_MODE(m_pSensorInst->GetSnsConfig().eSensorMode)) {
                         strBinName = (AX_CHAR *)m_tAttr.strHdrHotNoiseBalanceModeBin.c_str();
                     } else {
                         strBinName = (AX_CHAR *)m_tAttr.strSdrHotNoiseBalanceModeBin.c_str();
@@ -184,7 +184,7 @@ AX_BOOL CHotNoiseBalance::Process(AX_F32 fThermal) {
                     LOG_MM_C(HNB_MONITOR, "Thermal: %.2f", fThermal);
 
                     std::string strBinName;
-                    if (m_pSensorInst->GetSnsConfig().eSensorMode > AX_SNS_LINEAR_MODE) {
+                    if (IS_SNS_HDR_MODE(m_pSensorInst->GetSnsConfig().eSensorMode)) {
                         strBinName = (AX_CHAR *)m_tAttr.strHdrHotNoiseNormalModeBin.c_str();
                     } else {
                         strBinName = (AX_CHAR *)m_tAttr.strSdrHotNoiseNormalModeBin.c_str();
@@ -202,7 +202,7 @@ AX_BOOL CHotNoiseBalance::Process(AX_F32 fThermal) {
                 LOG_MM_C(HNB_MONITOR, "Thermal: %.2f", fThermal);
 
                 std::string strBinName;
-                if (m_pSensorInst->GetSnsConfig().eSensorMode > AX_SNS_LINEAR_MODE) {
+                if (IS_SNS_HDR_MODE(m_pSensorInst->GetSnsConfig().eSensorMode)) {
                     strBinName = (AX_CHAR *)m_tAttr.strHdrHotNoiseBalanceModeBin.c_str();
                 } else {
                     strBinName = (AX_CHAR *)m_tAttr.strSdrHotNoiseBalanceModeBin.c_str();
@@ -216,7 +216,7 @@ AX_BOOL CHotNoiseBalance::Process(AX_F32 fThermal) {
                 LOG_MM_C(HNB_MONITOR, "Thermal: %.2f", fThermal);
 
                 std::string strBinName;
-                if (m_pSensorInst->GetSnsConfig().eSensorMode > AX_SNS_LINEAR_MODE) {
+                if (IS_SNS_HDR_MODE(m_pSensorInst->GetSnsConfig().eSensorMode)) {
                     strBinName = (AX_CHAR *)m_tAttr.strHdrHotNoiseNormalModeBin.c_str();
                 } else {
                     strBinName = (AX_CHAR *)m_tAttr.strSdrHotNoiseNormalModeBin.c_str();

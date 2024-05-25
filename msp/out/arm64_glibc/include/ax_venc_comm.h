@@ -31,7 +31,7 @@ extern "C" {
 
 #define AX_MAX_VENC_OSD_NUM (8)
 
-#define AX_MAX_VENC_NALU_NUM (8)
+#define AX_MAX_VENC_NALU_NUM (32)
 
 #define AX_MIN_VENC_PIC_WIDTH_H264 (144)
 #define AX_MIN_VENC_PIC_WIDTH_H265 (136)

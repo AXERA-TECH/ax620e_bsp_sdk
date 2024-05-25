@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -14,8 +14,9 @@
 #include "ElapsedTimer.hpp"
 #include "GlobalDef.h"
 #include "ax_venc_api.h"
-
+#include "AXVideo.hpp"
 #include "PrintHelper.h"
+#include "AlgoOptionHelper.h"
 
 #define VENC "VENC"
 
@@ -58,6 +59,9 @@ AX_BOOL CVideoEncoder::Start(STAGE_START_PARAM_PTR pStartParams) {
 
     SetSendFlag(AX_TRUE);
 
+    // svc
+    UpdateSvcParamInternal(m_tSvcParam);
+
     LOG_MM_I(VENC, "---");
 
     return CAXStage::Start(pStartParams);
@@ -65,6 +69,8 @@ AX_BOOL CVideoEncoder::Start(STAGE_START_PARAM_PTR pStartParams) {
 
 AX_BOOL CVideoEncoder::Stop() {
     LOG_MM_C(VENC, "[%d] +++", GetChannel());
+    AX_S32 nRetry = 5;
+    AX_S32 nRet = 0;
     m_bGetThreadRunning = AX_FALSE;
 
     SetSendFlag(AX_FALSE);
@@ -72,7 +78,19 @@ AX_BOOL CVideoEncoder::Stop() {
     StopRecv();
 
     LOG_MM_I(VENC, "[%d] AX_VENC_DestroyChn ...", GetChannel());
-    AX_VENC_DestroyChn(GetChannel());
+    do {
+        nRet = AX_VENC_DestroyChn(GetChannel());
+        if (AX_ERR_VENC_BUSY == nRet) {
+            CElapsedTimer::GetInstance()->mSleep(100);
+            --nRetry;
+        } else {
+            break;
+        }
+    } while(nRetry >= 0);
+
+    if (nRetry == -1) {
+       LOG_MM_E(VENC, "[%d] AX_VENC_DestroyChn retry 5 times failed", GetChannel());
+    }
 
     StopWorkThread();
 
@@ -173,7 +191,7 @@ AX_VOID CVideoEncoder::NotifyAll(AX_U32 nChannel, AX_VOID* pStream) {
 }
 
 AX_BOOL CVideoEncoder::InitRcParams(VIDEO_CONFIG_T& tConfig) {
-    LOG_MM_I(VENC, "[%d] +++, nGop=%d", GetChannel(), tConfig.nGOP);
+    LOG_MM_I(VENC, "[%d] +++, nGop=%d", GetChannel(), tConfig.nGop);
 
     // 0: CBR, 1: VBR, 2:FIXQP, 3:AVBR 4:CVBR
     RC_INFO_T rcInfo;
@@ -183,7 +201,7 @@ AX_BOOL CVideoEncoder::InitRcParams(VIDEO_CONFIG_T& tConfig) {
         case PT_H264: {
             // set h264 cbr
             eRcType = AX_VENC_RC_MODE_H264CBR;
-            m_tVencRcParams.tH264Cbr.u32Gop = tConfig.nGOP;
+            m_tVencRcParams.tH264Cbr.u32Gop = tConfig.nGop;
             m_tVencRcParams.tH264Cbr.u32BitRate = tConfig.nBitrate;
             if (m_CurEncCfg.GetRcInfo(eRcType, rcInfo)) {
                 m_tVencRcParams.tH264Cbr.u32MinQp = ADAPTER_RANGE(rcInfo.nMinQp, 0, 51);
@@ -209,7 +227,7 @@ AX_BOOL CVideoEncoder::InitRcParams(VIDEO_CONFIG_T& tConfig) {
 
             // set h264 vbr
             eRcType = AX_VENC_RC_MODE_H264VBR;
-            m_tVencRcParams.tH264Vbr.u32Gop = tConfig.nGOP;
+            m_tVencRcParams.tH264Vbr.u32Gop = tConfig.nGop;
             m_tVencRcParams.tH264Vbr.u32MaxBitRate = tConfig.nBitrate;
             if (m_CurEncCfg.GetRcInfo(eRcType, rcInfo)) {
                 m_tVencRcParams.tH264Vbr.u32MinQp = ADAPTER_RANGE(rcInfo.nMinQp, 0, 51);
@@ -231,7 +249,7 @@ AX_BOOL CVideoEncoder::InitRcParams(VIDEO_CONFIG_T& tConfig) {
 
             // set h264 fixQp
             eRcType = AX_VENC_RC_MODE_H264FIXQP;
-            m_tVencRcParams.tH264FixQp.u32Gop = tConfig.nGOP;
+            m_tVencRcParams.tH264FixQp.u32Gop = tConfig.nGop;
             if (m_CurEncCfg.GetRcInfo(eRcType, rcInfo)) {
                 m_tVencRcParams.tH264FixQp.u32IQp = 25;
                 m_tVencRcParams.tH264FixQp.u32PQp = 30;
@@ -244,7 +262,7 @@ AX_BOOL CVideoEncoder::InitRcParams(VIDEO_CONFIG_T& tConfig) {
 
             // set h264 avbr
             eRcType = AX_VENC_RC_MODE_H264AVBR;
-            m_tVencRcParams.tH264AVbr.u32Gop = tConfig.nGOP;
+            m_tVencRcParams.tH264AVbr.u32Gop = tConfig.nGop;
             m_tVencRcParams.tH264AVbr.u32MaxBitRate = tConfig.nBitrate;
             if (m_CurEncCfg.GetRcInfo(eRcType, rcInfo)) {
                 m_tVencRcParams.tH264AVbr.u32MinQp = ADAPTER_RANGE(rcInfo.nMinQp, 0, 51);
@@ -265,7 +283,7 @@ AX_BOOL CVideoEncoder::InitRcParams(VIDEO_CONFIG_T& tConfig) {
             }
 
             eRcType = AX_VENC_RC_MODE_H264CVBR;
-            m_tVencRcParams.tH264CVbr.u32Gop = tConfig.nGOP;
+            m_tVencRcParams.tH264CVbr.u32Gop = tConfig.nGop;
             m_tVencRcParams.tH264CVbr.u32MaxBitRate = tConfig.nBitrate;
             if (m_CurEncCfg.GetRcInfo(eRcType, rcInfo)) {
                 m_tVencRcParams.tH264CVbr.u32MinQp = ADAPTER_RANGE(rcInfo.nMinQp, 0, 51);
@@ -278,8 +296,10 @@ AX_BOOL CVideoEncoder::InitRcParams(VIDEO_CONFIG_T& tConfig) {
                 m_tVencRcParams.tH264CVbr.u32MaxQpDelta = ADAPTER_RANGE(rcInfo.nMaxQpDelta, 0, 4);
                 m_tVencRcParams.tH264CVbr.u32ShortTermStatTime = ADAPTER_RANGE(rcInfo.nShtStaTime, 1, 120);
                 m_tVencRcParams.tH264CVbr.u32LongTermStatTime = ADAPTER_RANGE(rcInfo.nLtStaTime, 1, 1440);
-                m_tVencRcParams.tH264CVbr.u32LongTermMinBitrate = rcInfo.nLtMinBitrate;
-                m_tVencRcParams.tH264CVbr.u32LongTermMaxBitrate = rcInfo.nLtMaxBitrate;
+                m_tVencRcParams.tH264CVbr.u32LongTermMaxBitrate =
+                    ADAPTER_RANGE(rcInfo.nLtMaxBitrate, AX_VENC_MAX_LONG_TERM_BITRATE_LOW, m_tVencRcParams.tH264CVbr.u32MaxBitRate);
+                m_tVencRcParams.tH264CVbr.u32LongTermMinBitrate =
+                    ADAPTER_RANGE(rcInfo.nLtMinBitrate, AX_VENC_MAX_LONG_TERM_BITRATE_LOW, m_tVencRcParams.tH264CVbr.u32LongTermMaxBitrate);
                 m_tVencRcParams.tH264CVbr.s32IntraQpDelta = ADAPTER_RANGE(rcInfo.nIntraQpDelta, -51, 51);
                 m_tVencRcParams.tH264CVbr.u32IdrQpDeltaRange = ADAPTER_RANGE(rcInfo.nIdrQpDeltaRange, 2, 10);
                 m_tVencRcParams.tH264CVbr.s32DeBreathQpDelta = ADAPTER_RANGE(rcInfo.nDeBreathQpDelta, -51, 51);
@@ -294,8 +314,8 @@ AX_BOOL CVideoEncoder::InitRcParams(VIDEO_CONFIG_T& tConfig) {
                 m_tVencRcParams.tH264CVbr.u32MaxQpDelta = 0;
                 m_tVencRcParams.tH264CVbr.u32ShortTermStatTime = 2;
                 m_tVencRcParams.tH264CVbr.u32LongTermStatTime = 60;
-                m_tVencRcParams.tH264CVbr.u32LongTermMinBitrate = 2048;
-                m_tVencRcParams.tH264CVbr.u32LongTermMaxBitrate = 4096;
+                m_tVencRcParams.tH264CVbr.u32LongTermMinBitrate = AX_VENC_MAX_LONG_TERM_BITRATE_LOW;
+                m_tVencRcParams.tH264CVbr.u32LongTermMaxBitrate = m_tVencRcParams.tH264CVbr.u32MaxBitRate;
                 m_tVencRcParams.tH264CVbr.s32IntraQpDelta = -2;
                 m_tVencRcParams.tH264CVbr.u32IdrQpDeltaRange = 10;
                 m_tVencRcParams.tH264CVbr.s32DeBreathQpDelta = -2;
@@ -306,7 +326,7 @@ AX_BOOL CVideoEncoder::InitRcParams(VIDEO_CONFIG_T& tConfig) {
         case PT_H265: {
             // set h265 cbr
             eRcType = AX_VENC_RC_MODE_H265CBR;
-            m_tVencRcParams.tH265Cbr.u32Gop = tConfig.nGOP;
+            m_tVencRcParams.tH265Cbr.u32Gop = tConfig.nGop;
             m_tVencRcParams.tH265Cbr.u32BitRate = tConfig.nBitrate;
             if (m_CurEncCfg.GetRcInfo(eRcType, rcInfo)) {
                 m_tVencRcParams.tH265Cbr.u32MinQp = ADAPTER_RANGE(rcInfo.nMinQp, 0, 51);
@@ -332,7 +352,7 @@ AX_BOOL CVideoEncoder::InitRcParams(VIDEO_CONFIG_T& tConfig) {
 
             // set h265 vbr
             eRcType = AX_VENC_RC_MODE_H265VBR;
-            m_tVencRcParams.tH265Vbr.u32Gop = tConfig.nGOP;
+            m_tVencRcParams.tH265Vbr.u32Gop = tConfig.nGop;
             m_tVencRcParams.tH265Vbr.u32MaxBitRate = tConfig.nBitrate;
             if (m_CurEncCfg.GetRcInfo(eRcType, rcInfo)) {
                 m_tVencRcParams.tH265Vbr.u32MinQp = ADAPTER_RANGE(rcInfo.nMinQp, 0, 51);
@@ -354,7 +374,7 @@ AX_BOOL CVideoEncoder::InitRcParams(VIDEO_CONFIG_T& tConfig) {
 
             // set h265 fixQp
             eRcType = AX_VENC_RC_MODE_H265FIXQP;
-            m_tVencRcParams.tH265FixQp.u32Gop = tConfig.nGOP;
+            m_tVencRcParams.tH265FixQp.u32Gop = tConfig.nGop;
             if (m_CurEncCfg.GetRcInfo(eRcType, rcInfo)) {
                 m_tVencRcParams.tH265FixQp.u32IQp = 25;
                 m_tVencRcParams.tH265FixQp.u32PQp = 30;
@@ -367,7 +387,7 @@ AX_BOOL CVideoEncoder::InitRcParams(VIDEO_CONFIG_T& tConfig) {
 
             // set h265 avbr
             eRcType = AX_VENC_RC_MODE_H265AVBR;
-            m_tVencRcParams.tH265AVbr.u32Gop = tConfig.nGOP;
+            m_tVencRcParams.tH265AVbr.u32Gop = tConfig.nGop;
             m_tVencRcParams.tH265AVbr.u32MaxBitRate = tConfig.nBitrate;
             if (m_CurEncCfg.GetRcInfo(eRcType, rcInfo)) {
                 m_tVencRcParams.tH265AVbr.u32MinQp = ADAPTER_RANGE(rcInfo.nMinQp, 0, 51);
@@ -389,7 +409,7 @@ AX_BOOL CVideoEncoder::InitRcParams(VIDEO_CONFIG_T& tConfig) {
 
             // set h265 cvbr
             eRcType = AX_VENC_RC_MODE_H265CVBR;
-            m_tVencRcParams.tH265CVbr.u32Gop = tConfig.nGOP;
+            m_tVencRcParams.tH265CVbr.u32Gop = tConfig.nGop;
             m_tVencRcParams.tH265CVbr.u32MaxBitRate = tConfig.nBitrate;
             if (m_CurEncCfg.GetRcInfo(eRcType, rcInfo)) {
                 m_tVencRcParams.tH265CVbr.u32MinQp = ADAPTER_RANGE(rcInfo.nMinQp, 0, 51);
@@ -402,8 +422,10 @@ AX_BOOL CVideoEncoder::InitRcParams(VIDEO_CONFIG_T& tConfig) {
                 m_tVencRcParams.tH265CVbr.u32MaxQpDelta = ADAPTER_RANGE(rcInfo.nMaxQpDelta, 0, 4);
                 m_tVencRcParams.tH265CVbr.u32ShortTermStatTime = ADAPTER_RANGE(rcInfo.nShtStaTime, 1, 120);
                 m_tVencRcParams.tH265CVbr.u32LongTermStatTime = ADAPTER_RANGE(rcInfo.nLtStaTime, 1, 1440);
-                m_tVencRcParams.tH265CVbr.u32LongTermMinBitrate = rcInfo.nLtMinBitrate;
-                m_tVencRcParams.tH265CVbr.u32LongTermMaxBitrate = rcInfo.nLtMaxBitrate;
+                m_tVencRcParams.tH265CVbr.u32LongTermMaxBitrate =
+                    ADAPTER_RANGE(rcInfo.nLtMaxBitrate, AX_VENC_MAX_LONG_TERM_BITRATE_LOW, m_tVencRcParams.tH265CVbr.u32MaxBitRate);
+                m_tVencRcParams.tH265CVbr.u32LongTermMinBitrate =
+                    ADAPTER_RANGE(rcInfo.nLtMinBitrate, AX_VENC_MAX_LONG_TERM_BITRATE_LOW, m_tVencRcParams.tH265CVbr.u32LongTermMaxBitrate);
                 m_tVencRcParams.tH265CVbr.s32IntraQpDelta = ADAPTER_RANGE(rcInfo.nIntraQpDelta, -51, 51);
                 m_tVencRcParams.tH265CVbr.u32IdrQpDeltaRange = ADAPTER_RANGE(rcInfo.nIdrQpDeltaRange, 2, 10);
                 m_tVencRcParams.tH265CVbr.s32DeBreathQpDelta = ADAPTER_RANGE(rcInfo.nDeBreathQpDelta, -51, 51);
@@ -418,8 +440,8 @@ AX_BOOL CVideoEncoder::InitRcParams(VIDEO_CONFIG_T& tConfig) {
                 m_tVencRcParams.tH265CVbr.u32MaxQpDelta = 0;
                 m_tVencRcParams.tH265CVbr.u32ShortTermStatTime = 2;
                 m_tVencRcParams.tH265CVbr.u32LongTermStatTime = 60;
-                m_tVencRcParams.tH265CVbr.u32LongTermMinBitrate = 2048;
-                m_tVencRcParams.tH265CVbr.u32LongTermMaxBitrate = 4096;
+                m_tVencRcParams.tH265CVbr.u32LongTermMinBitrate = AX_VENC_MAX_LONG_TERM_BITRATE_LOW;
+                m_tVencRcParams.tH265CVbr.u32LongTermMaxBitrate = m_tVencRcParams.tH265CVbr.u32MaxBitRate;
                 m_tVencRcParams.tH265CVbr.s32IntraQpDelta = -2;
                 m_tVencRcParams.tH265CVbr.u32IdrQpDeltaRange = 10;
                 m_tVencRcParams.tH265CVbr.s32DeBreathQpDelta = -2;
@@ -484,7 +506,7 @@ AX_BOOL CVideoEncoder::InitParams() {
     m_tVencChnAttr.stVencAttr.u32PicHeightSrc = m_tVideoConfig.nHeight;
 
     /*stream buffer size*/
-    m_tVencChnAttr.stVencAttr.u32BufSize = m_tVideoConfig.nMaxWidth * m_tVideoConfig.nMaxHeight / 2;
+    m_tVencChnAttr.stVencAttr.u32BufSize = CAXTypeConverter::GetVencBufSize(m_tVideoConfig.ePayloadType, m_tVideoConfig.nMaxWidth, m_tVideoConfig.nMaxHeight);
     m_tVencChnAttr.stVencAttr.u8InFifoDepth = m_tVideoConfig.nInFifoDepth;
     m_tVencChnAttr.stVencAttr.u8OutFifoDepth = m_tVideoConfig.nOutFifoDepth;
     m_tVencChnAttr.stVencAttr.enLinkMode = m_tVideoConfig.bLink ? AX_LINK_MODE : AX_UNLINK_MODE;
@@ -495,8 +517,8 @@ AX_BOOL CVideoEncoder::InitParams() {
     m_tVencChnAttr.stVencAttr.bDeBreathEffect = m_tVideoConfig.bDeBreathEffect;
     m_tVencChnAttr.stVencAttr.bRefRingbuf = m_tVideoConfig.bRefRingbuf;
 
-    if (m_tVideoConfig.nGOP == 0) {
-        m_tVideoConfig.nGOP = (AX_U32)(4 * m_tVencChnAttr.stRcAttr.stFrameRate.fDstFrameRate);
+    if (m_tVideoConfig.nGop == 0) {
+        m_tVideoConfig.nGop = VENC_DEFAULT_GOP_SETTINGS(m_tVencChnAttr.stRcAttr.stFrameRate.fDstFrameRate);
     }
 
     m_tVideoConfig.nBitrate =
@@ -602,6 +624,7 @@ AX_BOOL CVideoEncoder::InitParams() {
 AX_BOOL CVideoEncoder::ProcessFrame(CAXFrame* pFrame) {
     AX_S32 nRet = 0;
     std::lock_guard<std::mutex> lck(m_mtx);
+
     if (!m_bSend) {
         return AX_FALSE;
     }
@@ -737,10 +760,11 @@ AX_BOOL CVideoEncoder::UpdateRcInfo(RC_INFO_T& tRcInfo) {
             break;
         }
         tRcParam.enRcMode = tRcInfo.eRcType;
-        LOG_MM_I(VENC, "eRcType:%d, nMinQp:%d,nMaxQp:%d,nMinIQp:%d,nMaxIQp:%d ,nMinIProp:%d,nMaxIProp:%d", tRcInfo.eRcType, tRcInfo.nMinQp,
-                 tRcInfo.nMaxQp, tRcInfo.nMinIQp, tRcInfo.nMaxIQp, tRcInfo.nMinIProp, tRcInfo.nMaxIProp);
+        LOG_MM_I(VENC, "eRcType:%d, nMinQp:%d,nMaxQp:%d,nMinIQp:%d,nMaxIQp:%d ,nMinIProp:%d,nMaxIProp:%d,nGop:%d", tRcInfo.eRcType,
+                 tRcInfo.nMinQp, tRcInfo.nMaxQp, tRcInfo.nMinIQp, tRcInfo.nMaxIQp, tRcInfo.nMinIProp, tRcInfo.nMaxIProp, tRcInfo.nGop);
         if (AX_VENC_RC_MODE_H264CBR == tRcInfo.eRcType) {
             memcpy(&tRcParam.stH264Cbr, &m_tVencRcParams.tH264Cbr, sizeof(AX_VENC_H264_CBR_T));
+            tRcParam.stH264Cbr.u32Gop = tRcInfo.nGop;
             tRcParam.stH264Cbr.u32MinQp = tRcInfo.nMinQp;
             tRcParam.stH264Cbr.u32MaxQp = tRcInfo.nMaxQp;
             tRcParam.stH264Cbr.u32MinIQp = tRcInfo.nMinIQp;
@@ -750,6 +774,7 @@ AX_BOOL CVideoEncoder::UpdateRcInfo(RC_INFO_T& tRcInfo) {
             tRcParam.stH264Cbr.u32BitRate = tRcInfo.nBitrate;
         } else if (AX_VENC_RC_MODE_H265CBR == tRcParam.enRcMode) {
             memcpy(&tRcParam.stH265Cbr, &m_tVencRcParams.tH265Cbr, sizeof(AX_VENC_H265_CBR_T));
+            tRcParam.stH265Cbr.u32Gop = tRcInfo.nGop;
             tRcParam.stH265Cbr.u32MinQp = tRcInfo.nMinQp;
             tRcParam.stH265Cbr.u32MaxQp = tRcInfo.nMaxQp;
             tRcParam.stH265Cbr.u32MinIQp = tRcInfo.nMinIQp;
@@ -764,6 +789,7 @@ AX_BOOL CVideoEncoder::UpdateRcInfo(RC_INFO_T& tRcInfo) {
             tRcParam.stMjpegCbr.u32BitRate = tRcInfo.nBitrate;
         } else if (AX_VENC_RC_MODE_H264VBR == tRcParam.enRcMode) {
             memcpy(&tRcParam.stH264Vbr, &m_tVencRcParams.tH264Vbr, sizeof(AX_VENC_H264_VBR_T));
+            tRcParam.stH264Vbr.u32Gop = tRcInfo.nGop;
             tRcParam.stH264Vbr.u32MinQp = tRcInfo.nMinQp;
             tRcParam.stH264Vbr.u32MaxQp = tRcInfo.nMaxQp;
             tRcParam.stH264Vbr.u32MinIQp = tRcInfo.nMinIQp;
@@ -771,6 +797,7 @@ AX_BOOL CVideoEncoder::UpdateRcInfo(RC_INFO_T& tRcInfo) {
             tRcParam.stH264Vbr.u32MaxBitRate = tRcInfo.nBitrate;
         } else if (AX_VENC_RC_MODE_H265VBR == tRcParam.enRcMode) {
             memcpy(&tRcParam.stH265Vbr, &m_tVencRcParams.tH265Vbr, sizeof(AX_VENC_H265_VBR_T));
+            tRcParam.stH265Vbr.u32Gop = tRcInfo.nGop;
             tRcParam.stH265Vbr.u32MinQp = tRcInfo.nMinQp;
             tRcParam.stH265Vbr.u32MaxQp = tRcInfo.nMaxQp;
             tRcParam.stH265Vbr.u32MinIQp = tRcInfo.nMinIQp;
@@ -783,14 +810,17 @@ AX_BOOL CVideoEncoder::UpdateRcInfo(RC_INFO_T& tRcInfo) {
             tRcParam.stMjpegVbr.u32MaxBitRate = tRcInfo.nBitrate;
         } else if (AX_VENC_RC_MODE_H264FIXQP == tRcParam.enRcMode) {
             memcpy(&tRcParam.stH264FixQp, &m_tVencRcParams.tH264FixQp, sizeof(AX_VENC_H264_FIXQP_T));
+            tRcParam.stH264FixQp.u32Gop = tRcInfo.nGop;
         } else if (AX_VENC_RC_MODE_H265FIXQP == tRcParam.enRcMode) {
             memcpy(&tRcParam.stH265FixQp, &m_tVencRcParams.tH265FixQp, sizeof(AX_VENC_H265_FIXQP_T));
+            tRcParam.stH265FixQp.u32Gop = tRcInfo.nGop;
         } else if (AX_VENC_RC_MODE_MJPEGFIXQP == tRcParam.enRcMode) {
             memcpy(&tRcParam.stMjpegFixQp, &m_tVencRcParams.tMjpegFixQp, sizeof(AX_VENC_MJPEG_FIXQP_T));
             // No way to change nFixQp value.
             // tRcParam.stMjpegFixQp.s32FixedQp = tRcInfo.nFixQp;
         } else if (AX_VENC_RC_MODE_H264AVBR == tRcParam.enRcMode) {
             memcpy(&tRcParam.stH264AVbr, &m_tVencRcParams.tH264AVbr, sizeof(AX_VENC_H264_AVBR_T));
+            tRcParam.stH264AVbr.u32Gop = tRcInfo.nGop;
             tRcParam.stH264AVbr.u32MinQp = tRcInfo.nMinQp;
             tRcParam.stH264AVbr.u32MaxQp = tRcInfo.nMaxQp;
             tRcParam.stH264AVbr.u32MinIQp = tRcInfo.nMinIQp;
@@ -798,6 +828,7 @@ AX_BOOL CVideoEncoder::UpdateRcInfo(RC_INFO_T& tRcInfo) {
             tRcParam.stH264AVbr.u32MaxBitRate = tRcInfo.nBitrate;
         } else if (AX_VENC_RC_MODE_H265AVBR == tRcParam.enRcMode) {
             memcpy(&tRcParam.stH265AVbr, &m_tVencRcParams.tH265AVbr, sizeof(AX_VENC_H265_AVBR_T));
+            tRcParam.stH265AVbr.u32Gop = tRcInfo.nGop;
             tRcParam.stH265AVbr.u32MinQp = tRcInfo.nMinQp;
             tRcParam.stH265AVbr.u32MaxQp = tRcInfo.nMaxQp;
             tRcParam.stH265AVbr.u32MinIQp = tRcInfo.nMinIQp;
@@ -805,6 +836,7 @@ AX_BOOL CVideoEncoder::UpdateRcInfo(RC_INFO_T& tRcInfo) {
             tRcParam.stH265AVbr.u32MaxBitRate = tRcInfo.nBitrate;
         } else if (AX_VENC_RC_MODE_H264CVBR == tRcParam.enRcMode) {
             memcpy(&tRcParam.stH264CVbr, &m_tVencRcParams.tH264CVbr, sizeof(AX_VENC_H264_CVBR_T));
+            tRcParam.stH264CVbr.u32Gop = tRcInfo.nGop;
             tRcParam.stH264CVbr.u32MaxQp = tRcInfo.nMaxQp;
             tRcParam.stH264CVbr.u32MinQp = tRcInfo.nMinQp;
             tRcParam.stH264CVbr.u32MinIQp = tRcInfo.nMinIQp;
@@ -813,8 +845,8 @@ AX_BOOL CVideoEncoder::UpdateRcInfo(RC_INFO_T& tRcInfo) {
             tRcParam.stH264CVbr.u32MaxIprop = tRcInfo.nMaxIProp;
             tRcParam.stH264CVbr.u32MaxBitRate = ADAPTER_RANGE(tRcInfo.nBitrate, AX_VENC_MIN_BITRATE, AX_VENC_MAX_BITRATE);
             tRcParam.stH264CVbr.u32LongTermMaxBitrate = ADAPTER_RANGE(tRcParam.stH264CVbr.u32LongTermMaxBitrate, AX_VENC_MAX_LONG_TERM_BITRATE_LOW, tRcParam.stH264CVbr.u32MaxBitRate);
-            tRcParam.stH264CVbr.u32LongTermMinBitrate = ADAPTER_RANGE(tRcParam.stH264CVbr.u32LongTermMinBitrate, AX_VENC_MIN_LONG_TERM_BITRATE_LOW, tRcParam.stH264CVbr.u32LongTermMaxBitrate);
-
+            tRcParam.stH264CVbr.u32LongTermMinBitrate = ADAPTER_RANGE(
+                tRcParam.stH264CVbr.u32LongTermMinBitrate, AX_VENC_MIN_LONG_TERM_BITRATE_LOW, tRcParam.stH264CVbr.u32LongTermMaxBitrate);
             /* Update CVBR attribute by web options */
             // tRcParam.stH264CVbr.u32ShortTermStatTime = tRcInfo.nShtStaTime;
             // tRcParam.stH264CVbr.u32LongTermStatTime = tRcInfo.nLtStaTime;
@@ -829,8 +861,10 @@ AX_BOOL CVideoEncoder::UpdateRcInfo(RC_INFO_T& tRcInfo) {
             tRcParam.stH265CVbr.u32MinIprop = tRcInfo.nMinIProp;
             tRcParam.stH265CVbr.u32MaxIprop = tRcInfo.nMaxIProp;
             tRcParam.stH265CVbr.u32MaxBitRate = ADAPTER_RANGE(tRcInfo.nBitrate, AX_VENC_MIN_BITRATE, AX_VENC_MAX_BITRATE);
-            tRcParam.stH265CVbr.u32LongTermMaxBitrate = ADAPTER_RANGE(tRcParam.stH264CVbr.u32LongTermMaxBitrate, AX_VENC_MAX_LONG_TERM_BITRATE_LOW, tRcParam.stH264CVbr.u32MaxBitRate);
-            tRcParam.stH265CVbr.u32LongTermMinBitrate = ADAPTER_RANGE(tRcParam.stH264CVbr.u32LongTermMinBitrate, AX_VENC_MIN_LONG_TERM_BITRATE_LOW, tRcParam.stH264CVbr.u32LongTermMaxBitrate);
+            tRcParam.stH265CVbr.u32LongTermMaxBitrate = ADAPTER_RANGE(tRcParam.stH265CVbr.u32LongTermMaxBitrate,
+                                                                      AX_VENC_MAX_LONG_TERM_BITRATE_LOW, tRcParam.stH265CVbr.u32MaxBitRate);
+            tRcParam.stH265CVbr.u32LongTermMinBitrate = ADAPTER_RANGE(
+                tRcParam.stH265CVbr.u32LongTermMinBitrate, AX_VENC_MIN_LONG_TERM_BITRATE_LOW, tRcParam.stH265CVbr.u32LongTermMaxBitrate);
             /* Update CVBR attribute by web options */
             // tRcParam.stH265CVbr.u32ShortTermStatTime = tRcInfo.nShtStaTime;
             // tRcParam.stH265CVbr.u32LongTermStatTime = tRcInfo.nLtStaTime;
@@ -965,4 +999,128 @@ AX_BOOL CVideoEncoder::UpdatePayloadType(AX_PAYLOAD_TYPE_E ePayloadType) {
 
     LOG_MM_C(VENC, "---");
     return ret;
+}
+
+AX_BOOL CVideoEncoder::UpdateSvcParam(const AX_APP_ALGO_SVC_PARAM_T& tParam) {
+    std::lock_guard<std::mutex> lck(m_mtx);
+
+    return UpdateSvcParamInternal(tParam);
+}
+
+AX_BOOL CVideoEncoder::UpdateSvcParamInternal(const AX_APP_ALGO_SVC_PARAM_T& tParam) {
+    AX_S32 s32Ret = AX_SUCCESS;
+
+    if (m_bSend) {
+        LOG_MM_C(VENC, "[%d] +++", GetChannel());
+
+        if (m_tSvcParam.bEnable && !tParam.bEnable) {
+            AX_VENC_SVC_REGION_T tRegion;
+            memset(&tRegion, 0x00, sizeof(tRegion));
+            s32Ret = AX_VENC_SetSvcRegion(GetChannel(), &tRegion);
+
+            if (s32Ret != 0) {
+                LOG_M_E(VENC, "AX_VENC_SetSvcRegion[%d] failed, ret=0x%x", GetChannel(), s32Ret);
+                return AX_FALSE;
+            }
+
+            m_CurSvcRegionNum = 0;
+        }
+
+        s32Ret = AX_VENC_EnableSvc(GetChannel(), tParam.bEnable);
+
+        if (s32Ret != 0) {
+            LOG_M_E(VENC, "AX_VENC_EnableSvc[%d] failed, ret=0x%x", GetChannel(), s32Ret);
+            return AX_FALSE;
+        }
+
+        if (tParam.bEnable) {
+            AX_VENC_SVC_PARAM_T tSvcParam;
+            s32Ret = AX_VENC_GetSvcParam(GetChannel(), &tSvcParam);
+
+            if (s32Ret != 0) {
+                LOG_M_E(VENC, "AX_VENC_GetSvcParam[%d] failed, ret=0x%x", GetChannel(), s32Ret);
+                return AX_FALSE;
+            }
+
+            tSvcParam.bAbsQp = AX_FALSE;
+            tSvcParam.bSync = tParam.bSync;
+            tSvcParam.stBgQpCfg.iQp = tParam.tBgQpCfg.iQp;
+            tSvcParam.stBgQpCfg.pQp = tParam.tBgQpCfg.pQp;
+            tSvcParam.u32RectTypeNum = tParam.nRegionTypeNum;
+            if (tParam.tQpCfg[AX_APP_ALGO_SVC_REGION_TYPE0].bEnable) {
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE0].iQp = tParam.tQpCfg[AX_APP_ALGO_SVC_REGION_TYPE0].tQpMap.iQp;
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE0].pQp = tParam.tQpCfg[AX_APP_ALGO_SVC_REGION_TYPE0].tQpMap.pQp;
+            } else {
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE0].iQp = tParam.tBgQpCfg.iQp;
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE0].pQp = tParam.tBgQpCfg.pQp;
+            }
+            if (tParam.tQpCfg[AX_APP_ALGO_SVC_REGION_TYPE1].bEnable) {
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE1].iQp = tParam.tQpCfg[AX_APP_ALGO_SVC_REGION_TYPE1].tQpMap.iQp;
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE1].pQp = tParam.tQpCfg[AX_APP_ALGO_SVC_REGION_TYPE1].tQpMap.pQp;
+            } else {
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE1].iQp = tParam.tBgQpCfg.iQp;
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE1].pQp = tParam.tBgQpCfg.pQp;
+            }
+            if (tParam.tQpCfg[AX_APP_ALGO_SVC_REGION_TYPE2].bEnable) {
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE2].iQp = tParam.tQpCfg[AX_APP_ALGO_SVC_REGION_TYPE2].tQpMap.iQp;
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE2].pQp = tParam.tQpCfg[AX_APP_ALGO_SVC_REGION_TYPE2].tQpMap.pQp;
+            } else {
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE2].iQp = tParam.tBgQpCfg.iQp;
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE2].pQp = tParam.tBgQpCfg.pQp;
+            }
+            if (tParam.tQpCfg[AX_APP_ALGO_SVC_REGION_TYPE3].bEnable) {
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE3].iQp = tParam.tQpCfg[AX_APP_ALGO_SVC_REGION_TYPE3].tQpMap.iQp;
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE3].pQp = tParam.tQpCfg[AX_APP_ALGO_SVC_REGION_TYPE3].tQpMap.pQp;
+            } else {
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE3].iQp = tParam.tBgQpCfg.iQp;
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE3].pQp = tParam.tBgQpCfg.pQp;
+            }
+            if (tParam.tQpCfg[AX_APP_ALGO_SVC_REGION_TYPE4].bEnable) {
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE4].iQp = tParam.tQpCfg[AX_APP_ALGO_SVC_REGION_TYPE4].tQpMap.iQp;
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE4].pQp = tParam.tQpCfg[AX_APP_ALGO_SVC_REGION_TYPE4].tQpMap.pQp;
+            } else {
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE4].iQp = tParam.tBgQpCfg.iQp;
+                tSvcParam.stQpCfg[AX_VENC_SVC_RECT_TYPE4].pQp = tParam.tBgQpCfg.pQp;
+            }
+
+            s32Ret = AX_VENC_SetSvcParam(GetChannel(), &tSvcParam);
+
+            if (s32Ret != 0) {
+                LOG_M_E(VENC, "AX_VENC_SetSvcParam[%d] failed, ret=0x%x", GetChannel(), s32Ret);
+                return AX_FALSE;
+            }
+        }
+
+        LOG_MM_C(VENC, "[%d] Enable[%d] ---", GetChannel(), tParam.bEnable);
+    }
+
+    m_tSvcParam = tParam;
+
+    return s32Ret == AX_SUCCESS ? AX_TRUE : AX_FALSE;
+}
+
+AX_BOOL CVideoEncoder::UpdateSvcRegion(AX_VENC_SVC_REGION_T& tRegion) {
+    std::lock_guard<std::mutex> lck(m_mtx);
+    AX_S32 s32Ret = AX_SUCCESS;
+
+    if (!m_bSend) {
+        return AX_FALSE;
+    }
+
+    if (m_tSvcParam.bEnable && (tRegion.u32RectNum != 0 || m_CurSvcRegionNum != 0)) {
+        LOG_MM_I(VENC, "[%d] num[%d] pts[%lld] +++", GetChannel(), tRegion.u32RectNum, tRegion.u64Pts);
+
+        s32Ret = AX_VENC_SetSvcRegion(GetChannel(), &tRegion);
+
+        if (s32Ret != 0) {
+            LOG_M_E(VENC, "AX_VENC_SetSvcRegion[%d] failed, ret=0x%x", GetChannel(), s32Ret);
+            return AX_FALSE;
+        }
+
+        m_CurSvcRegionNum = tRegion.u32RectNum;
+
+        LOG_MM_I(VENC, "[%d] ---", GetChannel());
+    }
+
+    return s32Ret == AX_SUCCESS ? AX_TRUE : AX_FALSE;
 }

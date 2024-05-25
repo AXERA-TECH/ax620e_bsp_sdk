@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -147,16 +147,14 @@ AX_VOID CSCD::UpdateResolution(AX_U32 w, AX_U32 h) {
     Cleanup();
     Startup(m_nSnsID, w, h);
 }
+
 AX_VOID CSCD::SetConfig(const AX_APP_ALGO_SCENE_CHANGE_PARAM_T &stConfig, AX_BOOL bUpdateParam) {
     if (stConfig.bEnable != m_stConfig.bEnable) {
+        Cleanup();
         if (stConfig.bEnable) {
-            Cleanup();
             Startup(m_nSnsID, m_scdImgW, m_scdImgH);
-        } else {
-            Cleanup();
         }
     }
-
     m_stConfig = stConfig;
 
     if (bUpdateParam) {

@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -13,6 +13,8 @@
 
 #define MPEG4 "MPEG4"
 
+#define MP4_DEFAULT_FILE_SIZE (64)
+#define MP4_MAX_FILE_SIZE (4 * 1024 - 64) // 4GiB
 #define MP4_DEFAULT_RECORD_FILE_NUM (10)
 #define MP4_DEFAULT_VIDEO_DEPTH (5)
 #define MP4_DEFAULT_AUDIO_DEPTH (5)
@@ -77,9 +79,13 @@ AX_BOOL CMPEG4Encoder::InitParam(const MPEG4EC_INFO_T &stMpeg4Info) {
 
     m_Chn = stMpeg4Info.nchn;
 
-    mp4_info.loop = (bool)MP4_DEFAULT_LOOP_SET;
-    mp4_info.max_file_size = (int)stMpeg4Info.nMaxFileInMBytes;
-    mp4_info.max_file_num = MP4_DEFAULT_RECORD_FILE_NUM;
+    mp4_info.loop = (bool)stMpeg4Info.bLoopSet;
+    if (stMpeg4Info.nMaxFileInMBytes > MP4_MAX_FILE_SIZE) {
+        mp4_info.max_file_size = MP4_MAX_FILE_SIZE;
+    } else {
+        mp4_info.max_file_size = (stMpeg4Info.nMaxFileInMBytes > 0) ? stMpeg4Info.nMaxFileInMBytes : MP4_DEFAULT_FILE_SIZE;
+    }
+    mp4_info.max_file_num = (stMpeg4Info.nMaxFileCount > 0) ? stMpeg4Info.nMaxFileCount : MP4_DEFAULT_RECORD_FILE_NUM;
     mp4_info.dest_path = (char *)stMpeg4Info.strSavePath.c_str();
     mp4_info.user_data = this;
 

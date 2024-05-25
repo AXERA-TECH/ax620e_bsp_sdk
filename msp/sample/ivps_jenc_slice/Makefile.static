@@ -51,11 +51,9 @@ CFLAGS			+= -ldl
 # dependency
 CLIB			+= -Wl,-rpath-link=$(OUT_PATH)/lib
 CLIB			+= -L$(OUT_PATH)/lib
-CLIB			+= -lstdc++
 CLIB			+= -lm -lpthread -lrt
 CLIB			+= -l:libax_ivps.a
 CLIB			+= -l:libax_venc.a
-CLIB			+= -l:libax_sys.a
 CLIB			+= -l:libax_proton.a
 ifeq ($(CHIP_TYPE), AX620Q)
 CLIB				+= -l:libax_engine_tiny.a
@@ -64,6 +62,7 @@ CLIB				+= -l:libax_engine.a
 endif
 CLIB				+= -l:libax_interpreter.a
 CLIB			+= -lstdc++
+CLIB			+= -l:libax_sys.a
 
 # install
 INSTALL_BIN	:= $(TARGET)

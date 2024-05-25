@@ -12,7 +12,7 @@ UBOOT_PATH		:= $(HOME_PATH)/boot/uboot
 ATF_PATH		:= $(HOME_PATH)/boot/atf
 KERNEL_PATH		:= $(HOME_PATH)/kernel/linux
 SAMPLE_PATH		:= $(HOME_PATH)/msp/sample
-ifeq ($(AX_BOOT_OPTIMIZATION_SUPPORT),TRUE)
+ifeq ($(AX_RISCV_SUPPORT),TRUE)
 RISCV_PATH		:= $(HOME_PATH)/riscv
 endif
 
@@ -44,7 +44,7 @@ SUBDIRS			+= $(BL1_PATH) \
 			$(MSP_PATH) \
 			$(APP_PATH)
 
-ifeq ($(AX_BOOT_OPTIMIZATION_SUPPORT),TRUE)
+ifeq ($(AX_RISCV_SUPPORT),TRUE)
 SUBDIRS			+=$(RISCV_PATH)
 endif
 
@@ -77,7 +77,7 @@ install: $(SUBDIRS_INSTALL)
 ifeq ($(SUPPORT_CPIO),TRUE)
 	@$(MAKE) -C $(KERNEL_PATH) all install
 endif
-ifeq ($(AX_BOOT_OPTIMIZATION_SUPPORT),TRUE)
+ifeq ($(AX_RISCV_SUPPORT),TRUE)
 	@$(MAKE) -C $(RISCV_PATH) all install
 endif
 	@echo -e $(GREEN)"\nInstall success!!\n"  $(DONE)

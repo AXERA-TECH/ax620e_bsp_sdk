@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -380,12 +380,10 @@ AX_VOID COD::AddArea() {
 
 AX_VOID COD::SetConfig(const AX_APP_ALGO_OCCLUSION_PARAM_T &stConfig, AX_BOOL bUpdateParam) {
     if (stConfig.bEnable != m_stConfig.bEnable) {
+        Cleanup();
         if (stConfig.bEnable) {
-            Cleanup();
             Startup(m_nSnsID, (AX_U32)m_nFrameRate, m_odImgW, m_odImgH);
-
-        } else {
-            Cleanup();
+            AddArea();
         }
     } else {
         const AX_U32 nAreaCount = m_vecAreas.size();

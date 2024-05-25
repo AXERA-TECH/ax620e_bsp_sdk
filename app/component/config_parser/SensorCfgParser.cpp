@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -68,12 +68,20 @@ AX_BOOL CSensorCfgParser::GetConfig(std::map<AX_U8, SENSOR_CONFIG_T>& mapSensorC
         LOG_MM(SNS_PARSER, "Apply default scenario %d.", nCfgScenario);
     }
 
-    if (nCfgScenario == E_APP_SCENARIO_DUAL_SENSOR || nCfgScenario == E_APP_SCENARIO_DUAL_WITH_VO) {
-        nSensorCount = 2;
-    } else if (nCfgScenario == E_APP_SCENARIO_SINGLE || nCfgScenario == E_APP_SCENARIO_SINGLE_WITH_VO) {
-        nSensorCount = 1;
-    } else {
-        nSensorCount = 2;
+    switch (nCfgScenario) {
+        case E_APP_SCENARIO_DUAL_SENSOR:
+        case E_APP_SCENARIO_DUAL_WITH_VO:
+        case E_APP_SCENARIO_DUAL_10_1_WITH_VO:
+            nSensorCount = 2;
+            break;
+        case E_APP_SCENARIO_SINGLE:
+        case E_APP_SCENARIO_SINGLE_WITH_VO:
+        case E_APP_SCENARIO_SINGLE_10_1__WITH_VO:
+            nSensorCount = 1;
+            break;
+        default:
+            nSensorCount = 2;
+            break;
     }
 
 #ifdef FRTTESTLP_SUPPORT
@@ -115,6 +123,16 @@ AX_BOOL CSensorCfgParser::ParseJson(picojson::object& objJsonRoot, std::map<AX_U
             return AX_FALSE;
         }
 
+        // Links to other scenarios
+        if (objJsonRoot[strScenario.c_str()].is<double>()) {
+            nScenario = objJsonRoot[strScenario.c_str()].get<double>();
+            LOG_MM_C(SNS_PARSER, "Links to scenario:%d", nScenario);
+            strScenario = CCmdLineParser::ScenarioEnum2Str((AX_U8)nScenario);
+            if (objJsonRoot.end() == objJsonRoot.find(strScenario.c_str())) {
+                return AX_FALSE;
+            }
+        }
+
         picojson::array& arrSettings = objJsonRoot[strScenario.c_str()].get<picojson::array>();
         if (0 == arrSettings.size()) {
             return AX_FALSE;
@@ -148,6 +166,15 @@ AX_BOOL CSensorCfgParser::ParseJson(picojson::object& objJsonRoot, std::map<AX_U
             tSensorCfg.nBusType = objSetting["bus_type"].get<double>();
             tSensorCfg.nDevNode = objSetting["dev_node"].get<double>();
             tSensorCfg.nI2cAddr = objSetting["i2c_addr"].get<double>();
+
+            if (objSetting.end() != objSetting.find("hdr_ratio")) {
+                picojson::object& objHdrRatio = objSetting["hdr_ratio"].get<picojson::object>();
+
+                tSensorCfg.tHdrRatioAttr.bEnable = (AX_BOOL)objHdrRatio["enable"].get<bool>();
+                tSensorCfg.tHdrRatioAttr.nRatio = objHdrRatio["ratio"].get<double>();
+                tSensorCfg.tHdrRatioAttr.strHdrRatioDefaultBin = objHdrRatio["hdr_ratio_default_bin"].get<std::string>();
+                tSensorCfg.tHdrRatioAttr.strHdrRatioModeBin = objHdrRatio["hdr_ratio_mode_bin"].get<std::string>();
+            }
 
             picojson::array& arrSettingIndex = objSetting["setting_index"].get<picojson::array>();
             for (size_t i = 0; i < 3; i++) {
@@ -196,6 +223,16 @@ AX_BOOL CSensorCfgParser::ParseJson(picojson::object& objJsonRoot, std::map<AX_U
                 }
 
                 tPipeConfig.arrChannelAttr[i].bChnEnable = arrChnEnable[i].get<double>() == 0 ? AX_FALSE : AX_TRUE;
+            }
+
+            if (objSetting.end() != objSetting.find("chn_frm_mode")) {
+                picojson::array& arrChnFrmMode = objSetting["chn_frm_mode"].get<picojson::array>();
+                for (size_t i = 0; i < arrChnFrmMode.size(); i++) {
+                    if (i >= AX_VIN_CHN_ID_MAX) {
+                        continue;
+                    }
+                    tPipeConfig.arrChannelAttr[i].eFrmMode = (AX_VIN_FRAME_MODE_E)(arrChnFrmMode[i].get<double>() == 0 ? 0 : 1);
+                }
             }
 
             picojson::array& arrChnCompressInfo = objSetting["chn_compress"].get<picojson::array>();

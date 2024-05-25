@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -541,7 +541,7 @@ AX_VOID COSDHelper::UpdateOSDStr(OSD_REGION_PARAM_T* pThreadParam) {
 
     do {
         tDisp.arrDisp[0].eType = AX_IVPS_RGN_TYPE_OSD;
-        tDisp.arrDisp[0].bShow = pThreadParam->tOsdCfg.bEnable;
+        tDisp.arrDisp[0].bShow = (nCharSize > 0) ? pThreadParam->tOsdCfg.bEnable : AX_FALSE;
         tDisp.arrDisp[0].uDisp.tOSD.u16Alpha = (AX_F32)(nFontColor >> 24) / 0xFF * 1024;
         tDisp.arrDisp[0].uDisp.tOSD.u32BmpWidth = nPixWidth;
         tDisp.arrDisp[0].uDisp.tOSD.u32BmpHeight = nPixHeight;
@@ -549,7 +549,7 @@ AX_VOID COSDHelper::UpdateOSDStr(OSD_REGION_PARAM_T* pThreadParam) {
         tDisp.arrDisp[0].uDisp.tOSD.u32DstYoffset = nOffsetY;
         tDisp.arrDisp[0].uDisp.tOSD.u64PhyAddr = 0;
 
-        if (pThreadParam->tOsdCfg.tStrAttr.bInvEnable) {
+        if (tDisp.arrDisp[0].bShow && pThreadParam->tOsdCfg.tStrAttr.bInvEnable) {
             /* Bitmap */
             nPicSize /= 16;
             pArgbData = (AX_U16*)AX_MALLOC(nPicSize);
@@ -578,7 +578,7 @@ AX_VOID COSDHelper::UpdateOSDStr(OSD_REGION_PARAM_T* pThreadParam) {
             tDisp.arrDisp[0].uDisp.tOSD.u32DstXoffset = ALIGN_UP(nOffsetX, OSD_BMP_ALIGN_X_OFFSET);
             tDisp.arrDisp[0].uDisp.tOSD.u32DstYoffset = ALIGN_UP(nOffsetY, OSD_BMP_ALIGN_Y_OFFSET);
 
-        } else {
+        } else if (tDisp.arrDisp[0].bShow) {
             pArgbData = (AX_U16*)AX_MALLOC(nPicSize);
             memset(pArgbData, 0x0, nPicSize);
             tDisp.tChnAttr.eFormat = AX_FORMAT_ARGB1555;
@@ -683,6 +683,7 @@ AX_VOID COSDHelper::UpdateOSDPri(OSD_REGION_PARAM_T* pThreadParam) {
                 tDisp.arrDisp[0].uDisp.tPolygon.nLineWidth = pThreadParam->tOsdCfg.tPrivacyAttr.nLineWidth;
             }
 
+            tDisp.arrDisp[0].uDisp.tPolygon.nPointNum = 4;
             tDisp.arrDisp[0].uDisp.tPolygon.tPTs[0].nX = pThreadParam->tOsdCfg.tPrivacyAttr.tPt[0].x;
             tDisp.arrDisp[0].uDisp.tPolygon.tPTs[0].nY = pThreadParam->tOsdCfg.tPrivacyAttr.tPt[0].y;
             tDisp.arrDisp[0].uDisp.tPolygon.tPTs[1].nX = pThreadParam->tOsdCfg.tPrivacyAttr.tPt[1].x;

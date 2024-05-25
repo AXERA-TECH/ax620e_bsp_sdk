@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -16,6 +16,9 @@
 #include "ax_mipi_rx_api.h"
 #include "ax_vin_api.h"
 #include "ax_isp_3a_plus.h"
+
+#define IS_SNS_LINEAR_MODE(eSensorMode) (((eSensorMode == AX_SNS_LINEAR_MODE) || (eSensorMode == AX_SNS_LINEAR_ONLY_MODE)) ? AX_TRUE : AX_FALSE)
+#define IS_SNS_HDR_MODE(eSensorMode) (((eSensorMode >= AX_SNS_HDR_2X_MODE) && (eSensorMode <= AX_SNS_HDR_4X_MODE)) ? AX_TRUE : AX_FALSE)
 
 #define MAX_PIPE_PER_DEVICE (3)
 
@@ -265,6 +268,18 @@ typedef struct _SENSOR_HOTNOISEBALANCE_T {
     }
 } SENSOR_HOTNOISEBALANCE_T;
 
+typedef struct _SENSOR_HDR_RATIO_T {
+    AX_BOOL bEnable;
+    AX_U8 nRatio; // 0: default; 1: 1:1 fusion
+    string strHdrRatioDefaultBin;
+    string strHdrRatioModeBin;
+
+    _SENSOR_HDR_RATIO_T() {
+        bEnable = AX_FALSE;
+        nRatio = 0;
+    }
+} SENSOR_HDR_RATIO_T;
+
 typedef struct _SENSOR_PIPE_MAPPING {
     AX_U8 nPipeSeq;
     AX_U8 nPipeID;
@@ -281,6 +296,7 @@ typedef struct _CHANNEL_CONFIG_T {
     AX_U8 nYuvDepth;
     AX_BOOL bChnEnable;
     AX_F32 fFrameRate;
+    AX_VIN_FRAME_MODE_E eFrmMode;
     AX_FRAME_COMPRESS_INFO_T tChnCompressInfo;
 
     _CHANNEL_CONFIG_T() {
@@ -289,6 +305,7 @@ typedef struct _CHANNEL_CONFIG_T {
         nYuvDepth = 0;
         fFrameRate = 0;
         bChnEnable = AX_FALSE;
+        eFrmMode = AX_VIN_FRAME_MODE_OFF;
         tChnCompressInfo.enCompressMode = AX_COMPRESS_MODE_NONE;
         tChnCompressInfo.u32CompressLevel = 0;
     }
@@ -346,6 +363,7 @@ typedef struct _SENSOR_CONFIG_T {
     SENSOR_SOFT_PHOTOSENSITIVITY_ATTR_T tSoftPhotoSensitivityAttr;
     SENSOR_EZOOM_ATTR_T tEZoomAttr;
     SENSOR_HOTNOISEBALANCE_T tHotNoiseBalanceAttr;
+    SENSOR_HDR_RATIO_T tHdrRatioAttr;
     AX_U8 nResetGpioNum;
     AX_U8 nClkId;
     AX_U8 nLaneNum;

@@ -1493,6 +1493,8 @@ AX_VOID SAMPLE_VO_DISPLAY_MODE_PRINT(AX_U32 u32DevId, AX_VO_DISPLAY_MODE_T *pstD
             s32Offs = snprintf(cBuf + s32Offs, s32Len - s32Offs, "@%d, DPI-BT\n", u32Refresh);
         else if (u32Type == VO_DISPLAY_TYPE_DSI)
             s32Offs = snprintf(cBuf + s32Offs, s32Len - s32Offs, "@%d, DSI\n", u32Refresh);
+        else if (u32Type == VO_DISPLAY_TYPE_LVDS)
+            s32Offs = snprintf(cBuf + s32Offs, s32Len - s32Offs, "@%d, LVDS\n", u32Refresh);
         else
             s32Offs = snprintf(cBuf + s32Offs, s32Len - s32Offs, "@%d, unsupported\n", u32Refresh);
 

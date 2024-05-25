@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -15,6 +15,8 @@
 #include "ax_venc_comm.h"
 
 #define ENC_MAX_BUF_SIZE (3840 * 2160 * 3 / 2)
+
+#define VENC_DEFAULT_GOP_SETTINGS(fps) ((AX_U32)(4 * (fps)))
 
 // video packet
 typedef struct axAPP_VIDEO_PKT_T {

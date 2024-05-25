@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -106,7 +106,7 @@ public:
         @brief: callback function intended to update sensor attributes, which will be called after initialization done and before opening.
     */
     static AX_BOOL UpdateAttrCB(ISensor* pInstance);
-    AX_VOID SwitchSnsMode(AX_U32 nSnsID, AX_U32 nSnsMode);
+    AX_VOID SwitchSnsMode(AX_U32 nSnsID, AX_U32 nSnsMode, AX_U8 nHdrRatio = 0);
     AX_VOID ChangeSnsFps(AX_U32 nSnsID, AX_F32 fFrameRate);
     AX_VOID ChangeSnsMirrorFlip(AX_U32 nSnsID, AX_BOOL bMirror, AX_BOOL bFlip);
     AX_VOID UpdateAeRoi(AX_U32 nSnsID, AX_BOOL bEnable);

@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -37,6 +37,7 @@
 #include "PrintHelper.h"
 #include "SensorOptionHelper.h"
 #include "VencObserver.h"
+#include "SvcObserver.h"
 #include "WebOptionHelper.h"
 #ifndef SLT
 #include "AXRtspObserver.h"
@@ -259,8 +260,14 @@ AX_BOOL CPanoBuilder::InitSensor() {
         tCamera.nDayNightMode = tSnsConfig.eDayNight; // 0: day, 1: night; 2: auto
         tCamera.nNrMode = 1;
         tCamera.bCapture = AX_TRUE;
-        tCamera.bCaptureEnable = AX_TRUE;
-        tCamera.bSnsModeEnable = AX_FALSE;
+        tCamera.bCaptureEnable = IS_APP_JENC_ENABLE();
+        if (tSnsConfig.eSensorMode == AX_SNS_LINEAR_ONLY_MODE) {
+            tCamera.bSnsModeEnable = AX_FALSE;
+        } else {
+            tCamera.bSnsModeEnable = AX_FALSE;
+        }
+        tCamera.bHdrRatioEnable = tSnsConfig.tHdrRatioAttr.bEnable;
+        tCamera.nHdrRatio = tSnsConfig.tHdrRatioAttr.nRatio;
         tCamera.bPNModeEnable = AX_TRUE;
         tCamera.bMirrorFlipEnable = AX_FALSE;
         tCamera.bRotationEnable = AX_FALSE;
@@ -568,7 +575,9 @@ AX_BOOL CPanoBuilder::InitVenc() {
                     VIDEO_CONFIG_T* pConfig = pVencInstance->GetChnCfg();
                     MPEG4EC_INFO_T tMpeg4Info;
                     tMpeg4Info.nchn = pConfig->nChannel;
-                    tMpeg4Info.nMaxFileInMBytes = 64;
+                    tMpeg4Info.bLoopSet = COptionHelper::GetInstance()->GetMp4LoopSet();
+                    tMpeg4Info.nMaxFileInMBytes = COptionHelper::GetInstance()->GetMp4FileSize();
+                    tMpeg4Info.nMaxFileCount = COptionHelper::GetInstance()->GetMp4FileCount();
 
                     AX_U32 nBuffSize = COptionHelper::GetInstance()->GetWebVencRingBufSize(pConfig->nWidth, pConfig->nHeight);
                     tMpeg4Info.stVideoAttr.bEnable = AX_TRUE;
@@ -761,6 +770,13 @@ AX_BOOL CPanoBuilder::InitDetector() {
 
         m_vecOsdObs.emplace_back(CObserverMaker::CreateObserver<COsdObserver>(&m_vecIvpsInstance));
         m_detector.RegObserver(m_vecOsdObs[m_vecOsdObs.size() - 1].get());
+
+        for (auto& pInstance : m_vecVencInstance) {
+            pInstance->UpdateSvcParam(ALGO_SVC_PARAM(pInstance->GetSensorSrc()));
+
+            m_vecSvcObs.emplace_back(CObserverMaker::CreateObserver<CSvcObserver>(pInstance));
+            m_detector.RegObserver(m_vecSvcObs[m_vecSvcObs.size() - 1].get());
+        }
     }
 
     LOG_MM(PPL, "---");
@@ -1152,17 +1168,6 @@ AX_BOOL CPanoBuilder::Stop(AX_VOID) {
     AX_APP_Audio_Stop();
 #endif  // SLT
 
-    for (auto& pInstance : m_vecIvesInstance) {
-        if (!pInstance->Stop()) {
-            return AX_FALSE;
-        }
-    }
-
-    for (auto& pInstance : m_vecDummyEncInstance) {
-        if (!pInstance->Stop()) {
-            return AX_FALSE;
-        }
-    }
     if (!m_mgrSensor.Stop()) {
         return AX_FALSE;
     }
@@ -1171,6 +1176,18 @@ AX_BOOL CPanoBuilder::Stop(AX_VOID) {
     m_avs.Stop();
 
     for (auto& pInstance : m_vecIvpsInstance) {
+        if (!pInstance->Stop()) {
+            return AX_FALSE;
+        }
+    }
+
+    for (auto& pInstance : m_vecIvesInstance) {
+        if (!pInstance->Stop()) {
+            return AX_FALSE;
+        }
+    }
+
+    for (auto& pInstance : m_vecDummyEncInstance) {
         if (!pInstance->Stop()) {
             return AX_FALSE;
         }
@@ -1315,8 +1332,6 @@ AX_BOOL CPanoBuilder::Destroy(AX_VOID) {
 }
 
 AX_BOOL CPanoBuilder::UpdateRotation(AX_U8 nSnsID, AX_U8 nRotation) {
-    //m_mgrSensor.EnableChn(nSnsID, AX_FALSE);
-
     for (auto pInstance : m_vecVencInstance) {
         if (pInstance->GetSensorSrc() == nSnsID) {
             pInstance->StopRecv();
@@ -1394,8 +1409,6 @@ AX_BOOL CPanoBuilder::UpdateRotation(AX_U8 nSnsID, AX_U8 nRotation) {
         }
     }
 
-    //m_mgrSensor.EnableChn(nSnsID, AX_TRUE);
-
     return AX_TRUE;
 }
 
@@ -1431,7 +1444,7 @@ AX_BOOL CPanoBuilder::DispatchOpr(WEB_REQ_OPERATION_T& tOperation, AX_VOID** pRe
     WEB_OPERATION_TYPE_E eOperaType = tOperation.GetOperationType();
     switch (eOperaType) {
         case E_WEB_OPERATION_TYPE_SNS_MODE: {
-            m_mgrSensor.SwitchSnsMode(tOperation.nSnsID, tOperation.tSnsMode.nSnsMode);
+            m_mgrSensor.SwitchSnsMode(tOperation.nSnsID, tOperation.tSnsMode.nSnsMode, tOperation.tSnsMode.nHdrRatio);
             break;
         }
         case E_WEB_OPERATION_TYPE_CAMERA_FPS: {
@@ -1672,6 +1685,22 @@ AX_BOOL CPanoBuilder::DispatchOpr(WEB_REQ_OPERATION_T& tOperation, AX_VOID** pRe
                     }
                 }
             }
+
+            {
+                AX_APP_ALGO_SVC_PARAM_T stParam = ALGO_SVC_PARAM(tOperation.nSnsID);
+                stParam.bEnable = tOperation.tAiEnable.bOn;
+                for (auto& pInstance : m_vecVencInstance) {
+                    if (pInstance->GetSensorSrc() == tOperation.nSnsID) {
+                        pInstance->UpdateSvcParam(stParam);
+                    }
+                }
+            }
+
+            {
+                AX_APP_ALGO_HVCFP_PARAM_T stParam = ALGO_HVCFP_PARAM(tOperation.nSnsID);
+                stParam.stAeRoiConfig[AX_APP_ALGO_HVCFP_BODY].bEnable = tOperation.tAiEnable.bOn;
+                m_detector.SetAeRoiAttr(tOperation.nSnsID, stParam.stAeRoiConfig);
+            }
             break;
         }
         case E_WEB_OPERATION_TYPE_AI_PUSH_MODE: {
@@ -1679,49 +1708,15 @@ AX_BOOL CPanoBuilder::DispatchOpr(WEB_REQ_OPERATION_T& tOperation, AX_VOID** pRe
             break;
         }
         case E_WEB_OPERATION_TYPE_AI_EVENT: {
-            if (-1 == tOperation.nSnsID) {
-                for (auto& pInstance : m_vecIvesInstance) {
-                    if (!((tOperation.tEvent.tMD.bEnable == AX_FALSE) && (pInstance->GetMDCapacity() == tOperation.tEvent.tMD.bEnable))) {
-                        pInstance->SetMDCapacity((AX_BOOL)tOperation.tEvent.tMD.bEnable);
-                        if (AX_TRUE == pInstance->GetMDCapacity()) {
-                            for (AX_S32 i = 0; i < pInstance->GetMDInstance()->GetAreaCount(); i++) {
-                                pInstance->GetMDInstance()->SetThresholdY(tOperation.nSnsID, i, tOperation.tEvent.tMD.nThrsHoldY,
-                                                                          tOperation.tEvent.tMD.nConfidence);
-                            }
-                        }
-                    }
-
-                    if (!((tOperation.tEvent.tOD.bEnable == AX_FALSE) && (pInstance->GetODCapacity() == tOperation.tEvent.tOD.bEnable))) {
-                        pInstance->SetODCapacity((AX_BOOL)tOperation.tEvent.tOD.bEnable);
-                        if (AX_TRUE == pInstance->GetODCapacity()) {
-                            for (AX_S32 i = 0; i < pInstance->GetODInstance()->GetAreaCount(); i++) {
-                                pInstance->GetODInstance()->SetThresholdY(tOperation.nSnsID, i, tOperation.tEvent.tOD.nThrsHoldY,
-                                                                          tOperation.tEvent.tOD.nConfidence);
-                            }
-                        }
-                    }
-
-                    if (!((tOperation.tEvent.tOD.bEnable == AX_FALSE) && (pInstance->GetSCDCapacity() == tOperation.tEvent.tSCD.bEnable))) {
-                        pInstance->SetSCDCapacity((AX_BOOL)tOperation.tEvent.tSCD.bEnable);
-                        if (AX_TRUE == pInstance->GetSCDCapacity()) {
-                            pInstance->GetSCDInstance()->SetThreshold(tOperation.nSnsID, tOperation.tEvent.tSCD.nThrsHoldY,
-                                                                      tOperation.tEvent.tSCD.nConfidence);
-                        }
-                    }
-                }
-            } else {
-                CIVESStage* pInstance{nullptr};
-                try {
-                    pInstance = m_vecIvesInstance.at(tOperation.nSnsID);
-                } catch (std::out_of_range& e) {
-                    LOG_MM_E(PPL, "nSnsID out of range %d. error: %s", tOperation.nSnsID, e.what());
-                    ret = AX_FALSE;
-                    break;
+            for (auto& pInstance : m_vecIvesInstance) {
+                if ((-1 != tOperation.nSnsID) &&
+                    (pInstance->GetIVESCfg()->nSnsSrc != tOperation.nSnsID)) {
+                    continue;
                 }
 
-                if (!((tOperation.tEvent.tMD.bEnable == AX_FALSE) && (pInstance->GetMDCapacity() == tOperation.tEvent.tMD.bEnable))) {
-                    pInstance->SetMDCapacity((AX_BOOL)tOperation.tEvent.tMD.bEnable);
-                    if (AX_TRUE == pInstance->GetMDCapacity()) {
+                if (pInstance->GetMDCapacity() != tOperation.tEvent.tMD.bEnable) {
+                    pInstance->SetMDCapacity(tOperation.tEvent.tMD.bEnable);
+                    if (tOperation.tEvent.tMD.bEnable) {
                         for (AX_S32 i = 0; i < pInstance->GetMDInstance()->GetAreaCount(); i++) {
                             pInstance->GetMDInstance()->SetThresholdY(tOperation.nSnsID, i, tOperation.tEvent.tMD.nThrsHoldY,
                                                                       tOperation.tEvent.tMD.nConfidence);
@@ -1729,9 +1724,9 @@ AX_BOOL CPanoBuilder::DispatchOpr(WEB_REQ_OPERATION_T& tOperation, AX_VOID** pRe
                     }
                 }
 
-                if (!((tOperation.tEvent.tOD.bEnable == AX_FALSE) && (pInstance->GetODCapacity() == tOperation.tEvent.tOD.bEnable))) {
-                    pInstance->SetODCapacity((AX_BOOL)tOperation.tEvent.tOD.bEnable);
-                    if (AX_TRUE == pInstance->GetODCapacity()) {
+                if (pInstance->GetODCapacity() != tOperation.tEvent.tOD.bEnable) {
+                    pInstance->SetODCapacity(tOperation.tEvent.tOD.bEnable);
+                    if (tOperation.tEvent.tOD.bEnable) {
                         for (AX_S32 i = 0; i < pInstance->GetODInstance()->GetAreaCount(); i++) {
                             pInstance->GetODInstance()->SetThresholdY(tOperation.nSnsID, i, tOperation.tEvent.tOD.nThrsHoldY,
                                                                       tOperation.tEvent.tOD.nConfidence);
@@ -1739,9 +1734,9 @@ AX_BOOL CPanoBuilder::DispatchOpr(WEB_REQ_OPERATION_T& tOperation, AX_VOID** pRe
                     }
                 }
 
-                if (!((tOperation.tEvent.tOD.bEnable == AX_FALSE) && (pInstance->GetSCDCapacity() == tOperation.tEvent.tSCD.bEnable))) {
-                    pInstance->SetSCDCapacity((AX_BOOL)tOperation.tEvent.tSCD.bEnable);
-                    if (AX_TRUE == pInstance->GetSCDCapacity()) {
+                if (pInstance->GetSCDCapacity() != tOperation.tEvent.tSCD.bEnable) {
+                    pInstance->SetSCDCapacity(tOperation.tEvent.tSCD.bEnable);
+                    if (tOperation.tEvent.tSCD.bEnable) {
                         pInstance->GetSCDInstance()->SetThreshold(tOperation.nSnsID, tOperation.tEvent.tSCD.nThrsHoldY,
                                                                   tOperation.tEvent.tSCD.nConfidence);
                     }
@@ -1759,6 +1754,29 @@ AX_BOOL CPanoBuilder::DispatchOpr(WEB_REQ_OPERATION_T& tOperation, AX_VOID** pRe
             SET_ALGO_HVCFP_PARAM(tOperation.nSnsID, stParam);
 
             m_detector.SetAeRoiAttr(tOperation.nSnsID, stParam.stAeRoiConfig);
+            break;
+        }
+        case E_WEB_OPERATION_TYPE_AI_SVC: {
+            AX_APP_ALGO_SVC_PARAM_T stParam = ALGO_SVC_PARAM(tOperation.nSnsID);
+
+            stParam.bEnable = tOperation.tSvcParam.bEnable;
+            stParam.bSync = tOperation.tSvcParam.bSync;
+            stParam.tBgQpCfg.iQp = tOperation.tSvcParam.tBgQpCfg.iQp;
+            stParam.tBgQpCfg.pQp = tOperation.tSvcParam.tBgQpCfg.pQp;
+
+            for (size_t i = 0; i < AX_APP_ALGO_SVC_REGION_TYPE_BUTT; i++) {
+                stParam.tQpCfg[i].bEnable = tOperation.tSvcParam.tQpCfg[i].bEnable;
+                stParam.tQpCfg[i].tQpMap.iQp = tOperation.tSvcParam.tQpCfg[i].tQpMap.iQp;
+                stParam.tQpCfg[i].tQpMap.pQp = tOperation.tSvcParam.tQpCfg[i].tQpMap.pQp;
+            }
+
+            SET_ALGO_SVC_PARAM(tOperation.nSnsID, stParam);
+
+            for (auto& pInstance : m_vecVencInstance) {
+                if (pInstance->GetSensorSrc() == tOperation.nSnsID) {
+                    pInstance->UpdateSvcParam(stParam);
+                }
+            }
             break;
         }
         case E_WEB_OPERATION_TYPE_OSD_ATTR: {
@@ -2005,6 +2023,32 @@ AX_BOOL CPanoBuilder::InitSysMods(AX_VOID) {
             LOG_MM_I(PPL, "AX_SYS_SetVINIVPSMode nVinId:%d, nIvpsId:%d, nVinIvpsMode:%d", nVinId, nIvpsId, nVinIvpsMode);
         }
     }
+
+    // low memory mode
+    {
+        AX_VIN_LOW_MEM_MODE_E eLowMemMode = AX_VIN_LOW_MEM_DISABLE;
+        const char *envValue = getenv("VIN_LOWMEM_MODE");
+
+        if (envValue != NULL) {
+            eLowMemMode = (AX_VIN_LOW_MEM_MODE_E)atoi(envValue);
+        } else {
+            // AX620E TODO: only for single sensor
+            if (APP_SENSOR_COUNT() == 1) {
+                eLowMemMode = (AX_VIN_LOW_MEM_MODE_E)COptionHelper::GetInstance()->GetSnsLowMemoryMode();
+            }
+        }
+
+        if (AX_VIN_LOW_MEM_DISABLE != eLowMemMode) {
+            AX_S32 nRet = AX_VIN_SetLowMemMode(eLowMemMode);
+
+            if (nRet != 0) {
+                LOG_MM_E(PPL, "AX_VIN_SetLowMemMode mode[%d] failed, ret = 0x%04x", eLowMemMode, nRet);
+            } else {
+                LOG_MM_C(PPL, "AX_VIN_SetLowMemMode mode[%d]", eLowMemMode);
+            }
+        }
+    }
+
     LOG_MM(PPL, "---");
 
     return AX_TRUE;
@@ -2150,9 +2194,8 @@ AX_S32 CPanoBuilder::APP_NPU_Init() {
 
     AX_ENGINE_NPU_ATTR_T attr;
     memset(&attr, 0, sizeof(AX_ENGINE_NPU_ATTR_T));
-    attr.eHardMode = AX_ENGINE_VIRTUAL_NPU_ENABLE;
+    attr.eHardMode = (AX_ENGINE_NPU_MODE_T)COptionHelper::GetInstance()->GetVnpuMode();
     nRet = AX_ENGINE_Init(&attr);
-
 
     if (AX_SUCCESS != nRet) {
         return nRet;
@@ -2620,6 +2663,24 @@ AX_S32 CPanoBuilder::APP_ACAP_Init() {
         if (AX_SUCCESS != nRet) {
             return nRet;
         }
+
+#if defined(APP_FAAC_SUPPORT)
+        nRet = AX_AENC_FaacInit();
+#elif defined(APP_FDK_SUPPORT)
+        nRet = AX_AENC_FdkInit();
+#endif
+
+        if (AX_SUCCESS != nRet) {
+            return nRet;
+        }
+
+#ifdef APP_OPUS_SUPPORT
+        nRet = AX_AENC_OpusInit();
+
+        if (AX_SUCCESS != nRet) {
+            return nRet;
+        }
+#endif
     }
 
     return AX_SUCCESS;
@@ -2629,6 +2690,24 @@ AX_S32 CPanoBuilder::APP_ACAP_DeInit() {
     AX_S32 nRet = AX_SUCCESS;
 
     if (APP_AUDIO_CAP_AVAILABLE()) {
+#if defined(APP_FAAC_SUPPORT)
+        nRet = AX_AENC_FaacDeInit();
+#elif defined(APP_FDK_SUPPORT)
+        nRet = AX_AENC_FdkDeInit();
+#endif
+
+        if (AX_SUCCESS != nRet) {
+            return nRet;
+        }
+
+#ifdef APP_OPUS_SUPPORT
+        nRet = AX_AENC_OpusDeInit();
+
+        if (AX_SUCCESS != nRet) {
+            return nRet;
+        }
+#endif
+
         nRet = AX_AI_DeInit();
 
         if (AX_SUCCESS != nRet) {
@@ -2660,6 +2739,24 @@ AX_S32 CPanoBuilder::APP_APLAY_Init() {
         if (AX_SUCCESS != nRet) {
             return nRet;
         }
+
+#if defined(APP_FAAC_SUPPORT)
+        nRet = AX_ADEC_FaacInit();
+#elif defined(APP_FDK_SUPPORT)
+        nRet = AX_ADEC_FdkInit();
+#endif
+
+        if (AX_SUCCESS != nRet) {
+            return nRet;
+        }
+
+#ifdef APP_OPUS_SUPPORT
+        nRet = AX_ADEC_OpusInit();
+
+        if (AX_SUCCESS != nRet) {
+            return nRet;
+        }
+#endif
     }
 
     return AX_SUCCESS;
@@ -2669,6 +2766,24 @@ AX_S32 CPanoBuilder::APP_APLAY_DeInit() {
     AX_S32 nRet = AX_SUCCESS;
 
     if (APP_AUDIO_PLAY_AVAILABLE()) {
+#if defined(APP_FAAC_SUPPORT)
+        nRet = AX_ADEC_FaacDeInit();
+#elif defined(APP_FDK_SUPPORT)
+        nRet = AX_ADEC_FdkDeInit();
+#endif
+
+        if (AX_SUCCESS != nRet) {
+            return nRet;
+        }
+
+#ifdef APP_OPUS_SUPPORT
+        nRet = AX_ADEC_OpusDeInit();
+
+        if (AX_SUCCESS != nRet) {
+            return nRet;
+        }
+#endif
+
         nRet = AX_AO_DeInit();
 
         if (AX_SUCCESS != nRet) {

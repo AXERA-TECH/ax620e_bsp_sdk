@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -130,6 +130,7 @@ public:
 
     /* Dynamic switch interfaces */
     AX_BOOL EnableChannel(AX_U8 nChn, AX_BOOL bEnable = AX_TRUE);
+    AX_VOID UpdateChannelState(AX_U8 nChn, AX_BOOL bEnable = AX_TRUE);
 
     AX_BOOL UpdateChnResolution(AX_U8 nChn, AX_S32 nWidth, AX_S32 nHeight);
     AX_BOOL UpdateRotation(AX_IVPS_ROTATION_E eRotation);

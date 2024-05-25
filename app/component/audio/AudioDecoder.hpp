@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -16,6 +16,8 @@
 #include "ax_adec_api.h"
 #include "ax_codec_comm.h"
 #include "ax_comm_aio.h"
+#include "ax_aac.h"
+#include "ax_opus.h"
 
 #define ADEC_META_SIZE (4 * 1024)
 #define ADEC_AAC_BLK_SIZE (4 * 1024)

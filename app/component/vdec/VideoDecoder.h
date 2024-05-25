@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2024 Axera Semiconductor (Shanghai) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Shanghai) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Shanghai) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -23,9 +23,7 @@
 
 typedef struct VDEC_GRP_CONFIG_S {
     AX_BOOL bEnable{AX_FALSE};
-    AX_BOOL bStarted;
-    AX_U32 nPoolDepth{0};          // POOL count
-    AX_U32 nFrameOutFifoDepth{0};  // SDK
+    AX_U32 nFrameOutFifoDepth{0};  // frame buffer number
     AX_U32 nGrp{0};
     AX_PAYLOAD_TYPE_E ePayloadType{PT_BUTT};
     AX_VDEC_DISPLAY_MODE_E eDisplayMode{AX_VDEC_DISPLAY_MODE_PREVIEW};
@@ -63,6 +61,7 @@ private:
     AX_VDEC_GRP m_nGrp;
     AX_VDEC_GRP_ATTR_T m_stAttr;
     CAXThread m_Thread;
-    AX_BOOL bRunning{AX_TRUE};
+    std::atomic<AX_BOOL> bRunning{AX_FALSE};
+
     AX_U32 m_nPool;
 };

@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -159,7 +159,7 @@ AX_BOOL COPALBuilder::InitSensor() {
         tCamera.nDayNightMode = 0; // 0: day, 1: night; 2: auto
         tCamera.nNrMode = 1;
         tCamera.bCapture = AX_TRUE;
-        tCamera.bCaptureEnable = AX_TRUE;
+        tCamera.bCaptureEnable = IS_APP_JENC_ENABLE();
         tCamera.bSnsModeEnable = AX_TRUE;
         tCamera.bPNModeEnable = AX_TRUE;
         tCamera.bMirrorFlipEnable = AX_TRUE;
@@ -813,17 +813,17 @@ AX_BOOL COPALBuilder::Stop(AX_VOID) {
 
     AX_APP_Audio_Stop();
 
-    for (auto& pInstance : m_vecIvesInstance) {
-        if (!pInstance->Stop()) {
-            return AX_FALSE;
-        }
-    }
-
     if (!m_mgrSensor.Stop()) {
         return AX_FALSE;
     }
 
     for (auto& pInstance : m_vecIvpsInstance) {
+        if (!pInstance->Stop()) {
+            return AX_FALSE;
+        }
+    }
+
+    for (auto& pInstance : m_vecIvesInstance) {
         if (!pInstance->Stop()) {
             return AX_FALSE;
         }
@@ -919,8 +919,6 @@ AX_BOOL COPALBuilder::Destroy(AX_VOID) {
 }
 
 AX_BOOL COPALBuilder::UpdateRotation(AX_U8 nSnsID, AX_U8 nRotation) {
-    //m_mgrSensor.EnableChn(nSnsID, AX_FALSE);
-
     for (auto pInstance : m_vecVencInstance) {
         if (pInstance->GetSensorSrc() == nSnsID) {
             pInstance->StopRecv();
@@ -997,8 +995,6 @@ AX_BOOL COPALBuilder::UpdateRotation(AX_U8 nSnsID, AX_U8 nRotation) {
             pInstance->GetOsdHelper()->Refresh();
         }
     }
-
-    //m_mgrSensor.EnableChn(nSnsID, AX_TRUE);
 
     return AX_TRUE;
 }
@@ -1100,6 +1096,33 @@ AX_BOOL COPALBuilder::InitSysMods(AX_VOID) {
         if (-1 != nVinIvpsMode) {
             AX_SYS_SetVINIVPSMode(nVinId, nIvpsId, (AX_VIN_IVPS_MODE_E)nVinIvpsMode);
             LOG_MM_I(PPL, "AX_SYS_SetVINIVPSMode nVinId:%d, nIvpsId:%d, nVinIvpsMode:%d", nVinId, nIvpsId, nVinIvpsMode);
+        }
+    }
+
+    // low memory mode
+    {
+        AX_VIN_LOW_MEM_MODE_E eLowMemMode = AX_VIN_LOW_MEM_DISABLE;
+        const char *envValue = getenv("VIN_LOWMEM_MODE");
+
+        if (envValue != NULL) {
+            eLowMemMode = (AX_VIN_LOW_MEM_MODE_E)atoi(envValue);
+        } else {
+            if (AX_SYS_GetChipType() == AX620Q_CHIP) {
+                // AX620E TODO: only for single sensor
+                if (APP_SENSOR_COUNT() == 1) {
+                    eLowMemMode = AX_VIN_LOW_MEM_ENABLE;
+                }
+            }
+        }
+
+        if (AX_VIN_LOW_MEM_DISABLE != eLowMemMode) {
+            AX_S32 nRet = AX_VIN_SetLowMemMode(eLowMemMode);
+
+            if (nRet != 0) {
+                LOG_MM_E(PPL, "AX_VIN_SetLowMemMode mode[%d] failed, ret = 0x%04x", eLowMemMode, nRet);
+            } else {
+                LOG_MM_C(PPL, "AX_VIN_SetLowMemMode mode[%d]", eLowMemMode);
+            }
         }
     }
 
@@ -1294,6 +1317,24 @@ AX_S32 COPALBuilder::APP_ACAP_Init() {
         if (AX_SUCCESS != nRet) {
             return nRet;
         }
+
+#if defined(APP_FAAC_SUPPORT)
+        nRet = AX_AENC_FaacInit();
+#elif defined(APP_FDK_SUPPORT)
+        nRet = AX_AENC_FdkInit();
+#endif
+
+        if (AX_SUCCESS != nRet) {
+            return nRet;
+        }
+
+#ifdef APP_OPUS_SUPPORT
+        nRet = AX_AENC_OpusInit();
+
+        if (AX_SUCCESS != nRet) {
+            return nRet;
+        }
+#endif
     }
 
     return AX_SUCCESS;
@@ -1303,6 +1344,24 @@ AX_S32 COPALBuilder::APP_ACAP_DeInit() {
     AX_S32 nRet = AX_SUCCESS;
 
     if (APP_AUDIO_CAP_AVAILABLE()) {
+#if defined(APP_FAAC_SUPPORT)
+        nRet = AX_AENC_FaacDeInit();
+#elif defined(APP_FDK_SUPPORT)
+        nRet = AX_AENC_FdkDeInit();
+#endif
+
+        if (AX_SUCCESS != nRet) {
+            return nRet;
+        }
+
+#ifdef APP_OPUS_SUPPORT
+        nRet = AX_AENC_OpusDeInit();
+
+        if (AX_SUCCESS != nRet) {
+            return nRet;
+        }
+#endif
+
         nRet = AX_AI_DeInit();
 
         if (AX_SUCCESS != nRet) {
@@ -1334,6 +1393,24 @@ AX_S32 COPALBuilder::APP_APLAY_Init() {
         if (AX_SUCCESS != nRet) {
             return nRet;
         }
+
+#if defined(APP_FAAC_SUPPORT)
+        nRet = AX_ADEC_FaacInit();
+#elif defined(APP_FDK_SUPPORT)
+        nRet = AX_ADEC_FdkInit();
+#endif
+
+        if (AX_SUCCESS != nRet) {
+            return nRet;
+        }
+
+#ifdef APP_OPUS_SUPPORT
+        nRet = AX_ADEC_OpusInit();
+
+        if (AX_SUCCESS != nRet) {
+            return nRet;
+        }
+#endif
     }
 
     return AX_SUCCESS;
@@ -1343,6 +1420,24 @@ AX_S32 COPALBuilder::APP_APLAY_DeInit() {
     AX_S32 nRet = AX_SUCCESS;
 
     if (APP_AUDIO_PLAY_AVAILABLE()) {
+#if defined(APP_FAAC_SUPPORT)
+        nRet = AX_ADEC_FaacDeInit();
+#elif defined(APP_FDK_SUPPORT)
+        nRet = AX_ADEC_FdkDeInit();
+#endif
+
+        if (AX_SUCCESS != nRet) {
+            return nRet;
+        }
+
+#ifdef APP_OPUS_SUPPORT
+        nRet = AX_ADEC_OpusDeInit();
+
+        if (AX_SUCCESS != nRet) {
+            return nRet;
+        }
+#endif
+
         nRet = AX_AO_DeInit();
 
         if (AX_SUCCESS != nRet) {

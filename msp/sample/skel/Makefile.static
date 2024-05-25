@@ -36,7 +36,7 @@ SRCCPPS             := $(wildcard $(SRC_PATH)/*.cpp)
 CINCLUDE            := -I$(SRC_PATH) \
                        -I$(MSP_OUT_PATH)/include \
                        -I$(HEADER_EXTERNAL_PATH)    \
-                       -isystem $(COMMON_PATH)   
+                       -isystem $(COMMON_PATH)
 
 
 OBJS 				:= $(SRCS:%.c=$(OUTPUT)/%.o) \
@@ -67,7 +67,6 @@ CLIB			+= -L$(MSP_OUT_PATH)/lib
 
 CLIB			+= -l:libax_venc.a
 CLIB			+= -l:libax_vdec.a
-CLIB			+= -l:libax_sys.a
 CLIB			+= -l:libax_ivps.a
 CLIB			+= -l:libax_proton.a
 #CLIB			+= -l:libax_syslog.a
@@ -80,6 +79,7 @@ CLIB			+= -l:libax_engine.a
 endif
 CLIB			+= -l:libax_interpreter.a
 CLIB			+= -lm -lpthread -lrt -ldl -lstdc++
+CLIB			+= -l:libax_sys.a
 
 # install
 INSTALL_TARGET			:= $(TARGET)

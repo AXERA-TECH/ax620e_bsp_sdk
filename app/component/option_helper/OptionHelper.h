@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -33,6 +33,9 @@ public:
     AX_BOOL IsEnableMp4Record();
     AX_BOOL IsEnableOSD();
     std::string GetMp4SavedPath();
+    AX_U32 GetMp4FileSize();
+    AX_U32 GetMp4FileCount();
+    AX_BOOL GetMp4LoopSet();
     /* SLT functions */
     AX_U32 GetSLTRunTime();
     AX_U32 GetSLTFpsCheckFreq();
@@ -47,11 +50,14 @@ public:
 
     AX_BOOL GetSnsHnbTestMode();
     AX_BOOL GetSnsHnbPrintTemperature();
+    AX_U32 GetSnsLowMemoryMode();
 
     AX_BOOL IsEnableWebServerStatusCheck();
 
     AX_U32 GetWebVencRingBufSize(AX_U32 width, AX_U32 height);
     AX_U32 GetWebVencRingBufCount(AX_U32 width, AX_U32 height);
+    AX_U32 GetVnpuMode();
+
 private:
     COptionHelper(AX_VOID) = default;
     ~COptionHelper(AX_VOID) = default;

@@ -10,11 +10,18 @@
       <el-form-item label="开启抓拍:" v-show="formCamera.camera_attr.switch_capture_enable">
         <el-switch v-model="formCamera.camera_attr.capture_enable"></el-switch>
       </el-form-item>
-      <el-form-item label="工作模式:" v-show="formCamera.camera_attr.switch_work_mode_enable">
-        <el-select v-model="formCamera.camera_attr.sns_work_mode">
-          <el-option v-for="item in sns_mode_options" :key="item.label" :label="item.label" :value="item.value"> </el-option>
-        </el-select>
-      </el-form-item>
+      <el-row>
+        <el-form-item label="工作模式:" v-show="formCamera.camera_attr.switch_work_mode_enable" class="inline">
+          <el-select v-model="formCamera.camera_attr.sns_work_mode">
+            <el-option v-for="item in sns_mode_options" :key="item.label" :label="item.label" :value="item.value"> </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Ratio:" v-show="formCamera.camera_attr.hdr_ratio_enable && formCamera.camera_attr.sns_work_mode > 1" class="inline">
+          <el-select v-model="formCamera.camera_attr.hdr_ratio">
+            <el-option v-for="item in hdr_ratio_options" :key="item.label" :label="item.label" :value="item.value"> </el-option>
+          </el-select>
+        </el-form-item>
+      </el-row>
       <el-form-item label="相机帧率:" v-show="formCamera.camera_attr.switch_PN_mode_enable">
          <el-select v-model="formCamera.camera_attr.framerate">
           <el-option v-for="item in framerate_options" :key="item.label" :label="item.label" :value="item.value">
@@ -74,6 +81,16 @@ export default {
         {
           label: 'HDR',
           value: 2
+        }
+      ],
+     hdr_ratio_options: [
+        {
+          label: '默认',
+          value: 0
+        },
+        {
+          label: '1:1',
+          value: 1
         }
       ],
       rotation_options: [
@@ -144,6 +161,8 @@ export default {
           switch_capture_enable: false,
           switch_work_mode_enable: false,
           switch_PN_mode_enable: false,
+          hdr_ratio_enable: false,
+          hdr_ratio: 0,
           framerate_opts: [
             25,
             30
@@ -197,6 +216,8 @@ export default {
           this.formCamera.camera_attr.switch_PN_mode_enable = res.data.camera_attr.switch_PN_mode_enable
           this.formCamera.camera_attr.switch_mirror_flip_enable = res.data.camera_attr.switch_mirror_flip_enable
           this.formCamera.camera_attr.switch_rotation_enable = res.data.camera_attr.switch_rotation_enable
+          this.formCamera.camera_attr.hdr_ratio_enable = res.data.camera_attr.hdr_ratio_enable
+          this.formCamera.camera_attr.hdr_ratio = res.data.camera_attr.hdr_ratio
           this.formCamera.framerate_opts = res.data.framerate_opts
 
           var fps = []
@@ -226,6 +247,15 @@ export default {
 }
 .el-slider {
   width: 400px;
+}
+.inline {
+  display: inline-block;
+  width: 30%;
+}
+.inline-margin {
+  display: inline-block;
+  width: 30%;
+  margin-left: 20px;
 }
 .el-form-item{
   margin-bottom: 10px;

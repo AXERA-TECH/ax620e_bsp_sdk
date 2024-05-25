@@ -139,7 +139,7 @@ get_axp_parm() {
 
 python3 $GEN_XML_PATH $PROJECT $TEMPLATE_XML_PATH $PROJECT_MAK $PAC_XML_PATH
 
-if [[ "$PROJECT" =~ "AX630C_nand" ]] || [ "$PROJECT" = "AX620Q_nand_arm32_k419" ] ||  [ "$PROJECT" = "AX620Q_fastnand_arm32_k419" ]; then
+if [[ "$PROJECT" =~ "AX630C_nand" ]] || [[ "$PROJECT" =~ "AX620Q_nand" ]]; then
 	PARAM_PATH=$IMG_PATH/param.ubi
 	ROOTFS_PATH=$IMG_PATH/rootfs_soc_opt.ubi
 elif [[ "$PROJECT" =~ "AX620Q_nor" ]]; then
@@ -147,6 +147,9 @@ elif [[ "$PROJECT" =~ "AX620Q_nor" ]]; then
 	OPT_PATH=$IMG_PATH/opt.img
 elif [[ "$PROJECT" =~ "AX620Q_fastnor" ]]; then
 	ROOTFS_PATH=$IMG_PATH/rootfs.img
+elif [[ "$PROJECT" =~ "AX620Q_fastnand_arm32_k419" ]]; then
+	ROOTFS_PATH=$IMG_PATH/rootfs.img
+	CUSTOMER_PATH=$IMG_PATH/customer.ubi
 elif [[ "$PROJECT" =~ "AX630C_fastemmc" ]]; then
 	CUSTOMER_PATH=$IMG_PATH/customer_sparse.ext4
 elif [[ "$PROJECT" =~ "AX630C_emmc" ]] ;then

@@ -88,21 +88,33 @@ static AX_S32 sc200ai_get_version(ISP_PIPE_ID nPipeId, AX_CHAR * ptSnsVerInfo)
 
 AX_S32 sc200ai_get_chipid(ISP_PIPE_ID nPipeId, AX_S32 *pSnsId)
 {
+    AX_S32 nRet = 0;
     AX_U32 sensor_id = 0;
+    SNS_STATE_OBJ *sns_obj = AX_NULL;
 
     SNS_CHECK_VALUE_RANGE_VALID(nPipeId, 0, AX_VIN_MAX_PIPE_NUM - 1);
 
-    sensor_id |= sc200ai_reg_read(nPipeId, 0x3107) << 8;
-    sensor_id |= sc200ai_reg_read(nPipeId, 0x3108);
+    SENSOR_GET_CTX(nPipeId, sns_obj);
 
-    SNS_DBG("sc200ai sensor_id: 0x%x\n", sensor_id);
-
-    if (sensor_id != SC200AI_SENSOR_CHIP_ID) {
-        SNS_ERR("Failed to read sc200ai sensor_id: 0x%x\n", sensor_id);
-        return AX_SNS_ERR_UNKNOWN;
+    if (AX_NULL == sns_obj) {
+        return AX_SNS_ERR_NOT_INIT;
     }
 
-    *pSnsId = sensor_id;
+    if (sns_obj->sns_id == 0) {
+        sensor_id |= sc200ai_reg_read(nPipeId, 0x3107) << 8;
+        sensor_id |= sc200ai_reg_read(nPipeId, 0x3108);
+
+        SNS_DBG("sc200ai sensor_id: 0x%x\n", sensor_id);
+
+        if (sensor_id != SC200AI_SENSOR_CHIP_ID) {
+            SNS_ERR("Failed to read sc200ai sensor_id: 0x%x\n", sensor_id);
+            return AX_SNS_ERR_UNKNOWN;
+        }
+        sns_obj->sns_id = sensor_id;
+        *pSnsId = sensor_id;
+    }   else {
+        *pSnsId = sns_obj->sns_id;
+    }
 
     return AX_SNS_SUCCESS;
 }
@@ -134,6 +146,7 @@ static void sc200ai_init(ISP_PIPE_ID nPipeId)
     sc200ai_i2c_init(nPipeId);
 
     sc200ai_get_chipid(nPipeId, &nSnsId);
+    sns_obj->sns_id = nSnsId;
 
     /* 3. config settings  */
     sc200ai_write_settings(nPipeId);
@@ -188,10 +201,12 @@ AX_S32 sc200ai_sleep_wakeup(ISP_PIPE_ID nPipeId, AX_SNS_SLEEP_WAKEUP_E eSleepWak
     SNS_CHECK_VALUE_RANGE_VALID(nPipeId, 0, AX_VIN_MAX_PIPE_NUM - 1);
 
     if (AX_SNS_EVENT_WAKE_UP == eSleepWakeup) {
+        sc200ai_hw_reset(35, 1);
         result = sc200ai_write_register(nPipeId, 0x0100, 0x01); // wakeup
         SNS_DBG("sensor wakeup !\n");
     } else if (AX_SNS_EVENT_SLEEP == eSleepWakeup) {
         result = sc200ai_write_register(nPipeId, 0x0100, 0x00); // sleep
+        sc200ai_hw_reset(35, 0);
         SNS_DBG("sensor sleep !\n");
     }
 

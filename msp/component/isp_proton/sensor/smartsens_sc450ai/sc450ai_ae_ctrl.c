@@ -802,6 +802,7 @@ static AX_S32 sc450ai_set_exp_limit(ISP_PIPE_ID nPipeId, AX_F32 fHdrRatio)
         SNS_DBG("hdr vts_s:%d, vts:%d, ratio:%f\n", vts_s, sns_sc450aiparams[nPipeId].vts ,fHdrRatio);
 
         sns_sc450aiparams[nPipeId].vts_s = vts_s;
+        sns_sc450aiparams[nPipeId].linegap = SC450AI_HDR_LINE_GAP(vts_s);
         sc450ai_set_vts_s(nPipeId, sns_sc450aiparams[nPipeId].vts_s);
 
         sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMinIntegrationTime[HDR_LONG_FRAME_IDX] = SC450AI_HDR_2X_LONG_EXP_LINE_MIN;
@@ -892,6 +893,15 @@ AX_S32 sc450ai_cfg_aec_param(ISP_PIPE_ID nPipeId)
 
     sns_obj->ae_ctrl_param.sns_ae_param.fCurRatio = SC450AI_MAX_RATIO;
     sns_obj->ae_ctrl_param.eSnsHcgLcgMode = AX_LCG_NOTSUPPORT_MODE;
+
+    if (sns_obj->sns_mode_obj.eHDRMode == AX_SNS_LINEAR_MODE) {
+        sns_obj->ae_ctrl_param.sns_ae_param.fIntegrationTimeOffset[HDR_LONG_FRAME_IDX] = sc450ai_get_exp_offset(nPipeId);
+    } else if (sns_obj->sns_mode_obj.eHDRMode == AX_SNS_HDR_2X_MODE) {
+        sns_obj->ae_ctrl_param.sns_ae_param.fIntegrationTimeOffset[HDR_LONG_FRAME_IDX] = sc450ai_get_exp_offset(nPipeId);
+        sns_obj->ae_ctrl_param.sns_ae_param.fIntegrationTimeOffset[HDR_MEDIUM_FRAME_IDX] = sc450ai_get_exp_offset(nPipeId);
+    } else {
+        sns_obj->ae_ctrl_param.sns_ae_param.fIntegrationTimeOffset[HDR_LONG_FRAME_IDX] = sc450ai_get_exp_offset(nPipeId);
+    }
 
     return AX_SNS_SUCCESS;
 }
@@ -1061,23 +1071,55 @@ AX_S32 sc450ai_get_integration_time_range(ISP_PIPE_ID nPipeId, AX_F32 fHdrRatio,
         ptIntTimeRange->fMinIntegrationTime[HDR_LONG_FRAME_IDX] =
             sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMinIntegrationTime[HDR_LONG_FRAME_IDX];
     } else if (AX_SNS_HDR_2X_MODE == sns_obj->sns_mode_obj.eHDRMode) {
-        ratio = fHdrRatio;
-        ratio = AXSNS_CLIP3(ratio, sns_obj->ae_ctrl_param.sns_ae_limit.fMinRatio, sns_obj->ae_ctrl_param.sns_ae_limit.fMaxRatio);
-        sns_obj->ae_ctrl_param.sns_ae_param.fCurRatio = ratio;
-        if (fabs(ratio) <= EPS) {
-            SNS_ERR("hdr ratio is error \n");
+
+        /* During the process of increasing the exposure ratio, it is necessary to limit the line gap */
+        if ((fHdrRatio > sns_obj->ae_ctrl_param.sns_ae_param.fCurRatio)
+            && (sns_sc450aiparams[nPipeId].linegap > sns_sc450aiparams[nPipeId].vblank)) {
+
+            /* last SE_MAX - current SE_MAX < vblank. (SE_MAX = 2*vts_s-11) */
+            sns_sc450aiparams[nPipeId].vts_s =
+                sns_sc450aiparams[nPipeId].linegap - sns_sc450aiparams[nPipeId].vblank + SC450AI_HDR_LINE_STEP;
+
+            sc450ai_set_vts_s(nPipeId, sns_sc450aiparams[nPipeId].vts_s);
+
+            sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMaxIntegrationTime[HDR_LONG_FRAME_IDX] =
+                SC450AI_HDR_2X_LONG_EXP_LINE_MAX(sns_sc450aiparams[nPipeId].vts, sns_sc450aiparams[nPipeId].vts_s);
+            sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMaxIntegrationTime[HDR_MEDIUM_FRAME_IDX] =
+                SC450AI_HDR_2X_SHORT_EXP_LINE_MAX(sns_sc450aiparams[nPipeId].vts_s);
+
+            /* The current maximum adjustable ratio */
+            ratio = sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMaxIntegrationTime[HDR_LONG_FRAME_IDX] /
+                    sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMaxIntegrationTime[HDR_MEDIUM_FRAME_IDX];
+
+            if ((ratio > sns_obj->ae_ctrl_param.sns_ae_limit.fMaxRatio) || (ratio > fHdrRatio)) {
+                ratio = fHdrRatio;
+                ratio = AXSNS_CLIP3(ratio, sns_obj->ae_ctrl_param.sns_ae_limit.fMinRatio,
+                                    sns_obj->ae_ctrl_param.sns_ae_limit.fMaxRatio);
+                sc450ai_set_exp_limit(nPipeId, ratio);
+            }
+        } else {
+            ratio = fHdrRatio;
+            ratio = AXSNS_CLIP3(ratio, sns_obj->ae_ctrl_param.sns_ae_limit.fMinRatio,
+                                sns_obj->ae_ctrl_param.sns_ae_limit.fMaxRatio);
+
+            sc450ai_set_exp_limit(nPipeId, ratio);
         }
 
-        sc450ai_set_exp_limit(nPipeId, ratio);
+        sns_obj->ae_ctrl_param.sns_ae_param.fCurRatio = ratio;
+        sns_sc450aiparams[nPipeId].linegap = SC450AI_HDR_LINE_GAP(sns_sc450aiparams[nPipeId].vts_s);
 
         ptIntTimeRange->fMaxIntegrationTime[HDR_LONG_FRAME_IDX] =
             sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMaxIntegrationTime[HDR_LONG_FRAME_IDX];
-        ptIntTimeRange->fMinIntegrationTime[HDR_LONG_FRAME_IDX] =
-            sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMinIntegrationTime[HDR_LONG_FRAME_IDX];
         ptIntTimeRange->fMaxIntegrationTime[HDR_MEDIUM_FRAME_IDX] =
             sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMaxIntegrationTime[HDR_MEDIUM_FRAME_IDX];
-        ptIntTimeRange->fMinIntegrationTime[HDR_MEDIUM_FRAME_IDX] =
-            sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMinIntegrationTime[HDR_MEDIUM_FRAME_IDX];
+
+        SNS_DBG("pipe: %d, user_ratio:%.2f, real_ratio:%.2f, expline_limit_max:[L-S]=[%.2f-%.2f], line_gap:%d, vblank:%d, vts:%d, vts_s:%d\n",
+            nPipeId, fHdrRatio, sns_obj->ae_ctrl_param.sns_ae_param.fCurRatio,
+            sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMaxIntegrationTime[HDR_LONG_FRAME_IDX],
+            sns_obj->ae_ctrl_param.sns_ae_limit.tIntTimeRange.fMaxIntegrationTime[HDR_MEDIUM_FRAME_IDX],
+            sns_sc450aiparams[nPipeId].linegap, sns_sc450aiparams[nPipeId].vblank,
+            sns_sc450aiparams[nPipeId].vts, sns_sc450aiparams[nPipeId].vts_s);
+
     } else {
         // do nothing
     }
@@ -1362,11 +1404,12 @@ AX_S32 sc450ai_get_fps(ISP_PIPE_ID nPipeId, AX_F32 *pFps)
 }
 
 
+
 AX_S32 sc450ai_set_fps(ISP_PIPE_ID nPipeId, AX_F32 fFps)
 {
-    AX_U32 vts = 0;
-    AX_S32 result = 0;
     SNS_STATE_OBJ *sns_obj = AX_NULL;
+    AX_S32 result = 0;
+    AX_U32 vts = 0;
 
     SNS_CHECK_VALUE_RANGE_VALID(nPipeId, 0, AX_VIN_MAX_PIPE_NUM - 1);
     SENSOR_GET_CTX(nPipeId, sns_obj);
@@ -1380,46 +1423,37 @@ AX_S32 sc450ai_set_fps(ISP_PIPE_ID nPipeId, AX_F32 fFps)
     if (IS_SNS_FPS_EQUAL(fFps, sns_sc450aiparams[nPipeId].setting_fps)) {
         vts = sns_sc450aiparams[nPipeId].setting_vts;
     } else {
-        vts = 1 * SNS_1_SECOND_UNIT_US / (sns_obj->ae_ctrl_param.fTimePerLine * fFps);
+        vts = round(1 * SNS_1_SECOND_UNIT_US / (sns_obj->ae_ctrl_param.fTimePerLine * fFps));
         if (vts > SC450AI_MAX_VTS){
             vts = SC450AI_MAX_VTS;
             SNS_WRN("Beyond max vts:0x%x\n", vts);
         }
     }
 
-    if(fFps > sns_obj->ae_ctrl_param.sns_ae_param.fCurFps) {
-        sns_sc450aiparams[nPipeId].vts = vts;
-        if (IS_SNS_FPS_EQUAL(fFps, sns_obj->sns_attr_param.fFrameRate)) {
-            sns_obj->sns_mode_obj.nVts = vts;
-            sns_obj->sns_mode_obj.fFrameRate = sns_obj->sns_attr_param.fFrameRate;
-        }
-        sc450ai_set_exp_limit(nPipeId, sns_obj->ae_ctrl_param.sns_ae_param.fCurRatio);
-        result = sc450ai_set_vts(nPipeId, vts);
-        if (result != 0) {
-            vts = 1 * SNS_1_SECOND_UNIT_US / (sns_obj->ae_ctrl_param.fTimePerLine * sns_obj->ae_ctrl_param.sns_ae_param.fCurFps);
-            sns_sc450aiparams[nPipeId].vts = vts;
-            sc450ai_set_exp_limit(nPipeId, sns_obj->ae_ctrl_param.sns_ae_param.fCurRatio);
-            SNS_ERR("sc450ai_set_vts failed %d \n", result);
-            return result;
-        }
+    result = sc450ai_set_vts(nPipeId, vts);
+    if (result != 0) {
+        SNS_ERR("%s: write vts failed %d \n", __func__, result);
+        return result;
+    }
+    sns_sc450aiparams[nPipeId].vts = vts;
+
+    if (IS_HDR_MODE(sns_obj->sns_mode_obj.eHDRMode)) {
+        sns_sc450aiparams[nPipeId].vblank = vts / 2 - sns_obj->sns_attr_param.nHeight;
     } else {
-        result = sc450ai_set_vts(nPipeId, vts);
-        if (result != 0) {
-            SNS_ERR("sc450ai_set_vts failed %d \n", result);
-            return result;
-        }
-        sns_sc450aiparams[nPipeId].vts = vts;
-        if (IS_SNS_FPS_EQUAL(fFps, sns_obj->sns_attr_param.fFrameRate)) {
-            sns_obj->sns_mode_obj.nVts = vts;
-            sns_obj->sns_mode_obj.fFrameRate = sns_obj->sns_attr_param.fFrameRate;
-        }
-        sc450ai_set_exp_limit(nPipeId, sns_obj->ae_ctrl_param.sns_ae_param.fCurRatio);
+        sns_sc450aiparams[nPipeId].vblank = vts - sns_obj->sns_attr_param.nHeight;
     }
 
+    if (IS_SNS_FPS_EQUAL(fFps, sns_obj->sns_attr_param.fFrameRate)) {
+        sns_obj->sns_mode_obj.nVts = vts;
+        sns_obj->sns_mode_obj.fFrameRate = sns_obj->sns_attr_param.fFrameRate;
+    }
+
+    sc450ai_set_exp_limit(nPipeId, sns_obj->ae_ctrl_param.sns_ae_param.fCurRatio);
     sns_obj->ae_ctrl_param.sns_ae_param.fCurFps = 1 * SNS_1_SECOND_UNIT_US / (sns_obj->ae_ctrl_param.fTimePerLine * vts);
 
-    SNS_INFO("pipe:%d, userFps:%f, curFps:%f, vts:0x%x\n",
-        nPipeId, fFps, sns_obj->ae_ctrl_param.sns_ae_param.fCurFps, vts);
+    SNS_DBG("pipe:%d, userFps:%f, curFps:%f, vts:0x%x, vblank:%d, fTimePerLine:%.2f\n",
+        nPipeId, fFps, sns_obj->ae_ctrl_param.sns_ae_param.fCurFps, vts,
+        sns_sc450aiparams[nPipeId].vblank, sns_obj->ae_ctrl_param.fTimePerLine);
 
     return AX_SNS_SUCCESS;
 }

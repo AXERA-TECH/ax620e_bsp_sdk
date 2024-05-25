@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -12,10 +12,12 @@
 
 #include <vector>
 #include "ax_ao_api.h"
+#include "ax_aac.h"
+#include "ax_opus.h"
 #include "ax_codec_comm.h"
 #include "ax_comm_aio.h"
 
-#define AUDIO_PLAY_DEV_DEFAULT_DEPTH (32)
+#define AUDIO_PLAY_DEV_DEFAULT_DEPTH (30)
 #define AUDIO_PLAY_DEV_PERIOD_COUNT (4)
 
 typedef enum audioPLAY_DEV_STATUS_E {

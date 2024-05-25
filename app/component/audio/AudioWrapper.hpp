@@ -1,3 +1,13 @@
+/**************************************************************************************************
+ *
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ *
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
+ * may not be copied or distributed in any isomorphic form without the prior
+ * written consent of Axera Semiconductor Co., Ltd.
+ *
+ **************************************************************************************************/
+
 #pragma once
 
 #include "AudioCap.hpp"
@@ -33,8 +43,9 @@ typedef enum axAPP_AUDIO_LAYOUT_MODE_E {
     AX_APP_AUDIO_LAYOUT_MIC_MIC = 0,
     AX_APP_AUDIO_LAYOUT_MIC_REF = 1,
     AX_APP_AUDIO_LAYOUT_REF_MIC = 2,
-    AX_APP_AUDIO_LAYOUT_INTERNAL_REF = 3,
-    AX_APP_AUDIO_LAYOUT_DOORBELL = 4,
+    AX_APP_AUDIO_LAYOUT_INTERNAL_MIC_NULL = 3,
+    AX_APP_AUDIO_LAYOUT_INTERNAL_NULL_MIC = 4,
+    AX_APP_AUDIO_LAYOUT_DOORBELL = 5,
     AX_APP_AUDIO_LAYOUT_MODE_BUTT
 } AX_APP_AUDIO_LAYOUT_MODE_E;
 

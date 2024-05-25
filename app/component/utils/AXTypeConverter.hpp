@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -15,6 +15,7 @@
 #include "BaseLinkage.h"
 #include "ax_global_type.h"
 #include "ax_venc_rc.h"
+#include "GlobalDef.h"
 
 class CAXTypeConverter {
 public:
@@ -30,8 +31,12 @@ public:
                 else if (nWidth >= 2560) {
                     return 4096;
                 }
-                else {
+                // 2M
+                else if (nWidth >= 1920) {
                     return 2048;
+                }
+                else {
+                    return ALIGN_COMM_DOWN(nWidth * nHeight / 1000, 100);
                 }
             } else if (PT_H265 == enType) {
                 // 4K
@@ -42,8 +47,12 @@ public:
                 else if (nWidth >= 2560) {
                     return 2048;
                 }
-                else {
+                // 2M
+                else if (nWidth >= 1920) {
                     return 1024;
+                }
+                else {
+                    return ALIGN_COMM_DOWN(nWidth * nHeight / 1000, 100);
                 }
             }
 
@@ -51,6 +60,15 @@ public:
         }
 
         return nBitrate;
+    }
+
+    static AX_U32 GetVencBufSize(AX_PAYLOAD_TYPE_E enType, AX_S32 nWidth, AX_S32 nHeight) {
+        // 4M
+        if (nWidth >= 2560) {
+            return (AX_U32)(nWidth * nHeight / 2);
+        }
+
+        return (AX_U32)(nWidth * nHeight * 3 / 4);
     }
 
     static AX_PAYLOAD_TYPE_E Int2EncoderType(AX_U32 nEncodeType) {

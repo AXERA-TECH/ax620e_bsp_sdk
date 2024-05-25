@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -191,6 +191,11 @@ public:
         }
 
         AX_U64 nHead = RING_MIN(m_nPopStart, m_nHeader);
+        if ((m_nTail - nHead) > m_nRingSize) {
+            LOG_MM_E(AXRINGEX, "[%s] ---, tail(%llu) - head(%llu) is large than ringsize(%u)", m_szName, m_nTail, nHead, m_nRingSize);
+            return AX_FALSE;
+        }
+
         AX_U32 nLeft = m_nRingSize - (m_nTail - nHead);
 
         if (nLeft < nEleCapacity) {
@@ -199,6 +204,11 @@ public:
                 do {
                     AX_U32 nPreEleSize = *(AX_U32*)(m_pRingBuf + ((m_nTail - 4) % m_nRingSize));
                     CAXRingElementEx * pEle = (CAXRingElementEx*)(m_pRingBuf + ((m_nTail - nPreEleSize) % m_nRingSize));
+                    if (nPreEleSize != pEle->nTotalSize || nPreEleSize > m_nRingSize) {
+                        LOG_MM_E(AXRINGEX, "[%s] element size (%u, %u) is invalid", m_szName, nPreEleSize, pEle->nTotalSize);
+                        break;
+                    }
+
                     if (pEle->GetRefCount() == 0) {
                         m_nTail -= nPreEleSize;
                         nLeft = m_nRingSize - (m_nTail - nHead);
@@ -226,36 +236,34 @@ public:
         AX_U32 offset = m_nTail % m_nRingSize;
         AX_U32 offset2 = (m_nTail + sizeof(CAXRingElementEx)) % m_nRingSize;
         CAXRingElementEx * pEle = (CAXRingElementEx*)(m_pRingBuf + offset);
-        RING_CHECK_PTR((AX_U8*)(pEle+1) - 1);
+        RING_CHECK_PTR((AX_U8*)(pEle + 1) - 1);
         pEle->Clear();
 
         pEle->pBuf = (AX_U8*)(m_pRingBuf + offset2);
-        pEle->nSize = RING_MIN(nSize, m_nRingSize - offset2);
+        pEle->nSize = RING_MIN(nSize, (m_nRingSize - offset2));
         pEle->pBuf2 = m_pRingBuf;
         pEle->nSize2 = nSize - pEle->nSize;
 
         RING_CHECK_PTR(pEle->pBuf);
         RING_CHECK_PTR(pEle->pBuf2);
-        RING_CHECK_PTR(pEle->pBuf+pEle->nSize-1);
+        RING_CHECK_PTR(pEle->pBuf + pEle->nSize - 1);
         if (pEle->nSize2 > 0) {
-            RING_CHECK_PTR(pEle->pBuf2+pEle->nSize2-1);
+            RING_CHECK_PTR(pEle->pBuf2 + pEle->nSize2 - 1);
         }
 
         pEle->CopyFrom(element);
         pEle->IncreaseRefCount();
         pEle->pParent = this;
         pEle->nTotalSize = nEleCapacity;
+        SetElementTailSize(pEle);
         m_nTail += nEleCapacity;
-
-        *(AX_U32*)(m_pRingBuf + ((m_nTail - 4) % m_nRingSize)) = nEleCapacity;
-        RING_CHECK_PTR(m_pRingBuf + ((m_nTail - 4) % m_nRingSize)+3);
 
         // clear next
         nLeft = m_nRingSize - (m_nTail - nHead);
         if (nLeft >= sizeof(CAXRingElementEx) && nLeft < m_nRingSize) {
             pEle = (CAXRingElementEx*)(m_pRingBuf + (m_nTail % m_nRingSize));
             pEle->Clear();
-            RING_CHECK_PTR((AX_U8*)(pEle+1) - 1);
+            RING_CHECK_PTR((AX_U8*)(pEle + 1) - 1);
         }
 
         //LOG_MM_C(AXRINGEX, "[%s] ---, tail=%llu, head=%llu, pop=%llu", m_szName, m_nTail, m_nHeader, m_nPopStart);
@@ -270,8 +278,13 @@ public:
         }
         //LOG_MM_C(AXRINGEX, "[%s] +++, tail=%llu, head=%llu, pop=%llu", m_szName, m_nTail, m_nHeader, m_nPopStart);
         element = (CAXRingElementEx*)(m_pRingBuf + (m_nHeader % m_nRingSize));
+        if (!CheckElement(element)) {
+            LOG_MM_E(AXRINGEX, "[%s] element size (%u) is invalid", m_szName, element->nTotalSize);
+            return nullptr;
+        }
+
         element->IncreaseRefCount();
-        RING_CHECK_PTR((AX_U8*)(element+1) - 1);
+        RING_CHECK_PTR((AX_U8*)(element + 1) - 1);
 
         //LOG_MM_C(AXRINGEX, "[%s] ---, tail=%llu, head=%llu, pop=%llu", m_szName, m_nTail, m_nHeader, m_nPopStart);
         return element;
@@ -284,8 +297,12 @@ public:
         }
         //LOG_MM_C(AXRINGEX, "[%s] +++, tail=%llu, head=%llu, pop=%llu", m_szName, m_nTail, m_nHeader, m_nPopStart);
         CAXRingElementEx* element = (CAXRingElementEx*)(m_pRingBuf + (m_nHeader % m_nRingSize));
+        if (!CheckElement(element)) {
+            LOG_MM_E(AXRINGEX, "[%s] element size (%u) is invalid", m_szName, element->nTotalSize);
+            return AX_FALSE;
+        }
         AX_S32 nRefCount = element->DecreaseRefCount(bForce);
-        RING_CHECK_PTR((AX_U8*)(element+1) - 1);
+        RING_CHECK_PTR((AX_U8*)(element + 1) - 1);
         if (nRefCount == 0 && m_nPopStart == m_nHeader) {
             m_nPopStart += element->nTotalSize;
         }
@@ -302,10 +319,15 @@ public:
         if (!m_pRingBuf) {
             return;
         }
+
+        if (!CheckElement(ele)) {
+            LOG_MM_E(AXRINGEX, "[%s] element size (%u) is invalid", m_szName, ele->nTotalSize);
+            return;
+        }
         //LOG_MM_C(AXRINGEX, "[%s] +++, tail=%llu, head=%llu, pop=%llu, ele=%p", m_szName, m_nTail, m_nHeader, m_nPopStart, ele);
         CAXRingElementEx* elementPopStart = (CAXRingElementEx*)(m_pRingBuf + (m_nPopStart % m_nRingSize));
         AX_S32 nRefCount = ele->DecreaseRefCount(bForce);
-        RING_CHECK_PTR((AX_U8*)(ele+1) - 1);
+        RING_CHECK_PTR((AX_U8*)(ele + 1) - 1);
         if (nRefCount == 0 && ele == elementPopStart) {
             m_nPopStart += ele->nTotalSize;
             while (m_nPopStart < m_nHeader) {
@@ -339,6 +361,45 @@ public:
             return 0;
         }
         return m_nTail - m_nHeader;
+    }
+private:
+    AX_BOOL CheckElement(CAXRingElementEx* ele) {
+        if ((AX_U8*)ele < m_pRingBuf || (AX_U8*)ele >= (m_pRingBuf + m_nRingSize)) {
+            LOG_MM_E(AXRINGEX, "[%s] element ptr(%p) is invalid (ringptr=%p, size=%u)", m_szName, ele, m_pRingBuf, m_nRingSize);
+            return AX_FALSE;
+        }
+
+        AX_U32 nTailSize = 0;
+        if (ele->nSize2 > 0) {
+            if (ele->pBuf2 < m_pRingBuf || ele->pBuf2 >= (m_pRingBuf + m_nRingSize)) {
+                LOG_MM_E(AXRINGEX, "[%s] element pBuf2(%p) is invalid (ringptr=%p, size=%u)", m_szName, ele->pBuf2, m_pRingBuf, m_nRingSize);
+                return AX_FALSE;
+            }
+            nTailSize = *(AX_U32*)(ele->pBuf2 + (ele->nTotalSize - ele->nSize - sizeof(CAXRingElementEx) - 4));
+            if (nTailSize != ele->nTotalSize) {
+                LOG_MM_E(AXRINGEX, "[%s] element nTailSize(%u) != nTotalSize(%u)", m_szName, nTailSize, ele->nTotalSize);
+                return AX_FALSE;
+            }
+        } else {
+            if (ele->pBuf < m_pRingBuf || ele->pBuf >= (m_pRingBuf + m_nRingSize)) {
+                LOG_MM_E(AXRINGEX, "[%s] element pBuf(%p) is invalid (ringptr=%p, size=%u)", m_szName, ele->pBuf, m_pRingBuf, m_nRingSize);
+                return AX_FALSE;
+            }
+            AX_U32 nOffset = ((AX_U32)((AX_U8*)ele - m_pRingBuf) + ele->nTotalSize - 4) % m_nRingSize;
+            nTailSize = *(AX_U32*)(m_pRingBuf + nOffset);
+
+            if (nTailSize != ele->nTotalSize) {
+                LOG_MM_E(AXRINGEX, "[%s] element nTailSize(%u) != nTotalSize(%u)", m_szName, nTailSize, ele->nTotalSize);
+                return AX_FALSE;
+            }
+        }
+
+        return AX_TRUE;
+    }
+
+    AX_VOID SetElementTailSize(CAXRingElementEx* ele) {
+        AX_U32 nTailOffset = (m_nTail + ele->nTotalSize - 4) % m_nRingSize;
+        *(AX_U32*)(m_pRingBuf + nTailOffset) = ele->nTotalSize;
     }
 
 private:

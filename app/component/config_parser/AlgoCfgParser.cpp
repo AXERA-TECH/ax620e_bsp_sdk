@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -24,7 +24,9 @@ AX_BOOL CAlgoCfgParser::InitOnce() {
     return AX_TRUE;
 }
 
-AX_BOOL CAlgoCfgParser::GetConfig(std::map<AX_U8, AX_APP_ALGO_PARAM_T>& stAlgoParam, AX_APP_ALGO_AUDIO_PARAM_T& stAudioParam) {
+AX_BOOL CAlgoCfgParser::GetConfig(std::map<AX_U8, AX_APP_ALGO_PARAM_T>& stAlgoParam,
+                                    std::map<AX_U8, AX_APP_ALGO_SVC_PARAM_T>& stAlgoSvcParam,
+                                    AX_APP_ALGO_AUDIO_PARAM_T& stAudioParam) {
 #ifndef _OPAL_LIB_
     string strConfigDir = CCommonUtils::GetPPLConfigDir();
     if (strConfigDir.empty()) {
@@ -48,7 +50,7 @@ AX_BOOL CAlgoCfgParser::GetConfig(std::map<AX_U8, AX_APP_ALGO_PARAM_T>& stAlgoPa
         return AX_FALSE;
     }
 
-    if (!ParseFile(strAlgoCfgFile, stAlgoParam, stAudioParam)) {
+    if (!ParseFile(strAlgoCfgFile, stAlgoParam, stAlgoSvcParam, stAudioParam)) {
         return AX_FALSE;
     }
 
@@ -58,7 +60,9 @@ AX_BOOL CAlgoCfgParser::GetConfig(std::map<AX_U8, AX_APP_ALGO_PARAM_T>& stAlgoPa
 #endif
 }
 
-AX_BOOL CAlgoCfgParser::ParseFile(const string& strPath, std::map<AX_U8, AX_APP_ALGO_PARAM_T>& stAlgoParam,
+AX_BOOL CAlgoCfgParser::ParseFile(const string& strPath,
+                                  std::map<AX_U8, AX_APP_ALGO_PARAM_T>& stAlgoParam,
+                                  std::map<AX_U8, AX_APP_ALGO_SVC_PARAM_T>& stAlgoSvcParam,
                                   AX_APP_ALGO_AUDIO_PARAM_T& stAudioParam) {
 #ifndef _OPAL_LIB_
     picojson::value v;
@@ -72,14 +76,16 @@ AX_BOOL CAlgoCfgParser::ParseFile(const string& strPath, std::map<AX_U8, AX_APP_
         return AX_TRUE;
     }
 
-    return ParseJson(v.get<picojson::object>(), stAlgoParam, stAudioParam);
+    return ParseJson(v.get<picojson::object>(), stAlgoParam, stAlgoSvcParam, stAudioParam);
 #else
     return AX_TRUE;
 #endif
 }
 
-AX_BOOL CAlgoCfgParser::ParseJson(picojson::object& objJsonRoot, std::map<AX_U8, AX_APP_ALGO_PARAM_T>& stAlgoParam,
-                                  AX_APP_ALGO_AUDIO_PARAM_T& stAudioParam) {
+AX_BOOL CAlgoCfgParser::ParseJson(picojson::object& objJsonRoot,
+                                    std::map<AX_U8, AX_APP_ALGO_PARAM_T>& stAlgoParam,
+                                    std::map<AX_U8, AX_APP_ALGO_SVC_PARAM_T>& stAlgoSvcParam,
+                                    AX_APP_ALGO_AUDIO_PARAM_T& stAudioParam) {
 #ifndef _OPAL_LIB_
     // get algo settings
     if (objJsonRoot.end() == objJsonRoot.find(ALGO_SETTINGS_KEY_STR)) {
@@ -106,6 +112,9 @@ AX_BOOL CAlgoCfgParser::ParseJson(picojson::object& objJsonRoot, std::map<AX_U8,
 
         // ives attribute
         ParseIvesJson(objSettings, stAlgoParam[nIndex]);
+
+        // svc attribute
+        ParseSvcJson(objSettings, stAlgoSvcParam[nIndex]);
     }
 
     // get audio attribute
@@ -142,15 +151,13 @@ AX_BOOL CAlgoCfgParser::ParseSkelJson(picojson::object& objJsonRoot, AX_APP_ALGO
         // SKEL.detect_algo_type
         AX_S32 nDetectAlgoType = objSkel["detect_algo_type"].get<double>();
 
-        if (nDetectAlgoType == AX_SKEL_PPL_BODY) {
-            stAlgoParam.nAlgoType |= AX_APP_ALGO_PERSON_DETECT;
-        } else if (nDetectAlgoType == AX_SKEL_PPL_HVCP) {
+        if (nDetectAlgoType ==  AX_SKEL_PPL_HVCP) {
             stAlgoParam.nAlgoType |= AX_APP_ALGO_TYPE_HVCP;
-        } else if (nDetectAlgoType == AX_SKEL_PPL_FH) {
-            stAlgoParam.nAlgoType |= AX_APP_ALGO_TYPE_FH;
+        } else if (nDetectAlgoType == AX_SKEL_PPL_FACE) {
+            stAlgoParam.nAlgoType |= AX_APP_ALGO_TYPE_FACE;
         } else if (nDetectAlgoType == 0) {
             stAlgoParam.nAlgoType &= ~AX_APP_ALGO_TYPE_HVCP;
-            stAlgoParam.nAlgoType &= ~AX_APP_ALGO_TYPE_FH;
+            stAlgoParam.nAlgoType &= ~AX_APP_ALGO_TYPE_FACE;
         }
 
         auto& stHvcfpParam = stAlgoParam.stHvcfpParam;
@@ -453,6 +460,75 @@ AX_BOOL CAlgoCfgParser::ParseIvesJson(picojson::object& objJsonRoot, AX_APP_ALGO
 
             stAlgoParam.stSceneChangeParam.fThreshold = objSCD["threshold"].get<double>();
             stAlgoParam.stSceneChangeParam.fConfidence = objSCD["confidence"].get<double>();
+        }
+    } while (0);
+
+    return bSucc;
+#else
+    return AX_TRUE;
+#endif
+}
+
+AX_BOOL CAlgoCfgParser::ParseSvcJson(picojson::object& objJsonRoot, AX_APP_ALGO_SVC_PARAM_T& stAlgoSvcParam) {
+#ifndef _OPAL_LIB_
+    AX_BOOL bSucc = AX_TRUE;
+
+    // get svc attribute
+    do {
+        // SVC
+        if (objJsonRoot.end() == objJsonRoot.find("SVC")) {
+            bSucc = AX_FALSE;
+            break;
+        }
+
+        picojson::object& objSvc = objJsonRoot["SVC"].get<picojson::object>();
+
+        // enable
+        stAlgoSvcParam.bEnable = (AX_BOOL)objSvc["enable"].get<bool>();
+
+        // absolute Qp
+        stAlgoSvcParam.bAbsQp = AX_FALSE;
+
+        // sync mode
+        stAlgoSvcParam.bSync = (AX_BOOL)objSvc["sync_mode"].get<bool>();
+
+        // bg qp
+        if (objSvc.end() != objSvc.find("bg_qp")) {
+            picojson::object& objBgQp = objSvc["bg_qp"].get<picojson::object>();
+
+            stAlgoSvcParam.tBgQpCfg.iQp = objBgQp["iQp"].get<double>();
+            stAlgoSvcParam.tBgQpCfg.pQp = objBgQp["pQp"].get<double>();
+        }
+
+        stAlgoSvcParam.nRegionTypeNum = 0;
+
+        // object fliter
+        if (objSvc.end() != objSvc.find("object_filter")) {
+            picojson::array& arrSvcObject = objSvc["object_filter"].get<picojson::array>();
+
+            AX_U32 nSvcObjectSize = arrSvcObject.size();
+            nSvcObjectSize = AX_MIN(nSvcObjectSize, AX_APP_ALGO_HVCFP_TYPE_BUTT);
+
+            for (size_t i = 0; i < nSvcObjectSize; i++) {
+                picojson::object objItem = arrSvcObject[i].get<picojson::object>();
+
+                std::string strObjectCategory = objItem["object_category"].get<std::string>();
+
+                AX_APP_ALGO_HVCFP_TYPE_E eHvcfpType = AX_APP_ALGO_GET_HVCFP_TYPE(strObjectCategory);
+                AX_APP_ALGO_SVC_REGION_TYPE_E eSvcRectType = (AX_APP_ALGO_SVC_REGION_TYPE_E)eHvcfpType;
+
+                if (eSvcRectType < AX_APP_ALGO_SVC_REGION_TYPE_BUTT) {
+                    stAlgoSvcParam.tQpCfg[eSvcRectType].bEnable = (AX_BOOL)objItem["enable"].get<bool>();
+                    stAlgoSvcParam.nRegionTypeNum ++;
+
+                    if (objItem.end() != objItem.find("qp")) {
+                        picojson::object& objQp = objItem["qp"].get<picojson::object>();
+
+                        stAlgoSvcParam.tQpCfg[eSvcRectType].tQpMap.iQp = objQp["iQp"].get<double>();
+                        stAlgoSvcParam.tQpCfg[eSvcRectType].tQpMap.pQp = objQp["pQp"].get<double>();
+                    }
+                }
+            }
         }
     } while (0);
 

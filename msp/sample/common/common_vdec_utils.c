@@ -1762,9 +1762,6 @@ AX_S32 VdecUserPicEnable(AX_VDEC_GRP VdGrp, SAMPLE_VDEC_USERPIC_T *pstVdecUserPi
         } else {
             *pContSendStm = AX_FALSE;
         }
-        /* wait release frm */
-        while (pstCtx->recvFrmCnt[VdGrp] != pstCtx->releaseFrmCnt[VdGrp])
-            usleep(5000);
 
         SAMPLE_LOG("VdGrp=%d, AX_VDEC_EnableUserPic finish!\n", VdGrp);
 

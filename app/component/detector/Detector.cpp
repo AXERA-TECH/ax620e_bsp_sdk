@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -160,6 +160,7 @@ static AX_VOID SkelResultCallback(AX_SKEL_HANDLE pHandle, AX_SKEL_RESULT_T *pstR
         return;
     }
     DETECT_RESULT_T hvcfp;
+    hvcfp.u64Pts = pPrivData->u64Pts;
     hvcfp.nSeqNum = pPrivData->nSeqNum;
     hvcfp.nGrpId = pPrivData->nGrpId;
     hvcfp.nSnsId = pPrivData->nSnsId;
@@ -216,6 +217,7 @@ AX_VOID CDetector::RunDetect(AX_VOID *pArg) {
             pAxFrame->FreeMem();
             continue;
         } else {
+            pPrivData->u64Pts = pAxFrame->stFrame.stVFrame.stVFrame.u64PTS;
             pPrivData->nSeqNum = pAxFrame->stFrame.stVFrame.stVFrame.u64SeqNum;
             pPrivData->nGrpId = m_stAttr.nGrp;
             pPrivData->nSnsId = nSnsId;

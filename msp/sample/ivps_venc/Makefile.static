@@ -67,7 +67,6 @@ endif
 CLIB				+= -Wl,-rpath-link=$(OUT_PATH)/lib
 CLIB				+= -L$(OUT_PATH)/lib -l:libax_ivps.a
 CLIB				+= -l:libax_venc.a
-CLIB				+= -l:libax_sys.a
 #CLIB				+= -l:libax_3a.a
 CLIB				+= -l:libax_proton.a
 ifeq ($(CHIP_TYPE), AX620Q)
@@ -83,6 +82,7 @@ CLIB				+= -lm -lpthread -lrt -ldl -lstdc++
 ifeq ($(USE_OPENSSL),yes)
 CLIB				+= -L$(SSL_PATH)/$(LIBC)/lib -lssl -lcrypto
 endif
+CLIB				+= -l:libax_sys.a
 #CLIB				+= -L$(LIVE_PATH)/lib -lliveMedia -lgroupsock -lBasicUsageEnvironment -lUsageEnvironment
 
 # install

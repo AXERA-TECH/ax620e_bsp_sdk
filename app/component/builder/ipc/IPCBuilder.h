@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -117,7 +117,7 @@ public:
 #ifdef VO_SUPPORT
     vector<CVideoDecoder*> m_vecVdecInstance;
     vector<CFileStreamer*> m_vecStreamInstance;
-    CVo m_voInstance;
+    CVO m_voInstance;
 #endif
     vector<CIVPSGrpStage*> m_vecIvpsInstance;
     vector<CVideoEncoder*> m_vecVencInstance;
@@ -145,6 +145,7 @@ public:
     std::vector<std::unique_ptr<IObserver>> m_vecVencObs;
     std::vector<std::unique_ptr<IObserver>> m_vecJencObs;
     std::vector<std::unique_ptr<IObserver>> m_vecVdecObs;
+    std::vector<std::unique_ptr<IObserver>> m_vecSvcObs;
 
     CLinkage m_linkage;
     CPoolConfig* m_pPoolConfig{nullptr};

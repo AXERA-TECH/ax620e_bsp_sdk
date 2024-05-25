@@ -285,6 +285,8 @@ extern "C"
                                  const AX_IVPS_CROP_RESIZE_ATTR_T *ptAttr);
     AX_S32 AX_IVPS_CropResizeV2Vpp(const AX_VIDEO_FRAME_T *ptSrc, AX_U8 nCropNum, const AX_IVPS_RECT_T tBox[],
                                    AX_VIDEO_FRAME_T ptDst[], const AX_IVPS_CROP_RESIZE_ATTR_T *ptAttr);
+    AX_S32 AX_IVPS_SetScaleCoefLevelVpp(const AX_IVPS_SCALE_RANGE_T *ScaleRange, const AX_IVPS_SCALE_COEF_LEVEL_T *CoefLevel);
+    AX_S32 AX_IVPS_GetScaleCoefLevelVpp(const AX_IVPS_SCALE_RANGE_T *ScaleRange, AX_IVPS_SCALE_COEF_LEVEL_T *CoefLevel);
 
     /***************************************************************************************************************/
     /*                                                   CPU                                                       */

@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -18,7 +18,7 @@
 #include "OsdOptionHelper.h"
 #include "PrintHelper.h"
 
-#define WEB_OBS "WEB_OBS"
+#define OSD_OBS "OSD_OBS"
 
 class COsdObserver : public IObserver {
 public:

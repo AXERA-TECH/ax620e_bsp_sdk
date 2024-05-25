@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -9,7 +9,7 @@
  **************************************************************************************************/
 
 #pragma once
-#if ((defined(__GNUC__) && __GNUC__ == 7) && (defined(__GNUC_MINOR__) && __GNUC_MINOR__ == 5) && (!defined(ARM32)))
+#if ((defined(__GNUC__) && __GNUC__ == 7) && (defined(__GNUC_MINOR__) && __GNUC_MINOR__ == 5))
 #include <chrono>
 #include <mutex>
 

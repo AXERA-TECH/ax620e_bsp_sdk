@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -287,6 +287,7 @@ public:
     AX_VOID SetSLTResult(AX_S32 nRet);
 #endif
     AX_S32 GetVencFramerate(AX_U32 nChn);
+    AX_VOID FinalPrint();
 
 private:
     CPrintHelper(AX_VOID) = default;

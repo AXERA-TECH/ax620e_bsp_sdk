@@ -72,4 +72,8 @@ AX_S32 sc200ai_set_slaveaddr(ISP_PIPE_ID nPipeId, AX_U8 nslaveaddr);
 
 AX_U32 sc200ai_get_vts_s(ISP_PIPE_ID nPipeId);
 
+AX_F32 sc200ai_get_exp_offset(ISP_PIPE_ID nPipeId);
+
+AX_S32 sc200ai_hw_reset(unsigned int gpio_num, unsigned int gpio_out_val);
+
 #endif  //end __SC200AI_REG_H__

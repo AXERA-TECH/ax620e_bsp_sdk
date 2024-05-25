@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -53,7 +53,7 @@ AX_BOOL CPoolConfig::AddBlocks() {
     for (AX_U8 i = 0; i < nSnsCnt; ++i) {
         SENSOR_CONFIG_T tSensorCfg;
         if (APP_SENSOR_CONFIG(i, tSensorCfg)) {
-            if (tSensorCfg.eSensorMode != AX_SNS_LINEAR_MODE) {
+            if (IS_SNS_HDR_MODE(tSensorCfg.eSensorMode)) {
                 bSdrOnly = AX_FALSE;
                 break;
             }
@@ -173,7 +173,7 @@ AX_BOOL CPoolConfig::AddBlocks() {
                 } else {
                     nMaxHeight = ALIGN_UP(nMaxHeight, AX_YUV_NONE_FBC_STRIDE_ALIGN_VAL);
                 }
-                nBlkSizeRotate90 = AX_VIN_GetImgBufferSize(nMaxWidth, nMaxHeight, AX_FORMAT_YUV420_SEMIPLANAR, &tCompressInfo, 2);
+                nBlkSizeRotate90 = AX_VIN_GetImgBufferSize(nWidthStride, nMaxHeight, AX_FORMAT_YUV420_SEMIPLANAR, &tCompressInfo, 2);
                 nBlkSize = AX_MAX(nBlkSize, nBlkSizeRotate90);
             }
 
@@ -216,7 +216,7 @@ AX_BOOL CPoolConfig::AddBlocks() {
                 } else {
                     nHeight = ALIGN_UP(nHeight, AX_YUV_NONE_FBC_STRIDE_ALIGN_VAL);
                 }
-                nBlkSizeRotate90 = AX_VIN_GetImgBufferSize(nWidth, nHeight, AX_FORMAT_YUV420_SEMIPLANAR, &tCompressInfo, 2);
+                nBlkSizeRotate90 = AX_VIN_GetImgBufferSize(nWidthStride, nHeight, AX_FORMAT_YUV420_SEMIPLANAR, &tCompressInfo, 2);
                 nBlkSize = AX_MAX(nBlkSize, nBlkSizeRotate90);
             }
             if (!AddBlock("YUV", nBlkSize, nMetaSize, nBlkCnt, AX_POOL_CACHE_MODE_NONCACHE)) {

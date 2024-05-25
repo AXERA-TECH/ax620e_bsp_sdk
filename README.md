@@ -2,7 +2,7 @@
 
 ## What is this?
 
-This is a ax620e linux bsp sdk form AX620e_SDK_V2.0.0_P2. currently it is application layer open source.
+This is a ax620e linux bsp sdk form AX620e_SDK_V2.0.0_P7. currently it is application layer open source.
 
 ## Which target support
 
@@ -24,11 +24,11 @@ export PATH="/opt/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/:$PATH"
 
 #### AX620Q
 
-Please get it from FAE
+Please get it from [here](https://github.com/AXERA-TECH/ax620q_bsp_sdk/releases/download/v2.0.0/arm-AX620E-linux-uclibcgnueabihf_V3_20240320.tgz)
 
 ```
-sudo tar -zxvf arm-linux-gnueabihf-uclibc-8.3.0.tar.gz -C /opt/
-export PATH="/opt/arm-linux-gnueabihf-uclibc-8.3.0/bin/:$PATH"
+sudo tar -zxvf arm-AX620E-linux-uclibcgnueabihf_V3_20240320.tgz -C /opt/
+export PATH="/opt/arm-AX620E-linux-uclibcgnueabihf/bin/:$PATH"
 ```
 
 ### prepare compile files

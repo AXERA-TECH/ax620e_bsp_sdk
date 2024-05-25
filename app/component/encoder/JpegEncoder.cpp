@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -116,12 +116,27 @@ AX_BOOL CJpegEncoder::Start(STAGE_START_PARAM_PTR pStartParams) {
 
 AX_BOOL CJpegEncoder::Stop() {
     LOG_MM_C(JENC, "[%d] +++", GetChannel());
+    AX_S32 nRetry = 5;
+    AX_S32 nRet = 0;
 
     CAXStage::Stop();
 
     StopRecv();
 
-    AX_VENC_DestroyChn(GetChannel());
+    LOG_MM_I(JENC, "[%d] AX_VENC_DestroyChn ...", GetChannel());
+    do {
+        nRet = AX_VENC_DestroyChn(GetChannel());
+        if (AX_ERR_VENC_BUSY == nRet) {
+            CElapsedTimer::GetInstance()->mSleep(100);
+            --nRetry;
+        } else {
+            break;
+        }
+    } while(nRetry >= 0);
+
+    if (nRetry == -1) {
+       LOG_MM_E(JENC, "[%d] AX_VENC_DestroyChn retry 5 times failed", GetChannel());
+    }
 
     StopWorkThread();
 
@@ -322,6 +337,14 @@ AX_VOID CJpegEncoder::FrameGetThreadFunc(AX_VOID* pCaller) {
     memset(&stStream, 0, sizeof(AX_VENC_STREAM_T));
 
     while (pThis->m_bGetThreadRunning) {
+        m_mtx.lock();
+        if (m_bPauseGet) {
+            CElapsedTimer::GetInstance()->mSleep(10);
+            m_mtx.unlock();
+            continue;
+        }
+        m_mtx.unlock();
+
         nRet = AX_VENC_GetStream(nChannel, &stStream, -1);
         if (AX_SUCCESS != nRet) {
             if (AX_ERR_VENC_FLOW_END == nRet) {
@@ -355,7 +378,6 @@ AX_BOOL CJpegEncoder::UpdateRotation(AX_U8 nRotation) {
     LOG_MM_C(JENC, "+++");
     AX_U32 nNewWidth = 0;
     AX_U32 nNewHeight = 0;
-    m_bGetThreadRunning = AX_FALSE;
 
     if (!GetResolutionByRotate(nRotation, nNewWidth, nNewHeight)) {
         LOG_MM_E(JENC, "[%d] Can not get new resolution for rotate operation.", GetChannel());
@@ -369,7 +391,6 @@ AX_BOOL CJpegEncoder::UpdateRotation(AX_U8 nRotation) {
     tAttr.stVencAttr.u32PicHeightSrc = nNewHeight;
 
     AX_VENC_SetChnAttr(GetChannel(), &tAttr);
-    m_bGetThreadRunning = AX_TRUE;
 
     LOG_MM_C(JENC, "[%d] Reset res: (w: %d, h: %d) (MAX w: %d, h:%d)", GetChannel(), tAttr.stVencAttr.u32PicWidthSrc,
              tAttr.stVencAttr.u32PicHeightSrc, tAttr.stVencAttr.u32MaxPicWidth, tAttr.stVencAttr.u32MaxPicHeight);
@@ -407,4 +428,9 @@ AX_BOOL CJpegEncoder::UpdateChnResolution(const JPEG_CONFIG_T& tNewConfig) {
              tAttr.stVencAttr.u32PicHeightSrc, tAttr.stVencAttr.u32MaxPicWidth, tAttr.stVencAttr.u32MaxPicHeight);
 
     return AX_TRUE;
+}
+
+AX_VOID CJpegEncoder::SetPauseFlag(AX_BOOL bPause) {
+    std::lock_guard<std::mutex> lck(m_mtx);
+    m_bPauseGet = bPause;
 }

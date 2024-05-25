@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -626,7 +626,7 @@ AX_BOOL CSensorMgr::ChangeDaynightMode(AX_U32 nSnsID, AX_DAYNIGHT_MODE_E eDaynig
    }
 }
 
-AX_VOID CSensorMgr::SwitchSnsMode(AX_U32 nSnsID, AX_U32 nSnsMode) {
+AX_VOID CSensorMgr::SwitchSnsMode(AX_U32 nSnsID, AX_U32 nSnsMode, AX_U8 nHdrRatio/* = 0 */) {
     LOG_MM_C(SNS_MGR, "+++");
 
     CBaseSensor* pCurSensor = GetSnsInstance(nSnsID);
@@ -638,7 +638,7 @@ AX_VOID CSensorMgr::SwitchSnsMode(AX_U32 nSnsID, AX_U32 nSnsMode) {
 
     {
         AX_U8 nDevID = pCurSensor->GetSnsConfig().nDevID;
-        pCurSensor->ChangeHdrMode(nSnsMode);
+        pCurSensor->ChangeHdrMode(nSnsMode, nHdrRatio);
         m_mapDev2ThreadParam[nDevID].eHdrMode = (AX_SNS_HDR_MODE_E)nSnsMode;
         pCurSensor->Init();
     }

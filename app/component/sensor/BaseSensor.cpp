@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -161,9 +161,19 @@ AX_BOOL CBaseSensor::OpenAll() {
     AX_S32 nRet = 0;
     AX_U8 nDevID = m_tSnsCfg.nDevID;
 
-    // SNS reset sensor obj
     for (auto &m : m_mapPipe2Attr) {
         AX_U8 nPipeID = m.first;
+
+        // open sensor mclk
+        nRet = AX_ISP_OpenSnsClk(m_tSnsClkAttr.nSnsClkIdx, m_tSnsClkAttr.eSnsClkRate);
+        if (0 != nRet) {
+            LOG_M_E(SENSOR, "[%d] AX_ISP_OpenSnsClk[%d] failed, ret=0x%x.", nPipeID, m_tSnsClkAttr.nSnsClkIdx, nRet);
+            return AX_FALSE;
+        } else {
+            LOG_M_C(SENSOR, "[%d] AX_ISP_OpenSnsClk[%d]", nPipeID, m_tSnsClkAttr.nSnsClkIdx);
+        }
+
+        // SNS reset sensor obj
         if ((AX_U8)(-1) != m_tSnsCfg.nResetGpioNum) {
             if (!ResetSensorObj(nPipeID, m_tSnsCfg.nResetGpioNum)) {
                 LOG_M_E(SENSOR, "ResetSensorObj failed, ret=0x%x.", nRet);
@@ -241,6 +251,7 @@ AX_BOOL CBaseSensor::OpenAll() {
 
         switch (m_tSnsAttr.eSnsMode) {
             case AX_SNS_LINEAR_MODE:
+            case AX_SNS_LINEAR_ONLY_MODE:
                 tDevBindPipe.nHDRSel[i] = 0x1;
                 break;
             case AX_SNS_HDR_2X_MODE:
@@ -330,27 +341,14 @@ AX_BOOL CBaseSensor::OpenAll() {
     for (auto &m : m_mapPipe2Attr) {
         AX_U8 nPipeID = m.first;
         /* Todo: SDR=4 ; HDR=5*/
-        m_tSnsAttr.nSettingIndex = m_tSnsCfg.arrSettingIndex[m_tSnsCfg.eSensorMode];
+        if (IS_SNS_LINEAR_MODE(m_tSnsCfg.eSensorMode)) {
+            m_tSnsAttr.nSettingIndex = m_tSnsCfg.arrSettingIndex[AX_SNS_LINEAR_MODE];
+        } else {
+            m_tSnsAttr.nSettingIndex = m_tSnsCfg.arrSettingIndex[m_tSnsCfg.eSensorMode];
+        }
 
         // step 12: SetSnsAttr
         if (!SetSnsAttr(nPipeID, m_tSnsAttr)) {
-            return AX_FALSE;
-        }
-
-        // step 13: AX_ISP_OpenSnsClk
-        nRet = AX_ISP_OpenSnsClk(m_tSnsClkAttr.nSnsClkIdx, m_tSnsClkAttr.eSnsClkRate);
-        if (0 != nRet) {
-            LOG_M_E(SENSOR, "[%d] AX_ISP_OpenSnsClk[%d] failed, ret=0x%x.", nPipeID, m_tSnsClkAttr.nSnsClkIdx, nRet);
-            return AX_FALSE;
-        } else {
-            LOG_M_C(SENSOR, "[%d] AX_ISP_OpenSnsClk[%d]", nPipeID, m_tSnsClkAttr.nSnsClkIdx);
-        }
-
-        // step 14: AX_ISP_ResetSensor
-        AX_U32 nResetGpio = m_tSnsCfg.nResetGpioNum;  // COMMON_HW_GetSensorResetGpioNum(nDevID)
-        nRet = AX_ISP_ResetSensor(nPipeID, nResetGpio);
-        if (0 != nRet) {
-            LOG_M_E(SENSOR, "AX_ISP_ResetSensor failed, ret=0x%x.\n", nRet);
             return AX_FALSE;
         }
     }
@@ -359,7 +357,7 @@ AX_BOOL CBaseSensor::OpenAll() {
         AX_U8 nPipeID = m_tSnsCfg.arrPipeAttr[i].nPipeID;
         vector<string> vecPipeTuningBin = GetSnsConfig().arrPipeAttr[i].vecTuningBin;
 
-        // step 15: AX_ISP_Create
+        // step 13: AX_ISP_Create
         nRet = AX_ISP_Create(nPipeID);
         if (0 != nRet) {
             LOG_M_E(SENSOR, "[%d] AX_ISP_Create failed, ret=0x%x.", nPipeID, nRet);
@@ -368,15 +366,15 @@ AX_BOOL CBaseSensor::OpenAll() {
             LOG_M_C(SENSOR, "[%d] AX_ISP_Create", nPipeID);
         }
 
-        // step 16: RegisterAlgo Callback
+        // step 14: RegisterAlgo Callback
         if (!m_algWrapper.RegisterAlgoToSensor(m_pSnsObj, nPipeID)) {
             LOG_M_E(SENSOR, "RegisterAlgoToSensor failed.");
             return AX_FALSE;
         }
 
-        // step 17: AX_ISP_LoadBinParams
+        // step 15: AX_ISP_LoadBinParams
         for (AX_U8 j = 0; j < vecPipeTuningBin.size(); j++) {
-            std::string strKey = m_tSnsCfg.eSensorMode == AX_SNS_LINEAR_MODE ? SDRKEY : HDRKEY;
+            std::string strKey = IS_SNS_LINEAR_MODE(m_tSnsCfg.eSensorMode) ? SDRKEY : HDRKEY;
             if (!vecPipeTuningBin[j].empty()) {
                 LOG_MM_I(SENSOR, "Try load %s",vecPipeTuningBin[j].c_str());
                 if (0 != access(vecPipeTuningBin[j].data(), F_OK)) {
@@ -397,7 +395,7 @@ AX_BOOL CBaseSensor::OpenAll() {
             }
         }
 
-        // step 18: AX_ISP_Open
+        // step 16: AX_ISP_Open
         nRet = AX_ISP_Open(nPipeID);
         if (0 != nRet) {
             LOG_M_E(SENSOR, "[%d] AX_ISP_Open failed, ret=0x%x.", nPipeID, nRet);
@@ -414,11 +412,18 @@ AX_BOOL CBaseSensor::OpenAll() {
             AX_VIN_CHN_ATTR_T &tChnAttr = m_mapPipe2ChnAttr[nPipeID][j];
 
             AX_VIN_CHN_ATTR_T tChnAttr2 = tChnAttr;
-            // step 19: AX_VIN_SetChnAttr
+            // step 17: AX_VIN_SetChnAttr
             nRet = AX_VIN_SetChnAttr(nPipeID, (AX_VIN_CHN_ID_E)j, &tChnAttr2);
             if (0 != nRet) {
                 LOG_M_E(SENSOR, "[%d] AX_VIN_SetChnAttr failed, ret=0x%x.", nPipeID, nRet);
                 return AX_FALSE;
+            }
+
+            if (m_tSnsCfg.arrPipeAttr[i].arrChannelAttr[j].eFrmMode == AX_VIN_FRAME_MODE_RING) {
+                nRet = AX_VIN_SetChnFrameMode(nPipeID, (AX_VIN_CHN_ID_E)j, m_tSnsCfg.arrPipeAttr[i].arrChannelAttr[j].eFrmMode);
+                if (0 != nRet) {
+                    LOG_M_E(SENSOR, "[%d] AX_VIN_SetChnFrameMode[%d] failed, ret=0x%x.", nPipeID, j, nRet);
+                }
             }
 
             if (m_tSnsCfg.bMirror) {
@@ -438,14 +443,25 @@ AX_BOOL CBaseSensor::OpenAll() {
                     }
                 }
 
-                // step 20: AX_VIN_EnableChn
-                LOG_M_I(SENSOR, "AX_VIN_EnableChn [%d] ...", j);
-                nRet = AX_VIN_EnableChn(nPipeID, (AX_VIN_CHN_ID_E)j);
-                if (0 != nRet) {
-                    LOG_M_E(SENSOR, "[%d] AX_VIN_EnableChn[%d] failed, ret=0x%x.", nPipeID, j, nRet);
-                    return AX_FALSE;
-                } else {
-                    LOG_M_C(SENSOR, "[%d] AX_VIN_EnableChn[%d]", nPipeID, j);
+                // step 18: AX_VIN_EnableChn
+                std::map<AX_U8, SENSOR_VINIVPS_CFG_T> mapVinIvps = CSensorOptionHelper::GetInstance()->GetMapVinIvps();
+                for (auto& m : mapVinIvps) {
+                    AX_U8 nVinId = m.first;
+                    AX_U8 nIvpsId = m.second.nIvpsGrp;
+                    AX_S8 nVinIvpsMode = m.second.nVinIvpsMode;
+                    if ((nVinId == nPipeID && AX_ITP_ONLINE_VPP == (AX_VIN_IVPS_MODE_E)nVinIvpsMode)
+                        && !m_tSnsCfg.arrPipeAttr[i].bTuning) {
+                        LOG_M_C(SENSOR, "[%d] ITP_ONLINE_VPP[%d] ...", nPipeID, nIvpsId);
+                    } else {
+                        LOG_M_I(SENSOR, "AX_VIN_EnableChn[%d] ...", j);
+                        nRet = AX_VIN_EnableChn(nPipeID, (AX_VIN_CHN_ID_E)j);
+                        if (0 != nRet) {
+                            LOG_M_E(SENSOR, "[%d] AX_VIN_EnableChn[%d] failed, ret=0x%x.", nPipeID, j, nRet);
+                            return AX_FALSE;
+                        } else {
+                            LOG_M_C(SENSOR, "[%d] AX_VIN_EnableChn[%d]", nPipeID, j);
+                        }
+                    }
                 }
             }
         }
@@ -454,14 +470,16 @@ AX_BOOL CBaseSensor::OpenAll() {
     for (AX_U8 i = 0; i < GetPipeCount(); i++) {
         AX_U8 nPipeID = m_tSnsCfg.arrPipeAttr[i].nPipeID;
 
-        // step 21: AX_VIN_StartPipe
+        // step 19: AX_VIN_StartPipe
         nRet = AX_VIN_StartPipe(nPipeID);
         if (0 != nRet) {
             LOG_M_E(SENSOR, "AX_VIN_StartPipe failed, ret=0x%x.", nRet);
             return AX_FALSE;
+        } else {
+            LOG_M_C(SENSOR, "[%d] AX_VIN_StartPipe", nPipeID);
         }
 
-        // step 22: AX_ISP_Start
+        // step 20: AX_ISP_Start
         nRet = AX_ISP_Start(nPipeID);
         if (0 != nRet) {
             LOG_M_E(SENSOR, "[%d] AX_ISP_Start failed, ret=0x%x.", nPipeID, nRet);
@@ -471,7 +489,7 @@ AX_BOOL CBaseSensor::OpenAll() {
         }
     }
 
-    // step 23: AX_VIN_EnableDev
+    // step 21: AX_VIN_EnableDev
     nRet = AX_VIN_EnableDev(nDevID);
     if (0 != nRet) {
         LOG_M_E(SENSOR, "[%d] AX_VIN_EnableDev failed, ret=0x%x.", nDevID, nRet);
@@ -484,7 +502,7 @@ AX_BOOL CBaseSensor::OpenAll() {
         SetMultiSnsSync(AX_TRUE);
     }
 
-    // step 24: AX_ISP_StreamOn
+    // step 22: AX_ISP_StreamOn
     for (AX_U8 i = 0; i < GetPipeCount(); i++) {
         AX_U8 nPipeID = m_tSnsCfg.arrPipeAttr[i].nPipeID;
         nRet = AX_ISP_StreamOn(nPipeID);
@@ -596,12 +614,23 @@ AX_BOOL CBaseSensor::CloseAll() {
         // step 6: AX_VIN_DisableChn
         for (AX_U8 j = AX_VIN_CHN_ID_MAIN; j < AX_VIN_CHN_ID_MAX; j++) {
             if (m_tSnsCfg.arrPipeAttr[i].arrChannelAttr[j].bChnEnable) {
-                nRet = AX_VIN_DisableChn(nPipeID, (AX_VIN_CHN_ID_E)j);
-                if (0 != nRet) {
-                    LOG_M_E(SENSOR, "[%d] AX_VIN_DisableChn[%d] failed, ret=0x%x.", nPipeID, j, nRet);
-                    return AX_FALSE;
-                } else {
-                    LOG_M_C(SENSOR, "[%d] AX_VIN_DisableChn[%d]", nPipeID, j);
+                std::map<AX_U8, SENSOR_VINIVPS_CFG_T> mapVinIvps = CSensorOptionHelper::GetInstance()->GetMapVinIvps();
+                for (auto& m : mapVinIvps) {
+                    AX_U8 nVinId = m.first;
+                    AX_U8 nIvpsId = m.second.nIvpsGrp;
+                    AX_S8 nVinIvpsMode = m.second.nVinIvpsMode;
+                    if ((nVinId == nPipeID && AX_ITP_ONLINE_VPP == (AX_VIN_IVPS_MODE_E)nVinIvpsMode)
+                        && !m_tSnsCfg.arrPipeAttr[i].bTuning) {
+                        LOG_M_C(SENSOR, "[%d] ITP_ONLINE_VPP[%d] ...", nPipeID, nIvpsId);
+                    } else {
+                        nRet = AX_VIN_DisableChn(nPipeID, (AX_VIN_CHN_ID_E)j);
+                        if (0 != nRet) {
+                            LOG_M_E(SENSOR, "[%d] AX_VIN_DisableChn[%d] failed, ret=0x%x.", nPipeID, j, nRet);
+                            return AX_FALSE;
+                        } else {
+                            LOG_M_C(SENSOR, "[%d] AX_VIN_DisableChn[%d]", nPipeID, j);
+                        }
+                    }
                 }
             }
         }
@@ -669,6 +698,12 @@ AX_BOOL CBaseSensor::CloseAll() {
 }
 
 AX_BOOL CBaseSensor::RestoreSnsAttr() {
+    // set hdr ratio
+    if (IS_SNS_HDR_MODE(m_tSnsCfg.eSensorMode)
+        && m_tSnsCfg.tHdrRatioAttr.bEnable) {
+        SetHdrRatio(m_tSnsCfg.tHdrRatioAttr.nRatio);
+    }
+
     // scene mode
     UpdateSceneMode();
 
@@ -996,10 +1031,11 @@ AX_BOOL CBaseSensor::ChangeDaynightMode(AX_DAYNIGHT_MODE_E eDaynightMode) {
     return AX_TRUE;
 }
 
-AX_VOID CBaseSensor::ChangeHdrMode(AX_U32 nSnsMode) {
+AX_VOID CBaseSensor::ChangeHdrMode(AX_U32 nSnsMode, AX_U8 nHdrRatio) {
     std::lock_guard<std::mutex> _ApiLck(m_mtx);
 
     m_tSnsCfg.eSensorMode = (AX_SNS_HDR_MODE_E)nSnsMode;
+    m_tSnsCfg.tHdrRatioAttr.nRatio = nHdrRatio;
     return;
 }
 
@@ -1320,6 +1356,33 @@ AX_BOOL CBaseSensor::UpdateSnsAttr() {
             return AX_FALSE;
         }
     }
+    return AX_TRUE;
+}
+
+AX_BOOL CBaseSensor::SetHdrRatio(AX_U8 nHdrRatio) {
+    std::lock_guard<std::mutex> _ApiLck(m_mtx);
+
+    m_tSnsCfg.tHdrRatioAttr.nRatio = nHdrRatio;
+
+    if (IS_SNS_HDR_MODE(m_tSnsCfg.eSensorMode)
+        && m_tSnsCfg.tHdrRatioAttr.bEnable) {
+        if (!m_bSensorStarted) {
+            return AX_TRUE;
+        }
+
+        LOG_MM_C(SENSOR, "Ratio[%d]", nHdrRatio);
+
+        string strBinName;
+
+        if (nHdrRatio == 0) {
+            strBinName = m_tSnsCfg.tHdrRatioAttr.strHdrRatioDefaultBin;
+        } else {
+            strBinName = m_tSnsCfg.tHdrRatioAttr.strHdrRatioModeBin;
+        }
+
+        return LoadParams(strBinName);
+    }
+
     return AX_TRUE;
 }
 
@@ -1920,6 +1983,10 @@ AX_BOOL CBaseSensor::SetShutterMode(SNS_SHUTTER_MODE_E eShutterMode) {
 AX_BOOL CBaseSensor::LoadBinParams(const std::string &strBinName) {
     std::lock_guard<std::mutex> _ApiLck(m_mtx);
 
+    return LoadParams(strBinName);
+}
+
+AX_BOOL CBaseSensor::LoadParams(const std::string &strBinName) {
     if (access(strBinName.c_str(), F_OK) != 0) {
         LOG_MM_C(SENSOR, "(%s) not exist.", strBinName.c_str());
     } else {
@@ -1929,11 +1996,11 @@ AX_BOOL CBaseSensor::LoadBinParams(const std::string &strBinName) {
             AX_S32 nRet = AX_ISP_LoadBinParams(nPipeID, strBinName.c_str());
 
             if (0 != nRet) {
-                LOG_M_E(SENSOR, "AX_ISP_LoadBinParams (%s) failed, ret=0x%x.", strBinName.c_str(), nRet);
+                LOG_M_E(SENSOR, "(%s) loaded failed, ret=0x%x.", strBinName.c_str(), nRet);
 
                 return AX_FALSE;
             } else {
-                LOG_MM_C(SENSOR, "AX_ISP_LoadBinParams (%s) successfully.", strBinName.c_str());
+                LOG_MM_C(SENSOR, "(%s) loaded.", strBinName.c_str());
             }
         }
     }
@@ -1948,7 +2015,6 @@ AX_BOOL CBaseSensor::GetSnsTemperature(AX_F32 &fTemperature) {
         return AX_FALSE;
     }
 
-#if 0
     for (AX_U32 i = 0; i < m_tSnsCfg.nPipeCount; i++) {
         AX_U8 nPipeId = m_tSnsCfg.arrPipeAttr[i].nPipeID;
 
@@ -1964,7 +2030,6 @@ AX_BOOL CBaseSensor::GetSnsTemperature(AX_F32 &fTemperature) {
             }
         }
     }
-#endif
 
     return AX_FALSE;
 }

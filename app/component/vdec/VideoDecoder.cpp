@@ -1,10 +1,10 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2024 Axera Semiconductor (Shanghai) Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
- * This source file is the property of Axera Semiconductor (Shanghai) Co., Ltd. and
+ * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
- * written consent of Axera Semiconductor (Shanghai) Co., Ltd.
+ * written consent of Axera Semiconductor Co., Ltd.
  *
  **************************************************************************************************/
 
@@ -19,7 +19,7 @@ CVideoDecoder::CVideoDecoder(VDEC_GRP_CONFIG_T &tConfig) : CAXStage((std::string
 
 AX_BOOL CVideoDecoder::Init() {
     LOG_MM_C(VDEC, "+++");
-
+    memset(&m_stAttr, 0, sizeof(m_stAttr));
     m_stAttr.enCodecType = m_tGrpInfo.ePayloadType;
     m_stAttr.enOutOrder = AX_VDEC_OUTPUT_ORDER_DISP;
     m_stAttr.u32PicWidth = m_tGrpInfo.nWidth;   /* pic width */
@@ -88,20 +88,20 @@ AX_BOOL CVideoDecoder::Start() {
         return AX_FALSE;
     }
 #endif
-    m_tGrpInfo.bStarted = AX_TRUE;
+    bRunning = AX_TRUE;
     LOG_MM_C(VDEC, "---");
 
     return AX_TRUE;
 }
 
 AX_BOOL CVideoDecoder::Send(AX_U8 *pData, AX_U32 nLen) {
-    LOG_MM_D(VDEC, "+++");
-    AX_U32 nStep = 1000000 / m_tGrpInfo.fFrameRate;
-    static AX_U64 u64PTS = 0;
-    if (!m_tGrpInfo.bStarted) {
+    if (!bRunning) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
         return AX_TRUE;
     }
+    AX_U32 nStep = 1000000 / m_tGrpInfo.fFrameRate;
+    static AX_U64 u64PTS = 0;
+
     AX_VDEC_STREAM_T tStream;
     memset(&tStream, 0, sizeof(tStream));
     tStream.u32StreamPackLen = nLen;
@@ -122,8 +122,6 @@ AX_BOOL CVideoDecoder::Send(AX_U8 *pData, AX_U32 nLen) {
         return AX_FALSE;
     }
     u64PTS += nStep;
-    LOG_MM_D(VDEC, "---");
-
     return AX_TRUE;
 }
 
@@ -144,7 +142,11 @@ AX_BOOL CVideoDecoder::Stop() {
         LOG_MM_E(VDEC, "AX_VDEC_StopRecvStream failed! ret:0x%x", ret);
     }
 
-    m_tGrpInfo.bStarted = AX_FALSE;
+    ret = AX_VDEC_ResetGrp(m_nGrp);
+    if (ret != AX_SUCCESS) {
+        LOG_MM_E(VDEC, "AX_VDEC_ResetGrp failed! ret:0x%x", ret);
+    }
+
     LOG_MM_C(VDEC, "---");
 
     return ret == AX_SUCCESS ? AX_TRUE : AX_FALSE;
@@ -193,7 +195,7 @@ AX_S32 CVideoDecoder::InitPool() {
 
     memset(&stPoolConfig, 0, sizeof(AX_POOL_CONFIG_T));
     stPoolConfig.MetaSize = 512;
-    stPoolConfig.BlkCnt = m_tGrpInfo.nPoolDepth;
+    stPoolConfig.BlkCnt = m_tGrpInfo.nFrameOutFifoDepth;
     stPoolConfig.BlkSize = nBufferSize;
     stPoolConfig.CacheMode = AX_POOL_CACHE_MODE_NONCACHE;
     memset(stPoolConfig.PartitionName, 0, sizeof(stPoolConfig.PartitionName));
@@ -212,8 +214,8 @@ AX_S32 CVideoDecoder::InitPool() {
             break;
         }
 
-        LOG_MM_I(VDEC, "FramePoolInit successfully m_nPool: %d nPoolDepth:%d, nBufferSize:%d ", m_nPool, m_tGrpInfo.nPoolDepth,
-                 nBufferSize);
+        LOG_MM_I(VDEC, "FramePoolInit successfully m_nPool: %d nFrameOutFifoDepth:%d, nBufferSize:%d ", m_nPool,
+                 m_tGrpInfo.nFrameOutFifoDepth, nBufferSize);
     } while (0);
 
     return s32Ret;

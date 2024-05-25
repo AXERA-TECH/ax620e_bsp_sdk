@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -15,6 +15,7 @@
 #include "IObserver.h"
 #include "ax_venc_comm.h"
 #include "ax_venc_rc.h"
+#include "AXAlgo.hpp"
 
 #define MAX_VENC_CHANNEL_NUM (16)
 #define APP_ENCODER_TYPE_MAX 4
@@ -52,6 +53,7 @@ typedef struct _stRCInfo {
     AX_S32 nIntraQpDelta{APP_ENCODE_PARSE_INVALID};
     AX_S32 nDeBreathQpDelta{APP_ENCODE_PARSE_INVALID};
     AX_S32 nBitrate{APP_ENCODE_PARSE_INVALID};
+    AX_U32 nGop{APP_ENCODE_PARSE_INVALID};
 
     AX_U32 nMinQpDelta{APP_ENCODE_PARSE_INVALID};
     AX_U32 nMaxQpDelta{APP_ENCODE_PARSE_INVALID};
@@ -89,7 +91,7 @@ typedef struct _stVideoConfig {
     AX_S32 nChannel{APP_ENCODE_PARSE_INVALID};
     AX_PAYLOAD_TYPE_E ePayloadType{PT_BUTT};
     AX_VENC_RC_MODE_E eRcType{AX_VENC_RC_MODE_BUTT};
-    AX_U32 nGOP{APP_ENCODE_PARSE_INVALID};
+    AX_U32 nGop{APP_ENCODE_PARSE_INVALID};
     AX_F32 fSrcFrameRate{APP_ENCODE_PARSE_INVALID};
     AX_F32 fDstFrameRate{APP_ENCODE_PARSE_INVALID};
     AX_S32 nMaxWidth{APP_ENCODE_PARSE_INVALID};
@@ -153,6 +155,9 @@ public:
     AX_BOOL UpdateRcInfo(RC_INFO_T& tRcInfo);
     AX_BOOL UpdateLinkMode(AX_BOOL bLink);
     AX_BOOL UpdatePayloadType(AX_PAYLOAD_TYPE_E ePayloadType);
+    AX_BOOL UpdateSvcParam(const AX_APP_ALGO_SVC_PARAM_T& tParam);
+    AX_BOOL UpdateSvcRegion(AX_VENC_SVC_REGION_T& tRegion);
+
     VIDEO_CONFIG_T* GetChnCfg() {
         return &m_tVideoConfig;
     }
@@ -181,6 +186,10 @@ public:
         m_bSend = bSend;
     }
 
+    const AX_APP_ALGO_SVC_PARAM_T& GetSvcParam() {
+        return m_tSvcParam;
+    }
+
 protected:
     virtual AX_BOOL ProcessFrame(CAXFrame* pFrame) override;
     AX_VOID NotifyAll(AX_U32 nChannel, AX_VOID* pStream);
@@ -189,6 +198,7 @@ protected:
     AX_VOID StartWorkThread();
     AX_VOID StopWorkThread();
     AX_BOOL InitRcParams(VIDEO_CONFIG_T& tConfig);
+    AX_BOOL UpdateSvcParamInternal(const AX_APP_ALGO_SVC_PARAM_T& tParam);
 
 private:
     AX_BOOL GetResolutionByRotate(AX_U8 nRotation, AX_U32& nWidth, AX_U32& nHeight);
@@ -199,10 +209,12 @@ private:
     AX_VENC_CHN_ATTR_T m_tVencChnAttr;
     APP_VENC_RC_PARAMS_T m_tVencRcParams;
     APP_ENC_RC_CONFIG m_CurEncCfg;
+    AX_U32 m_CurSvcRegionNum{0};
+    AX_APP_ALGO_SVC_PARAM_T m_tSvcParam;
 
     std::thread m_hGetThread;
     AX_BOOL m_bGetThreadRunning;
-    AX_BOOL m_bSend{AX_TRUE};
+    AX_BOOL m_bSend{AX_FALSE};
 
     std::vector<IObserver*> m_vecObserver;
 

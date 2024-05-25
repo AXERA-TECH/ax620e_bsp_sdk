@@ -1,6 +1,6 @@
 /**************************************************************************************************
  *
- * Copyright (c) 2019-2023 Axera Semiconductor Co., Ltd. All Rights Reserved.
+ * Copyright (c) 2019-2024 Axera Semiconductor Co., Ltd. All Rights Reserved.
  *
  * This source file is the property of Axera Semiconductor Co., Ltd. and
  * may not be copied or distributed in any isomorphic form without the prior
@@ -36,7 +36,7 @@ AX_BOOL CIVESStage::Init(AX_U32 nGrp) {
     LOG_MM_I(IVES, "nSnsID:%d, width:%d, height:%d, frameRate:%f, %d, %d, %d", nSnsID, m_stAttr.nWidth, m_stAttr.nHeight,
              m_stAttr.fSrcFramerate, m_bMDEnable, m_bODEnable, m_bSCDEnable);
     /*init MD */
-    if (m_bMDEnable) {
+    {
         m_spMDInstance.reset(new CMD());
         if (!m_spMDInstance->Startup(nSnsID, nFrmW, nFrmH)) {
             return AX_FALSE;
@@ -44,10 +44,13 @@ AX_BOOL CIVESStage::Init(AX_U32 nGrp) {
 
         AX_APP_ALGO_MOTION_PARAM_T stParam = ALGO_MD_PARAM(nSnsID);
         m_spMDInstance->SetConfig(stParam);
+        if (!m_bMDEnable) {
+            m_spMDInstance->AddArea(stParam);
+        }
     }
 
     /*init OD */
-    if (m_bODEnable) {
+    {
         m_spODInstance.reset(new COD());
         if (!m_spODInstance->Startup(nSnsID, (AX_U32)m_stAttr.fSrcFramerate, nFrmW, nFrmH)) {
             return AX_FALSE;
@@ -55,10 +58,13 @@ AX_BOOL CIVESStage::Init(AX_U32 nGrp) {
 
         AX_APP_ALGO_OCCLUSION_PARAM_T stParam = ALGO_OD_PARAM(nSnsID);
         m_spODInstance->SetConfig(stParam);
+        if (!m_bODEnable) {
+            m_spODInstance->AddArea();
+        }
     }
 
     /*init SCD */
-    if (m_bSCDEnable) {
+    {
         m_spSCDInstance.reset(new CSCD());
         if (!m_spSCDInstance->Startup(nSnsID, nFrmW, nFrmH)) {
             return AX_FALSE;
@@ -110,21 +116,21 @@ AX_BOOL CIVESStage::SetScdConfig(const AX_APP_ALGO_SCENE_CHANGE_PARAM_T &stConfi
 AX_BOOL CIVESStage::InitModule() {
     AX_S32 ret = AX_SUCCESS;
 
-    if (CAlgoOptionHelper::GetInstance()->IsEnableMD()) {
+    {
         ret = AX_IVES_MD_Init();
         if (AX_SUCCESS != ret) {
             LOG_M_E(IVES, "AX_IVES_MD_Init() fail, ret = 0x%x", ret);
             return AX_FALSE;
         }
     }
-    if (CAlgoOptionHelper::GetInstance()->IsEnableOD()) {
+    {
         ret = AX_IVES_OD_Init();
         if (AX_SUCCESS != ret) {
             LOG_M_E(IVES, "AX_IVES_OD_Init() fail, ret = 0x%x", ret);
             return AX_FALSE;
         }
     }
-    if (CAlgoOptionHelper::GetInstance()->IsEnableSCD()) {
+    {
         ret = AX_IVES_SCD_Init();
         if (AX_SUCCESS != ret) {
             LOG_M_E(IVES, "AX_IVES_SCD_Init() fail, ret = 0x%x", ret);
@@ -139,22 +145,21 @@ AX_BOOL CIVESStage::DeinitModule() {
     LOG_MM_C(IVES, "+++");
 
     AX_S32 ret = AX_SUCCESS;
-    // AX620E TODO: for deinit module?
-    if (CAlgoOptionHelper::GetInstance()->IsEnableMD()) {
+    {
         ret = AX_IVES_MD_DeInit();
         if (AX_SUCCESS != ret) {
             LOG_M_E(IVES, "AX_IVES_MD_Init() fail, ret = 0x%x", ret);
             return AX_FALSE;
         }
     }
-    if (CAlgoOptionHelper::GetInstance()->IsEnableOD()) {
+    {
         ret = AX_IVES_OD_DeInit();
         if (AX_SUCCESS != ret) {
             LOG_M_E(IVES, "AX_IVES_OD_Init() fail, ret = 0x%x", ret);
             return AX_FALSE;
         }
     }
-    if (CAlgoOptionHelper::GetInstance()->IsEnableSCD()) {
+    {
         ret = AX_IVES_SCD_DeInit();
         if (AX_SUCCESS != ret) {
             LOG_M_E(IVES, "AX_IVES_SCD_Init() fail, ret = 0x%x", ret);
@@ -175,7 +180,9 @@ AX_BOOL CIVESStage::Start(AX_VOID) {
 }
 
 AX_BOOL CIVESStage::SendFrame(AX_U32 nSnsID, CAXFrame *pAxFrame) {
-    if (m_spFramectrl && m_spFramectrl->FramerateCtrl()) {
+    AX_BOOL bEnable = (m_bMDEnable || m_bODEnable || m_bSCDEnable) ? AX_TRUE : AX_FALSE;
+    if (!bEnable ||
+       (m_spFramectrl && m_spFramectrl->FramerateCtrl())) {
         pAxFrame->FreeMem();
         return AX_TRUE;
     }
@@ -198,6 +205,7 @@ AX_BOOL CIVESStage::ProcessFrame(CAXFrame *pAxFrame) {
         }
 
         IVES_RESULT_T ives;
+        ives.u64Pts = pAxFrame->stFrame.stVFrame.stVFrame.u64PTS;
         ives.nSeqNum = pAxFrame->stFrame.stVFrame.stVFrame.u64SeqNum;
         ives.nW = pAxFrame->stFrame.stVFrame.stVFrame.u32Width;
         ives.nH = pAxFrame->stFrame.stVFrame.stVFrame.u32Height;
@@ -216,7 +224,7 @@ AX_BOOL CIVESStage::ProcessFrame(CAXFrame *pAxFrame) {
 
         CIvesResult::GetInstance()->Get(nSnsID, ives);
         NotifyAll(nSnsID, 0, &ives);
-        LOG_MM_D(IVES, " Seq: %lld, w:%d, h:%d, size:%u, PhyAddr:%lld", pAxFrame->stFrame.stVFrame.stVFrame.u64SeqNum,
+        LOG_MM_D(IVES, " Seq: %llu, w:%d, h:%d, size:%u, PhyAddr:%llu", pAxFrame->stFrame.stVFrame.stVFrame.u64SeqNum,
                  pAxFrame->stFrame.stVFrame.stVFrame.u32Width, pAxFrame->stFrame.stVFrame.stVFrame.u32Height,
                  pAxFrame->stFrame.stVFrame.stVFrame.u32FrameSize, pAxFrame->stFrame.stVFrame.stVFrame.u64PhyAddr[0]);
     } while (0);
