@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: build_app_samples
+name: build_arm_uclibc
 
 # Controls when the workflow will run
 on:
@@ -33,8 +33,8 @@ jobs:
       
       - name: prepare gcc and build
         run: |
-          wget https://developer.arm.com/-/media/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu.tar.xz
-          tar -xf gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu.tar.xz
-          export PATH=$PATH:$PWD/gcc-arm-9.2-2019.12-x86_64-aarch64-none-linux-gnu/bin/
-          aarch64-none-linux-gnu-gcc -v
-          make -C msp/sample/ p=AX630C_emmc_arm64_k419 -j16
+          wget https://github.com/AXERA-TECH/ax620q_bsp_sdk/releases/download/v2.0.0/arm-AX620E-linux-uclibcgnueabihf_V3_20240320.tgz
+          tar zxvf arm-AX620E-linux-uclibcgnueabihf_V3_20240320.tgz
+          export PATH=$PATH:$PWD/arm-AX620E-linux-uclibcgnueabihf/bin/
+          arm-AX620E-linux-uclibcgnueabihf-gcc -v
+          make -C msp/sample/ p=AX620Q_nand_arm32_k419 -j16
