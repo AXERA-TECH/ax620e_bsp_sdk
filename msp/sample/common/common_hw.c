@@ -12,7 +12,7 @@ AX_S8 COMMON_ISP_GetI2cDevNode(AX_U8 nDevId)
 {
     switch (AX_SYS_GetChipType()) {
     case AX620Q_CHIP:
-            return 0;
+            return 6;
     break;
     case AX630C_CHIP:
         if (nDevId == 0)

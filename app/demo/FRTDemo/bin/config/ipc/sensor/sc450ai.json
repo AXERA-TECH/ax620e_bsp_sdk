@@ -11,7 +11,7 @@
             "clk_id": 0,
             "lane_num": 4,
             "bus_type": 0,
-            "dev_node": 0,
+            "dev_node": 6,
             "i2c_addr": 48,
             "reset_gpio_num": 97,
             "sns_framerate": 30,
