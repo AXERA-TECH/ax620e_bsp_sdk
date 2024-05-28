@@ -26,6 +26,13 @@ COMMON_SYS_POOL_CFG_T gtSysCommPoolSingleOs04a10Sdr[] = {
     {720, 576, 720, AX_FORMAT_YUV420_SEMIPLANAR, 3},    /* vin nv21/nv21 use */
 };
 
+COMMON_SYS_POOL_CFG_T gtSysCommPoolSingleOs450aiSdr[] = {
+    {2688, 1520, 2688, AX_FORMAT_YUV420_SEMIPLANAR, 3, AX_COMPRESS_MODE_LOSSY, 4},    /* vin nv21/nv21 use */
+    {2688, 1520, 2688, AX_FORMAT_YUV420_SEMIPLANAR, 4},    /* vin nv21/nv21 use */
+    {1920, 1080, 1920, AX_FORMAT_YUV420_SEMIPLANAR, 3},    /* vin nv21/nv21 use */
+    {720, 576, 720, AX_FORMAT_YUV420_SEMIPLANAR, 3},    /* vin nv21/nv21 use */
+};
+
 /* private pool */
 COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleDummySdr[] = {
     {2688, 1520, 2688, AX_FORMAT_BAYER_RAW_16BPP, 10},
@@ -34,6 +41,11 @@ COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleDummySdr[] = {
 COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleOs04a10Sdr[] = {
     {2688, 1520, 2688, AX_FORMAT_BAYER_RAW_10BPP_PACKED, 12, AX_COMPRESS_MODE_LOSSY, 4},      /* vin raw16 use */
 };
+
+COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleOs450aiSdr[] = {
+    {2688, 1520, 2688, AX_FORMAT_BAYER_RAW_10BPP_PACKED, 8, AX_COMPRESS_MODE_LOSSY, 4},      /* vin raw10 use */
+};
+
 static SAMPLE_VENC_SELECT_PARA_T gstVencSelectPara;
 
 static AX_CAMERA_T gCams[MAX_CAMERAS] = {0};
@@ -301,6 +313,48 @@ static AX_U32 __sample_case_single_os04a10(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYP
     return 0;
 }
 
+static AX_U32 __sample_case_single_sc450ai(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYPE_E eSnsType,
+        SAMPLE_VIN_PARAM_T *pVinParam, COMMON_SYS_ARGS_T *pCommonArgs)
+{
+    AX_CAMERA_T *pCam = NULL;
+    COMMON_VIN_MODE_E eSysMode = pVinParam->eSysMode;
+    AX_SNS_HDR_MODE_E eHdrMode = pVinParam->eHdrMode;
+    AX_S32 j = 0;
+    SAMPLE_LOAD_RAW_NODE_E eLoadRawNode = pVinParam->eLoadRawNode;
+    pCommonArgs->nCamCnt = 1;
+
+    pCam = &pCamList[0];
+    pCam->nPipeId = 0;
+    COMMON_VIN_GetSnsConfig(eSnsType, &pCam->tMipiAttr, &pCam->tSnsAttr,
+                                &pCam->tSnsClkAttr, &pCam->tDevAttr,
+                                &pCam->tPipeAttr[pCam->nPipeId], pCam->tChnAttr);
+    pCam->nDevId = 0;
+    pCam->nRxDev = 0;
+    pCam->tSnsClkAttr.nSnsClkIdx = 0;
+    pCam->tDevBindPipe.nNum =  1;
+    pCam->eLoadRawNode = eLoadRawNode;
+    pCam->tDevBindPipe.nPipeId[0] = pCam->nPipeId;
+    pCam->ptSnsHdl[pCam->nPipeId] = COMMON_ISP_GetSnsObj(eSnsType);
+    pCam->eBusType = COMMON_ISP_GetSnsBusType(eSnsType);
+    pCam->eInputMode = AX_INPUT_MODE_MIPI;
+    __set_pipe_hdr_mode(&pCam->tDevBindPipe.nHDRSel[0], eHdrMode);
+    __set_vin_attr(pCam, eSnsType, eHdrMode, eSysMode, pVinParam->bAiispEnable);
+    for (j = 0; j < pCam->tDevBindPipe.nNum; j++) {
+        pCam->tPipeInfo[j].ePipeMode = SAMPLE_PIPE_MODE_VIDEO;
+        pCam->tPipeInfo[j].bAiispEnable = pVinParam->bAiispEnable;
+        if (pCam->tPipeInfo[j].bAiispEnable) {
+            if (eHdrMode <= AX_SNS_LINEAR_MODE) {
+                strncpy(pCam->tPipeInfo[j].szBinPath, "/opt/etc/sc450ai_sdr_dual3dnr.bin", sizeof(pCam->tPipeInfo[j].szBinPath));
+            } else {
+                strncpy(pCam->tPipeInfo[j].szBinPath, "/opt/etc/sc450ai_hdr_2x_ainr.bin", sizeof(pCam->tPipeInfo[j].szBinPath));
+            }
+        } else {
+            strncpy(pCam->tPipeInfo[j].szBinPath, "null.bin", sizeof(pCam->tPipeInfo[j].szBinPath));
+        }
+    }
+    return 0;
+}
+
 static AX_U32 __sample_case_config(SAMPLE_VIN_PARAM_T *pVinParam, COMMON_SYS_ARGS_T *pCommonArgs,
                                    COMMON_SYS_ARGS_T *pPrivArgs)
 {
@@ -327,6 +381,23 @@ static AX_U32 __sample_case_config(SAMPLE_VIN_PARAM_T *pVinParam, COMMON_SYS_ARG
         /* cams config */
         __sample_case_single_os04a10(pCamList, eSnsType, pVinParam, pCommonArgs);
         break;
+
+    case SAMPLE_VIN_SINGLE_SC450AI:
+        eSnsType = SMARTSENS_SC450AI;
+        /* comm pool config */
+        __cal_dump_pool(gtSysCommPoolSingleOs450aiSdr, pVinParam->eHdrMode, pVinParam->nDumpFrameNum);
+        pCommonArgs->nPoolCfgCnt = sizeof(gtSysCommPoolSingleOs450aiSdr) / sizeof(gtSysCommPoolSingleOs450aiSdr[0]);
+        pCommonArgs->pPoolCfg = gtSysCommPoolSingleOs450aiSdr;
+
+        /* private pool config */
+        __cal_dump_pool(gtPrivatePoolSingleOs450aiSdr, pVinParam->eHdrMode, pVinParam->nDumpFrameNum);
+        pPrivArgs->nPoolCfgCnt = sizeof(gtPrivatePoolSingleOs450aiSdr) / sizeof(gtPrivatePoolSingleOs450aiSdr[0]);
+        pPrivArgs->pPoolCfg = gtPrivatePoolSingleOs450aiSdr;
+
+        /* cams config */
+        __sample_case_single_sc450ai(pCamList, eSnsType, pVinParam, pCommonArgs);
+        break;
+		
     case SAMPLE_VIN_SINGLE_DUMMY:
     default:
         eSnsType = SAMPLE_SNS_DUMMY;
