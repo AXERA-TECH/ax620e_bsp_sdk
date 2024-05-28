@@ -47,6 +47,8 @@ extern "C"
 #define ARRAY_SIZE(array) sizeof(array) / sizeof(array[0])
 #define ALIGN_UP(x, align) (((x) + ((align)-1)) & ~((align)-1))
 #define DIV_ROUND_UP(n, d) (((n) + (d)-1) / (d))
+#define ALIGN_UP_64(value) ((value + 0x3F) & (~0x3F))
+#define ALIGN_UP_128(value) ((value + 0x7F) & (~0x7F))
 
 #define ALGO_CHN   3
 
