@@ -110,8 +110,10 @@ CLIB				+= -L$(LIVE_PATH)/lib -lliveMedia -lgroupsock -lBasicUsageEnvironment -l
 
 # install
 INSTALL_TARGET	:= $(TARGET)
-MV_TARGET	:= $(INSTALL_TARGET)
+MV_TARGET		:= $(INSTALL_TARGET)
 INSTALL_DIR		:= $(ROOTFS_TARGET_PATH)/bin/
+INSTALL_DATA	:= $(SRC_PATH)/models
+
 
 # link
 LINK = $(CC)

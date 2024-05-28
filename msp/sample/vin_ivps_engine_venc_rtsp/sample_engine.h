@@ -13,11 +13,12 @@
 #include "ax_sys_api.h"
 #include "ax_ivps_api.h"
 
-#define SAMPLE_ENGINE_MODEL_FILE "/opt/data/npu/models/yolov5s.axmodel"
+#define SAMPLE_ENGINE_MODEL_FILE "../data/models/yolov8n.axmodel"
 #define SAMPLE_ENGINE_OBJ_MAX_COUNT 32
 #define INFER_WIDTH     640
-#define INFER_HEIHGT    640
+#define INFER_HEIGHT    640
 #define INFER_FORMAT    AX_FORMAT_RGB888
+#define NUM_CLASSES     80
 
 #ifdef __cplusplus
 extern "C"

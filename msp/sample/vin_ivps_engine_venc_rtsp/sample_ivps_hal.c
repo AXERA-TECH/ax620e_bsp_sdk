@@ -521,8 +521,10 @@ static AX_VOID *IVPS_GetFrameThread(AX_VOID *pArg)
             return (AX_VOID *)0;
         }
 
-        aspect_w[i] = stPipelineAttr.tFilter[i + 1][0].nDstPicWidth * 1.0f / 1920;
-        aspect_h[i] = stPipelineAttr.tFilter[i + 1][0].nDstPicHeight * 1.0f / 1080;
+        // aspect_w[i] = stPipelineAttr.tFilter[i + 1][0].nDstPicWidth * 1.0f / 1920;
+        // aspect_h[i] = stPipelineAttr.tFilter[i + 1][0].nDstPicHeight * 1.0f / 1080;
+        aspect_w[i] = 1.0f;
+        aspect_h[i] = 1.0f;
 
         // printf("aspect ratio[%d]: %f %f\n", i, aspect_w[i], aspect_h[i]);
     }
@@ -549,8 +551,8 @@ static AX_VOID *IVPS_GetFrameThread(AX_VOID *pArg)
         {
             printf("inference failed, ret=%d.\n", ret);
         }
-        if (stResults.obj_count > 0)
-            printf("Detected %d object(s)\n", stResults.obj_count);
+        // if (stResults.obj_count > 0)
+        //     printf("Detected %d object(s)\n", stResults.obj_count);
 
         // draw frame
         for (int i = 0; i < chn_num; i++)

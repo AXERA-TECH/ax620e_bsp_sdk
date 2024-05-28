@@ -37,14 +37,14 @@ COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleOs04a10Sdr[] = {
 };
 
 // SC450AI
-COMMON_SYS_POOL_CFG_T gtSysCommPoolSingleOs450aiSdr[] = {
+COMMON_SYS_POOL_CFG_T gtSysCommPoolSingleSc450aiSdr[] = {
     {2688, 1520, 2688, AX_FORMAT_YUV420_SEMIPLANAR, 3, AX_COMPRESS_MODE_LOSSY, 4},    /* vin nv21/nv21 use */
     {2688, 1520, 2688, AX_FORMAT_YUV420_SEMIPLANAR, 4},    /* vin nv21/nv21 use */
     {1920, 1080, 1920, AX_FORMAT_YUV420_SEMIPLANAR, 3},    /* vin nv21/nv21 use */
     {720, 576, 720, AX_FORMAT_YUV420_SEMIPLANAR, 3},    /* vin nv21/nv21 use */
 };
 
-COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleOs450aiSdr[] = {
+COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleSc450aiSdr[] = {
     {2688, 1520, 2688, AX_FORMAT_BAYER_RAW_10BPP_PACKED, 8, AX_COMPRESS_MODE_LOSSY, 4},      /* vin raw10 use */
 };
 
@@ -384,14 +384,14 @@ static AX_U32 __sample_case_config(SAMPLE_VIN_PARAM_T *pVinParam, COMMON_SYS_ARG
     case SAMPLE_VIN_SINGLE_SC450AI:
         eSnsType = SMARTSENS_SC450AI;
         /* comm pool config */
-        __cal_dump_pool(gtSysCommPoolSingleOs450aiSdr, pVinParam->eHdrMode, pVinParam->nDumpFrameNum);
-        pCommonArgs->nPoolCfgCnt = sizeof(gtSysCommPoolSingleOs450aiSdr) / sizeof(gtSysCommPoolSingleOs450aiSdr[0]);
-        pCommonArgs->pPoolCfg = gtSysCommPoolSingleOs450aiSdr;
+        __cal_dump_pool(gtSysCommPoolSingleSc450aiSdr, pVinParam->eHdrMode, pVinParam->nDumpFrameNum);
+        pCommonArgs->nPoolCfgCnt = sizeof(gtSysCommPoolSingleSc450aiSdr) / sizeof(gtSysCommPoolSingleSc450aiSdr[0]);
+        pCommonArgs->pPoolCfg = gtSysCommPoolSingleSc450aiSdr;
 
         /* private pool config */
-        __cal_dump_pool(gtPrivatePoolSingleOs450aiSdr, pVinParam->eHdrMode, pVinParam->nDumpFrameNum);
-        pPrivArgs->nPoolCfgCnt = sizeof(gtPrivatePoolSingleOs450aiSdr) / sizeof(gtPrivatePoolSingleOs450aiSdr[0]);
-        pPrivArgs->pPoolCfg = gtPrivatePoolSingleOs450aiSdr;
+        __cal_dump_pool(gtPrivatePoolSingleSc450aiSdr, pVinParam->eHdrMode, pVinParam->nDumpFrameNum);
+        pPrivArgs->nPoolCfgCnt = sizeof(gtPrivatePoolSingleSc450aiSdr) / sizeof(gtPrivatePoolSingleSc450aiSdr[0]);
+        pPrivArgs->pPoolCfg = gtPrivatePoolSingleSc450aiSdr;
 
         /* cams config */
         __sample_case_single_sc450ai(pCamList, eSnsType, pVinParam, pCommonArgs);
@@ -813,9 +813,9 @@ static int SAMPLE_IVPS_Init(AX_S32 nGrpId, AX_S32 nChnNum, AX_IVPS_ROTATION_E eR
         stPipelineAttr.tFilter[0][0].nDstPicWidth = gOutChnAttr[0].nWidth;
         stPipelineAttr.tFilter[0][0].nDstPicHeight = gOutChnAttr[0].nHeight;
     }
-    stPipelineAttr.tFilter[0][0].nDstPicStride = ALIGN_UP_16(stPipelineAttr.tFilter[0][0].nDstPicWidth);
+    stPipelineAttr.tFilter[0][0].nDstPicStride = ALIGN_UP(stPipelineAttr.tFilter[0][0].nDstPicWidth, 128);
     stPipelineAttr.tFilter[0][0].eDstPicFormat = AX_FORMAT_YUV420_SEMIPLANAR;
-    stPipelineAttr.tFilter[0][0].eEngine = AX_IVPS_ENGINE_TDP;
+    stPipelineAttr.tFilter[0][0].eEngine = AX_IVPS_ENGINE_VPP;
 
     for (nChn = 0; nChn < nChnNum; nChn++) {
         stPipelineAttr.tFilter[nChn + 1][0].bEngage = AX_TRUE;
@@ -826,20 +826,30 @@ static int SAMPLE_IVPS_Init(AX_S32 nGrpId, AX_S32 nChnNum, AX_IVPS_ROTATION_E eR
             stPipelineAttr.tFilter[nChn + 1][0].nDstPicWidth = gOutChnAttr[nChn].nWidth;
             stPipelineAttr.tFilter[nChn + 1][0].nDstPicHeight = gOutChnAttr[nChn].nHeight;
         }
-        stPipelineAttr.tFilter[nChn + 1][0].nDstPicStride = ALIGN_UP_16(stPipelineAttr.tFilter[nChn + 1][0].nDstPicWidth);
+        stPipelineAttr.tFilter[nChn + 1][0].nDstPicStride = ALIGN_UP(stPipelineAttr.tFilter[nChn + 1][0].nDstPicWidth, 128);
         stPipelineAttr.tFilter[nChn + 1][0].eDstPicFormat = AX_FORMAT_YUV420_SEMIPLANAR;
-        stPipelineAttr.tFilter[nChn + 1][0].eEngine = AX_IVPS_ENGINE_TDP;
+        stPipelineAttr.tFilter[nChn + 1][0].eEngine = AX_IVPS_ENGINE_VPP;
+
+        stPipelineAttr.tFilter[nChn + 1][1].bEngage = AX_TRUE;
+        stPipelineAttr.tFilter[nChn + 1][1].nDstPicWidth = gOutChnAttr[nChn].nWidth;
+        stPipelineAttr.tFilter[nChn + 1][1].nDstPicHeight = gOutChnAttr[nChn].nHeight;
+        stPipelineAttr.tFilter[nChn + 1][1].nDstPicStride = ALIGN_UP_128(stPipelineAttr.tFilter[nChn + 1][0].nDstPicWidth);
+        stPipelineAttr.tFilter[nChn + 1][1].eDstPicFormat = AX_FORMAT_YUV420_SEMIPLANAR;
+        stPipelineAttr.tFilter[nChn + 1][1].eEngine = AX_IVPS_ENGINE_TDP;
+        stPipelineAttr.tFilter[nChn + 1][1].bInplace = AX_TRUE;
+
+        // stPipelineAttr.nOutFifoDepth[nChn] = 1;
     }
 
     stPipelineAttr.tFilter[ALGO_CHN + 1][0].bEngage = AX_TRUE;
     if (eRotAngle == AX_IVPS_ROTATION_90 || eRotAngle == AX_IVPS_ROTATION_270) {
-        stPipelineAttr.tFilter[ALGO_CHN + 1][0].nDstPicWidth = INFER_HEIHGT;
+        stPipelineAttr.tFilter[ALGO_CHN + 1][0].nDstPicWidth = INFER_HEIGHT;
         stPipelineAttr.tFilter[ALGO_CHN + 1][0].nDstPicHeight = INFER_WIDTH;
     } else {
         stPipelineAttr.tFilter[ALGO_CHN + 1][0].nDstPicWidth = INFER_WIDTH;
-        stPipelineAttr.tFilter[ALGO_CHN + 1][0].nDstPicHeight = INFER_HEIHGT;
+        stPipelineAttr.tFilter[ALGO_CHN + 1][0].nDstPicHeight = INFER_HEIGHT;
     }
-    stPipelineAttr.tFilter[ALGO_CHN + 1][0].nDstPicStride = ALIGN_UP_16(INFER_WIDTH);
+    stPipelineAttr.tFilter[ALGO_CHN + 1][0].nDstPicStride = ALIGN_UP(INFER_WIDTH, 128);
     stPipelineAttr.tFilter[ALGO_CHN + 1][0].eDstPicFormat = INFER_FORMAT;
     stPipelineAttr.tFilter[ALGO_CHN + 1][0].eEngine = AX_IVPS_ENGINE_TDP;
     stPipelineAttr.tFilter[ALGO_CHN + 1][0].tTdpCfg.eRotation = AX_IVPS_ROTATION_0;

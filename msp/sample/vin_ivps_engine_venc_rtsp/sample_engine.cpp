@@ -52,8 +52,8 @@ static const char *CLASS_NAMES[] = {
     "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors", "teddy bear",
     "hair drier", "toothbrush"};
 
-const int DEFAULT_RTSP_H = 1080;
-const int DEFAULT_RTSP_W = 1920;
+const int DEFAULT_RTSP_H = 1520;
+const int DEFAULT_RTSP_W = 2688;
 
 const int DEFAULT_IMG_H = 640;
 const int DEFAULT_IMG_W = 640;
@@ -187,14 +187,13 @@ static inline int prepare_io(AX_ENGINE_IO_INFO_T *info, AX_ENGINE_IO_T *io_data,
 static void post_process(AX_ENGINE_IO_INFO_T *io_info, AX_ENGINE_IO_T *io_data, std::vector<detection::Object> &objects, const std::vector<std::string> &want_classes)
 {
     std::vector<detection::Object> proposals;
-    float prob_threshold_u_sigmoid = -1.0f * (float)std::log((1.0f / PROB_THRESHOLD) - 1.0f);
     for (uint32_t i = 0; i < io_info->nOutputSize; ++i)
     {
         auto &output = io_data->pOutputs[i];
         // auto& info = io_info->pOutputs[i];
         auto ptr = (float *)output.pVirAddr;
         int32_t stride = (1 << i) * 8;
-        detection::generate_proposals_255(stride, ptr, PROB_THRESHOLD, proposals, DEFAULT_IMG_W, DEFAULT_IMG_H, ANCHORS, prob_threshold_u_sigmoid);
+        detection::generate_proposals_yolov8_native(stride, ptr, PROB_THRESHOLD, proposals, DEFAULT_IMG_W, DEFAULT_IMG_H, NUM_CLASSES);
     }
 
     if (!want_classes.empty())
