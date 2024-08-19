@@ -85,6 +85,14 @@ AX_S32 COMMON_VIN_GetSnsConfig(SAMPLE_SNS_TYPE_E eSnsType,
         memcpy(pPipeAttr, &gSc450aiPipeAttr, sizeof(AX_VIN_PIPE_ATTR_T));
         memcpy(&pChnAttr[0], &gSc450aiChn0Attr, sizeof(AX_VIN_CHN_ATTR_T));
         break;
+	case SMARTSENS_SC200AI:
+        memcpy(ptMipiAttr, &gSc200aiMipiAttr, sizeof(AX_MIPI_RX_ATTR_T));
+        memcpy(ptSnsAttr, &gSc200aiSnsAttr, sizeof(AX_SNS_ATTR_T));
+        memcpy(ptSnsClkAttr, &gSc200aiSnsClkAttr, sizeof(AX_SNS_CLK_ATTR_T));
+        memcpy(pDevAttr, &gSc200aiDevAttr, sizeof(AX_VIN_DEV_ATTR_T));
+        memcpy(pPipeAttr, &gSc200aiPipeAttr, sizeof(AX_VIN_PIPE_ATTR_T));
+        memcpy(&pChnAttr[0], &gSc200aiChn0Attr, sizeof(AX_VIN_CHN_ATTR_T));
+        break;
     case SAMSUNG_S5KJN1SQ03:
         memcpy(ptMipiAttr, &gs5kjn1sq03MipiAttr, sizeof(AX_MIPI_RX_ATTR_T));
         memcpy(ptSnsAttr, &gs5kjn1sq03SnsAttr, sizeof(AX_SNS_ATTR_T));

@@ -30,6 +30,8 @@ typedef enum {
     OMNIVISION_OS04A10_DCG_VS = 3,
     /* smartsens sensor */
     SMARTSENS_SC450AI = 10,
+    /* smartsens sensor */
+    SMARTSENS_SC200AI = 11,
     /*samsung sensor*/
     SAMSUNG_S5KJN1SQ03 = 20,
     /* dvp sensor */

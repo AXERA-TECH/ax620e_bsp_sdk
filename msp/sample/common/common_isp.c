@@ -48,6 +48,7 @@ const static AX_SENSOR_LIB_TAB s_libSensorTab[] = {
     {OMNIVISION_OS04A10_DCG,         "libsns_os04a10.so",       "gSnsos04a10ObjDcg"},
     {OMNIVISION_OS04A10_DCG_VS,      "libsns_os04a10.so",       "gSnsos04a10ObjVs"},
     {SMARTSENS_SC450AI,             "libsns_sc450ai.so",        "gSnssc450aiObj"},
+    {SMARTSENS_SC200AI,             "libsns_sc200ai.so",        "gSnssc200aiObj"},
     {SAMPLE_SNS_DVP,                "libsns_sc4210.so",         "gSnssc4210Obj"},
     {SAMPLE_SNS_BT656,              "libsns_dummy.so",          "gSnsdummyObj"},
     {SAMSUNG_S5KJN1SQ03,            "libsns_s5kjn1sq03.so",     "gSnss5kjn1sq03Obj"},

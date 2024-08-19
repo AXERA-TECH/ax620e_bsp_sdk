@@ -547,6 +547,78 @@ AX_VIN_CHN_ATTR_T gSc450aiChn0Attr = {
     .tFrameRateCtrl = {AX_INVALID_FRMRATE, AX_INVALID_FRMRATE},
 };
 
+AX_MIPI_RX_ATTR_T gSc200aiMipiAttr = {
+    .ePhyMode = AX_MIPI_PHY_TYPE_DPHY,
+    .eLaneNum = AX_MIPI_DATA_LANE_2,
+    .nDataRate =  400,
+    .nDataLaneMap[0] = 0,
+    .nDataLaneMap[1] = 1,
+    .nDataLaneMap[2] = 3,
+    .nDataLaneMap[3] = 4,
+    .nClkLane[0]     = 2,
+    .nClkLane[1]     = 5,
+};
+
+AX_SNS_ATTR_T gSc200aiSnsAttr = {
+    .nWidth = 1920,
+    .nHeight = 1080,
+    .fFrameRate = 30,
+    .eSnsMode = AX_SNS_LINEAR_MODE,
+    .eRawType = AX_RT_RAW10,
+    .eBayerPattern = AX_BP_RGGB,
+    .bTestPatternEnable = AX_FALSE,
+    // .nSettingIndex = 12,
+};
+
+AX_SNS_CLK_ATTR_T gSc200aiSnsClkAttr = {
+    .nSnsClkIdx = 0,
+    .eSnsClkRate = AX_SNS_CLK_24M,
+};
+
+AX_VIN_DEV_ATTR_T gSc200aiDevAttr = {
+    .bImgDataEnable = AX_TRUE,
+    .bNonImgDataEnable = AX_FALSE,
+    .eDevMode = AX_VIN_DEV_ONLINE,
+    .eSnsIntfType = AX_SNS_INTF_TYPE_MIPI_RAW,
+    .tDevImgRgn[0] = {0, 0, 1920, 1080},
+    .tDevImgRgn[1] = {0, 0, 1920, 1080},
+    .tDevImgRgn[2] = {0, 0, 1920, 1080},
+    .tDevImgRgn[3] = {0, 0, 1920, 1080},
+
+    /* When users transfer special data, they need to configure VC&DT for szImgVc/szImgDt/szInfoVc/szInfoDt */
+    //.tMipiIntfAttr.szImgVc[0] = 0,
+    //.tMipiIntfAttr.szImgDt[0] = MIPI_CSI_DT_RAW10,
+    //.tMipiIntfAttr.szImgVc[1] = 1,
+    //.tMipiIntfAttr.szImgDt[1] = MIPI_CSI_DT_RAW10,
+
+    .ePixelFmt = AX_FORMAT_BAYER_RAW_10BPP_PACKED,
+    .eBayerPattern = AX_BP_RGGB,
+    .eSnsMode = AX_SNS_LINEAR_MODE,
+    .eSnsOutputMode = AX_SNS_NORMAL,
+    .tCompressInfo = {AX_COMPRESS_MODE_NONE, 0},
+    .tFrameRateCtrl= {AX_INVALID_FRMRATE, AX_INVALID_FRMRATE},
+};
+
+AX_VIN_PIPE_ATTR_T gSc200aiPipeAttr = {
+    .ePipeWorkMode = AX_VIN_PIPE_NORMAL_MODE1,
+    .tPipeImgRgn = {0, 0, 1920, 1080},
+    .eBayerPattern = AX_BP_RGGB,
+    .ePixelFmt = AX_FORMAT_BAYER_RAW_10BPP_PACKED,
+    .eSnsMode = AX_SNS_LINEAR_MODE,
+    .tCompressInfo = {AX_COMPRESS_MODE_LOSSY, 0},
+    .tNrAttr = {{0, {AX_COMPRESS_MODE_LOSSLESS, 0}}, {0, {AX_COMPRESS_MODE_NONE, 0}}},
+    .tFrameRateCtrl = {AX_INVALID_FRMRATE, AX_INVALID_FRMRATE},
+};
+
+AX_VIN_CHN_ATTR_T gSc200aiChn0Attr = {
+    .nWidth = 1920,
+    .nHeight = 1080,
+    .nWidthStride = 1920,
+    .eImgFormat = AX_FORMAT_YUV420_SEMIPLANAR,
+    .nDepth = 0,
+    .tCompressInfo = {AX_COMPRESS_MODE_LOSSY, 4},
+    .tFrameRateCtrl = {AX_INVALID_FRMRATE, AX_INVALID_FRMRATE},
+};
 
 AX_MIPI_RX_ATTR_T gs5kjn1sq03MipiAttr = {
     .ePhyMode = AX_MIPI_PHY_TYPE_DPHY,

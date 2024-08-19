@@ -33,6 +33,13 @@ COMMON_SYS_POOL_CFG_T gtSysCommPoolSingleOs450aiSdr[] = {
     {720, 576, 720, AX_FORMAT_YUV420_SEMIPLANAR, 3},    /* vin nv21/nv21 use */
 };
 
+COMMON_SYS_POOL_CFG_T gtSysCommPoolSingleOs200aiSdr[] = {
+    {1920, 1080, 1920, AX_FORMAT_YUV420_SEMIPLANAR, 3, AX_COMPRESS_MODE_LOSSY, 4},    /* vin nv21/nv21 use */
+    {1920, 1080, 1920, AX_FORMAT_YUV420_SEMIPLANAR, 4},    /* vin nv21/nv21 use */
+    {1280, 720, 1280, AX_FORMAT_YUV420_SEMIPLANAR, 3},    /* vin nv21/nv21 use */
+    {720, 576, 720, AX_FORMAT_YUV420_SEMIPLANAR, 3},    /* vin nv21/nv21 use */
+};
+
 /* private pool */
 COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleDummySdr[] = {
     {2688, 1520, 2688, AX_FORMAT_BAYER_RAW_16BPP, 10},
@@ -44,6 +51,10 @@ COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleOs04a10Sdr[] = {
 
 COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleOs450aiSdr[] = {
     {2688, 1520, 2688, AX_FORMAT_BAYER_RAW_10BPP_PACKED, 8, AX_COMPRESS_MODE_LOSSY, 4},      /* vin raw10 use */
+};
+
+COMMON_SYS_POOL_CFG_T gtPrivatePoolSingleOs200aiSdr[] = {
+    {1920, 1080, 1920, AX_FORMAT_BAYER_RAW_10BPP_PACKED, 8, AX_COMPRESS_MODE_LOSSY, 4},      /* vin raw10 use */
 };
 
 static SAMPLE_VENC_SELECT_PARA_T gstVencSelectPara;
@@ -61,6 +72,27 @@ static SAMPLE_CHN_ATTR_T gOutChnAttr[] = {
         .nStride = 1920,
         .nWidth =  1920,
         .nHeight = 1080,
+        .eFbcMode = AX_COMPRESS_MODE_NONE,
+    },
+    {
+        .nStride = 720,
+        .nWidth =  720,
+        .nHeight = 576,
+        .eFbcMode = AX_COMPRESS_MODE_NONE,
+    },
+};
+
+static SAMPLE_CHN_ATTR_T gOutChnAttr1[] = {
+    {
+        .nStride = 1920,
+        .nWidth =  1920,
+        .nHeight = 1080,
+        .eFbcMode = AX_COMPRESS_MODE_LOSSY,
+    },
+    {
+        .nStride = 1280,
+        .nWidth =  1280,
+        .nHeight = 720,
         .eFbcMode = AX_COMPRESS_MODE_NONE,
     },
     {
@@ -342,15 +374,42 @@ static AX_U32 __sample_case_single_sc450ai(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYP
     for (j = 0; j < pCam->tDevBindPipe.nNum; j++) {
         pCam->tPipeInfo[j].ePipeMode = SAMPLE_PIPE_MODE_VIDEO;
         pCam->tPipeInfo[j].bAiispEnable = pVinParam->bAiispEnable;
-        if (pCam->tPipeInfo[j].bAiispEnable) {
-            if (eHdrMode <= AX_SNS_LINEAR_MODE) {
-                strncpy(pCam->tPipeInfo[j].szBinPath, "/opt/etc/sc450ai_sdr_dual3dnr.bin", sizeof(pCam->tPipeInfo[j].szBinPath));
-            } else {
-                strncpy(pCam->tPipeInfo[j].szBinPath, "/opt/etc/sc450ai_hdr_2x_ainr.bin", sizeof(pCam->tPipeInfo[j].szBinPath));
-            }
-        } else {
-            strncpy(pCam->tPipeInfo[j].szBinPath, "null.bin", sizeof(pCam->tPipeInfo[j].szBinPath));
-        }
+        strncpy(pCam->tPipeInfo[j].szBinPath, "null.bin", sizeof(pCam->tPipeInfo[j].szBinPath));
+    }
+    return 0;
+}
+
+
+static AX_U32 __sample_case_single_sc200ai(AX_CAMERA_T *pCamList, SAMPLE_SNS_TYPE_E eSnsType,
+        SAMPLE_VIN_PARAM_T *pVinParam, COMMON_SYS_ARGS_T *pCommonArgs)
+{
+    AX_CAMERA_T *pCam = NULL;
+    COMMON_VIN_MODE_E eSysMode = pVinParam->eSysMode;
+    AX_SNS_HDR_MODE_E eHdrMode = pVinParam->eHdrMode;
+    AX_S32 j = 0;
+    SAMPLE_LOAD_RAW_NODE_E eLoadRawNode = pVinParam->eLoadRawNode;
+    pCommonArgs->nCamCnt = 1;
+
+    pCam = &pCamList[0];
+    pCam->nPipeId = 0;
+    COMMON_VIN_GetSnsConfig(eSnsType, &pCam->tMipiAttr, &pCam->tSnsAttr,
+                                &pCam->tSnsClkAttr, &pCam->tDevAttr,
+                                &pCam->tPipeAttr[pCam->nPipeId], pCam->tChnAttr);
+    pCam->nDevId = 0;
+    pCam->nRxDev = 0;
+    pCam->tSnsClkAttr.nSnsClkIdx = 0;
+    pCam->tDevBindPipe.nNum =  1;
+    pCam->eLoadRawNode = eLoadRawNode;
+    pCam->tDevBindPipe.nPipeId[0] = pCam->nPipeId;
+    pCam->ptSnsHdl[pCam->nPipeId] = COMMON_ISP_GetSnsObj(eSnsType);
+    pCam->eBusType = COMMON_ISP_GetSnsBusType(eSnsType);
+    pCam->eInputMode = AX_INPUT_MODE_MIPI;
+    __set_pipe_hdr_mode(&pCam->tDevBindPipe.nHDRSel[0], eHdrMode);
+    __set_vin_attr(pCam, eSnsType, eHdrMode, eSysMode, pVinParam->bAiispEnable);
+    for (j = 0; j < pCam->tDevBindPipe.nNum; j++) {
+        pCam->tPipeInfo[j].ePipeMode = SAMPLE_PIPE_MODE_VIDEO;
+        pCam->tPipeInfo[j].bAiispEnable = pVinParam->bAiispEnable;
+        strncpy(pCam->tPipeInfo[j].szBinPath, "null.bin", sizeof(pCam->tPipeInfo[j].szBinPath));
     }
     return 0;
 }
@@ -396,6 +455,22 @@ static AX_U32 __sample_case_config(SAMPLE_VIN_PARAM_T *pVinParam, COMMON_SYS_ARG
 
         /* cams config */
         __sample_case_single_sc450ai(pCamList, eSnsType, pVinParam, pCommonArgs);
+        break;
+
+	case SAMPLE_VIN_SINGLE_SC200AI:
+        eSnsType = SMARTSENS_SC200AI;
+        /* comm pool config */
+        __cal_dump_pool(gtSysCommPoolSingleOs200aiSdr, pVinParam->eHdrMode, pVinParam->nDumpFrameNum);
+        pCommonArgs->nPoolCfgCnt = sizeof(gtSysCommPoolSingleOs200aiSdr) / sizeof(gtSysCommPoolSingleOs200aiSdr[0]);
+        pCommonArgs->pPoolCfg = gtSysCommPoolSingleOs200aiSdr;
+
+        /* private pool config */
+        __cal_dump_pool(gtPrivatePoolSingleOs200aiSdr, pVinParam->eHdrMode, pVinParam->nDumpFrameNum);
+        pPrivArgs->nPoolCfgCnt = sizeof(gtPrivatePoolSingleOs200aiSdr) / sizeof(gtPrivatePoolSingleOs200aiSdr[0]);
+        pPrivArgs->pPoolCfg = gtPrivatePoolSingleOs200aiSdr;
+
+        /* cams config */
+        __sample_case_single_sc200ai(pCamList, eSnsType, pVinParam, pCommonArgs);
         break;
 		
     case SAMPLE_VIN_SINGLE_DUMMY:
@@ -641,7 +716,7 @@ static AX_S32 SAMPLE_VencStartSelectGetStream(SAMPLE_VENC_SELECT_PARA_T *pstArg)
     return s32Ret;
 }
 
-static AX_S32 SAMPLE_VENC_Init(AX_S32 nChnNum, AX_IVPS_ROTATION_E eRotAngle, AX_U32 bVencSelect)
+static AX_S32 SAMPLE_VENC_Init(SAMPLE_VIN_PARAM_T *pVinParam, AX_S32 nChnNum, AX_IVPS_ROTATION_E eRotAngle, AX_U32 bVencSelect)
 {
     AX_VENC_CHN_ATTR_T stVencChnAttr;
     VIDEO_CONFIG_T config = { 0 };
@@ -688,17 +763,36 @@ static AX_S32 SAMPLE_VENC_Init(AX_S32 nChnNum, AX_IVPS_ROTATION_E eRotAngle, AX_
             break;
         }
 
-        if (eRotAngle == AX_IVPS_ROTATION_90 || eRotAngle == AX_IVPS_ROTATION_270) {
-            config.nInWidth = gOutChnAttr[VencChn].nHeight;
-            config.nInHeight = gOutChnAttr[VencChn].nWidth;
-        } else {
-            config.nInWidth = gOutChnAttr[VencChn].nWidth;
-            config.nInHeight = gOutChnAttr[VencChn].nHeight;
-        }
-        if (gOutChnAttr[VencChn].eFbcMode)
-            config.nStride = ALIGN_UP(gOutChnAttr[VencChn].nWidth, 128);
-        else
-            config.nStride = ALIGN_UP(gOutChnAttr[VencChn].nWidth, 16);
+		if(pVinParam->eSysCase == SAMPLE_VIN_SINGLE_SC200AI)
+		{
+			if (eRotAngle == AX_IVPS_ROTATION_90 || eRotAngle == AX_IVPS_ROTATION_270) {
+				   config.nInWidth = gOutChnAttr1[VencChn].nHeight;
+				   config.nInHeight = gOutChnAttr1[VencChn].nWidth;
+			   } else {
+				   config.nInWidth = gOutChnAttr1[VencChn].nWidth;
+				   config.nInHeight = gOutChnAttr1[VencChn].nHeight;
+			   }
+			   if (gOutChnAttr1[VencChn].eFbcMode)
+				   config.nStride = ALIGN_UP(gOutChnAttr1[VencChn].nWidth, 128);
+			   else
+				   config.nStride = ALIGN_UP(gOutChnAttr1[VencChn].nWidth, 16);
+		}
+		else
+		{
+			if (eRotAngle == AX_IVPS_ROTATION_90 || eRotAngle == AX_IVPS_ROTATION_270) {
+				   config.nInWidth = gOutChnAttr[VencChn].nHeight;
+				   config.nInHeight = gOutChnAttr[VencChn].nWidth;
+			   } else {
+				   config.nInWidth = gOutChnAttr[VencChn].nWidth;
+				   config.nInHeight = gOutChnAttr[VencChn].nHeight;
+			   }
+			   if (gOutChnAttr[VencChn].eFbcMode)
+				   config.nStride = ALIGN_UP(gOutChnAttr[VencChn].nWidth, 128);
+			   else
+				   config.nStride = ALIGN_UP(gOutChnAttr[VencChn].nWidth, 16);
+
+		}
+       
 
         memset(&stVencChnAttr, 0, sizeof(AX_VENC_CHN_ATTR_T));
 
@@ -888,7 +982,7 @@ static AX_S32 SAMPLE_VENC_DeInit(AX_S32 nChnNum, AX_BOOL bVencSelect)
     return 0;
 }
 
-static int SAMPLE_IVPS_Init(AX_S32 nGrpId, AX_S32 nChnNum, AX_IVPS_ROTATION_E eRotAngle)
+static int SAMPLE_IVPS_Init(SAMPLE_VIN_PARAM_T *pVinParam, AX_S32 nGrpId, AX_S32 nChnNum, AX_IVPS_ROTATION_E eRotAngle)
 {
     AX_S32 s32Ret = 0, nChn;
     AX_IVPS_GRP_ATTR_T stGrpAttr = { 0 };
@@ -907,33 +1001,71 @@ static int SAMPLE_IVPS_Init(AX_S32 nGrpId, AX_S32 nChnNum, AX_IVPS_ROTATION_E eR
         ALOGE("AX_IVPS_CreateGrp failed,nGrp %d,s32Ret:0x%x", nGrpId, s32Ret);
         return s32Ret;
     }
-    stPipelineAttr.nOutChnNum = nChnNum;
-    stPipelineAttr.tFilter[0][0].bEngage = AX_TRUE;
-    stPipelineAttr.tFilter[0][0].nDstPicWidth = gOutChnAttr[0].nWidth;
-    stPipelineAttr.tFilter[0][0].nDstPicHeight = gOutChnAttr[0].nHeight;
-    stPipelineAttr.tFilter[0][0].nDstPicStride = ALIGN_UP_16(stPipelineAttr.tFilter[0][0].nDstPicWidth);
-    stPipelineAttr.tFilter[0][0].eDstPicFormat = AX_FORMAT_YUV420_SEMIPLANAR;
-    stPipelineAttr.tFilter[0][0].eEngine = AX_IVPS_ENGINE_VPP;
 
-    for (nChn = 0; nChn < nChnNum; nChn++) {
-        stPipelineAttr.tFilter[nChn + 1][0].bEngage = AX_TRUE;
-        stPipelineAttr.tFilter[nChn + 1][0].nDstPicWidth = gOutChnAttr[nChn].nWidth;
-        stPipelineAttr.tFilter[nChn + 1][0].nDstPicHeight = gOutChnAttr[nChn].nHeight;
-        stPipelineAttr.tFilter[nChn + 1][0].nDstPicStride = ALIGN_UP_16(stPipelineAttr.tFilter[nChn + 1][0].nDstPicWidth);
-        stPipelineAttr.tFilter[nChn + 1][0].eDstPicFormat = AX_FORMAT_YUV420_SEMIPLANAR;
-        stPipelineAttr.tFilter[nChn + 1][0].eEngine = AX_IVPS_ENGINE_SCL;
-        stPipelineAttr.tFilter[nChn + 1][0].tCompressInfo.enCompressMode = gOutChnAttr[nChn].eFbcMode;
-        stPipelineAttr.tFilter[nChn + 1][0].tCompressInfo.u32CompressLevel = 4;
-
-        stPipelineAttr.tFilter[nChn + 1][1].bEngage = AX_TRUE;
-        stPipelineAttr.tFilter[nChn + 1][1].nDstPicWidth = gOutChnAttr[nChn].nWidth;
-        stPipelineAttr.tFilter[nChn + 1][1].nDstPicHeight = gOutChnAttr[nChn].nHeight;
-        stPipelineAttr.tFilter[nChn + 1][1].nDstPicStride = ALIGN_UP_16(stPipelineAttr.tFilter[nChn + 1][0].nDstPicWidth);
-        stPipelineAttr.tFilter[nChn + 1][1].eDstPicFormat = AX_FORMAT_YUV420_SEMIPLANAR;
-        stPipelineAttr.tFilter[nChn + 1][1].eEngine = AX_IVPS_ENGINE_TDP;
-        stPipelineAttr.tFilter[nChn + 1][1].bInplace = AX_TRUE;
-        stPipelineAttr.nOutFifoDepth[nChn] = 0;
-    }
+ 	if(pVinParam->eSysCase == SAMPLE_VIN_SINGLE_SC200AI)
+	{
+		ALOGI2("SAMPLE_VIN_SINGLE_SC200AI\n");
+		stPipelineAttr.nOutChnNum = nChnNum;
+		stPipelineAttr.tFilter[0][0].bEngage = AX_TRUE;
+		stPipelineAttr.tFilter[0][0].nDstPicWidth = gOutChnAttr1[0].nWidth;
+		stPipelineAttr.tFilter[0][0].nDstPicHeight = gOutChnAttr1[0].nHeight;
+		stPipelineAttr.tFilter[0][0].nDstPicStride = ALIGN_UP_16(stPipelineAttr.tFilter[0][0].nDstPicWidth);
+		stPipelineAttr.tFilter[0][0].eDstPicFormat = AX_FORMAT_YUV420_SEMIPLANAR;
+		stPipelineAttr.tFilter[0][0].eEngine = AX_IVPS_ENGINE_VPP;
+	
+		for (nChn = 0; nChn < nChnNum; nChn++) {
+			stPipelineAttr.tFilter[nChn + 1][0].bEngage = AX_TRUE;
+			stPipelineAttr.tFilter[nChn + 1][0].tFRC.fSrcFrameRate = 30;
+    		stPipelineAttr.tFilter[nChn + 1][0].tFRC.fDstFrameRate = 30;
+			stPipelineAttr.tFilter[nChn + 1][0].nDstPicWidth = gOutChnAttr1[nChn].nWidth;
+			stPipelineAttr.tFilter[nChn + 1][0].nDstPicHeight = gOutChnAttr1[nChn].nHeight;
+			stPipelineAttr.tFilter[nChn + 1][0].nDstPicStride = ALIGN_UP_16(stPipelineAttr.tFilter[nChn + 1][0].nDstPicWidth);
+			stPipelineAttr.tFilter[nChn + 1][0].eDstPicFormat = AX_FORMAT_YUV420_SEMIPLANAR;
+			stPipelineAttr.tFilter[nChn + 1][0].eEngine = AX_IVPS_ENGINE_SCL;
+			stPipelineAttr.tFilter[nChn + 1][0].tCompressInfo.enCompressMode = gOutChnAttr1[nChn].eFbcMode;
+			stPipelineAttr.tFilter[nChn + 1][0].tCompressInfo.u32CompressLevel = 4;
+	
+			stPipelineAttr.tFilter[nChn + 1][1].bEngage = AX_TRUE;
+			stPipelineAttr.tFilter[nChn + 1][1].nDstPicWidth = gOutChnAttr1[nChn].nWidth;
+			stPipelineAttr.tFilter[nChn + 1][1].nDstPicHeight = gOutChnAttr1[nChn].nHeight;
+			stPipelineAttr.tFilter[nChn + 1][1].nDstPicStride = ALIGN_UP_16(stPipelineAttr.tFilter[nChn + 1][0].nDstPicWidth);
+			stPipelineAttr.tFilter[nChn + 1][1].eDstPicFormat = AX_FORMAT_YUV420_SEMIPLANAR;
+			stPipelineAttr.tFilter[nChn + 1][1].eEngine = AX_IVPS_ENGINE_TDP;
+			stPipelineAttr.tFilter[nChn + 1][1].bInplace = AX_TRUE;
+			stPipelineAttr.nOutFifoDepth[nChn] = 0;
+		}
+	}
+	else
+	{
+		stPipelineAttr.nOutChnNum = nChnNum;
+		stPipelineAttr.tFilter[0][0].bEngage = AX_TRUE;
+		stPipelineAttr.tFilter[0][0].nDstPicWidth = gOutChnAttr[0].nWidth;
+		stPipelineAttr.tFilter[0][0].nDstPicHeight = gOutChnAttr[0].nHeight;
+		stPipelineAttr.tFilter[0][0].nDstPicStride = ALIGN_UP_16(stPipelineAttr.tFilter[0][0].nDstPicWidth);
+		stPipelineAttr.tFilter[0][0].eDstPicFormat = AX_FORMAT_YUV420_SEMIPLANAR;
+		stPipelineAttr.tFilter[0][0].eEngine = AX_IVPS_ENGINE_VPP;
+	
+		for (nChn = 0; nChn < nChnNum; nChn++) {
+			stPipelineAttr.tFilter[nChn + 1][0].bEngage = AX_TRUE;
+			stPipelineAttr.tFilter[nChn + 1][0].nDstPicWidth = gOutChnAttr[nChn].nWidth;
+			stPipelineAttr.tFilter[nChn + 1][0].nDstPicHeight = gOutChnAttr[nChn].nHeight;
+			stPipelineAttr.tFilter[nChn + 1][0].nDstPicStride = ALIGN_UP_16(stPipelineAttr.tFilter[nChn + 1][0].nDstPicWidth);
+			stPipelineAttr.tFilter[nChn + 1][0].eDstPicFormat = AX_FORMAT_YUV420_SEMIPLANAR;
+			stPipelineAttr.tFilter[nChn + 1][0].eEngine = AX_IVPS_ENGINE_SCL;
+			stPipelineAttr.tFilter[nChn + 1][0].tCompressInfo.enCompressMode = gOutChnAttr[nChn].eFbcMode;
+			stPipelineAttr.tFilter[nChn + 1][0].tCompressInfo.u32CompressLevel = 4;
+	
+			stPipelineAttr.tFilter[nChn + 1][1].bEngage = AX_TRUE;
+			stPipelineAttr.tFilter[nChn + 1][1].nDstPicWidth = gOutChnAttr[nChn].nWidth;
+			stPipelineAttr.tFilter[nChn + 1][1].nDstPicHeight = gOutChnAttr[nChn].nHeight;
+			stPipelineAttr.tFilter[nChn + 1][1].nDstPicStride = ALIGN_UP_16(stPipelineAttr.tFilter[nChn + 1][0].nDstPicWidth);
+			stPipelineAttr.tFilter[nChn + 1][1].eDstPicFormat = AX_FORMAT_YUV420_SEMIPLANAR;
+			stPipelineAttr.tFilter[nChn + 1][1].eEngine = AX_IVPS_ENGINE_TDP;
+			stPipelineAttr.tFilter[nChn + 1][1].bInplace = AX_TRUE;
+			stPipelineAttr.nOutFifoDepth[nChn] = 0;
+		}
+	}
+    
 #ifdef SAMPLE_IVPS_CROPRESIZE_ENABLE
     AX_S32 nChnGetId = 0;
     stPipelineAttr.nOutFifoDepth[nChnGetId] = 1;
@@ -1161,14 +1293,14 @@ static AX_S32 SAMPLE_VIN_IVPS_VENC_RTSP(SAMPLE_VIN_PARAM_T *pVinParam)
     }
 
     /* Step5: IVPS init */
-    s32Ret = SAMPLE_IVPS_Init(pVinParam->nGrpId, pVinParam->nOutChnNum, pVinParam->eRotAngle);
+    s32Ret = SAMPLE_IVPS_Init(pVinParam, pVinParam->nGrpId, pVinParam->nOutChnNum, pVinParam->eRotAngle);
     if (AX_SUCCESS != s32Ret) {
         ALOGE("SAMPLE_IVPS_Init failed, ret:0x%x", s32Ret);
         goto EXIT_FAIL4;
     }
 
     /* Step6: VENC init */
-    s32Ret = SAMPLE_VENC_Init(pVinParam->nOutChnNum, pVinParam->eRotAngle, pVinParam->bVencSelect);
+    s32Ret = SAMPLE_VENC_Init(pVinParam, pVinParam->nOutChnNum, pVinParam->eRotAngle, pVinParam->bVencSelect);
     if (AX_SUCCESS != s32Ret) {
         ALOGE("SAMPLE_VENC_Init failed, ret:0x%x", s32Ret);
         goto EXIT_FAIL5;
