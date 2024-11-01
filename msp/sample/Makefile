@@ -26,7 +26,7 @@ SUBDIRS += avs
 SUBDIRS += sysmap
 SUBDIRS += efuse_hash
 SUBDIRS += gzipd
-SUBDIRS += optee
+# SUBDIRS += optee
 ################################################################################
 #	prepare param
 ################################################################################

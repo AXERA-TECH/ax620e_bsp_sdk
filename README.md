@@ -1,4 +1,4 @@
-# ax620e_bsp_sdk
+# ax620e_bsp_sdk for M5Stack
 
 ## What is this?
 
@@ -42,6 +42,12 @@ Download the third-party zip file and decompress it into third-party dir
 
 - [百度网盘](https://pan.baidu.com/s/1BPvwQ3a93f5BRh3kdVUjWQ?pwd=g6nu)
 - [Google Drive](https://drive.google.com/drive/folders/1JkZQlCtPz2U3W0mvBwwryHXW_Uo79stI?usp=sharing)
+
+Or using wget download it
+```
+wget https://github.com/AXERA-TECH/ax620q_bsp_sdk/releases/download/v2.0.0/third-party.tar.gz
+tar zxvf third-party.tar.gz
+```
 
 ```
 $ tree -L 2
