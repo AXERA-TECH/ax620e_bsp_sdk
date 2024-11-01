@@ -1,5 +1,10 @@
 # ax620e_bsp_sdk for M5Stack
 
+| Platform | Build Status |
+| -------- | ------------ |
+| AX630C   | ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/AXERA-TECH/ax620e_bsp_sdk/build_arm64_glibc.yml?branch=m5stack)|
+| AX620Q   | ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/AXERA-TECH/ax620e_bsp_sdk/build_arm_uclibc.yml?branch=m5stack)|
+
 ## What is this?
 
 This is a ax620e linux bsp sdk based on official version AX620e_SDK_V2.0.0_P7 and changed for M5Stack's products. currently it is application layer open source.
