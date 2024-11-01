@@ -2,7 +2,7 @@
 
 ## What is this?
 
-This is a ax620e linux bsp sdk form AX620e_SDK_V2.0.0_P7. currently it is application layer open source.
+This is a ax620e linux bsp sdk based on official version AX620e_SDK_V2.0.0_P7 and changed for M5Stack's products. currently it is application layer open source.
 
 ## Which target support
 
@@ -34,8 +34,8 @@ export PATH="/opt/arm-AX620E-linux-uclibcgnueabihf/bin/:$PATH"
 ### prepare compile files
 
 ```
-git clone https://github.com/AXERA-TECH/ax620q_bsp_sdk.git
-cd ax620q_bsp_sdk
+git clone -b m5stack https://github.com/AXERA-TECH/ax620e_bsp_sdk.git
+cd ax620e_bsp_sdk
 ```
 
 Download the third-party zip file and decompress it into third-party dir

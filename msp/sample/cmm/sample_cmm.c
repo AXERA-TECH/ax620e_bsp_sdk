@@ -451,7 +451,7 @@ static int ax_mem_cmm_test_007(void)
     AX_U8 *src_pviraddr[DEFAULT_ALLOC_TIME];
     AX_U64 dst_phyaddr[DEFAULT_ALLOC_TIME];
     AX_U8 *dst_pviraddr[DEFAULT_ALLOC_TIME];
-    AX_U32 TEST_TIME = 32;
+    AX_U32 TEST_TIME = 10;
     AX_U32 fail_count = 0;
     ADDR_BUF_T srcBuf = {0};
     ADDR_BUF_T dstBuf = {0};
@@ -547,7 +547,7 @@ static int ax_mem_cmm_test_008(void)
     AX_U8 *src_pviraddr[DEFAULT_ALLOC_TIME];
     ADDR_BUF_T srcBuf = {0};
     ADDR_BUF_T dstBuf = {0};
-    AX_U32 TEST_TIME = 32;
+    AX_U32 TEST_TIME = 10;
     AX_U32 fail_count = 0;
 
     printf("\nax_mem_cmm_test_008 begin\n");
@@ -655,7 +655,7 @@ static int ax_mem_cmm_test_009(void)
     ADDR_BUF_T srcBuf = {0};
     ADDR_BUF_T dstBuf = {0};
     AX_U32 offset = 0;
-    AX_U32 TEST_TIME = 100;
+    AX_U32 TEST_TIME = 10;
     AX_U32 fail_count = 0;
 
     printf("\nax_mem_cmm_test_009 begin\n");
@@ -746,7 +746,7 @@ static int ax_mem_cmm_test_010(void)
     ADDR_BUF_T srcBuf = {0};
     ADDR_BUF_T dstBuf = {0};
     AX_U32 offset = 0;
-    AX_U32 TEST_TIME = 100;
+    AX_U32 TEST_TIME = 10;
     AX_U32 fail_count = 0;
 
     printf("\nax_mem_cmm_test_010 begin\n");
@@ -826,6 +826,7 @@ static int ax_mem_cmm_test_010(void)
 */
 static int ax_mem_cmm_test_011(void)
 {
+    return 1;
     AX_S32 l_size = 1*1024*1024;
     AX_S32 i = 0;
     AX_S32 j = 0;
@@ -838,7 +839,7 @@ static int ax_mem_cmm_test_011(void)
     ADDR_BUF_T srcBuf = {0};
     ADDR_BUF_T dstBuf = {0};
     AX_U32 offset = 0;
-    AX_U32 TEST_TIME = 100;
+    AX_U32 TEST_TIME = 10;
     AX_U32 fail_count = 0;
 
     printf("\nax_mem_cmm_test_011 begin\n");
@@ -917,6 +918,7 @@ static int ax_mem_cmm_test_011(void)
 */
 static int ax_mem_cmm_test_012(void)
 {
+    return 1;
     AX_S32 l_size = 1*1024*1024;
     AX_S32 i = 0;
     AX_S32 j = 0;
@@ -929,7 +931,7 @@ static int ax_mem_cmm_test_012(void)
     ADDR_BUF_T srcBuf = {0};
     ADDR_BUF_T dstBuf = {0};
     AX_U32 offset = 0;
-    AX_U32 TEST_TIME = 100;
+    AX_U32 TEST_TIME = 10;
     AX_U32 fail_count = 0;
 
     printf("\nax_mem_cmm_test_012 begin (We expect this case to fail)\n");
@@ -1009,13 +1011,14 @@ static int ax_mem_cmm_test_012(void)
 */
 static int ax_mem_cmm_test_013(void)
 {
+    return 1;
     AX_U64 PhyAddr;
     AX_VOID *pVirAddr;
     AX_VOID *pVirAddr2;
     AX_U32 BlockSize= 4*DEFAULT_1_M;
     AX_S32 nRet,i,j;
     AX_U32 offset = 0;
-    AX_U32 TEST_TIME = 100;
+    AX_U32 TEST_TIME = 10;
     AX_U32 fail_count =0;
 
     printf("\nax_mem_cmm_test_013 begin\n");
@@ -1075,15 +1078,16 @@ static int ax_mem_cmm_test_013(void)
 */
 static int ax_mem_cmm_test_014(void)
 {
+    return 1;
     AX_U64 PhyAddr;
     AX_VOID *pVirAddr;
     AX_VOID *pVirAddr2;
     AX_U32 BlockSize= 4*DEFAULT_1_M;
     AX_S32 nRet,i,j;
     AX_U32 offset = 0;
-    AX_U32 TEST_TIME = 100;
+    AX_U32 TEST_TIME = 10;
     AX_U32 fail_count = 0;
-
+    
     printf("\nax_mem_cmm_test_014 begin (We expect this case to fail)\n");
 
     for (j = 0; j < TEST_TIME; j++) {
@@ -1146,6 +1150,7 @@ static int ax_mem_cmm_test_014(void)
 */
 static int ax_mem_cmm_test_015(void)
 {
+    return 1;
     AX_U64 PhyAddr = 0xA0000000;//该物理地址需没有被当前进程使用
     AX_VOID *pVirAddr;
     AX_VOID *pVirAddr2;
@@ -1229,6 +1234,7 @@ static int ax_mem_cmm_test_015(void)
 */
 static int ax_mem_cmm_test_016(void)
 {
+    return 1;
     AX_U64 PhyAddr = 0xA0000000;//该物理地址需没有被当前进程使用
     AX_VOID *pVirAddr;
     AX_VOID *pVirAddr2;

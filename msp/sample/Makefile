@@ -10,6 +10,7 @@ SUBDIRS += vdec
 SUBDIRS += ives
 SUBDIRS += venc
 SUBDIRS += skel
+SUBDIRS += efuse
 SUBDIRS += ivps_jenc_slice
 SUBDIRS += vin_ivps_vo_venc
 SUBDIRS += vin_ivps_venc_rtsp
@@ -18,11 +19,14 @@ SUBDIRS += vin_ivps_skel_venc_rtsp
 SUBDIRS += vdec_ivps_venc
 SUBDIRS += vdec_ivps_vo
 SUBDIRS += npu
+SUBDIRS += uvc
 SUBDIRS += cipher
 SUBDIRS += ive
 SUBDIRS += avs
 SUBDIRS += sysmap
+SUBDIRS += efuse_hash
 SUBDIRS += gzipd
+SUBDIRS += optee
 ################################################################################
 #	prepare param
 ################################################################################

@@ -1,0 +1,49 @@
+CUR_PATH             := $(shell pwd)
+HOME_PATH            := $(abspath $(CUR_PATH)/../../..)
+
+include $(HOME_PATH)/build/config.mak
+
+PRJ_OUT_HOME         := $(HOME_PATH)/build/out/$(PROJECT)
+OBJ_OUT_PATH         := $(PRJ_OUT_HOME)/objs
+SRC_RELATIVE_PATH    := $(subst $(HOME_PATH)/,,$(CUR_PATH))
+TARGET_OUT_PATH      := $(OBJ_OUT_PATH)/$(SRC_RELATIVE_PATH)
+
+SRC_PATH             := $(CUR_PATH)
+BASE_PATH            := $(HOME_PATH)/msp/component
+OUT_PATH             := $(MSP_OUT_PATH)
+LIB_PATH             := $(OUT_PATH)/lib
+
+# output
+MOD_NAME                := sample_efuse_s
+OUTPUT                  := $(TARGET_OUT_PATH)/.obj_a
+
+# source
+SRCS                    := $(wildcard $(SRC_PATH)/*.c)
+OBJS                    := $(SRCS:%.c=$(OUTPUT)/%.o)
+CINCLUDE                := -I$(SRC_PATH) -I$(MSP_OUT_PATH)/include
+
+# exec
+TARGET                  := $(MOD_NAME)
+
+# build flags
+CFLAGS			:= ${EXEC_FLAG} -Wall -Wl,-rpath-link=$(LIB_PATH)
+ifeq ($(debug),yes)
+CFLAGS			+= -O0 -ggdb3
+else
+CFLAGS			+= -O2
+endif
+
+# dependency
+CLIB                    += -lm -lpthread
+CLIB			+= -L$(LIB_PATH)
+CLIB			+= -l:libax_efuse.a -l:libax_sys.a
+
+INSTALL_BIN		:= $(TARGET)
+MV_TARGET		:= $(INSTALL_BIN)
+
+
+# link
+LINK = $(CC)
+
+include $(HOME_PATH)/build/rules.mak
+
